@@ -1,0 +1,270 @@
+---
+title: "Introduction to React"
+description: "Learn React fundamentals and start building component-based UIs"
+tags: ["react", "components", "beginner"]
+estimatedTime: "90 minutes"
+youtubeId: "dQw4w9WgXcQ"
+---
+
+# Introduction to React
+
+React is a JavaScript library for building user interfaces with components. Instead of manipulating the DOM directly, you describe what the UI should look like, and React handles the rest.
+
+## Watch: React Fundamentals
+
+<YouTubeEmbed videoId="dQw4w9WgXcQ" />
+
+## What is React?
+
+React's core principle: **UI is a function of state**.
+
+```
+UI = f(state)
+```
+
+When state changes, React re-renders the component and updates only what changed. This makes building interactive UIs predictable and efficient.
+
+## Components
+
+React apps are built from **components**—reusable pieces of UI.
+
+```jsx
+// Functional component (modern)
+const Greeting = ({ name }) => {
+  return <h1>Hello, {name}!</h1>;
+};
+
+// Using the component
+export default function App() {
+  return <Greeting name="Alice" />;
+}
+```
+
+<SeniorNote>
+Functional components with hooks are now the standard. Class components are legacy. Always use functional components in new code.
+</SeniorNote>
+
+## JSX
+
+JSX is a syntax extension that looks like HTML inside JavaScript:
+
+```jsx
+const element = <h1>Hello, World!</h1>;
+
+const Component = () => {
+  const name = "Alice";
+  return (
+    <div>
+      <h1>Welcome, {name}!</h1>
+      <p>This is JSX.</p>
+    </div>
+  );
+};
+```
+
+JSX is not HTML—it compiles to JavaScript function calls:
+
+```javascript
+// JSX
+<div className="container">Hello</div>
+
+// Compiles to
+React.createElement("div", { className: "container" }, "Hello");
+```
+
+## Props
+
+Props allow you to pass data to components:
+
+```jsx
+interface CardProps {
+  title: string;
+  description: string;
+  onLearnMore: () => void;
+}
+
+const Card = ({ title, description, onLearnMore }: CardProps) => {
+  return (
+    <div className="card">
+      <h2>{title}</h2>
+      <p>{description}</p>
+      <button onClick={onLearnMore}>Learn More</button>
+    </div>
+  );
+};
+
+// Using it
+export default function App() {
+  return (
+    <Card
+      title="React Basics"
+      description="Learn React fundamentals"
+      onLearnMore={() => console.log("Clicked!")}
+    />
+  );
+}
+```
+
+<Pitfall>
+Props flow one direction: parent to child. Don't try to modify props directly. This causes confusion and bugs.
+</Pitfall>
+
+## State with Hooks
+
+Hooks let you use state and other React features in functional components:
+
+```jsx
+import { useState } from "react";
+
+const Counter = () => {
+  const [count, setCount] = useState(0);
+
+  const increment = () => setCount(count + 1);
+
+  return (
+    <div>
+      <p>Count: {count}</p>
+      <button onClick={increment}>Increment</button>
+    </div>
+  );
+};
+```
+
+## Common Hooks
+
+```jsx
+import { useState, useEffect, useContext } from "react";
+
+// useState: manage local state
+const [value, setValue] = useState("");
+
+// useEffect: run side effects after render
+useEffect(() => {
+  console.log("Component mounted!");
+  
+  return () => {
+    console.log("Component unmounting");
+  };
+}, []); // Dependency array
+
+// useContext: access context values
+const theme = useContext(ThemeContext);
+```
+
+<ProTip>
+Always include a dependency array in `useEffect`. This prevents infinite loops and makes your intent clear.
+</ProTip>
+
+## Conditional Rendering
+
+```jsx
+const Component = ({ isLoggedIn }) => {
+  if (isLoggedIn) {
+    return <Dashboard />;
+  }
+  return <Login />;
+};
+
+// Or using ternary
+return isLoggedIn ? <Dashboard /> : <Login />;
+
+// Or using &&
+return isLoggedIn && <Dashboard />;
+```
+
+## Lists and Keys
+
+```jsx
+const TodoList = ({ todos }) => {
+  return (
+    <ul>
+      {todos.map((todo) => (
+        <li key={todo.id}>{todo.text}</li>
+      ))}
+    </ul>
+  );
+};
+```
+
+Always use a unique `key` prop when rendering lists. This helps React identify which items have changed.
+
+<Pitfall>
+Never use array index as a key. If the list is reordered, React will get confused. Use a unique identifier.
+</Pitfall>
+
+## Event Handling
+
+```jsx
+const Form = () => {
+  const [input, setInput] = useState("");
+
+  const handleChange = (e) => {
+    setInput(e.target.value);
+  };
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    console.log("Submitted:", input);
+  };
+
+  return (
+    <form onSubmit={handleSubmit}>
+      <input 
+        type="text" 
+        value={input} 
+        onChange={handleChange}
+      />
+      <button type="submit">Submit</button>
+    </form>
+  );
+};
+```
+
+## Component Composition
+
+React is built on composition, not inheritance:
+
+```jsx
+// Bad: Complex parent component
+const Page = () => {
+  // 500 lines of code
+};
+
+// Good: Composed from smaller components
+const Page = () => {
+  return (
+    <div>
+      <Header />
+      <MainContent />
+      <Sidebar />
+      <Footer />
+    </div>
+  );
+};
+```
+
+Break components into smaller, focused pieces. Each component should have a single responsibility.
+
+<Checklist
+  title="React Fundamentals"
+  items={[
+    "Understand components as functions",
+    "Learn props and state",
+    "Master useState hook",
+    "Use useEffect for side effects",
+    "Handle events properly",
+    "Compose from smaller components",
+    "Use keys in lists"
+  ]}
+/>
+
+## Key Takeaways
+
+- React is all about **components and composition**
+- **Props** pass data down; **state** is local
+- Use **hooks** for state and side effects
+- **JSX** is syntactic sugar for `createElement`
+- Build **small, focused components**
+
+Next, we'll explore advanced hooks and patterns!
+

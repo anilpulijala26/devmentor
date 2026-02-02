@@ -1,0 +1,94 @@
+---
+title: "Flexbox Layout"
+description: "Master flexible layouts with CSS Flexbox"
+tags: ["css", "flexbox", "layout"]
+estimatedTime: "45 minutes"
+youtubeId: "w9lsR2tvkvQ"
+---
+
+# Flexbox Layout
+
+Flexbox is one of the most powerful CSS tools. It makes centering, alignment, and distribution of elements simple and intuitive.
+
+## Watch: Flexbox
+
+<YouTubeEmbed videoId="w9lsR2tvkvQ" />
+
+## Container Properties
+
+```css
+.flex-container {
+  display: flex;
+  
+  /* Direction */
+  flex-direction: row;        /* row, column, row-reverse */
+  
+  /* Wrapping */
+  flex-wrap: wrap;            /* wrap, nowrap */
+  
+  /* Main axis alignment */
+  justify-content: center;    /* flex-start, center, space-between, space-around */
+  
+  /* Cross axis alignment */
+  align-items: center;        /* flex-start, center, stretch */
+  
+  /* Gap between items */
+  gap: 1rem;
+}
+```
+
+## Common Patterns
+
+```css
+/* Centered content */
+.center {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+}
+
+/* Navigation */
+.navbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+/* Card grid */
+.card-grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 2rem;
+}
+
+.card {
+  flex: 1 1 300px;  /* Grow, shrink, basis */
+}
+```
+
+<SeniorNote>
+Use Flexbox for one-dimensional layouts. When you need rows and columns at the same time, switch to CSS Grid.
+</SeniorNote>
+
+<Pitfall>
+Forgetting to set `flex-wrap` causes layouts to overflow on smaller screens.
+</Pitfall>
+
+<Checklist
+  title="Flexbox Checklist"
+  items={[
+    "Use flex for one-dimensional layouts",
+    "Set both justify-content and align-items",
+    "Use gap instead of margins for spacing",
+    "Enable flex-wrap for responsive grids"
+  ]}
+/>
+
+## Key Takeaways
+
+- Flexbox handles alignment beautifully
+- Use `gap` for consistent spacing
+- Combine with `flex-wrap` for responsive layouts
+
+Master Flexbox—it's used everywhere in modern web development.

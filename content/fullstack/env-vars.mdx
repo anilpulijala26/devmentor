@@ -1,0 +1,95 @@
+---
+title: "Environment Variables (.env)"
+description: "Understand why .env files matter and how to use them safely in production"
+tags: ["env", "configuration", "security"]
+estimatedTime: "45 minutes"
+youtubeId: "dQw4w9WgXcQ"
+---
+
+# Environment Variables (.env)
+
+Environment variables separate **configuration** from **code**. This keeps secrets out of your repository and lets you switch settings between dev, staging, and production without rewriting your app.
+
+## Watch: Environment Variables
+
+<YouTubeEmbed videoId="dQw4w9WgXcQ" />
+
+## Why use .env files?
+
+- **Security**: keep API keys, DB URLs, and tokens out of Git.
+- **Portability**: same codebase, different environment settings.
+- **Operational safety**: rotate secrets without code changes.
+
+<SeniorNote>
+If a value is secret or environment-specific, it belongs in an environment variable, not in your code.
+</SeniorNote>
+
+## Common Patterns
+
+```bash
+# .env.local (development)
+DATABASE_URL=postgres://user:pass@localhost:5432/app
+JWT_SECRET=replace-me
+API_BASE_URL=http://localhost:3001
+NEXT_PUBLIC_SITE_URL=http://localhost:3000
+```
+
+### Server vs Client in Next.js
+
+```ts
+// Server-only
+const dbUrl = process.env.DATABASE_URL;
+const jwtSecret = process.env.JWT_SECRET;
+
+// Client-safe (must be prefixed)
+const siteUrl = process.env.NEXT_PUBLIC_SITE_URL;
+```
+
+Only variables prefixed with `NEXT_PUBLIC_` are exposed to the browser.
+
+<Pitfall>
+Never put secrets in client-exposed variables. If the browser can read it, it’s not a secret.
+</Pitfall>
+
+## .env.example
+
+Document required variables without exposing real values:
+
+```bash
+# .env.example
+DATABASE_URL=
+JWT_SECRET=
+NEXT_PUBLIC_SITE_URL=
+```
+
+## Validation at Startup
+
+Fail fast if required variables are missing:
+
+```ts
+const required = ["DATABASE_URL", "JWT_SECRET"];
+
+for (const key of required) {
+  if (!process.env[key]) {
+    throw new Error(`Missing env var: ${key}`);
+  }
+}
+```
+
+<Checklist
+  title=".env Best Practices"
+  items={[
+    "Never commit real .env files",
+    "Use .env.example to document required vars",
+    "Keep secrets server-only",
+    "Rotate secrets without code changes",
+    "Validate required vars at startup"
+  ]}
+/>
+
+## Key Takeaways
+
+- `.env` files keep secrets out of source control
+- Use `NEXT_PUBLIC_` only for client-safe values
+- Document required variables with `.env.example`
+- Validate env vars on startup to avoid runtime surprises

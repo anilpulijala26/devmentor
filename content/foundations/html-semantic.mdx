@@ -1,0 +1,185 @@
+---
+title: "Semantic HTML"
+description: "Write meaningful HTML that's accessible, SEO-friendly, and maintainable"
+tags: ["html", "semantic", "accessibility"]
+estimatedTime: "50 minutes"
+youtubeId: "og4APl4Wjl0"
+---
+
+# Semantic HTML
+
+Semantic HTML means using the **right element for the right purpose**. It's not just about making HTML "valid"—it's about communicating intent to browsers, screen readers, and future developers.
+
+## Watch: Semantic HTML
+
+<YouTubeEmbed videoId="og4APl4Wjl0" />
+
+## Why Semantic HTML?
+
+### 1. Accessibility
+Screen readers rely on semantic elements to understand page structure. Using `<button>` instead of `<div onclick="">` allows users with assistive technology to navigate properly.
+
+### 2. SEO
+Search engines care about semantics. A `<header>`, `<nav>`, and `<article>` tell search engines what's important.
+
+### 3. Maintainability
+Your future self (and your team) will thank you for writing clear, self-documenting HTML.
+
+<SeniorNote>
+In many production codebases, you'll still see divitis (divs everywhere). This is technical debt. Modern standards favor semantic elements. Use them from day one.
+</SeniorNote>
+
+## Semantic Elements
+
+### Document Structure
+
+```html
+<header>
+  <h1>My Website</h1>
+  <nav>
+    <ul>
+      <li><a href="/">Home</a></li>
+      <li><a href="/about">About</a></li>
+    </ul>
+  </nav>
+</header>
+
+<main>
+  <article>
+    <h2>Blog Post Title</h2>
+    <p>Content here...</p>
+  </article>
+  
+  <aside>
+    <h3>Sidebar</h3>
+    <p>Related content...</p>
+  </aside>
+</main>
+
+<footer>
+  <p>&copy; 2026 My Company</p>
+</footer>
+```
+
+### Content Elements
+
+```html
+<!-- Article: self-contained content -->
+<article>
+  <h2>Article Title</h2>
+  <p>Article content...</p>
+</article>
+
+<!-- Section: thematic grouping -->
+<section>
+  <h2>Section Title</h2>
+  <p>Content grouped by theme...</p>
+</section>
+
+<!-- Figure: images with captions -->
+<figure>
+  <img src="chart.png" alt="Sales data">
+  <figcaption>Q1 Sales Performance</figcaption>
+</figure>
+```
+
+<Pitfall>
+Using `<div>` when a semantic element exists. `<div>` has no meaning. If content is an article, use `<article>`. If it's a navigation, use `<nav>`.
+</Pitfall>
+
+## Forms with Semantics
+
+```html
+<form>
+  <fieldset>
+    <legend>Personal Information</legend>
+    
+    <label for="name">Full Name:</label>
+    <input type="text" id="name" name="name" required>
+    
+    <label for="email">Email:</label>
+    <input type="email" id="email" name="email" required>
+  </fieldset>
+  
+  <button type="submit">Submit</button>
+</form>
+```
+
+Always pair `<label>` with form inputs using the `for` attribute.
+
+### Interactive Elements
+
+```html
+<details>
+  <summary>Click to expand</summary>
+  <p>This content is hidden until expanded.</p>
+</details>
+
+<menu>
+  <li><button>Action 1</button></li>
+  <li><button>Action 2</button></li>
+</menu>
+```
+
+## Common Mistakes
+
+### ❌ Wrong
+
+```html
+<div class="header">
+  <div class="nav">
+    <div class="nav-item"><a href="/">Home</a></div>
+  </div>
+</div>
+```
+
+### ✅ Right
+
+```html
+<header>
+  <nav>
+    <ul>
+      <li><a href="/">Home</a></li>
+    </ul>
+  </nav>
+</header>
+```
+
+<ProTip>
+Browser DevTools can help identify semantic issues. Use accessibility checkers like axe to validate your HTML.
+</ProTip>
+
+## Semantic Reference
+
+| Element | Purpose |
+|---------|---------|
+| `<header>` | Introductory content or site navigation |
+| `<nav>` | Navigation links |
+| `<main>` | Main content of the page |
+| `<article>` | Self-contained content (blog post, news) |
+| `<section>` | Thematic grouping of content |
+| `<aside>` | Tangential content (sidebar) |
+| `<footer>` | Footer content |
+| `<figure>` | Images, diagrams with captions |
+| `<details>` | Expandable/collapsible content |
+
+<Checklist
+  title="Semantic HTML Checklist"
+  items={[
+    "Use semantic elements over divs",
+    "Include proper header, nav, main, footer",
+    "Use article for blog posts, news",
+    "Use section for thematic grouping",
+    "Label all form inputs properly",
+    "Use native elements (button, not div+click)"
+  ]}
+/>
+
+## Key Takeaways
+
+- **Semantics matter** for accessibility, SEO, and maintainability
+- Use the **right element** for the right purpose
+- Native elements (button, form, etc.) are always better than custom divs
+- Semantic HTML is the foundation of modern web development
+
+Next, we'll dive into CSS and learn how to style semantic HTML beautifully.

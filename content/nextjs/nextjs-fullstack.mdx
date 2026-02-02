@@ -1,0 +1,389 @@
+---
+title: "Building Full-Stack Applications"
+description: "Build complete applications with Next.js combining frontend and backend"
+tags: ["nextjs", "full-stack", "production"]
+estimatedTime: "120 minutes"
+youtubeId: "dQw4w9WgXcQ"
+---
+
+# Building Full-Stack Applications with Next.js
+
+Next.js enables full-stack development: frontend and backend in one codebase. This lesson covers building production-quality full-stack applications.
+
+## Watch: Full-Stack Overview
+
+<YouTubeEmbed videoId="dQw4w9WgXcQ" />
+
+## Architecture Overview
+
+```
+┌─────────────────────────────────────┐
+│    Browser / Client Application      │
+│  (React Components, Interactivity)   │
+└──────────────┬──────────────────────┘
+               │
+      API Routes / Endpoints
+               │
+┌──────────────▼──────────────────────┐
+│   Server (Next.js)                  │
+│  - Data fetching                    │
+│  - Database queries                 │
+│  - Authentication                   │
+│  - Business logic                   │
+└─────────────────────────────────────┘
+```
+
+## API Route Structure
+
+```typescript
+// app/api/todos/route.ts
+import { NextRequest, NextResponse } from "next/server";
+
+export async function GET(request: NextRequest) {
+  try {
+    // Fetch from database
+    const todos = await db.todo.findMany();
+    return NextResponse.json(todos);
+  } catch (error) {
+    return NextResponse.json(
+      { error: "Failed to fetch todos" },
+      { status: 500 }
+    );
+  }
+}
+
+export async function POST(request: NextRequest) {
+  try {
+    const data = await request.json();
+    
+    // Validate input
+    if (!data.title) {
+      return NextResponse.json(
+        { error: "Title is required" },
+        { status: 400 }
+      );
+    }
+    
+    // Save to database
+    const todo = await db.todo.create(data);
+    return NextResponse.json(todo, { status: 201 });
+  } catch (error) {
+    return NextResponse.json(
+      { error: "Failed to create todo" },
+      { status: 500 }
+    );
+  }
+}
+
+// app/api/todos/[id]/route.ts
+export async function PUT(
+  request: NextRequest,
+  { params }: { params: { id: string } }
+) {
+  const data = await request.json();
+  const todo = await db.todo.update(params.id, data);
+  return NextResponse.json(todo);
+}
+
+export async function DELETE(
+  request: NextRequest,
+  { params }: { params: { id: string } }
+) {
+  await db.todo.delete(params.id);
+  return NextResponse.json({ success: true });
+}
+```
+
+<SeniorNote>
+Always validate input and handle errors gracefully. Never trust client data. Treat API routes like a real backend—because they are.
+</SeniorNote>
+
+## Client-Side Data Fetching
+
+### Server Components (Preferred)
+
+```typescript
+// app/todos/page.tsx
+async function getTodos() {
+  const res = await fetch("/api/todos", {
+    cache: "revalidate",
+    next: { revalidate: 60 }  // Revalidate every 60 seconds
+  });
+  
+  if (!res.ok) throw new Error("Failed to fetch");
+  return res.json();
+}
+
+export default async function TodosPage() {
+  const todos = await getTodos();
+  
+  return (
+    <div>
+      <h1>Todos</h1>
+      <TodoList todos={todos} />
+    </div>
+  );
+}
+```
+
+### Client Components (When Needed)
+
+```typescript
+"use client";
+
+import { useEffect, useState } from "react";
+
+export function TodoList() {
+  const [todos, setTodos] = useState([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchTodos = async () => {
+      try {
+        const res = await fetch("/api/todos");
+        setTodos(await res.json());
+      } catch (error) {
+        console.error(error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchTodos();
+  }, []);
+
+  if (loading) return <div>Loading...</div>;
+
+  return (
+    <ul>
+      {todos.map(todo => (
+        <li key={todo.id}>{todo.title}</li>
+      ))}
+    </ul>
+  );
+}
+```
+
+## Forms and Mutations
+
+### Server Actions (Modern Approach)
+
+```typescript
+// app/todos/actions.ts
+"use server";
+
+export async function addTodo(formData: FormData) {
+  const title = formData.get("title");
+  
+  // Save to database
+  const todo = await db.todo.create({ title });
+  
+  // Revalidate the page
+  revalidatePath("/todos");
+  
+  return todo;
+}
+
+// app/todos/page.tsx
+import { addTodo } from "./actions";
+
+export default function TodosPage() {
+  return (
+    <form action={addTodo}>
+      <input name="title" required />
+      <button type="submit">Add Todo</button>
+    </form>
+  );
+}
+```
+
+### Traditional API + Form
+
+```typescript
+"use client";
+
+import { useState } from "react";
+
+export function AddTodoForm() {
+  const [loading, setLoading] = useState(false);
+
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    setLoading(true);
+
+    try {
+      const formData = new FormData(e.currentTarget);
+      const res = await fetch("/api/todos", {
+        method: "POST",
+        body: JSON.stringify({ title: formData.get("title") })
+      });
+
+      if (res.ok) {
+        e.currentTarget.reset();
+        // Refresh data
+      }
+    } catch (error) {
+      console.error(error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  return (
+    <form onSubmit={handleSubmit}>
+      <input name="title" required />
+      <button type="submit" disabled={loading}>
+        {loading ? "Adding..." : "Add Todo"}
+      </button>
+    </form>
+  );
+}
+```
+
+<ProTip>
+Server Actions are a powerful Next.js feature. They're type-safe, automatic, and reduce boilerplate. Use them when possible.
+</ProTip>
+
+## Authentication
+
+```typescript
+// lib/auth.ts
+import { cookies } from "next/headers";
+
+export async function getCurrentUser() {
+  const cookieStore = cookies();
+  const token = cookieStore.get("auth-token")?.value;
+
+  if (!token) return null;
+
+  // Verify token and get user
+  const user = await verifyToken(token);
+  return user;
+}
+
+// app/api/protected/route.ts
+export async function GET(request: NextRequest) {
+  const user = await getCurrentUser();
+
+  if (!user) {
+    return NextResponse.json(
+      { error: "Unauthorized" },
+      { status: 401 }
+    );
+  }
+
+  return NextResponse.json({ data: "Protected content" });
+}
+
+// app/protected/page.tsx
+export default async function ProtectedPage() {
+  const user = await getCurrentUser();
+
+  if (!user) {
+    redirect("/login");
+  }
+
+  return <h1>Welcome, {user.name}</h1>;
+}
+```
+
+## Error Handling
+
+```typescript
+// app/error.tsx
+"use client";
+
+export default function Error({
+  error,
+  reset
+}: {
+  error: Error;
+  reset: () => void;
+}) {
+  return (
+    <div>
+      <h1>Error</h1>
+      <p>{error.message}</p>
+      <button onClick={reset}>Retry</button>
+    </div>
+  );
+}
+
+// API error handling
+export async function GET(request: NextRequest) {
+  try {
+    const data = await fetch("/api/data");
+    return NextResponse.json(data);
+  } catch (error) {
+    console.error(error);
+    return NextResponse.json(
+      { error: "Internal server error" },
+      { status: 500 }
+    );
+  }
+}
+```
+
+<Pitfall>
+Never expose sensitive errors to clients. Log internally, return generic messages externally. Example: "Failed to process request" instead of "Database connection failed".
+</Pitfall>
+
+## Deployment Considerations
+
+```typescript
+// Database connections
+// Create connection pool, reuse across requests
+const db = initializeDatabase();
+
+// Environment variables
+const apiUrl = process.env.NEXT_PUBLIC_API_URL;
+const dbUrl = process.env.DATABASE_URL;  // Never expose
+
+// Performance monitoring
+export async function GET(request: NextRequest) {
+  const start = Date.now();
+  
+  // Your code
+  
+  const duration = Date.now() - start;
+  console.log(`Request took ${duration}ms`);
+}
+```
+
+## Production Checklist
+
+```typescript
+// Error handling ✓
+// Input validation ✓
+// Authentication & authorization ✓
+// Rate limiting ✓
+// Logging and monitoring ✓
+// Database optimization ✓
+// Caching strategy ✓
+// Environment variables ✓
+```
+
+<Checklist
+  title="Full-Stack Application Building"
+  items={[
+    "Design API routes for your features",
+    "Validate all input on the server",
+    "Implement proper error handling",
+    "Use Server Actions for forms",
+    "Add authentication and authorization",
+    "Implement caching strategy",
+    "Monitor performance",
+    "Deploy with confidence"
+  ]}
+/>
+
+## Key Takeaways
+
+- **Next.js is truly full-stack** – frontend and backend in one codebase
+- **Server Components fetch data directly** – no extra API call
+- **API Routes** replace a separate backend
+- **Server Actions** simplify form handling
+- **Error handling and validation** are critical
+- **Production deployment** requires attention to performance and security
+
+You now have the skills to build production-ready applications. Start building!

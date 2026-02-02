@@ -1,0 +1,164 @@
+{
+  "tracks": [
+    {
+      "slug": "foundations",
+      "title": "Web Foundations",
+      "description": "Master the fundamentals of web development",
+      "modules": [
+        {
+          "slug": "html",
+          "title": "HTML Fundamentals",
+          "lessons": [
+            {
+              "slug": "html-intro",
+              "title": "Introduction to HTML",
+              "order": 1
+            },
+            {
+              "slug": "html-semantic",
+              "title": "Semantic HTML",
+              "order": 2
+            }
+          ]
+        },
+        {
+          "slug": "css",
+          "title": "CSS Mastery",
+          "lessons": [
+            {
+              "slug": "css-intro",
+              "title": "CSS Fundamentals",
+              "order": 1
+            },
+            {
+              "slug": "css-flexbox",
+              "title": "Flexbox Layout",
+              "order": 2
+            }
+          ]
+        },
+        {
+          "slug": "javascript",
+          "title": "JavaScript Essentials",
+          "lessons": [
+            {
+              "slug": "js-intro",
+              "title": "JavaScript Fundamentals",
+              "order": 1
+            },
+            {
+              "slug": "js-async",
+              "title": "Async Programming",
+              "order": 2
+            }
+          ]
+        },
+        {
+          "slug": "typescript",
+          "title": "TypeScript Basics",
+          "lessons": [
+            {
+              "slug": "ts-intro",
+              "title": "TypeScript Fundamentals",
+              "order": 1
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "slug": "frontend-frameworks",
+      "title": "Frontend Frameworks",
+      "description": "Build modern web applications with React and Next.js",
+      "modules": [
+        {
+          "slug": "react",
+          "title": "React Mastery",
+          "lessons": [
+            {
+              "slug": "react-intro",
+              "title": "Introduction to React",
+              "order": 1
+            },
+            {
+              "slug": "react-components",
+              "title": "Building Components",
+              "order": 2
+            },
+            {
+              "slug": "react-hooks",
+              "title": "React Hooks",
+              "order": 3
+            }
+          ]
+        },
+        {
+          "slug": "nextjs",
+          "title": "Next.js Mastery",
+          "lessons": [
+            {
+              "slug": "nextjs-intro",
+              "title": "Introduction to Next.js",
+              "order": 1
+            },
+            {
+              "slug": "nextjs-app-router",
+              "title": "App Router Fundamentals",
+              "order": 2
+            },
+            {
+              "slug": "nextjs-fullstack",
+              "title": "Building Full-Stack Applications",
+              "order": 3
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "slug": "fullstack",
+      "title": "Full-Stack Applications",
+      "description": "Build complete production applications",
+      "modules": [
+        {
+          "slug": "react-node-postgres",
+          "title": "React + Node + PostgreSQL",
+          "lessons": [
+            {
+              "slug": "rn-p-intro",
+              "title": "Full-Stack Architecture",
+              "order": 1
+            }
+          ]
+        },
+        {
+          "slug": "nextjs-postgres",
+          "title": "Next.js + PostgreSQL",
+          "lessons": [
+            {
+              "slug": "nn-p-intro",
+              "title": "Full-Stack with Next.js",
+              "order": 1
+            }
+          ]
+        },
+        {
+          "slug": "production-readiness",
+          "title": "Production Readiness",
+          "lessons": [
+            {
+              "slug": "env-vars",
+              "title": "Environment Variables (.env)",
+              "order": 1
+            },
+            {
+              "slug": "docker-basics",
+              "title": "Docker Basics",
+              "order": 2
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,113 @@
+---
+title: "CSS Fundamentals"
+description: "CSS (Cascading Style Sheets) transforms plain HTML into beautiful, responsive designs. In 2026, modern CSS has evolved significantly—gone are the days of browser hacks and complex workarounds."
+tags: ["css", "styling", "layout"]
+estimatedTime: "60 minutes"
+youtubeId: "dQw4w9WgXcQ"
+---
+
+## Selectors and Specificity
+
+```css
+/* Element selector */
+p { color: blue; }
+
+/* Class selector */
+.button { padding: 10px; }
+
+/* ID selector (avoid in production) */
+#header { background: white; }
+
+/* Attribute selector */
+input[type="email"] { border: 1px solid gray; }
+
+/* Combinators */
+nav > ul { list-style: none; }
+article p { margin: 1rem 0; }
+```
+
+<SeniorNote>
+Specificity wars are common in production codebases. Use BEM (Block, Element, Modifier) or utility-first frameworks like Tailwind to avoid CSS conflicts. Don't rely on high specificity to fix problems.
+</SeniorNote>
+
+## The Box Model
+
+```css
+div {
+  width: 200px;
+  padding: 20px;      /* Inside the box */
+  border: 1px solid;
+  margin: 10px;       /* Outside the box */
+}
+```
+
+Remember: **margin** is outside, **padding** is inside.
+
+## Display and Layout
+
+```css
+/* Block, inline, inline-block */
+div { display: block; }
+span { display: inline; }
+button { display: inline-block; }
+
+/* Flexbox */
+.container { 
+  display: flex;
+  gap: 1rem;
+  align-items: center;
+}
+
+/* Grid */
+.grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 2rem;
+}
+```
+
+<ProTip>
+Flexbox and Grid are now standard. Don't use floats for layout—that's 2010s thinking. Modern CSS is declarative and powerful.
+</ProTip>
+
+## Responsive Design
+
+```css
+/* Mobile first */
+body { font-size: 14px; }
+
+/* Tablet and up */
+@media (min-width: 768px) {
+  body { font-size: 16px; }
+}
+
+/* Desktop and up */
+@media (min-width: 1024px) {
+  body { font-size: 18px; }
+}
+```
+
+<Pitfall>
+Overusing complex selectors makes CSS brittle. Prefer class-based selectors and keep specificity low.
+</Pitfall>
+
+<Checklist
+  title="CSS Fundamentals Checklist"
+  items={[
+    "Understand the box model",
+    "Keep specificity low",
+    "Use mobile-first breakpoints",
+    "Prefer Flexbox and Grid for layout",
+    "Avoid !important"
+  ]}
+/>
+
+## Key Takeaways
+
+- Learn Flexbox and Grid, not floats
+- Use a CSS framework or methodology (Tailwind, BEM)
+- Keep specificity low
+- Mobile-first approach
+- Use CSS custom properties (variables)
+
+This is a foundational lesson. Dive deeper by building projects!

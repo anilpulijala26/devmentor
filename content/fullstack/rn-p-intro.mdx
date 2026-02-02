@@ -1,0 +1,329 @@
+---
+title: "Full-Stack Architecture"
+description: "Learn full-stack application architecture with React, Node.js, and PostgreSQL"
+tags: ["full-stack", "architecture", "nodejs", "postgres"]
+estimatedTime: "100 minutes"
+youtubeId: "dQw4w9WgXcQ"
+---
+
+# Full-Stack Architecture: React + Node + PostgreSQL
+
+Building production applications requires understanding how frontend, backend, and database interact. This lesson covers proven patterns used in real-world applications.
+
+## Watch: Full-Stack Architecture
+
+<YouTubeEmbed videoId="dQw4w9WgXcQ" />
+
+## Architecture Overview
+
+```
+┌─────────────────┐
+│  React Browser  │
+│   (Vite/CRA)    │
+└────────┬────────┘
+         │ HTTP/REST
+         │
+┌────────▼────────────────┐
+│  Node.js Backend        │
+│  (Express/Fastify)      │
+│  - API Routes           │
+│  - Business Logic       │
+│  - Auth/Validation      │
+└────────┬────────────────┘
+         │ SQL
+         │
+┌────────▼────────────────┐
+│  PostgreSQL Database    │
+│  - Tables/Schemas       │
+│  - Data Persistence     │
+└─────────────────────────┘
+```
+
+## Backend API Design
+
+```typescript
+// Node.js backend endpoints
+GET    /api/users           → List users
+POST   /api/users           → Create user
+GET    /api/users/:id       → Get user
+PUT    /api/users/:id       → Update user
+DELETE /api/users/:id       → Delete user
+```
+
+### Example Express API
+
+```typescript
+import express from "express";
+import { db } from "./db";
+
+const app = express();
+app.use(express.json());
+
+// List all users
+app.get("/api/users", async (req, res) => {
+  const users = await db.query("SELECT * FROM users");
+  res.json(users);
+});
+
+// Create user
+app.post("/api/users", async (req, res) => {
+  const { name, email } = req.body;
+  
+  // Validate
+  if (!name || !email) {
+    return res.status(400).json({ error: "Missing fields" });
+  }
+
+  // Insert
+  const user = await db.query(
+    "INSERT INTO users (name, email) VALUES ($1, $2) RETURNING *",
+    [name, email]
+  );
+
+  res.status(201).json(user);
+});
+
+// Get user
+app.get("/api/users/:id", async (req, res) => {
+  const user = await db.query(
+    "SELECT * FROM users WHERE id = $1",
+    [req.params.id]
+  );
+
+  if (!user) return res.status(404).json({ error: "Not found" });
+  res.json(user);
+});
+
+app.listen(3001, () => console.log("Server running"));
+```
+
+## Frontend Integration
+
+```typescript
+// React component consuming API
+"use client";
+
+import { useEffect, useState } from "react";
+
+interface User {
+  id: number;
+  name: string;
+  email: string;
+}
+
+export function UserList() {
+  const [users, setUsers] = useState<User[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchUsers = async () => {
+      const res = await fetch("/api/users");
+      const data = await res.json();
+      setUsers(data);
+      setLoading(false);
+    };
+
+    fetchUsers();
+  }, []);
+
+  if (loading) return <div>Loading...</div>;
+
+  return (
+    <ul>
+      {users.map(user => (
+        <li key={user.id}>
+          {user.name} - {user.email}
+        </li>
+      ))}
+    </ul>
+  );
+}
+```
+
+## Authentication Flow
+
+```
+1. User enters credentials
+2. Frontend sends to /api/auth/login
+3. Backend verifies against database
+4. Backend returns JWT token
+5. Frontend stores in localStorage
+6. Frontend includes token in all requests
+7. Backend verifies token before processing
+```
+
+<SeniorNote>
+JWT (JSON Web Token) is standard for APIs. Store tokens securely and verify them on every protected request. Never trust client credentials.
+</SeniorNote>
+
+<Pitfall>
+Mixing frontend and backend validation is not enough. Always validate input on the server even if the client validates too.
+</Pitfall>
+
+## Database Schema
+
+```sql
+-- Users table
+CREATE TABLE users (
+  id SERIAL PRIMARY KEY,
+  name VARCHAR(255) NOT NULL,
+  email VARCHAR(255) UNIQUE NOT NULL,
+  password_hash VARCHAR(255) NOT NULL,
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+-- Posts table
+CREATE TABLE posts (
+  id SERIAL PRIMARY KEY,
+  user_id INTEGER REFERENCES users(id),
+  title VARCHAR(255) NOT NULL,
+  content TEXT NOT NULL,
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+-- Create indexes for performance
+CREATE INDEX idx_posts_user_id ON posts(user_id);
+CREATE INDEX idx_users_email ON users(email);
+```
+
+## Error Handling in Full-Stack Apps
+
+```typescript
+// Backend: Return structured errors
+app.get("/api/users/:id", async (req, res) => {
+  try {
+    const user = await db.query(...);
+    res.json(user);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({
+      error: "Failed to fetch user",
+      code: "USER_FETCH_ERROR"
+    });
+  }
+});
+
+// Frontend: Handle different error types
+const fetchUser = async (id: string) => {
+  try {
+    const res = await fetch(`/api/users/${id}`);
+    
+    if (res.status === 404) {
+      throw new Error("User not found");
+    }
+    
+    if (!res.ok) {
+      throw new Error("Failed to fetch user");
+    }
+    
+    return res.json();
+  } catch (error) {
+    console.error(error);
+    showErrorMessage("Could not load user");
+  }
+};
+```
+
+<ProTip>
+Use consistent error codes between frontend and backend. This makes debugging and user feedback clearer.
+</ProTip>
+
+## Production Considerations
+
+- **Database connection pooling** – Reuse connections efficiently
+- **Request validation** – Sanitize and validate all input
+- **Authentication** – Use industry-standard methods (OAuth, JWT)
+- **CORS** – Configure CORS properly for production domains
+- **Rate limiting** – Prevent abuse
+- **Logging** – Track all significant events
+- **Monitoring** – Alert on errors and performance issues
+
+## Environment Variables (.env) in Full-Stack Apps
+
+Environment variables keep secrets and environment-specific settings out of your codebase. They make deployments safer and configuration changes faster.
+
+```bash
+# .env.local
+DATABASE_URL=postgres://user:pass@localhost:5432/app
+JWT_SECRET=replace-me
+API_BASE_URL=http://localhost:3001
+```
+
+<Pitfall>
+Never commit real secrets. Use `.env.example` to document required variables and keep actual values private.
+</Pitfall>
+
+## Dockerization (Why and How)
+
+Docker standardizes your runtime across machines. It makes setup repeatable, reduces onboarding time, and ensures parity between local, staging, and production.
+
+### Example docker-compose.yml
+
+```yaml
+version: "3.9"
+
+services:
+  web:
+    build: ./client
+    ports:
+      - "3000:3000"
+    env_file:
+      - .env.local
+
+  api:
+    build: ./server
+    ports:
+      - "3001:3001"
+    env_file:
+      - .env.local
+    depends_on:
+      - db
+
+  db:
+    image: postgres:16
+    environment:
+      POSTGRES_USER: app
+      POSTGRES_PASSWORD: app_password
+      POSTGRES_DB: app_db
+    ports:
+      - "5432:5432"
+```
+
+### Example Dockerfile (Node API)
+
+```dockerfile
+FROM node:20-alpine
+WORKDIR /app
+COPY package.json package-lock.json ./
+RUN npm ci
+COPY . .
+EXPOSE 3001
+CMD ["npm", "run", "start"]
+```
+
+<Pitfall>
+Never bake secrets into your image. Always inject them at runtime using `.env` files or environment variables in your deployment platform.
+</Pitfall>
+
+<Checklist
+  title="Full-Stack Development"
+  items={[
+    "Design RESTful API endpoints",
+    "Implement backend validation",
+    "Add authentication/authorization",
+    "Design efficient database schema",
+    "Handle errors gracefully",
+    "Implement CORS correctly",
+    "Add logging and monitoring"
+  ]}
+/>
+
+## Key Takeaways
+
+- Full-stack apps have **clear separation** between frontend, backend, and database
+- **API contract** between frontend and backend is critical
+- **Error handling** must work across the stack
+- **Authentication** is not optional in production
+- **Database design** impacts application performance
+
+This architecture is used in thousands of production applications worldwide. Master these patterns and you're ready for any full-stack role!

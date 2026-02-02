@@ -1,0 +1,278 @@
+---
+title: "Building Components"
+description: "Master component patterns and best practices"
+tags: ["react", "components", "patterns"]
+estimatedTime: "80 minutes"
+youtubeId: "dQw4w9WgXcQ"
+---
+
+# Building Components
+
+Building scalable React applications means writing components that are reusable, testable, and maintainable. This lesson covers essential patterns used in production codebases.
+
+## Watch: Component Patterns
+
+<YouTubeEmbed videoId="dQw4w9WgXcQ" />
+
+## Component Structure
+
+```typescript
+import { ReactNode } from "react";
+import styles from "./Button.module.css";
+
+interface ButtonProps {
+  children: ReactNode;
+  onClick: () => void;
+  variant?: "primary" | "secondary";
+  disabled?: boolean;
+}
+
+export const Button = ({
+  children,
+  onClick,
+  variant = "primary",
+  disabled = false,
+}: ButtonProps) => {
+  return (
+    <button
+      className={`${styles.button} ${styles[variant]}`}
+      onClick={onClick}
+      disabled={disabled}
+    >
+      {children}
+    </button>
+  );
+};
+```
+
+## Composition Pattern
+
+Instead of creating large, complex components, compose smaller ones:
+
+```tsx
+// ❌ Monolithic component
+const UserCard = () => {
+  return (
+    <div>
+      <img src={user.avatar} />
+      <h2>{user.name}</h2>
+      <p>{user.bio}</p>
+      <button>Follow</button>
+    </div>
+  );
+};
+
+// ✅ Composed from smaller components
+const UserCard = ({ user }) => {
+  return (
+    <div>
+      <UserAvatar src={user.avatar} />
+      <UserInfo name={user.name} bio={user.bio} />
+      <FollowButton userId={user.id} />
+    </div>
+  );
+};
+```
+
+<SeniorNote>
+In production, component files should typically be 100-200 lines max. If it's larger, break it into smaller, composable pieces. This improves testability and reusability.
+</SeniorNote>
+
+## Custom Hooks
+
+Extract logic into custom hooks to make it reusable:
+
+```typescript
+// Hook for managing form state
+const useForm = (initialValues) => {
+  const [values, setValues] = useState(initialValues);
+
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setValues((prev) => ({ ...prev, [name]: value }));
+  };
+
+  const reset = () => setValues(initialValues);
+
+  return { values, handleChange, reset };
+};
+
+// Using the hook
+const LoginForm = () => {
+  const { values, handleChange } = useForm({ email: "", password: "" });
+
+  return (
+    <form>
+      <input
+        name="email"
+        value={values.email}
+        onChange={handleChange}
+      />
+      <input
+        name="password"
+        type="password"
+        value={values.password}
+        onChange={handleChange}
+      />
+    </form>
+  );
+};
+```
+
+## Compound Components
+
+For complex UIs, use compound components where children control the parent:
+
+```tsx
+const Tabs = ({ children }) => {
+  const [active, setActive] = useState(0);
+
+  return (
+    <div>
+      <TabButtons>
+        {React.Children.map(children, (child, i) => (
+          <TabButton key={i} active={i === active} onClick={() => setActive(i)}>
+            {child.props.label}
+          </TabButton>
+        ))}
+      </TabButtons>
+      {children[active]}
+    </div>
+  );
+};
+
+// Usage
+<Tabs>
+  <Tab label="Profile">Profile content</Tab>
+  <Tab label="Settings">Settings content</Tab>
+</Tabs>
+```
+
+## Render Props
+
+Alternative to hooks for sharing logic:
+
+```typescript
+const MouseTracker = ({ render }) => {
+  const [position, setPosition] = useState({ x: 0, y: 0 });
+
+  useEffect(() => {
+    const handleMouseMove = (e) => {
+      setPosition({ x: e.clientX, y: e.clientY });
+    };
+
+    window.addEventListener("mousemove", handleMouseMove);
+    return () => window.removeEventListener("mousemove", handleMouseMove);
+  }, []);
+
+  return render(position);
+};
+
+// Usage
+<MouseTracker
+  render={(pos) => <p>Mouse at: {pos.x}, {pos.y}</p>}
+/>
+```
+
+<ProTip>
+In modern React, hooks are preferred over render props. They're cleaner and easier to understand.
+</ProTip>
+
+## Fragment for Multiple Elements
+
+```jsx
+// Without Fragment
+const List = () => {
+  return (
+    <div>
+      <h2>Items</h2>
+      <ul>...</ul>
+    </div>
+  );
+};
+
+// With Fragment (no extra wrapper)
+const List = () => {
+  return (
+    <>
+      <h2>Items</h2>
+      <ul>...</ul>
+    </>
+  );
+};
+```
+
+## Error Boundaries
+
+Catch errors in component trees:
+
+```typescript
+class ErrorBoundary extends React.Component {
+  state = { hasError: false };
+
+  static getDerivedStateFromError(error) {
+    return { hasError: true };
+  }
+
+  componentDidCatch(error, errorInfo) {
+    console.error(error, errorInfo);
+  }
+
+  render() {
+    if (this.state.hasError) {
+      return <h1>Something went wrong</h1>;
+    }
+
+    return this.props.children;
+  }
+}
+
+// Usage
+<ErrorBoundary>
+  <MyComponent />
+</ErrorBoundary>
+```
+
+<Pitfall>
+Error boundaries don't catch errors in event handlers. Use try/catch for event handlers, and Error Boundaries for render errors.
+</Pitfall>
+
+## Performance Optimization
+
+```typescript
+// Memoize to prevent unnecessary re-renders
+const ExpensiveComponent = React.memo(({ data }) => {
+  return <div>{data.name}</div>;
+});
+
+// useCallback for stable function references
+const Component = ({ onSelect }) => {
+  const handleSelect = useCallback((item) => {
+    onSelect(item.id);
+  }, [onSelect]);
+
+  return <List onSelect={handleSelect} />;
+};
+```
+
+<Checklist
+  title="Component Patterns"
+  items={[
+    "Keep components small and focused",
+    "Use composition over large monolithic components",
+    "Extract reusable logic into custom hooks",
+    "Use TypeScript interfaces for props",
+    "Implement error boundaries",
+    "Memoize components when needed"
+  ]}
+/>
+
+## Key Takeaways
+
+- **Small, focused components** are the foundation of scalable React apps
+- **Custom hooks** make logic reusable and testable
+- **Composition** beats inheritance
+- **TypeScript** prevents prop bugs
+- **Error boundaries** protect your app
+
+Next, we'll dive into advanced hooks and state management!

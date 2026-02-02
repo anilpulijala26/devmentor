@@ -1,0 +1,105 @@
+---
+title: "JavaScript Fundamentals"
+description: "JavaScript powers interactivity on the web. Understanding its core concepts is essential before moving to frameworks like React."
+tags: ["javascript", "basics", "fundamentals"]
+estimatedTime: "90 minutes"
+youtubeId: "dQw4w9WgXcQ"
+---
+
+## Variables and Types
+
+```javascript
+// Modern variable declaration
+const name = "Alice";           // Use const by default
+let age = 25;                   // Use let if reassignment needed
+var old = true;                 // Avoid var (function-scoped, confusing)
+
+// Types
+const number = 42;
+const string = "hello";
+const boolean = true;
+const array = [1, 2, 3];
+const object = { name: "Alice", age: 25 };
+const nothing = null;
+const undefined_value = undefined;
+```
+
+<SeniorNote>
+In production JavaScript, always use `const` by default. Use `let` only when you need reassignment. `var` is legacy and causes scope confusion.
+</SeniorNote>
+
+## Functions
+
+```javascript
+// Arrow functions (modern)
+const add = (a, b) => a + b;
+
+// Traditional function
+function multiply(a, b) {
+  return a * b;
+}
+
+// Functions with default parameters
+const greet = (name = "Guest") => `Hello, ${name}`;
+```
+
+## Arrays and Objects
+
+```javascript
+// Array methods
+const numbers = [1, 2, 3, 4, 5];
+numbers.map(n => n * 2);        // Transform
+numbers.filter(n => n > 2);     // Filter
+numbers.find(n => n === 3);     // Find first
+
+// Object destructuring
+const person = { name: "Alice", age: 25 };
+const { name, age } = person;
+```
+
+<Pitfall>
+Mutating shared objects in place causes bugs that are hard to trace. Prefer immutable updates with object spread or array methods.
+</Pitfall>
+
+## Async Programming
+
+```javascript
+// Promises
+const fetchData = () => {
+  return fetch("/api/data")
+    .then(response => response.json())
+    .then(data => console.log(data))
+    .catch(error => console.error(error));
+};
+
+// Async/await (modern, cleaner)
+const getData = async () => {
+  try {
+    const response = await fetch("/api/data");
+    const data = await response.json();
+    console.log(data);
+  } catch (error) {
+    console.error(error);
+  }
+};
+```
+
+## Key Takeaways
+
+- Use `const` and `let`, never `var`
+- Arrow functions are standard in modern code
+- Master async/await for handling asynchronous operations
+- Learn array methods (map, filter, reduce)
+
+<Checklist
+  title="JavaScript Fundamentals Checklist"
+  items={[
+    "Use const and let correctly",
+    "Understand functions and scope",
+    "Know arrays and objects",
+    "Avoid mutating shared state",
+    "Handle errors explicitly"
+  ]}
+/>
+
+This foundation is critical before learning React!
