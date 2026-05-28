@@ -1,0 +1,212 @@
+---
+title: "TypeScript Interview Cracking Guide"
+description: "Master TypeScript interview concepts including any/unknown/never, Type vs Interface, Discriminated Unions, and Mapped/Conditional Types with production-grade QA"
+tags: ["typescript", "interview", "types", "advanced-ts"]
+estimatedTime: "50 minutes"
+---
+
+# TypeScript Interview Cracking Guide
+
+Securing roles as a modern front-end or full-stack engineer requires a deep, runtime-aware understanding of TypeScript's type system. This guide compiles essential interview questions ranging from core structural semantics to advanced type manipulation.
+
+## 1. Junior Level Questions
+
+<Collapsible title="Q1: What is the difference between any, unknown, and never in TypeScript?">
+These three represent different levels of type safety and constraints at the extremes of the TypeScript type hierarchy:
+
+- **`any`** is the "escape hatch." It opts out of type checking completely. You can call any method, read any property, or assign it to any other variable. It defeats the purpose of using TypeScript.
+- **`unknown`** is the type-safe counterpart of `any`. It represents any value, but TypeScript won't let you perform operations on it without first performing type narrowing (e.g., via `typeof`, `instanceof`, or custom type guards).
+- **`never`** represents the type of values that *never* occur. It is used for functions that never return (e.g., throwing an error or infinite loops) or as the empty set in conditional types.
+
+```typescript
+// any vs unknown vs never
+let valAny: any = "hello";
+valAny.foo(); // Compiles fine, but might crash at runtime!
+
+let valUnknown: unknown = "hello";
+// valUnknown.foo(); // Compile Error: Object is of type 'unknown'.
+if (typeof valUnknown === "string") {
+  console.log(valUnknown.toUpperCase()); // Safe and allowed!
+}
+
+function throwError(msg: string): never {
+  throw new Error(msg); // Never returns
+}
+```
+</Collapsible>
+
+<Collapsible title="Q2: What is the difference between type aliases and interface declarations?">
+In modern TypeScript, `type` and `interface` are very similar, but they have distinct structural behaviors:
+
+- **`interface`** defines the shape of an object. Crucially, interfaces support **declaration merging**—if you declare two interfaces with the same name, they merge into one. They are also optimized by the compiler for faster lookups.
+- **`type`** can define objects, unions, primitives, tuples, and intersections. Type aliases *cannot* be merged or redeclared, making them ideal for representing API contracts, complex unions, or mapping functions.
+
+```typescript
+// Interface Declaration Merging:
+interface User {
+  name: string;
+}
+interface User {
+  role: "admin" | "member";
+}
+// Merged User interface has both name and role:
+const currentUser: User = { name: "Alice", role: "admin" };
+
+// Type Alias Union representation (Interfaces cannot do this):
+type Status = "pending" | "success" | "failed";
+type ID = string | number;
+```
+</Collapsible>
+
+## 2. Mid Level Questions
+
+<Collapsible title="Q3: What is a Discriminated Union? How do you perform compile-time exhaustiveness checking?">
+A Discriminated Union (or Tagged Union) is a pattern where a group of types share a common literal property (the "discriminant"), which TypeScript uses to narrow down the union type safely.
+
+To perform **exhaustiveness checking**, assign the narrowed type to a variable of type `never` in the default case. If a new type is added to the union but not handled in the switch block, the compiler throws an error.
+
+```typescript
+interface Circle {
+  kind: "circle";
+  radius: number;
+}
+
+interface Square {
+  kind: "square";
+  sideLength: number;
+}
+
+interface Triangle {
+  kind: "triangle";
+  base: number;
+  height: number;
+}
+
+type Shape = Circle | Square | Triangle;
+
+function getArea(shape: Shape): number {
+  switch (shape.kind) {
+    case "circle":
+      return Math.PI * shape.radius ** 2;
+    case "square":
+      return shape.sideLength ** 2;
+    case "triangle":
+      return 0.5 * shape.base * shape.height;
+    default:
+      // If we forget to handle 'triangle', this line will fail compilation:
+      const _exhaustiveCheck: never = shape;
+      return _exhaustiveCheck;
+  }
+}
+```
+</Collapsible>
+
+<Collapsible title="Q4: Explain the difference between the keyof and typeof operators.">
+- **`typeof`** takes a value/variable in JavaScript runtime space and extracts its static type for TypeScript compile-time space.
+- **`keyof`** takes an object type and returns a union type of its keys.
+
+```typescript
+const productionConfig = {
+  port: 8080,
+  host: "localhost",
+  ssl: true
+};
+
+// 1. typeof extracts the type structure of the object
+type Config = typeof productionConfig;
+/*
+type Config = {
+  port: number;
+  host: string;
+  ssl: boolean;
+}
+*/
+
+// 2. keyof extracts the keys of Config as a union
+type ConfigKeys = keyof Config; // "port" | "host" | "ssl"
+```
+</Collapsible>
+
+## 3. Senior Level Questions
+
+<Collapsible title="Q5: What are Conditional Types and how does the infer keyword work? Give a real-world example.">
+**Conditional Types** act like ternary expressions in type space (`T extends U ? X : Y`).
+
+The **`infer`** keyword is used within the `extends` clause of a conditional type to declare a type variable that TypeScript must infer automatically.
+
+```typescript
+// Example: Extracting the resolved value of a Promise
+type UnwrappedPromise<T> = T extends Promise<infer U> ? U : T;
+
+type ResolvesToString = Promise<string>;
+type StringType = UnwrappedPromise<ResolvesToString>; // Evaluates to string
+
+type RawNumber = number;
+type NumberType = UnwrappedPromise<RawNumber>; // Evaluates to number (not a promise)
+```
+</Collapsible>
+
+<Collapsible title="Q6: How do Mapped Types work? Write a custom type helper that makes all properties of an interface optional and read-only.">
+Mapped Types allow you to create new types by iterating over a union of keys (typically using `in keyof`). You can add or subtract modifiers like `readonly` or `?`.
+
+```typescript
+type ReadonlyPartial<T> = {
+  readonly [P in keyof T]?: T[P];
+};
+
+interface Todo {
+  title: string;
+  description: string;
+}
+
+// Resulting type makes both fields optional AND read-only:
+type SafeTodo = ReadonlyPartial<Todo>;
+/*
+type SafeTodo = {
+  readonly title?: string;
+  readonly description?: string;
+}
+*/
+```
+</Collapsible>
+
+<Collapsible title="Q7: Why are catch block variables default-typed as unknown in modern TypeScript, and how do you handle them safely?">
+In JavaScript, any runtime error can be thrown: an instance of `Error`, a plain string, a number, or even `null`. Therefore, typing the caught exception as `Error` is unsafe. Typing it as `unknown` forces the developer to check the structure before accessing properties.
+
+```typescript
+try {
+  // Dangerous operation
+  throw new Error("Database connection timeout");
+} catch (error: unknown) {
+  // Correct pattern: Narrow down the type of error
+  if (error instanceof Error) {
+    console.error(error.message); // Safe: access message property
+  } else if (typeof error === "string") {
+    console.error(error); // Handle string error thrown
+  } else {
+    console.error("An unknown error occurred");
+  }
+}
+```
+</Collapsible>
+
+<Checklist
+  title="TypeScript Interview Must-Known Topics"
+  items={[
+    "Compare and contrast any, unknown, and never for variable assignment constraints",
+    "Describe interface declaration merging vs type unions and intersections",
+    "Construct Discriminated Unions with compile-time exhaustiveness checks using never",
+    "Combine typeof and keyof to extract dynamic object configuration keys",
+    "Infer generic type arguments using conditional extends patterns",
+    "Create mapped types using readonly and optional property flags",
+    "Implement type-safe error catching with unknown validation logic"
+  ]}
+/>
+
+## Must-Known Points
+
+- **`unknown`** requires type validation before use, whereas **`any`** turns off safety rules.
+- **`never`** checks for non-existent code paths, perfect for switch block safety.
+- **`Discriminated Unions`** partition state schemas with a single shared literal tag.
+- **`infer`** retrieves wrapped components inside generic variables at compilation time.
+- **Mapped Types** loop over existing definitions to transform permissions or optional fields dynamically.

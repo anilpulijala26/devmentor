@@ -1,0 +1,188 @@
+---
+title: "Parallel & Intercepting Routes"
+description: "Master advanced routing mechanics: Parallel routes, Intercepting routes, and Middleware with Edge Runtime details"
+tags: ["nextjs", "routing", "middleware", "edge-runtime", "security-headers"]
+estimatedTime: "90 minutes"
+---
+
+# Parallel Routes, Intercepting Routes & Middleware
+
+Next.js provides advanced routing features that make it possible to build complex, premium UI flows like dashboards with concurrent panels, modals that can be shared via URLs, and edge-native security layers. Let&apos;s dive deep into Parallel Routes, Intercepting Routes, and Middleware.
+
+---
+
+## 1. Parallel Routes (`@folder`)
+
+Parallel routing allows you to render multiple pages simultaneously inside the same layout. Each route is defined as a **slot** (denoted by `@slotName`) and is passed directly to the parent layout as a prop.
+
+### Why use Parallel Routes?
+- **Concurrent loading:** Load different panels of a dashboard independently (with separate loading skeletons).
+- **Independent error handling:** If one panel crashes, the rest of the application remains functional.
+- **Conditional panels:** Display tabs or split views depending on user roles.
+
+### File Structure:
+```
+app/
+  dashboard/
+    layout.tsx          → Consumes @analytics and @team props
+    page.tsx            → The core dashboard page view
+    @analytics/
+      page.tsx          → Rendered in the analytics slot
+      loading.tsx       → Analytics skeleton loader
+    @team/
+      page.tsx          → Rendered in the team slot
+```
+
+### Implementing Layout:
+```tsx
+// app/dashboard/layout.tsx
+import React from "react";
+
+interface LayoutProps {
+  children: React.ReactNode;
+  analytics: React.ReactNode; // Slot prop
+  team: React.ReactNode;      // Slot prop
+}
+
+export default function DashboardLayout({ children, analytics, team }: LayoutProps) {
+  return (
+    <div className="flex flex-col gap-6">
+      <header className="p-4 bg-slate-900 text-white rounded-xl">Dashboard Header</header>
+      <main className="grid grid-cols-1 md:grid-cols-3 gap-6">
+        <section className="md:col-span-1">{children}</section>
+        <section className="md:col-span-1 border rounded-xl p-4 bg-white">{analytics}</section>
+        <section className="md:col-span-1 border rounded-xl p-4 bg-white">{team}</section>
+      </main>
+    </div>
+  );
+}
+```
+
+### The role of `default.tsx`
+If a user reloads the browser, Next.js needs to know what to render inside slots that do not match the current URL. If you don&apos;t provide a `default.tsx` fallback file inside your slot directories, Next.js will render a 404 error page.
+
+<Pitfall>
+Always create a <code>default.tsx</code> file in <strong>every</strong> parallel slot directory. It can simply return <code>null</code> or render a fallback component, ensuring reloads do not trigger random 404 errors.
+</Pitfall>
+
+---
+
+## 2. Intercepting Routes (`(.)folder`, `(..)folder`)
+
+Intercepting routes allow you to load a route from another part of the application inside the current layout. This is commonly used to implement **modals** with shareable URLs.
+
+- **`(.)`** matches segments on the **same level**
+- **`(..)`** matches segments **one level above**
+- **`(..)(..)`** matches segments **two levels above**
+- **`(...)`** matches segments from the **root** `app` directory
+
+### Photo Gallery Modal Pattern:
+When a user clicks on a photo card, you intercept the `/photo/:id` route and render it as an overlay modal without changing the page context. If they copy the URL, send it to a friend, or refresh the browser, the page renders in full layout view.
+
+```
+app/
+  page.tsx              → Main Feed (Lists photo cards)
+  photo/
+    [id]/
+      page.tsx          → Full Photo Detail Page (Served on direct URL load)
+  @modal/
+    default.tsx         → Returns null (initial load fallback)
+    (.)photo/
+      [id]/
+        page.tsx        → The modal overlay component (Loads on feed click)
+```
+
+---
+
+## 3. Middleware & The Edge Runtime (Senior Level)
+
+Middleware runs before a request is completed. It allows you to intercept incoming requests, inspect headers/cookies, redirect users, and rewrite paths.
+
+### Edge Runtime vs. Node.js Runtime
+Next.js Middleware runs on the **Edge Runtime** (powered by V8 engines), not Node.js.
+- **Benefits:** Ultra-low latency, instant cold starts, runs closer to the user.
+- **Constraints:** Limited memory, no support for Node.js native modules (no `fs`, `path`, or `child_process`), and limited NPM package support.
+
+### Implementing Auth Checks in Middleware:
+```typescript
+// middleware.ts
+import { NextResponse } from "next/server";
+import type { NextRequest } from "next/server";
+
+export function middleware(request: NextRequest) {
+  const token = request.cookies.get("session")?.value;
+  const { pathname } = request.nextUrl;
+
+  // Protect dashboard routes
+  if (pathname.startsWith("/dashboard") && !token) {
+    // Redirect unauthenticated user to login
+    return NextResponse.redirect(new URL("/login", request.url));
+  }
+
+  return NextResponse.next();
+}
+
+// Config to select only matching paths (speeds up application assets loads)
+export const config = {
+  matcher: ["/dashboard/:path*", "/admin/:path*"]
+};
+```
+
+---
+
+## 4. Configuring Security Headers in Middleware
+
+Middleware is the perfect place to enforce global security policies by injecting HTTP headers.
+
+```typescript
+// middleware.ts
+import { NextResponse } from "next/server";
+import type { NextRequest } from "next/server";
+
+export function middleware(request: NextRequest) {
+  const response = NextResponse.next();
+
+  // 1. Content Security Policy (CSP)
+  response.headers.set(
+    "Content-Security-Policy",
+    "default-src 'self'; script-src 'self' 'unsafe-inline' https://apis.google.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com;"
+  );
+
+  // 2. Strict Transport Security (HSTS)
+  response.headers.set(
+    "Strict-Transport-Security",
+    "max-age=63072000; includeSubDomains; preload"
+  );
+
+  // 3. X-Frame-Options (Clickjacking protection)
+  response.headers.set("X-Frame-Options", "DENY");
+
+  // 4. Referrer Policy
+  response.headers.set("Referrer-Policy", "strict-origin-when-cross-origin");
+
+  return response;
+}
+```
+
+<SeniorNote>
+Edge Middleware is limited to <strong>50MB execution time</strong>. If you run complex database queries or heavy computation, the process will fail. Keep middleware lightweight: check cookies/JWT format signatures locally without querying databases on every request.
+</SeniorNote>
+
+<Checklist
+  title="Routing & Middleware Checklist"
+  items={[
+    "Implement Parallel Routes using the @slot naming convention",
+    "Create default.tsx fallback files for all parallel route slots",
+    "Implement Intercepting Routes to build dynamic modal overlays",
+    "Compare and contrast the Edge Runtime against the Node.js runtime",
+    "Configure custom middleware path matchers to exclude static files",
+    "Inject Content Security Policy (CSP) and CORS headers via middleware"
+  ]}
+/>
+
+## Key Takeaways
+
+- **Parallel Routes** pass page slots as layout props for simultaneous layout panels.
+- **Intercepting Routes** catch navigation events to load modals while keeping dynamic url shareability.
+- **Middleware** runs on V8 Edge runtime. Avoid using heavy libraries or Node.js-only scripts.
+- Secure your application by injecting **Security Headers** (CSP, X-Frame-Options) in global middleware hooks.

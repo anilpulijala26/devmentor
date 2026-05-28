@@ -1,0 +1,140 @@
+---
+title: "SEO, Meta Tags & Performance"
+description: "Master search engine optimization, structured schema metadata, and modern performance-related resource preloading hints"
+tags: ["html", "seo", "performance", "web-vitals"]
+estimatedTime: "50 minutes"
+---
+
+# SEO, Meta Tags & Performance Semantics
+
+Writing clean HTML doesn't just impact standard client viewing. Search engine bots (SEO indexing) and performance parsing (web vitals like LCP, CLS, FID) look at specific semantic structures, metadata schemas, and resource cues embedded within your page head.
+
+---
+
+## 1. Social Sharing & Meta Tags (OpenGraph)
+
+When users paste links to your site on platforms like Slack, Twitter, or Discord, those platforms parse your metadata tags to generate card previews. This is powered by **OpenGraph (og:)** and **Twitter Cards** attributes.
+
+```html
+<head>
+  <!-- Standard Head Properties -->
+  <title>DevMentor - Advanced Software Learning Tracks</title>
+  <meta name="description" content="Master production-ready engineering patterns from React, Next.js, and Docker.">
+
+  <!-- OpenGraph Metadata -->
+  <meta property="og:title" content="DevMentor - Advanced Software Learning Tracks">
+  <meta property="og:description" content="Master production-ready engineering patterns from React, Next.js, and Docker.">
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://devmentor.co">
+  <meta property="og:image" content="https://devmentor.co/assets/og-home-preview.jpg">
+  <meta property="og:site_name" content="DevMentor">
+
+  <!-- Twitter Metadata -->
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="DevMentor - Advanced Software Learning Track">
+  <meta name="twitter:description" content="Learn core architectures from local coding to production-ready deployments.">
+  <meta name="twitter:image" content="https://devmentor.co/assets/og-home-preview.jpg">
+</head>
+```
+
+---
+
+## 2. Structured Data with JSON-LD
+
+Structured data tells search engine bots exactly what your content represents (e.g. an Article, Product, Course, or FAQ) so they can show rich snippets in search results.
+
+The standard format is **JSON-LD (JavaScript Object Notation for Linked Data)**, placed inside a `<script type="application/ld+json">` tag.
+
+```html
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "Course",
+  "name": "Full-Stack Development Mastery",
+  "description": "Learn to write real-time apps in Express, Prisma, and Docker Compose.",
+  "provider": {
+    "@type": "Organization",
+    "name": "DevMentor",
+    "sameAs": "https://devmentor.co"
+  }
+}
+</script>
+```
+
+---
+
+## 3. Performance Tuning (Resource Hints)
+
+Resource hints tell the browser to initiate connection handshakes or load resource files ahead of schedule, reducing page load times.
+
+* **`dns-prefetch`**: Performs DNS resolution for an external domain ahead of time.
+* **`preconnect`**: Resolves DNS, TCP handshake, and SSL negotiation (best for fonts, APIs).
+* **`preload`**: Forces browser to fetch a highly critical asset early (best for fonts, key CSS, hero images).
+* **`prefetch`**: Fetches assets needed for future navigations in the background (low priority).
+
+```html
+<head>
+  <!-- Preconnect to Google Fonts and Neon APIs -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://api.neon.tech">
+
+  <!-- Preload the critical above-the-fold stylesheet -->
+  <link rel="preload" href="/styles/main.css" as="style">
+  
+  <!-- Preload the main hero image to minimize LCP times -->
+  <link rel="preload" href="/images/hero-banner.webp" as="image">
+</head>
+```
+
+---
+
+## 4. Responsive Images with `srcset` & `picture`
+
+Serving a desktop-size 2MB image to a mobile phone degrades performance and hurts SEO ranking. Use `<picture>` and `srcset` to let browsers select the optimal image size automatically.
+
+```html
+<!-- Native responsive image selection -->
+<picture>
+  <!-- Serve WebP formats first to supported browsers -->
+  <source srcset="/images/hero-mobile.webp 600w, /images/hero-desktop.webp 1200w" type="image/webp">
+  <!-- Fallback to standard JPEGs -->
+  <source srcset="/images/hero-mobile.jpg 600w, /images/hero-desktop.jpg 1200w" type="image/jpeg">
+  <!-- Fallback img element for old browsers, always include alt! -->
+  <img 
+    src="/images/hero-desktop.jpg" 
+    alt="Developer working on coding tracks dashboard" 
+    loading="lazy"
+    width="1200"
+    height="600"
+  >
+</picture>
+```
+
+<ProTip>
+Always set explicit <code>width</code> and <code>height</code> attributes on your images. The browser uses these to reserve screen space, preventing Cumulative Layout Shift (CLS) when images load.
+</ProTip>
+
+<Pitfall>
+Set the <code>loading="lazy"</code> attribute on below-the-fold images to improve speed. However, <strong>never</strong> set it on above-the-fold hero images, as it delays the load and hurts your Largest Contentful Paint (LCP) score.
+</Pitfall>
+
+---
+
+<Checklist
+  title="SEO & HTML Performance Checklist"
+  items={[
+    "Configure metadata title, description, and OpenGraph/Twitter card properties",
+    "Embed JSON-LD schema scripts to support Google search rich snippets",
+    "Use preconnect links for high-importance fonts and API domains",
+    "Preload above-the-fold CSS files and critical hero images",
+    "Write picture elements with webp sources and responsive width classes",
+    "Apply loading='lazy' strictly to below-the-fold image assets to save bandwith"
+  ]}
+/>
+
+## Key Takeaways
+
+* **OpenGraph meta tags** control how your pages look when shared across social channels, boosting organic click-through rates.
+* **JSON-LD schemas** provide a structured API for crawler bots to index product catalogs and courses.
+* **Resource hints** (`preconnect`, `preload`) bypass network latency.
+* **Image optimizations** (explicit widths, modern formats like WebP, lazy loading) protect LCP and CLS scores.

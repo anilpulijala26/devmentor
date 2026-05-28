@@ -1,0 +1,157 @@
+---
+title: "Event Loop & Event Delegation"
+description: "Master the single-threaded JavaScript Event Loop execution order and optimize DOM performance using event delegation and propagation"
+tags: ["javascript", "event-loop", "dom", "performance"]
+estimatedTime: "60 minutes"
+---
+
+# Event Loop & Event Delegation
+
+JavaScript is a **single-threaded, concurrent** language. It can only execute one line of code at a time, yet it handles animations, API requests, and user clicks smoothly. Understanding how the browser orchestrates asynchronous execution (the Event Loop) and how the DOM handles event propagation is essential for writing high-performance web applications.
+
+---
+
+## 1. The JavaScript Event Loop & Task Queues
+
+The JavaScript runtime contains three major execution areas:
+1. **Call Stack**: Executes synchronous operations (Last In, First Out).
+2. **Web APIs**: Browser-managed features (timers, DOM events, HTTP network requests) that run in the background.
+3. **Queue Managers (Microtasks and Macrotasks)**: Store callbacks ready to be pushed back to the Call Stack.
+
+![JavaScript Event Loop Flowchart](/images/js-event-loop.png)
+
+### Execution Priority:
+1. **Synchronous code** runs first, blocking everything else.
+2. When the Call Stack is empty, the Event Loop checks the **Microtask Queue** (Promise resolve callbacks, `queueMicrotask`, MutationObservers). The Event Loop executes *all* waiting microtasks before moving to the next phase.
+3. The Event Loop then executes **one** callback from the **Macrotask Queue** (also called Task Queue: `setTimeout`, `setInterval`, network requests, user clicks).
+4. After that one macrotask executes, the loop repeats: checking microtasks, rendering layout updates, and then running the next macrotask.
+
+### Priority Test:
+
+```javascript
+console.log("1. Synchronous Begin");
+
+setTimeout(() => {
+  console.log("2. Macrotask (setTimeout)");
+}, 0);
+
+Promise.resolve().then(() => {
+  console.log("3. Microtask (Promise)");
+});
+
+console.log("4. Synchronous End");
+```
+
+#### Output:
+```
+1. Synchronous Begin
+4. Synchronous End
+3. Microtask (Promise)
+2. Macrotask (setTimeout)
+```
+
+---
+
+## 2. Event Propagation (Bubbling and Capturing)
+
+When an event fires on a DOM node (e.g. clicking a link inside a list), it doesn't just trigger the event listener on that single element. It propagates through three phases:
+
+```
+Window  ─┐                                ┌─ Window  (Phase 3: Bubbling)
+  Body   │ Phase 1: Capturing (Downwards) │   Body
+    List │                                │   List
+      Item ──────────► Target ────────────┘
+                   (Phase 2: Target)
+```
+
+1. **Capturing Phase**: The event travels down from the `Window` object to the target element. (Rarely used in practice, active only if `addEventListener(..., { capture: true })` is set).
+2. **Target Phase**: The event reaches the element that was clicked (`event.target`).
+3. **Bubbling Phase**: The event bubbles back up from the target element to the `Window` object. By default, standard event listeners trigger during this phase.
+
+To stop an event from continuing up or down the DOM tree, call:
+```javascript
+event.stopPropagation();
+```
+
+---
+
+## 3. Event Delegation
+
+In production, adding event listeners to hundreds of list items or buttons individually wastes memory and degrades page performance. Instead, we use **Event Delegation**.
+
+By placing **one** event listener on a common parent element, we can catch bubbled events and inspect `event.target` to handle clicks dynamically.
+
+```html
+<ul id="todoList">
+  <li data-id="1">Buy Groceries <button class="delete-btn">X</button></li>
+  <li data-id="2">Write Code <button class="delete-btn">X</button></li>
+  <li data-id="3">Go running <button class="delete-btn">X</button></li>
+</ul>
+
+<script>
+const list = document.getElementById("todoList");
+
+// One single listener handles all child delete buttons, even new items!
+list.addEventListener("click", (event) => {
+  if (event.target.classList.contains("delete-btn")) {
+    const listItem = event.target.closest("li");
+    const todoId = listItem.dataset.id;
+    console.log(`Deleting todo ID: ${todoId}`);
+    listItem.remove();
+  }
+});
+</script>
+```
+
+---
+
+## 4. DOM Optimization: DocumentFragments
+
+Updating the DOM forces the browser to run Reflow and Repaint calculations. If you loop and append 1,000 list items directly to a `<ul>`, the browser recalculates layouts 1,000 times, causing major page lag.
+
+To optimize this, build nodes in-memory using a **DocumentFragment** and append it to the live DOM once.
+
+```javascript
+const list = document.getElementById("todoList");
+// Create a virtual offscreen DOM container
+const fragment = document.createDocumentFragment();
+
+for (let i = 0; i < 1000; i++) {
+  const li = document.createElement("li");
+  li.textContent = `Generated item ${i}`;
+  fragment.appendChild(li); // Appending to virtual fragment triggers NO reflow
+}
+
+// Append once to the live page: triggers only 1 reflow calculation!
+list.appendChild(fragment);
+```
+
+<SeniorNote>
+Event delegation is particularly important in Single Page Applications (SPAs). If you bind event listeners directly to elements, you must remember to remove those listeners when components unmount to prevent memory leaks. Event delegation on a permanent parent container bypasses this risk completely.
+</SeniorNote>
+
+<Pitfall>
+When writing microtask chains (such as resolving recursive Promises), you can accidentally lock up the browser. Because the event loop will not run layout updates or process clicks until the microtask queue is completely empty, an infinite microtask chain will freeze the tab completely.
+</Pitfall>
+
+---
+
+<Checklist
+  title="Event Loop & DOM Checklist"
+  items={[
+    "Write async helpers using Microtask queues (Promises) over Macrotask timers (setTimeout)",
+    "Use Event Delegation to handle dynamic list buttons with a single parent listener",
+    "Identify target elements using event.target instead of hardcoded DOM paths",
+    "Call event.stopPropagation() only when explicitly preventing parent bubbles",
+    "Create DocumentFragments to batch group DOM updates offline before appending",
+    "Prevent UI freezing by keeping microtask chains finite"
+  ]}
+/>
+
+## Key Takeaways
+
+* **The Call Stack** handles synchronous execution, while **Task Queues** schedule async callbacks.
+* **Microtasks** (Promises) execute before **Macrotasks** (`setTimeout`).
+* **Events bubble** up the DOM tree, allowing parent elements to intercept clicks.
+* **Event Delegation** saves system memory by using a single parent listener.
+* **DocumentFragments** batch DOM insertions, minimizing page reflows.

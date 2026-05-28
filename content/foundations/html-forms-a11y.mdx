@@ -1,0 +1,168 @@
+---
+title: "Form Validation & Accessibility"
+description: "Master native HTML5 form validation and design accessible input structures using modern ARIA guidelines"
+tags: ["html", "forms", "accessibility", "a11y"]
+estimatedTime: "55 minutes"
+---
+
+# Form Validation & Accessibility (A11y)
+
+Forms are the primary interactive components of most web applications. Designing them requires focusing on both data validation (ensuring clean submissions) and accessibility (ensuring all users, including those using screen readers or keyboard-only navigation, can fill them out).
+
+---
+
+## 1. Native HTML5 Constraint Validation
+
+Modern browsers provide built-in validation APIs. Using native validation improves performance and reduces JavaScript bundle size.
+
+### Built-in Attributes:
+* `required`: Field must be filled before submission.
+* `pattern`: Regex schema matching constraint.
+* `min`/`max`: Minimum and maximum numerical bounds or dates.
+* `minlength`/`maxlength`: Text length bounds.
+* `type`: Standard browser input type checking (`email`, `url`, `number`, `tel`).
+
+```html
+<form id="profileForm">
+  <!-- Validating an input with custom pattern, length limits, and requirements -->
+  <label for="username">Username (Letters and numbers only):</label>
+  <input 
+    type="text" 
+    id="username" 
+    name="username" 
+    required 
+    minlength="4" 
+    maxlength="15" 
+    pattern="[a-zA-Z0-9]+"
+    title="Username must be 4-15 characters and contain only letters and numbers."
+  >
+  <button type="submit">Save Profile</button>
+</form>
+```
+
+### The JavaScript Validation API
+
+You can hook into validation states dynamically using the element's `.validity` object:
+
+```javascript
+const emailInput = document.getElementById("email");
+
+emailInput.addEventListener("input", () => {
+  if (emailInput.validity.typeMismatch) {
+    emailInput.setCustomValidity("Please enter a valid email address!");
+  } else if (emailInput.validity.valueMissing) {
+    emailInput.setCustomValidity("Email is required!");
+  } else {
+    emailInput.setCustomValidity(""); // Clear the error state
+  }
+});
+```
+
+---
+
+## 2. Designing Accessible Forms (A11y)
+
+Writing semantic markup is the foundation of accessible forms.
+
+### Always Associate Labels
+Screen readers will read an input's purpose only if it is explicitly bound to a `<label>`.
+
+```html
+<!-- ✅ GOOD: Explicit linkage using 'for' matching input 'id' -->
+<label for="userEmail">Email Address:</label>
+<input type="email" id="userEmail" name="email">
+
+<!-- ❌ BAD: Implicit or missing links (hard for screen readers to associate) -->
+<span>Email Address:</span>
+<input type="email" name="email">
+```
+
+### Focus Styling (WCAG standards)
+Never hide focus styles (`outline: none`) without providing a visible, high-contrast alternative. Keyboard-only users rely on the focus ring to see where they are on the page.
+
+```css
+/* Custom focus rings are recommended for custom styling */
+input:focus, select:focus, textarea:focus {
+  outline: 3px solid #6366f1; /* High contrast Indigo */
+  outline-offset: 2px;
+}
+```
+
+---
+
+## 3. ARIA Roles, States, and Properties
+
+When standard HTML lacks the descriptive power needed for complex UI widgets, use **ARIA (Accessible Rich Internet Applications)** attributes.
+
+### ARIA Describedby
+Use `aria-describedby` to associate helper text or validation error logs with their inputs:
+
+```html
+<label for="passCode">Pin Code:</label>
+<input 
+  type="password" 
+  id="passCode" 
+  name="passcode" 
+  aria-describedby="passcodeHelper passcodeError" 
+  required
+>
+<small id="passcodeHelper">Your pin must be 4 digits.</small>
+<span id="passcodeError" class="error-msg" aria-live="assertive">
+  Incorrect code format.
+</span>
+```
+
+### ARIA Live Regions
+An element with `aria-live` automatically announces dynamic text changes (e.g. error alerts) to screen reader users.
+* `aria-live="polite"`: Announces when the user is idle.
+* `aria-live="assertive"`: Interrupts the user immediately (use for critical error notifications).
+
+<SeniorNote>
+Do not over-use ARIA. The first rule of ARIA is: "If you can use a native HTML element or attribute instead of an ARIA role/state, do so." Native elements have built-in accessibility built by browser vendors.
+</SeniorNote>
+
+<Pitfall>
+Hiding inputs using <code>display: none</code> or <code>visibility: hidden</code> removes them from the screen reader accessibility tree entirely. If you want to visually hide labels (e.g., in icon-only buttons) while keeping them accessible to screen readers, use a visually-hidden CSS utility class.
+</Pitfall>
+
+```css
+/* visually-hidden helper */
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  border: 0;
+}
+```
+
+```html
+<button type="submit">
+  <svg aria-hidden="true" class="icon"><!-- SVG icon --></svg>
+  <span class="sr-only">Submit Search Query</span>
+</button>
+```
+
+---
+
+<Checklist
+  title="Form Validation & Accessibility Checklist"
+  items={[
+    "Associate every input with a clear `label` using 'for' and 'id'",
+    "Use built-in validation types (email, pattern) before custom JavaScript code",
+    "Provide high-contrast, visible focus styling outline rings for accessibility",
+    "Use aria-describedby to link inputs to helper texts or error containers",
+    "Define aria-live regions to communicate dynamic errors to screen readers",
+    "Ensure icon-only interactive controls contain a screen-reader-only (sr-only) descriptive label text"
+  ]}
+/>
+
+## Key Takeaways
+
+* **Form validations** must happen natively on the browser first to maximize performance, but backend API check guarantees safety.
+* **Semantic tags** (`<label>`, `<input>`) are preferred over custom styled divs.
+* **Keyboard access** is mandatory. Ensure users can fill, navigate, and submit the form using only the Tab and Enter keys.
+* **Dynamic content updates** must be announced to assistive technologies using ARIA live attributes.

@@ -1,0 +1,185 @@
+---
+title: "Next.js Caching & Revalidation"
+description: "Deep dive into the 4 Next.js caching layers: Request Memoization, Data Cache, Full Route Cache, Router Cache, and on-demand revalidation"
+tags: ["nextjs", "caching", "performance", "revalidation"]
+estimatedTime: "75 minutes"
+---
+
+# Next.js Caching & Revalidation
+
+Next.js has one of the most powerful—and sometimes confusing—caching systems in modern web development. To build performant production apps and pass senior engineering interviews, you must master the four caching mechanisms, know how to opt-out, and understand on-demand revalidation.
+
+---
+
+## 1. The Four Caching Pillars
+
+Next.js caching operates at different layers of the request-response lifecycle. Here is a summary of the four cache pillars:
+
+| Cache Layer | What is Cached | Where | Lifetime | Purpose |
+| :--- | :--- | :--- | :--- | :--- |
+| **Request Memoization** | fetch API responses | Server (Memory) | Single request lifecycle | Deduplicates requests in the same render tree |
+| **Data Cache** | fetch responses & database results | Server (File System / Redis) | Persistent (survives restarts) | Caches fetched data across user requests |
+| **Full Route Cache** | Rendered HTML & RSC Payload | Server (File System) | Persistent (until revalidated) | Minimizes server CPU load by serving static pages |
+| **Router Cache** | RSC Payload (client-side) | Client Browser (Memory) | Session-based (cleared on refresh) | Speeds up back/forward navigation in the app |
+
+![Next.js Caching Layers Diagram](/images/nextjs-caching.png)
+
+---
+
+## 2. Request Memoization & Data Cache (Mid-Level)
+
+### Request Memoization
+React extends the native `fetch` API to automatically deduplicate requests with the same URL and options. If three components in your page tree fetch the same current user details, only **one** network request is sent to the database or API.
+
+```tsx
+// app/layout.tsx
+async function getUser() {
+  const res = await fetch("https://api.example.com/user");
+  return res.json();
+}
+
+export default async function Layout({ children }: { children: React.ReactNode }) {
+  const user = await getUser(); // First fetch: calls database
+  return (
+    <html>
+      <body>
+        <Header user={user} />
+        {children}
+      </body>
+    </html>
+  );
+}
+
+// app/page.tsx
+async function getUser() {
+  const res = await fetch("https://api.example.com/user");
+  return res.json();
+}
+
+export default async function Page() {
+  const user = await getUser(); // Second fetch: returns cached result instantly!
+  return <main>Welcome back, {user.name}</main>;
+}
+```
+
+### Data Cache
+Unlike Request Memoization (which lasts for one request), the **Data Cache** persists data across multiple requests and user visits. By default, Next.js caches all fetch requests.
+
+```tsx
+// 1. Cached by default (persistent)
+const res = await fetch("https://api.example.com/products");
+
+// 2. Opt-out: Fetch fresh data on every request
+const res = await fetch("https://api.example.com/products", {
+  cache: "no-store"
+});
+
+// 3. Time-based revalidation: Cache for 1 hour (3600 seconds)
+const res = await fetch("https://api.example.com/products", {
+  next: { revalidate: 3600 }
+});
+```
+
+<Pitfall>
+Request Memoization only applies to <code>fetch</code> GET requests. If you use a database ORM like Prisma, Mongoose, or pg-pool, requests are <strong>not</strong> memoized automatically. You must wrap your query functions in React&apos;s custom <code>cache</code> utility to prevent duplicate queries.
+</Pitfall>
+
+---
+
+## 3. Full Route Cache & Router Cache (Senior Level)
+
+### Full Route Cache (Static vs. Dynamic Rendering)
+During the build step (`npm run build`), Next.js renders your pages into static HTML and React Server Component (RSC) payloads. If a route uses only cached data and has no dynamic dependencies, it is pre-rendered static.
+
+A route becomes **dynamic** (rendering on request) if it uses any **dynamic functions**:
+- `cookies()` or `headers()`
+- Dynamic routing params or search query params (`searchParams`)
+- A data fetch containing `cache: "no-store"` or `revalidate: 0`
+
+```tsx
+import { cookies } from "next/headers";
+
+export default async function DashboardPage() {
+  // Calling cookies() automatically opts this route out of Full Route Cache
+  const cookieStore = await cookies();
+  const token = cookieStore.get("session")?.value;
+
+  const res = await fetch("https://api.example.com/profile", {
+    headers: { Authorization: `Bearer ${token}` }
+  });
+  const profile = await res.json();
+
+  return <div>Welcome, {profile.name}</div>;
+}
+```
+
+### Router Cache (Client-Side Caching)
+When users navigate, Next.js caches the visited segments in browser memory. This is why clicking a `<Link>` to a previous page loads instantly without checking the server.
+- **Prefetched routes:** Cached for 5 minutes.
+- **Non-prefetched routes:** Cached for 30 seconds.
+
+<SeniorNote>
+To invalidate the client-side Router Cache on demand, call the <code>router.refresh()</code> hook inside client components, or trigger a Server Action that calls <code>revalidatePath()</code> or <code>revalidateTag()</code> on the server.
+</SeniorNote>
+
+---
+
+## 4. Revalidation Strategies (Senior Level)
+
+### On-Demand Revalidation (Tags & Paths)
+On-demand revalidation allows you to purge cached data instantly when a database update occurs, rather than waiting for a timer to expire.
+
+#### Step 1: Assign a Tag to the Fetch Request
+```typescript
+// lib/data.ts
+export async function getProducts() {
+  const res = await fetch("https://api.example.com/products", {
+    next: { tags: ["products"] } // Assign cache tag
+  });
+  return res.json();
+}
+```
+
+#### Step 2: Purge the Tag inside a Server Action
+```typescript
+// app/actions.ts
+"use server";
+
+import { revalidateTag, revalidatePath } from "next/cache";
+
+export async function addProduct(formData: FormData) {
+  // 1. Save new product in DB
+  await db.product.create({
+    name: formData.get("name")
+  });
+
+  // 2. Clear all cache entries tagged with &quot;products&quot;
+  revalidateTag("products");
+
+  // 3. Clear cache and trigger UI update for the products page
+  revalidatePath("/products");
+}
+```
+
+<ProTip>
+For production enterprise systems, combine Next.js tags with database triggers or Webhooks. When an admin updates a product in a headless CMS (like Contentful or Sanity), trigger a webhook that calls <code>revalidateTag</code> to keep your site updated without manual rebuilds.
+</ProTip>
+
+<Checklist
+  title="Caching & Revalidation Checklist"
+  items={[
+    "Explain Request Memoization vs Data Cache",
+    "Identify dynamic functions that force dynamic rendering",
+    "Configure custom React cache functions for ORM database queries",
+    "Implement time-based revalidation on fetch requests",
+    "Set up on-demand revalidation using revalidateTag and revalidatePath",
+    "Differentiate server-side Full Route Cache from client-side Router Cache"
+  ]}
+/>
+
+## Key Takeaways
+
+- React **Request Memoization** deduplicates GET fetches in the same request tree.
+- **Data Cache** stores API responses persistently on the server.
+- Using **dynamic headers or cookies** opts the route out of Full Route Cache.
+- Use **Server Actions** with `revalidateTag` to purge caches instantly when data changes.

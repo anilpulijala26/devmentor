@@ -1,0 +1,170 @@
+---
+title: "Advanced Types & Generics"
+description: "Master advanced static type checking using TypeScript Generics, type guards, and native utility type configurations"
+tags: ["typescript", "types", "generics", "advanced-ts"]
+estimatedTime: "60 minutes"
+---
+
+# Advanced Types & Generics
+
+Writing production application interfaces requires more than basic primitive typing (`string`, `number`). Real-world projects use dynamic generic arguments to type reusable API handlers, write custom type narrowing guards to prevent runtime crashes, and apply utility types to represent subsets of existing interface objects.
+
+---
+
+## 1. TypeScript Generics (`<T>`)
+
+Generics allow you to write reusable, type-safe functions, classes, and interfaces that work with multiple types rather than a single concrete type. Think of generics as passing arguments to types themselves.
+
+### Generic Function Example
+Instead of using `any` (which disables type safety), use a type parameter `T`:
+
+```typescript
+// Reusable identity function
+function apiResponseWrapper<T>(data: T, status: number) {
+  return {
+    data,
+    status,
+    timestamp: new Date()
+  };
+}
+
+// Explicit usage
+const stringResponse = apiResponseWrapper<string>("Success", 200);
+// stringResponse.data is typed as string!
+
+// Implicit usage (TypeScript infers type automatically)
+const userResponse = apiResponseWrapper({ id: 1, name: "Bob" }, 200);
+// userResponse.data is typed as { id: number; name: string }!
+```
+
+---
+
+## 2. Type Narrowing & Type Guards
+
+TypeScript evaluates type structures during compiling. However, in JavaScript runtime environments, type declarations disappear. **Type Guards** are expressions that perform runtime checks, allowing TypeScript to narrow down union types to more specific types.
+
+### Native Guards: `typeof` & `instanceof`
+```typescript
+function processId(id: string | number) {
+  if (typeof id === "string") {
+    // TypeScript knows 'id' is a string inside this block!
+    return id.toUpperCase();
+  }
+  // TypeScript knows 'id' is a number here
+  return id.toFixed(0);
+}
+```
+
+### User-defined Type Guards
+For complex objects, define a custom checking function returning a **type predicate** (`parameterName is Type`):
+
+```typescript
+interface Admin {
+  role: "admin";
+  permissions: string[];
+}
+
+interface User {
+  role: "user";
+  email: string;
+}
+
+// Custom Type Guard
+function isAdmin(profile: Admin | User): profile is Admin {
+  return profile.role === "admin";
+}
+
+function handleAccess(profile: Admin | User) {
+  if (isAdmin(profile)) {
+    // Safe: profile typed as Admin inside this scope!
+    console.log(profile.permissions);
+  } else {
+    // Safe: profile typed as User
+    console.log(profile.email);
+  }
+}
+```
+
+---
+
+## 3. TypeScript Utility Types
+
+TypeScript provides built-in utility types to perform common type transformations:
+
+* **`Partial<T>`**: Makes all properties in `T` optional.
+* **`Omit<T, K>`**: Creates a type by removing properties list `K` from `T`.
+* **`Pick<T, K>`**: Creates a type by selecting only properties list `K` from `T`.
+* **`Record<K, T>`**: Creates an object type with keys of type `K` and values of type `T`.
+
+```typescript
+interface UserProfile {
+  id: string;
+  username: string;
+  email: string;
+  avatarUrl: string;
+  createdAt: Date;
+}
+
+// 1. Partial: Ideal for update/patch endpoints
+type ProfileUpdateInput = Partial<UserProfile>; // All properties optional
+
+// 2. Omit: Ideal for creating records where database autogenerates fields
+type NewProfileInput = Omit<UserProfile, "id" | "createdAt">; 
+
+// 3. Pick: Ideal for selecting specific subset data cards
+type PreviewProfile = Pick<UserProfile, "username" | "avatarUrl">;
+
+// 4. Record: Ideal for mapping key-value dictionary tables
+const usersDict: Record<string, UserProfile> = {
+  "user_101": { id: "101", username: "alice", email: "a@test.com", avatarUrl: "/url", createdAt: new Date() }
+};
+```
+
+---
+
+## 4. Production compiler settings (`tsconfig.json`)
+
+To get the full benefit of TypeScript, configure `tsconfig.json` with strict compilation standards:
+
+```json
+{
+  "compilerOptions": {
+    "strict": true,                         /* Enable all strict type-checking options */
+    "noImplicitAny": true,                  /* Raise error on expressions with implied any type */
+    "strictNullChecks": true,                /* Null and undefined get unique distinct types */
+    "noUnusedLocals": true,                 /* Report errors on unused local variables */
+    "noUnusedParameters": true,             /* Report errors on unused function parameters */
+    "noImplicitReturns": true,              /* Ensure all code paths in function return a value */
+    "exactOptionalPropertyTypes": true     /* Optional properties are not undefined */
+  }
+}
+```
+
+<SeniorNote>
+Setting <code>strictNullChecks: true</code> is the most impactful setting for reducing production bugs. It forces developers to handle <code>null</code> and <code>undefined</code> cases explicitly, eliminating "Cannot read property 'X' of undefined" crashes.
+</SeniorNote>
+
+<Pitfall>
+Avoid type assertions (using the <code>as</code> keyword) to bypass compiler warnings. Assertions force the compiler to trust you, but do not perform any runtime checks, meaning errors will simply manifest as runtime crashes. Use proper type guards instead.
+</Pitfall>
+
+---
+
+<Checklist
+  title="TypeScript Advanced Checklist"
+  items={[
+    "Implement generics <T> to type reusable helper outputs safely",
+    "Write custom type guard functions returning type predicates to resolve runtime checking",
+    "Use Partial utility types to map payload properties on database edit inputs",
+    "Use Omit to filter out system-generated keys (like IDs or dates) from form creations",
+    "Map dictionary indices safely using key-value Record patterns",
+    "Configure strict compile settings in tsconfig.json to prevent compile warnings"
+  ]}
+/>
+
+## Key Takeaways
+
+* **Generics** write reusable type contracts, maintaining type-safety across variable inputs.
+* **Type Guards** run checks at runtime to narrow down variable structures during compilation.
+* **Utility Types** reuse existing configurations, saving code repetition.
+* **Strict compilation flags** block implicit unsafe declarations.

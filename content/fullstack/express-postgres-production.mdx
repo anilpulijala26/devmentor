@@ -1,0 +1,319 @@
+---
+title: "Express + PostgreSQL in Production"
+description: "Master input validation, JWT token lifecycles, connection pooling, CORS, rate-limiting, and error-handling in Express production apps"
+tags: ["express", "nodejs", "postgres", "security", "backend"]
+estimatedTime: "85 minutes"
+---
+
+# Express + PostgreSQL in Production
+
+Writing a quick local server is easy, but running an Express backend connected to a PostgreSQL database at scale requires robust input validation, hardened security configurations, database connection stability, and clean error handling. Let's learn the exact patterns used in modern enterprise APIs.
+
+---
+
+## 1. Request Input Validation (Zod)
+
+In production, never trust user input. Client-side validation can easily be bypassed by sending raw HTTP requests. Express endpoints must validate request parameters, query strings, and body JSON before performing database queries.
+
+Using **Zod**, we can define schemas and parse requests cleanly, returning structured validation errors.
+
+### Step 1: Create a Validation Middleware
+```typescript
+import { Request, Response, NextFunction } from "express";
+import { AnyZodObject, ZodError } from "zod";
+
+export const validate = (schema: AnyZodObject) => {
+  return async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+    try {
+      // Validate body, query, and params against the schema
+      const parsed = await schema.parseAsync({
+        body: req.body,
+        query: req.query,
+        params: req.params,
+      });
+      
+      // Assign parsed values back to req
+      req.body = parsed.body;
+      req.query = parsed.query;
+      req.params = parsed.params;
+      
+      next();
+    } catch (error) {
+      if (error instanceof ZodError) {
+        res.status(400).json({
+          status: "fail",
+          errors: error.errors.map(err => ({
+            field: err.path.join("."),
+            message: err.message
+          }))
+        });
+        return;
+      }
+      next(error);
+    }
+  };
+};
+```
+
+### Step 2: Define Schema and Route
+```typescript
+import express from "express";
+import { z } from "zod";
+import { validate } from "./middleware/validate";
+
+const router = express.Router();
+
+const createUserSchema = z.object({
+  body: z.object({
+    name: z.string().min(2, "Name must be at least 2 characters long"),
+    email: z.string().email("Invalid email address"),
+    password: z.string().min(8, "Password must be at least 8 characters long"),
+  }),
+});
+
+router.post("/users", validate(createUserSchema), async (req, res) => {
+  // Safe: req.body is validated and typed!
+  const { name, email, password } = req.body;
+  
+  // Insert into PostgreSQL database...
+  res.status(201).json({ success: true });
+});
+```
+
+---
+
+## 2. JWT Authentication Lifecycle & Security
+
+JWTs (JSON Web Tokens) are standard for API authorization, but storing them insecurely makes your app vulnerable to security exploits.
+
+### Secure Token Lifecycles
+1. **Access Token**: Short-lived (e.g., 15 minutes). Used to access endpoints.
+2. **Refresh Token**: Long-lived (e.g., 7 days). Used to request a new Access Token. Stored in a database to allow token revocation if compromised.
+
+![JWT Authentication Token Rotation Flow](/images/jwt-flow.png)
+
+### HttpOnly Cookies (Defense Against XSS)
+Never store JWTs in local storage (`localStorage`) or session storage. Storing tokens in client memory makes them vulnerable to **Cross-Site Scripting (XSS)**. Instead, store tokens in **Secure, HttpOnly, SameSite** cookies.
+
+```typescript
+import { Response } from "express";
+import jwt from "jsonwebtoken";
+
+export const sendTokens = (res: Response, userId: string) => {
+  const accessToken = jwt.sign({ userId }, process.env.JWT_ACCESS_SECRET!, { expiresIn: "15m" });
+  const refreshToken = jwt.sign({ userId }, process.env.JWT_REFRESH_SECRET!, { expiresIn: "7d" });
+
+  // Store access token in HttpOnly cookie
+  res.cookie("accessToken", accessToken, {
+    httpOnly: true,
+    secure: process.env.NODE_ENV === "production", // HTTPS only in prod
+    sameSite: "strict", // Prevent CSRF attacks
+    maxAge: 15 * 60 * 1000, // 15 mins
+  });
+
+  // Store refresh token in a separate HttpOnly cookie
+  res.cookie("refreshToken", refreshToken, {
+    httpOnly: true,
+    secure: process.env.NODE_ENV === "production",
+    sameSite: "strict",
+    maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
+  });
+};
+```
+
+<Pitfall>
+When using cookies for auth, your app becomes vulnerable to <strong>Cross-Site Request Forgery (CSRF)</strong>. Always set <code>sameSite: &quot;strict&quot;</code> or <code>sameSite: &quot;lax&quot;</code>, and use a anti-CSRF token check for modifying state endpoints (POST/PUT/DELETE) if serving a separate domain.
+</Pitfall>
+
+---
+
+## 3. Database Connection Pooling (pg.Pool)
+
+Opening a new database connection on every incoming HTTP request is an expensive operation that will quickly exhaust your PostgreSQL resources under high traffic. 
+
+Always use a **Connection Pool** (`pg.Pool`) which creates a cache of reusable database connections.
+
+```typescript
+import { Pool } from "pg";
+
+const pool = new Pool({
+  connectionString: process.env.DATABASE_URL,
+  max: 20, // Max number of concurrent clients in the pool
+  idleTimeoutMillis: 30000, // Close idle clients after 30 seconds
+  connectionTimeoutMillis: 2000, // Return an error if connection takes > 2s
+});
+
+export const query = (text: string, params?: any[]) => {
+  return pool.query(text, params);
+};
+
+// Check pool error handling
+pool.on("error", (err) => {
+  console.error("Unexpected error on idle database client", err);
+});
+```
+
+<SeniorNote>
+Setting the pool size (<code>max</code>) requires careful balance. A good starting formula is: <code>((Max Database Connections) / (Number of Server Instances)) - 5</code>. Leaving room ensures other tools (e.g. database migrations, backup scripts) can connect without encountering errors.
+</SeniorNote>
+
+---
+
+## 4. CORS and Rate Limiting Policies
+
+### CORS Configuration
+Allowing all domains (`cors(*)`) is a security hazard in production. Restrict cross-origin requests to trusted domains only.
+
+```typescript
+import cors from "cors";
+
+const allowedOrigins = [
+  "https://devmentor.co",
+  "https://admin.devmentor.co"
+];
+
+const corsOptions: cors.CorsOptions = {
+  origin: (origin, callback) => {
+    if (!origin || allowedOrigins.indexOf(origin) !== -1) {
+      callback(null, true);
+    } else {
+      callback(new Error("Blocked by CORS policy"));
+    }
+  },
+  credentials: true, // Allow cookies to be sent along with requests
+  optionsSuccessStatus: 200,
+};
+
+app.use(cors(corsOptions));
+```
+
+### Rate Limiting
+Prevent Denial of Service (DoS) and brute force attacks by limiting requests from a single IP address using `express-rate-limit`.
+
+```typescript
+import rateLimit from "express-rate-limit";
+
+export const globalLimiter = rateLimit({
+  windowMs: 15 * 60 * 1000, // 15 minutes
+  max: 100, // Limit each IP to 100 requests per window
+  message: {
+    status: "fail",
+    message: "Too many requests from this IP, please try again later."
+  },
+  standardHeaders: true, // Return rate limit info in the headers
+  legacyHeaders: false, // Disable the X-RateLimit-* headers
+});
+
+app.use("/api/", globalLimiter);
+```
+
+---
+
+## 5. Global Error Handling Middleware
+
+A clean backend must separate business logic from error response formatting. Express should capture errors centrally to log them, alert administrators, and return standard, non-sensitive payloads to the client.
+
+### Step 1: Create a Custom AppError Class
+```typescript
+export class AppError extends Error {
+  public readonly statusCode: number;
+  public readonly isOperational: boolean;
+
+  constructor(message: string, statusCode: number) {
+    super(message);
+    this.statusCode = statusCode;
+    // Operational errors represent expected failures (validation, auth failures)
+    // Programmer errors represent bugs (syntax, database exceptions)
+    this.isOperational = true;
+
+    Error.captureStackTrace(this, this.constructor);
+  }
+}
+```
+
+### Step 2: Centralized Express Error Middleware
+```typescript
+import { Request, Response, NextFunction } from "express";
+import { AppError } from "./errors/AppError";
+
+export const errorHandler = (
+  err: Error | AppError,
+  req: Request,
+  res: Response,
+  next: NextFunction
+): void => {
+  const statusCode = "statusCode" in err ? err.statusCode : 500;
+  const isOperational = "isOperational" in err ? err.isOperational : false;
+
+  // 1. Log all errors internally
+  console.error("ERROR 💥:", err);
+
+  // 2. Format response based on error type
+  if (isOperational) {
+    res.status(statusCode).json({
+      status: "fail",
+      message: err.message,
+    });
+  } else {
+    // Programmer or Database error: Don't leak details to clients
+    res.status(500).json({
+      status: "error",
+      message: "Something went wrong on our end.",
+    });
+  }
+};
+```
+
+### Step 3: Register in Application Root
+```typescript
+import express from "express";
+import { errorHandler } from "./middleware/errorHandler";
+import { AppError } from "./errors/AppError";
+
+const app = express();
+
+app.get("/api/user-details", async (req, res, next) => {
+  try {
+    const user = await getUserFromDb(req.query.id);
+    if (!user) {
+      return next(new AppError("No user found with that ID", 404));
+    }
+    res.json(user);
+  } catch (error) {
+    next(error); // Forward programmer error to error handler middleware
+  }
+});
+
+// Register errorHandler at the very end of app middleware chain!
+app.use(errorHandler);
+```
+
+<ProTip>
+Always capture unhandled promise rejections and uncaught exceptions at the Node process level. If a database connection fails and is unhandled, shut down the server gracefully so your process manager (like PM2 or Kubernetes) can restart the instance:
+<pre><code>process.on("unhandledRejection", (err) => &#123;
+  console.error("UNHANDLED REJECTION! Shutting down...");
+  console.error(err);
+  server.close(() => process.exit(1));
+&#125;);</code></pre>
+</ProTip>
+
+---
+
+<Checklist
+  title="Express + Postgres Production Checklist"
+  items={[
+    "Validate all incoming req.body, req.query, and req.params fields using Zod",
+    "Store access/refresh JWT tokens in secure HttpOnly cookies",
+    "Configure specific CORS origins and enable credentials sharing",
+    "Apply request rate limiters to all API routes",
+    "Configure pg.Pool connection reuse limits and idle timeouts",
+    "Implement centralized global error handling and mask raw system errors in production"
+  ]}
+/>
+
+## Key Takeaways
+
+- **Never rely on client-side safety checks**; always validate inputs on the server.
+- **HttpOnly Cookies** shield authorization tokens from client-side script access.
+- **Database Connection Pools** are mandatory to prevent resource crashes.
+- **Global Error Handlers** block core system traces (e.g. database schema details) from being leaked to users.

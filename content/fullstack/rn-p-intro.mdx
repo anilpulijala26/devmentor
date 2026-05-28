@@ -117,7 +117,10 @@ export function UserList() {
 
   useEffect(() => {
     const fetchUsers = async () => {
-      const res = await fetch("/api/users");
+      // In local development:
+      // - Either fetch from the absolute backend URL (http://localhost:3001/api/users)
+      // - Or configure a proxy in Vite (vite.config.ts) to map "/api" to the backend server.
+      const res = await fetch("http://localhost:3001/api/users");
       const data = await res.json();
       setUsers(data);
       setLoading(false);
@@ -142,22 +145,23 @@ export function UserList() {
 
 ## Authentication Flow
 
-```
-1. User enters credentials
-2. Frontend sends to /api/auth/login
-3. Backend verifies against database
-4. Backend returns JWT token
-5. Frontend stores in localStorage
-6. Frontend includes token in all requests
-7. Backend verifies token before processing
-```
+1. **Submit Credentials**: The user enters credentials (email/password) on the login form.
+2. **Send Request**: The frontend sends credentials to `/api/auth/login`.
+3. **Verify & Generate**: The backend verifies credentials against the database and signs a JWT (JSON Web Token).
+4. **Token Storage**:
+   - **For Development/Simple Apps**: The backend returns the JWT in the response body, and the frontend stores it in `localStorage` or `sessionStorage`.
+   - **For Production Readiness**: The backend sets the JWT in a secure, `HttpOnly` cookie. This hides the token from client-side scripts, protecting it from Cross-Site Scripting (XSS) attacks.
+5. **Send Token with Requests**:
+   - If using `localStorage`, the frontend manually attaches the token in the `Authorization: Bearer <token>` header.
+   - If using `HttpOnly` cookies, the browser automatically attaches the cookie with every request.
+6. **Backend Verification**: The backend verifies the token before processing protected routes.
 
 <SeniorNote>
-JWT (JSON Web Token) is standard for APIs. Store tokens securely and verify them on every protected request. Never trust client credentials.
+JWT (JSON Web Token) is standard for APIs. While storing tokens in `localStorage` is common in tutorial projects, production-ready systems should use `HttpOnly` and `SameSite` cookies to protect users from token theft via malicious XSS scripts.
 </SeniorNote>
 
 <Pitfall>
-Mixing frontend and backend validation is not enough. Always validate input on the server even if the client validates too.
+Always validate data on the backend. Client-side validation is only for user experience (UX) and can easily be bypassed by an attacker sending raw HTTP requests directly to your backend.
 </Pitfall>
 
 ## Database Schema

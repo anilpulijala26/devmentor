@@ -18,6 +18,21 @@
               "slug": "html-semantic",
               "title": "Semantic HTML",
               "order": 2
+            },
+            {
+              "slug": "html-forms-a11y",
+              "title": "Form Validation & Accessibility",
+              "order": 3
+            },
+            {
+              "slug": "html-seo-performance",
+              "title": "SEO, Meta Tags & Performance",
+              "order": 4
+            },
+            {
+              "slug": "html-interview-cracking",
+              "title": "HTML Interview Cracking Guide",
+              "order": 5
             }
           ]
         },
@@ -34,6 +49,21 @@
               "slug": "css-flexbox",
               "title": "Flexbox Layout",
               "order": 2
+            },
+            {
+              "slug": "css-grid",
+              "title": "CSS Grid Layout",
+              "order": 3
+            },
+            {
+              "slug": "css-variables-nesting",
+              "title": "CSS Custom Properties & Nesting",
+              "order": 4
+            },
+            {
+              "slug": "css-interview-cracking",
+              "title": "CSS Interview Cracking Guide",
+              "order": 5
             }
           ]
         },
@@ -50,6 +80,21 @@
               "slug": "js-async",
               "title": "Async Programming",
               "order": 2
+            },
+            {
+              "slug": "js-event-loop-dom",
+              "title": "Event Loop & Event Delegation",
+              "order": 3
+            },
+            {
+              "slug": "js-advanced-es6-memory",
+              "title": "Advanced JS & Memory Management",
+              "order": 4
+            },
+            {
+              "slug": "js-interview-cracking",
+              "title": "JavaScript Interview Cracking Guide",
+              "order": 5
             }
           ]
         },
@@ -61,6 +106,16 @@
               "slug": "ts-intro",
               "title": "TypeScript Fundamentals",
               "order": 1
+            },
+            {
+              "slug": "ts-advanced-generics",
+              "title": "Advanced Types & Generics",
+              "order": 2
+            },
+            {
+              "slug": "ts-interview-cracking",
+              "title": "TypeScript Interview Cracking Guide",
+              "order": 3
             }
           ]
         }
@@ -89,6 +144,36 @@
               "slug": "react-hooks",
               "title": "React Hooks",
               "order": 3
+            },
+            {
+              "slug": "react-state-management",
+              "title": "Advanced State Management",
+              "order": 4
+            },
+            {
+              "slug": "react-performance-profiling",
+              "title": "Performance & Profiling",
+              "order": 5
+            },
+            {
+              "slug": "react-fiber-architecture",
+              "title": "Fiber & Under the Hood",
+              "order": 6
+            },
+            {
+              "slug": "react-server-components",
+              "title": "Server Components (RSC)",
+              "order": 7
+            },
+            {
+              "slug": "react-security-testing",
+              "title": "Testing & Security",
+              "order": 8
+            },
+            {
+              "slug": "react-interview-cracking",
+              "title": "React Interview Cracking Guide",
+              "order": 9
             }
           ]
         },
@@ -110,6 +195,31 @@
               "slug": "nextjs-fullstack",
               "title": "Building Full-Stack Applications",
               "order": 3
+            },
+            {
+              "slug": "nextjs-caching-rendering",
+              "title": "Next.js Caching & Revalidation",
+              "order": 4
+            },
+            {
+              "slug": "nextjs-advanced-actions",
+              "title": "Advanced Server Actions & Forms",
+              "order": 5
+            },
+            {
+              "slug": "nextjs-routing-middleware",
+              "title": "Parallel & Intercepting Routes",
+              "order": 6
+            },
+            {
+              "slug": "nextjs-optimization-monitoring",
+              "title": "Performance Optimization & Scale",
+              "order": 7
+            },
+            {
+              "slug": "nextjs-interview-cracking",
+              "title": "Next.js Interview Cracking Guide",
+              "order": 8
             }
           ]
         }
@@ -128,6 +238,11 @@
               "slug": "rn-p-intro",
               "title": "Full-Stack Architecture",
               "order": 1
+            },
+            {
+              "slug": "express-postgres-production",
+              "title": "Express + PostgreSQL in Production",
+              "order": 2
             }
           ]
         },
@@ -139,6 +254,11 @@
               "slug": "nn-p-intro",
               "title": "Full-Stack with Next.js",
               "order": 1
+            },
+            {
+              "slug": "prisma-drizzle-postgres",
+              "title": "Postgres ORMs & Query Performance",
+              "order": 2
             }
           ]
         },
@@ -155,6 +275,16 @@
               "slug": "docker-basics",
               "title": "Docker Basics",
               "order": 2
+            },
+            {
+              "slug": "docker-compose-production",
+              "title": "Production Docker & Compose",
+              "order": 3
+            },
+            {
+              "slug": "fullstack-interview-cracking",
+              "title": "Full-Stack Interview Cracking Guide",
+              "order": 4
             }
           ]
         }

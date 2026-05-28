@@ -1,0 +1,150 @@
+---
+title: "HTML Interview Cracking Guide"
+description: "A comprehensive compile of junior, mid, and senior level HTML interview questions and answers covering semantic structures, storage strategies, and accessibility standards"
+tags: ["html", "interview", "accessibility", "seo", "career"]
+estimatedTime: "40 minutes"
+---
+
+# HTML Interview Cracking Guide
+
+Securing front-end and full-stack positions requires understanding the inner workings of semantic HTML, browser parsing behaviors, client-side storage, and accessibility (WCAG/ARIA) standards.
+
+---
+
+## 1. Junior Level Questions
+
+### Q1: What is the difference between inline and block-level HTML elements?
+* **Answer:**
+  * **Block-level elements** (e.g. `<div>`, `<p>`, `<section>`) start on a new line and stretch to take up the full available width of their parent container. They can contain block or inline elements.
+  * **Inline elements** (e.g. `<span>`, `<a>`, `<strong>`) do not start on a new line. They only take up as much width as their content wraps. They cannot contain block-level elements. In CSS, setting `width` and `height` properties has no effect on inline elements (unless display is changed to `block` or `inline-block`).
+
+### Q2: What are structural semantic elements in HTML5, and what is their benefit?
+* **Answer:** Semantic HTML uses tags that explain their content's purpose (e.g., `<header>`, `<nav>`, `<main>`, `<article>`, `<aside>`, `<footer>`) instead of generic structural wrappers like `<div>` and `<span>`.
+* **Benefits**:
+  1. **Accessibility (A11y)**: Screen readers use semantic boundaries to build accessibility landmarks for navigation.
+  2. **SEO**: Crawlers index and rank content faster when they know what sections are key articles vs sidebar navigation.
+  3. **Code Readability**: Makes DOM hierarchies self-documenting for team developers.
+
+### Q3: Why is the `alt` attribute on `<img>` tags required? What happens if it's left empty?
+* **Answer:** The `alt` attribute describes an image's content. It is required for accessibility:
+  * Screen readers announce the `alt` text to visually impaired users.
+  * If the image fails to load, the browser displays the `alt` text in its place.
+  * If an image is purely decorative, set an empty `alt=""` tag. This tells screen readers to ignore the image entirely. Leaving the `alt` attribute out completely causes screen readers to read the image filename, which degrades the user experience.
+
+---
+
+## 2. Mid Level Questions
+
+### Q4: Compare `localStorage`, `sessionStorage`, cookies, and `IndexedDB`.
+* **Answer:**
+
+| Feature | Cookies | LocalStorage | SessionStorage | IndexedDB |
+| :--- | :--- | :--- | :--- | :--- |
+| **Capacity** | ~4KB | ~5MB - 10MB | ~5MB | > 250MB (Variable) |
+| **Expiry** | Manually set | Never | Tab Close | Never |
+| **Server Access** | Sent automatically | Client-only | Client-only | Client-only |
+| **Sync/Async** | Synchronous | Synchronous | Synchronous | Asynchronous |
+| **Use Case** | Auth sessions, settings | User preferences | Temp page state | Complex local data, offline apps |
+
+### Q5: How do `async` and `defer` attributes affect `<script>` tag loading?
+* **Answer:** By default, script tags block HTML parsing while they are downloaded and executed.
+
+```
+Parser:  ████████████████████████████████
+Default:           [download & run] (blocks HTML)
+
+Parser:  ████████████         ███████████
+Async:             [download] [run] (blocks HTML during execution)
+
+Parser:  ████████████████████████████████
+Defer:             [download]            [run] (executes after parsing completes)
+```
+
+* **`async`**: Script downloads in the background. As soon as it finishes downloading, HTML parsing is paused while the script executes. Order of execution is not guaranteed (whichever downloads first runs first). Use for third-party scripts (e.g., Google Analytics).
+* **`defer`**: Script downloads in the background. It executes only after the HTML parsing has fully finished. Order of execution is guaranteed (in the order they appear in the HTML). Best for application scripts.
+
+### Q6: What are the WCAG (Web Content Accessibility Guidelines) conformance levels (A, AA, AAA)? What are key requirements for color contrast, text sizing, and keyboard navigation?
+* **Answer:** WCAG guidelines are divided into three levels of compliance:
+  * **Level A (Minimum)**: Basic accessibility features. Without this, assistive technology cannot access the content. (e.g., all non-text content must have text alternatives like `alt=""`, keyboard navigation must be possible without mouse emulation).
+  * **Level AA (Mid-level / Industry Standard)**: Addresses the most common barriers for disabled users. This is the legal and professional target level for most commercial/government sites. (e.g., color contrast ratio must be at least **4.5:1** for normal text and **3:1** for large text; text must be resizable up to 200% without loss of content/functionality; visible focus indicators must be present for keyboard navigators).
+  * **Level AAA (Highest)**: The most stringent standard. Often difficult or impossible to apply to all content. (e.g., color contrast ratio must be at least **7:1** for normal text; sign language interpretation must be provided for all prerecorded audio; no keyboard trap exceptions are allowed).
+
+---
+
+## 3. Senior Level Questions
+
+### Q6: What is the Accessibility Tree, and how does it relate to the DOM?
+* **Answer:** The browser builds the standard Document Object Model (DOM) from HTML tags. In parallel, it generates an **Accessibility Tree (AOM)**.
+  * The Accessibility Tree is a subset of the DOM that translates elements into roles, names, states, and values that screen readers can understand.
+  * You can inspect and shape this tree using semantic HTML or by adding ARIA attributes (e.g. `role="dialog"`, `aria-expanded="false"`). ARIA alters the accessibility tree without changing the visual structure of the DOM.
+
+### Q7: How does browser layout calculation work? What is Cumulative Layout Shift (CLS) and how do you prevent it?
+* **Answer:** When HTML parsing occurs:
+  1. HTML is parsed into the **DOM**. CSS is parsed into the **CSSOM**.
+  2. The browser combines them to create a **Render Tree**.
+  3. The **Layout** phase calculates the exact dimensions and positions of each element on the viewport.
+  4. The **Paint** phase fills in pixels on the screen.
+* **CLS (Cumulative Layout Shift)** is a layout stability metric. It measures how much elements shift around while the page loads (e.g., an image loads late and pushes content down).
+* **Prevention**:
+  - Always set explicit `width` and `height` properties on `<img>` and `<video>` tags so the browser allocates space before the asset downloads.
+  - Never insert dynamic content (like ads or notices) above existing content unless responding to user interaction.
+  - Use CSS transform animations (`translate`) instead of animating position rules (`top`, `left`, `margin`) to prevent layout recalculations.
+
+### Q9: How do you design and build a fully keyboard-accessible modal dialog? Explain the concept of a "focus trap" and how to implement it.
+* **Answer:** A keyboard-accessible modal must fulfill several accessibility expectations:
+  1. **Semantic Roles**: Use `role="dialog"` and `aria-modal="true"`. Link the heading to the modal container using `aria-labelledby`.
+  2. **Initial Focus**: When the modal opens, move focus to the first interactive element or the close button using `element.focus()`.
+  3. **Focus Trap**: Keyboard navigation (`Tab` / `Shift+Tab`) must be restricted to elements inside the modal. The user should not be able to tab out of the modal into background page elements.
+  4. **Escape Key Handling**: Pressing `Escape` must close the modal immediately.
+  5. **Restore Focus**: When the modal closes, focus must be returned to the element that triggered it.
+
+```javascript
+// Simple Focus Trap logic in Javascript:
+const modal = document.getElementById("myModal");
+const focusableElements = modal.querySelectorAll(
+  'button, [href], input, select, textarea, [tabindex="0"]'
+);
+const firstElement = focusableElements[0];
+const lastElement = focusableElements[focusableElements.length - 1];
+
+modal.addEventListener("keydown", (e) => {
+  if (e.key === "Tab") {
+    if (e.shiftKey) { // Shift + Tab (navigating backward)
+      if (document.activeElement === firstElement) {
+        lastElement.focus();
+        e.preventDefault();
+      }
+    } else { // Tab (navigating forward)
+      if (document.activeElement === lastElement) {
+        firstElement.focus();
+        e.preventDefault();
+      }
+    }
+  } else if (e.key === "Escape") {
+    closeModal(); // Custom function to close modal and restore focus
+  }
+});
+```
+
+---
+
+<Checklist
+  title="HTML Interview Cracking Checklist"
+  items={[
+    "Compare block-level vs inline layout rules",
+    "Explain standard structural semantic elements and accessibility benefits",
+    "Explain WCAG levels (A, AA, AAA), contrast ratios, and keyboard requirements",
+    "Contrast storage limits, expiries, and access paths of localStorage vs cookies",
+    "Describe async vs defer parsing execution rules",
+    "Define the accessibility tree structure and its relationship to the DOM",
+    "Address layout metrics by setting widths to prevent Cumulative Layout Shifts",
+    "Implement a keyboard-accessible modal dialog with a custom JavaScript focus trap"
+  ]}
+/>
+
+## Key Takeaways
+
+* **Semantics** are tested in interview settings to check your attention to SEO and accessibility.
+* **Script loading strategies** (`async`/`defer`) are key questions for web performance tuning.
+* **Local data systems** must be matched to their size limits and sync characteristics (e.g., IndexedDB for offline databases).
+* **Layout shifts** (CLS) are monitored via Web Vitals to assess rendering performance.

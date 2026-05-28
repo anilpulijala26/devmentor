@@ -13,7 +13,9 @@ export function RouteSpinner() {
       window.clearTimeout(timerRef.current);
     }
 
-    setVisible(true);
+    const startTimer = window.setTimeout(() => {
+      setVisible(true);
+    }, 0);
 
     timerRef.current = window.setTimeout(() => {
       setVisible(false);
@@ -21,6 +23,7 @@ export function RouteSpinner() {
     }, 450);
 
     return () => {
+      window.clearTimeout(startTimer);
       if (timerRef.current) {
         window.clearTimeout(timerRef.current);
       }

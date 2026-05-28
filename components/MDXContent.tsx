@@ -1,10 +1,13 @@
+/* eslint-disable @typescript-eslint/no-explicit-any, @typescript-eslint/no-unused-vars */
 import { MDXRemote } from "next-mdx-remote/rsc";
+import remarkGfm from "remark-gfm";
 import { CodeBlock } from "./CodeBlock";
 import { SeniorNote } from "./SeniorNote";
 import { Pitfall } from "./Pitfall";
 import { ProTip } from "./ProTip";
 import { Checklist } from "./Checklist";
 import { YouTubeEmbed } from "./YouTubeEmbed";
+import { Collapsible } from "./Collapsible";
 
 function getHeadingText(children: any): string {
   if (typeof children === "string") return children;
@@ -20,6 +23,7 @@ const components = {
   ProTip,
   Checklist,
   YouTubeEmbed: () => null,
+  Collapsible,
   // Add default HTML components with styling
   h1: () => null,
   h2: (props: any) => {
@@ -31,15 +35,15 @@ const components = {
     <h3 className="text-2xl font-bold mt-4 mb-2" {...props} />
   ),
   p: (props: any) => (
-    <p className="text-base leading-7 my-4" {...props} />
+    <div className="text-[inherit] leading-[inherit] my-4" {...props} />
   ),
   ul: (props: any) => (
-    <ul className="list-disc list-inside my-4 space-y-2" {...props} />
+    <ul className="list-disc list-inside my-4 space-y-2 text-[inherit] leading-[inherit]" {...props} />
   ),
   ol: (props: any) => (
-    <ol className="list-decimal list-inside my-4 space-y-2" {...props} />
+    <ol className="list-decimal list-inside my-4 space-y-2 text-[inherit] leading-[inherit]" {...props} />
   ),
-  li: (props: any) => <li className="text-base" {...props} />,
+  li: (props: any) => <li className="text-[inherit] leading-[inherit]" {...props} />,
   blockquote: (props: any) => (
     <blockquote
       className="border-l-4 border-slate-300 pl-4 italic text-slate-700 my-4"
@@ -74,9 +78,22 @@ const components = {
   },
   code: (props: any) => (
     <code
-      className="bg-slate-100 px-2 py-1 rounded font-mono text-sm"
+      className="bg-slate-100 dark:bg-slate-800 px-2 py-1 rounded font-mono text-[0.875em]"
       {...props}
     />
+  ),
+  img: (props: any) => (
+    <span className="block my-8 text-center">
+      <img
+        className="mx-auto rounded-2xl border border-slate-200/80 shadow-lg max-w-full h-auto bg-slate-950"
+        {...props}
+      />
+      {props.alt && (
+        <span className="block mt-3 text-xs text-slate-500 italic font-sans">
+          {props.alt}
+        </span>
+      )}
+    </span>
   ),
 };
 
@@ -89,6 +106,12 @@ export async function MDXContent({ source }: MDXContentProps) {
     <MDXRemote
       source={source}
       components={components}
+      options={{
+        mdxOptions: {
+          remarkPlugins: [remarkGfm],
+          rehypePlugins: [],
+        },
+      }}
     />
   );
 }

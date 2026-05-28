@@ -1,0 +1,180 @@
+---
+title: "Fiber & Under the Hood"
+description: "Understand React's internal Fiber architecture, reconciliation, render vs commit phases, and concurrent rendering"
+tags: ["react", "fiber", "reconciliation", "under-the-hood"]
+estimatedTime: "95 minutes"
+---
+
+# Fiber & Under the Hood
+
+To master React at a senior level or to crack core interviews, you need to understand how React works under the hood. Let's explore the reconciliation engine, Fiber architecture, render vs commit phases, and concurrent rendering.
+
+---
+
+## 1. Virtual DOM vs Real DOM (Junior/Mid-Level)
+
+### The Real DOM
+The browser represents a webpage as a tree of nodes (Document Object Model). Modifying the real DOM directly is slow because the browser has to recalculate styles, layout, and repaint the screen (called **Reflow** and **Repaint**).
+
+### The Virtual DOM
+React keeps a lightweight copy of the UI in memory as plain JavaScript objects. 
+
+```javascript
+// A React Element is just a plain JS object!
+{
+  type: 'button',
+  props: {
+    className: 'btn-primary',
+    children: 'Click me'
+  }
+}
+```
+
+### Reconciliation
+When state changes, React builds a new virtual DOM tree. It compares this tree with the previous tree (a process called **Diffing**) using a heuristic algorithm with $O(N)$ complexity based on two assumptions:
+1. Two elements of different types will produce different trees.
+2. You can hint which child elements are stable across renders with a `key` prop.
+
+Once the diffing is calculated, React applies only the minimal set of changes to the Real DOM.
+
+---
+
+## 2. What is Fiber? (Senior Level)
+
+### The Problem (Before React 16)
+Historically, React used the **Stack Reconciler**. It traversed the component tree recursively. Because the JavaScript call stack is synchronous, once React started rendering an update, it could not stop. If the tree was large, the main thread would block, causing input lag, frame drops, and frozen UI (jank).
+
+### The Solution: React Fiber
+Introduced in React 16, **Fiber** is a complete rewrite of the reconciliation core. 
+
+Fiber is a **virtual stack frame**. It represents a unit of work that can be paused, restarted, or discarded. Instead of recursive function calls, Fiber represents the component tree as a **singly-linked list** of "fiber nodes".
+
+#### Anatomy of a Fiber Node:
+```typescript
+interface FiberNode {
+  type: any;             // The component or HTML tag (e.g. 'div', Button)
+  key: null | string;    // Unique key identifier
+  stateNode: any;        // Reference to the actual DOM element or class instance
+  
+  // Singly-linked list tree structure pointers
+  child: FiberNode;      // Points to the first child
+  sibling: FiberNode;    // Points to the next sibling
+  return: FiberNode;     // Points to the parent fiber
+
+  memoizedState: any;    // State currently rendered on the screen
+  updateQueue: any;      // List of state changes waiting to be applied
+}
+```
+
+### Double Buffering (Work-In-Progress)
+To prevent users from seeing half-rendered UIs, React uses a graphics technique called **Double Buffering**.
+- **Current Tree:** Represents what is currently visible on the screen.
+- **Work-In-Progress Tree:** The tree React builds in the background during rendering.
+
+Once the Work-In-Progress tree is complete, React swaps a single pointer to make the work-in-progress tree the new current tree on the screen.
+
+---
+
+## 3. Render Phase vs Commit Phase (Senior Level)
+
+React splits reconciliation into two distinct phases:
+
+![React Fiber Reconciliation vs Commit Phase](/images/react-fiber.png)
+
+<Pitfall>
+Because the Render Phase can be paused or run multiple times before committing, never put side effects (like API requests, logs, timers, or state modifications of other components) directly in the body of your functional component. Keep them inside event handlers or `useEffect`.
+</Pitfall>
+
+---
+
+## 4. Concurrent Rendering (Senior Level)
+
+Concurrent React allows React to work on multiple state updates simultaneously. It categorizes updates into:
+- **Urgent updates:** Typing, clicking, dragging (require instant feedback).
+- **Transition updates:** Loading search results, changing tabs (can tolerate minor delay).
+
+React 18/19 exposes hooks to manage this priority:
+
+### useTransition
+Allows you to mark a state update as a transition, preventing it from blocking user inputs.
+
+```tsx
+import { useState, useTransition } from "react";
+
+export const FilterList = ({ items }: { items: string[] }) => {
+  const [query, setQuery] = useState("");
+  const [filterText, setFilterText] = useState("");
+  const [isPending, startTransition] = useTransition();
+
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    // 1. Keep input response urgent!
+    setQuery(e.target.value);
+
+    // 2. Mark list filtering as low priority
+    startTransition(() => {
+      setFilterText(e.target.value);
+    });
+  };
+
+  const filteredItems = items.filter(item => item.includes(filterText));
+
+  return (
+    <div>
+      <input type="text" value={query} onChange={handleChange} placeholder="Search..." />
+      {isPending && <p className="text-gray-500">Loading list...</p>}
+      <ul>
+        {filteredItems.map(item => <li key={item}>{item}</li>)}
+      </ul>
+    </div>
+  );
+};
+```
+
+### useDeferredValue
+Defers updating a value if the screen needs to render urgent changes first. Similar to debouncing, but built into React's render loop without fixed timeout delays.
+
+```tsx
+import { useState, useDeferredValue } from "react";
+import { BigList } from "./BigList";
+
+export const SearchApp = () => {
+  const [query, setQuery] = useState("");
+  
+  // Defer query updates for the heavy list rendering
+  const deferredQuery = useDeferredValue(query);
+
+  return (
+    <div>
+      <input value={query} onChange={e => setQuery(e.target.value)} />
+      {/* BigList will only re-render once browser is idle */}
+      <BigList query={deferredQuery} />
+    </div>
+  );
+};
+```
+
+<SeniorNote>
+Fiber changes tree traversal from recursive to pointer-based loop:
+<code>while (nextUnitOfWork !== null) &#123; nextUnitOfWork = performUnitOfWork(nextUnitOfWork); &#125;</code>.
+This allows React to inspect the <code>nextUnitOfWork</code>, check if the browser has remaining time in the current frame (using <code>requestIdleCallback</code> or scheduling libraries), and pause if necessary.
+</SeniorNote>
+
+<Checklist
+  title="Fiber Checklist"
+  items={[
+    "Explain the difference between the Real DOM and the Virtual DOM",
+    "Describe reconciliation and diffing assumptions",
+    "Explain why the Stack Reconciler caused frame drops on large apps",
+    "Describe the singly-linked list structure of Fiber nodes",
+    "Explain the difference between current and workInProgress trees",
+    "Distinguish between the asynchronous Render phase and synchronous Commit phase",
+    "Use useTransition to keep interactive inputs responsive"
+  ]}
+/>
+
+## Key Takeaways
+
+- **Virtual DOM** is a representation of the UI. **Reconciliation** is the sync algorithm.
+- **Fiber** represents stack frames in the heap, allowing work to be broken into chunks.
+- **Render Phase** is asynchronous and can be paused. **Commit Phase** is synchronous and writes updates to the DOM.
+- **Concurrent features** let React schedule low-priority rendering in the background, keeping the UI interactive.

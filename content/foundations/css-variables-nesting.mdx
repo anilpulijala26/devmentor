@@ -1,0 +1,162 @@
+---
+title: "CSS Custom Properties & Nesting"
+description: "Master modern styling techniques using native CSS variables, native selector nesting, and container-query layouts"
+tags: ["css", "variables", "nesting", "modern-css"]
+estimatedTime: "45 minutes"
+---
+
+# CSS Custom Properties & Nesting
+
+CSS is evolving rapidly. Preprocessors (like Sass or Less) used to be mandatory for writing clean and maintainable code. Today, browsers support native **CSS Custom Properties (Variables)**, **CSS Nesting**, and **Container Queries** out-of-the-box, simplifying our build pipelines.
+
+---
+
+## 1. CSS Custom Properties (Variables)
+
+Unlike Sass variables (which compile away to static values), native CSS variables exist in the browser DOM. This means you can inspect, update, or inherit them dynamically using CSS or JavaScript.
+
+### Declaring Variables
+Declare variables on the `:root` pseudo-class to make them globally accessible:
+
+```css
+:root {
+  --primary-color: #4f46e5;
+  --primary-hover: #4338ca;
+  --text-main: #1f2937;
+  --spacing-md: 1rem;
+  --transition-fast: 150ms ease;
+}
+
+/* Using variables */
+.button {
+  background-color: var(--primary-color);
+  color: #ffffff;
+  padding: var(--spacing-md);
+  transition: background var(--transition-fast);
+}
+
+.button:hover {
+  background-color: var(--primary-hover);
+}
+```
+
+### Dynamic Themes (Dark Mode)
+Because CSS variables are dynamic, implementing dark mode is as simple as overriding variable values:
+
+```css
+:root {
+  --bg-color: #ffffff;
+  --text-color: #1f2937;
+}
+
+/* Override variables on dark class */
+@media (prefers-color-scheme: dark) {
+  :root {
+    --bg-color: #111827;
+    --text-color: #f9fafb;
+  }
+}
+
+body {
+  background-color: var(--bg-color);
+  color: var(--text-color);
+}
+```
+
+---
+
+## 2. Native CSS Nesting
+
+Native nesting is now supported across all major browsers. It allows you to group related selectors inside one styling block, reducing file sizes and improving maintainability.
+
+```css
+.card {
+  background-color: #ffffff;
+  border: 1px solid #e5e7eb;
+  padding: 1.5rem;
+  
+  /* Nest child elements directly */
+  .card-title {
+    font-size: 1.25rem;
+    font-weight: 700;
+  }
+  
+  .card-body {
+    font-size: 1rem;
+    color: #4b5563;
+  }
+  
+  /* Nest pseudo-classes and pseudo-elements using the '&' symbol */
+  &:hover {
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+    
+    .card-title {
+      color: #4f46e5;
+    }
+  }
+}
+```
+
+---
+
+## 3. Container Queries
+
+Traditionally, responsive design relied on **Media Queries**, which evaluate the size of the *entire browser viewport*. However, in modern component-driven architectures, we want components to adapt based on the size of *their parent container*, regardless of where they are placed.
+
+This is solved by **Container Queries**.
+
+### Step 1: Define a Container
+Tell the browser to monitor a parent element's dimensions:
+
+```css
+.card-wrapper {
+  container-type: inline-size;
+  container-name: card-container;
+}
+```
+
+### Step 2: Write Container Styles
+Style the component based on the container size:
+
+```css
+.card {
+  display: flex;
+  flex-direction: column;
+}
+
+/* If the parent container is wider than 500px, change card layout to horizontal */
+@container card-container (min-width: 500px) {
+  .card {
+    flex-direction: row;
+    gap: 1.5rem;
+  }
+}
+```
+
+<SeniorNote>
+Container Queries are ideal for building reusable component libraries. A card styled with container queries will look correct whether it is placed in a narrow sidebar or in a wide central content feed, without needing custom CSS modifiers.
+</SeniorNote>
+
+<Pitfall>
+When using Native Nesting, avoid nesting too deeply (e.g. more than 3 levels). Deep nesting increases CSS bundle sizes and specificity, making styles hard to override in the future.
+</Pitfall>
+
+---
+
+<Checklist
+  title="Modern CSS Checklist"
+  items={[
+    "Declare global design values as custom properties on the :root element",
+    "Use CSS custom properties to implement dynamic behaviors like dark mode theme shifts",
+    "Use native nesting to organize child element rules under parent selector groups",
+    "Use the '&' selector strictly for hover, focus, active, and pseudo-elements nesting",
+    "Define container-type: inline-size to prepare container queries on parent wrappers",
+    "Write @container queries to build components that adjust based on parent container sizes"
+  ]}
+/>
+
+## Key Takeaways
+
+* **CSS Custom Properties** are dynamic variables readable by both CSS rules and JavaScript scripts.
+* **Native Nesting** removes the need for Sass compiling in modern build workflows.
+* **Container Queries** evaluate component parent sizes rather than viewport widths, enabling modular layouts.

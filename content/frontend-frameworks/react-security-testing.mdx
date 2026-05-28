@@ -1,0 +1,181 @@
+---
+title: "Testing & Security"
+description: "Learn to test React components with Jest and RTL, mock custom hooks, and secure your applications against XSS and injection attacks"
+tags: ["react", "testing", "security", "xss"]
+estimatedTime: "80 minutes"
+---
+
+# Testing & Security Best Practices
+
+Building production-ready React apps requires keeping them robust under changes (via tests) and secure against vulnerabilities (via security audits). Let's master the standards for React testing and application security.
+
+---
+
+## 1. Unit & Integration Testing (Junior/Mid-Level)
+
+### React Testing Library (RTL) Philosophy
+RTL tests your components based on how real users interact with them, rather than testing their internal state, private methods, or implementation details. This makes refactoring code easy without breaking tests.
+
+### Test Example: Theme Toggle Button
+We'll write a test for a component that toggles between Light and Dark mode.
+
+```tsx
+// ThemeToggle.tsx
+import { useState } from "react";
+
+export const ThemeToggle = () => {
+  const [isDark, setIsDark] = useState(false);
+  return (
+    <button onClick={() => setIsDark(!isDark)}>
+      Current mode: {isDark ? "Dark" : "Light"}
+    </button>
+  );
+};
+```
+
+```typescript
+// ThemeToggle.test.tsx
+import { render, screen } from "@testing-library/react";
+import userEvent from "@testing-library/user-event";
+import { ThemeToggle } from "./ThemeToggle";
+
+describe("ThemeToggle Component", () => {
+  it("renders with initial Light mode", () => {
+    render(<ThemeToggle />);
+    const button = screen.getByRole("button");
+    expect(button).toHaveTextContent("Current mode: Light");
+  });
+
+  it("changes text to Dark mode on click", async () => {
+    render(<ThemeToggle />);
+    const button = screen.getByRole("button");
+
+    // Simulate user click using userEvent (preferred over fireEvent)
+    await userEvent.click(button);
+
+    expect(button).toHaveTextContent("Current mode: Dark");
+  });
+});
+```
+
+---
+
+## 2. Mocking APIs & Testing Custom Hooks (Mid/Senior)
+
+### Testing Custom Hooks
+We test custom hooks by wrapping them with RTL's helper function `renderHook`.
+
+```typescript
+// useCounter.ts
+import { useState } from "react";
+
+export const useCounter = (initial = 0) => {
+  const [count, setCount] = useState(initial);
+  const increment = () => setCount((c) => c + 1);
+  return { count, increment };
+};
+```
+
+```typescript
+// useCounter.test.ts
+import { renderHook, act } from "@testing-library/react";
+import { useCounter } from "./useCounter";
+
+test("should increment counter state", () => {
+  const { result } = renderHook(() => useCounter(10));
+
+  expect(result.current.count).toBe(10);
+
+  // State changes must be wrapped in act()
+  act(() => {
+    result.current.increment();
+  });
+
+  expect(result.current.count).toBe(11);
+});
+```
+
+### Mocking API Calls (MSW)
+Instead of mocking the global `fetch` object (which is brittle and hard to maintain), the industry standard is to use **Mock Service Worker (MSW)**. MSW intercepts network requests at the browser link level and returns mock responses, keeping your test code realistic.
+
+---
+
+## 3. Security in React: Preventing XSS (Senior Level)
+
+### Cross-Site Scripting (XSS)
+XSS is an attack where malicious JavaScript code is injected into websites to steal user sessions, session tokens, or track interactions.
+
+### React Auto-Escaping
+By default, React secures your variables from XSS by auto-escaping values before rendering them inside JSX:
+
+```tsx
+const name = "<script>alert('hack')</script>";
+return <div>{name}</div>; // Safely rendered as plain text strings, script won't run.
+```
+
+### The Danger: dangerouslySetInnerHTML
+Sometimes you need to render rich HTML content (e.g. from a CMS editor). React forces you to write `dangerouslySetInnerHTML` to warn you of potential vulnerabilities.
+
+```tsx
+// ❌ Dangerous: Vulnerable to XSS if bio contains malicious tags
+const UserBio = ({ bio }: { bio: string }) => {
+  return <div dangerouslySetInnerHTML={{ __html: bio }} />;
+};
+```
+
+### The Solution: Sanitation with DOMPurify
+Always sanitize user-provided HTML before injecting it into the DOM.
+
+```typescript
+import DOMPurify from "isomorphic-dompurify"; // Server and Client safe DOMPurify
+
+const UserBioSafe = ({ bio }: { bio: string }) => {
+  // Purge any <script> tags or onerror attributes
+  const cleanHtml = DOMPurify.sanitize(bio);
+
+  return <div dangerouslySetInnerHTML={{ __html: cleanHtml }} />;
+};
+```
+
+---
+
+## 4. Secure Token Storage (Senior Level)
+
+Where should you store JWT Access and Refresh Tokens? Let's analyze the two main options:
+
+| Storage Location | Vulnerable to XSS? | Vulnerable to CSRF? | Recommendation |
+| :--- | :--- | :--- | :--- |
+| **LocalStorage / SessionStorage** | ⚠️ Yes (accessible via any running script) | 🚫 No | Avoid for sensitive financial or personal user accounts |
+| **HttpOnly, Secure Cookies** | 🚫 No (inaccessible to JavaScript) | ⚠️ Yes | **Recommended** (Must use SameSite and CSRF tokens) |
+
+### Best-Practice Architecture
+1. **Access Tokens:** Store in **in-memory JavaScript state** (inside store or Context). It disappears when the user refreshes, which is very secure.
+2. **Refresh Tokens:** Store in an **HttpOnly, Secure Cookie** sent from the server. When the user refreshes or token expires, call an endpoint (`/refresh`) to fetch a new access token into memory.
+
+<Pitfall>
+Storing API keys or database credentials in frontend environment variables (like <code>NEXT_PUBLIC_API_KEY</code>) exposes them to the public bundle. Anyone can read them in the source code files. Keep sensitive keys in private server variables.
+</Pitfall>
+
+<ProTip>
+Use RTL queries like <code>screen.getByRole</code>. They enforce web accessibility standards (ARIA). If your test fails to find an element by its role, it's a sign that disabled users using screen readers won't be able to find it either.
+</ProTip>
+
+<Checklist
+  title="Testing & Security Checklist"
+  items={[
+    "Test components based on user interaction, not implementation details",
+    "Use screen.getByRole for accessibility-first queries",
+    "Wrap custom hook testing logic inside renderHook",
+    "Encapsulate state changes within act() in hook tests",
+    "Recognize the risks of dangerouslySetInnerHTML",
+    "Sanitize rich HTML strings using DOMPurify before rendering",
+    "Compare security trade-offs between LocalStorage and HttpOnly cookies"
+  ]}
+/>
+
+## Key Takeaways
+
+- React Testing Library verifies component behavior rather than code structure.
+- Mock APIs realistically rather than hacking global browser fetch functions.
+- Never render raw HTML strings without first running them through `DOMPurify`.
+- Keep private keys on the server, and store access tokens securely in-memory.

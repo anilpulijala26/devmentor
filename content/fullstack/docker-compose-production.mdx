@@ -1,0 +1,210 @@
+---
+title: "Production Docker & Compose"
+description: "Master multi-stage Docker builds, production-grade docker-compose architectures, database backup schedules, network isolation, and non-root security standards"
+tags: ["docker", "docker-compose", "devops", "security", "deployment"]
+estimatedTime: "80 minutes"
+---
+
+# Production Docker & Compose
+
+Containerizing an application with a basic Dockerfile is straightforward. But packaging applications for production requires optimizing image sizes to reduce cold start times, establishing secure network isolation, persisting database states, orchestrating service startups using container health checks, and running containers without root permissions.
+
+---
+
+## 1. Multi-Stage Docker Builds (Node & NextJS)
+
+A standard Dockerfile keeps files like your packages cache, source code compiler, and dev dependencies inside the final production container. This can result in image sizes of over 1GB, posing security risks and slowing down deployments.
+
+**Multi-stage builds** solve this by separating the build pipeline into clean stages, outputting a final production stage that contains only the compiled JavaScript files and production node modules.
+
+### Production Dockerfile (Next.js Standalone Build)
+```dockerfile
+# Stage 1: Install dependencies
+FROM node:20-alpine AS deps
+RUN apk add --no-cache libc6-compat
+WORKDIR /app
+COPY package.json package-lock.json ./
+RUN npm ci
+
+# Stage 2: Build the application
+FROM node:20-alpine AS builder
+WORKDIR /app
+COPY --from=deps /app/node_modules ./node_modules
+COPY . .
+ENV NEXT_TELEMETRY_DISABLED=1
+RUN npm run build
+
+# Stage 3: Production Runner
+FROM node:20-alpine AS runner
+WORKDIR /app
+ENV NODE_ENV=production
+ENV PORT=3000
+
+# Create a non-root group and user for security
+RUN addgroup --system --gid 1001 nodejs
+RUN adduser --system --uid 1001 nextjs
+
+# Copy pre-compiled standalone app server and assets
+COPY --from=builder /app/public ./public
+COPY --from=builder --chown=nextjs:nodejs /app/.next/standalone ./
+COPY --from=builder --chown=nextjs:nodejs /app/.next/static ./.next/static
+
+# Run as non-root user
+USER nextjs
+
+EXPOSE 3000
+CMD ["node", "server.js"]
+```
+
+---
+
+## 2. Multi-Container Orchestration (Docker Compose)
+
+In production, you want a repeatable way to define and run multi-container applications (frontend, backend, database, cache).
+
+Here is a hardened `docker-compose.yml` configuration:
+
+```yaml
+version: "3.8"
+
+services:
+  # Node/Express Backend API
+  api:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    restart: always
+    environment:
+      - DATABASE_URL=postgres://app_user:db_secure_pass@db:5432/app_prod
+      - NODE_ENV=production
+    depends_on:
+      db:
+        condition: service_healthy # Wait for Postgres to be fully ready
+    networks:
+      - web-network
+      - db-network
+
+  # PostgreSQL Database
+  db:
+    image: postgres:16-alpine
+    restart: always
+    shm_size: 256mb # Adjust shared memory for Postgres query speeds
+    environment:
+      - POSTGRES_USER=app_user
+      - POSTGRES_PASSWORD=db_secure_pass
+      - POSTGRES_DB=app_prod
+    volumes:
+      - pg-data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U app_user -d app_prod"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - db-network
+
+# Network isolation rules
+networks:
+  web-network: # Public facing network
+  db-network: # Internal backend-to-database network
+
+# Persistent volume config
+volumes:
+  pg-data:
+    driver: local
+```
+
+---
+
+## 3. Network Isolation
+
+Notice how the `db` service in our Compose file only belongs to the `db-network`, whereas the `api` service belongs to both `web-network` and `db-network`.
+
+### Why does this matter?
+If an attacker exploits an remote code execution vulnerability in your API, they will search the local network. 
+* By separating the database into `db-network`, only the `api` container can communicate with the `db` port.
+* The database container does not have public internet exposure and cannot be targeted directly from the web.
+
+---
+
+## 4. Service Startup Orchestration (Healthchecks)
+
+In basic docker-compose files, developers use `depends_on: [db]`. This tells Docker to start the `api` container once the `db` container *starts*. 
+
+However, PostgreSQL takes 5–15 seconds to spin up, allocate memory, and start accepting incoming connections. If the `api` container attempts to connect immediately, it will throw a connection exception and crash.
+
+### The Solution:
+Using **Docker Healthchecks** (`pg_isready`) alongside `depends_on: { db: { condition: service_healthy } }` ensures the API only starts once PostgreSQL is fully prepared to execute database queries.
+
+---
+
+## 5. Database Voluming & Automated Backups
+
+Containers are ephemeral: when a container is deleted, all files stored in it disappear. To persist database files across restarts and upgrades, you must mount a **Docker Volume**.
+
+```yaml
+volumes:
+  - pg-data:/var/lib/postgresql/data
+```
+
+### Automated Backup Script
+To secure database files, run a cron job on your host machine that calls `pg_dump` inside the running container to output a SQL backup without downtime.
+
+```bash
+#!/bin/bash
+# backup-db.sh
+BACKUP_DIR="/backups/postgres"
+DATE=$(date +%Y-%m-%d_%H%M%S)
+CONTAINER_NAME="app-db-1"
+DB_USER="app_user"
+DB_NAME="app_prod"
+
+# Create backup directory
+mkdir -p $BACKUP_DIR
+
+# Run pg_dump inside running database container
+docker exec -t $CONTAINER_NAME pg_dump -U $DB_USER $DB_NAME > $BACKUP_DIR/backup_$DATE.sql
+
+# Retain only the last 7 days of backups
+find $BACKUP_DIR -type f -name "*.sql" -mtime +7 -delete
+```
+
+---
+
+## 6. Container Security Standards
+
+To run containers securely in production, follow these rules:
+
+1. **Never run containers as root**: The default user inside a Docker container is `root`. If an attacker breaks out of your app container, they gain root access to the host machine. Always define a custom user:
+   ```dockerfile
+   USER nextjs
+   ```
+2. **Use Read-Only Root Filesystems**: Prevent attackers from writing script files or modifying binaries inside the container:
+   ```yaml
+   # docker-compose.yml
+   services:
+     api:
+       read_only: true
+   ```
+3. **Use Slim Base Images**: Prefer `-alpine` or `-slim` Node images to reduce security vulnerabilities.
+
+---
+
+<Checklist
+  title="Production Docker Checklist"
+  items={[
+    "Implement multi-stage Dockerfiles to keep production image sizes small",
+    "Run containerized app processes using non-root users",
+    "Configure volume mounting for persistent database files",
+    "Establish separate networks to isolate database containers from the public internet",
+    "Orchestrate startup sequences using container health checks (e.g. pg_isready)",
+    "Schedule database backups on the host machine using pg_dump scripts"
+  ]}
+/>
+
+## Key Takeaways
+
+- **Multi-stage builds** keep image sizes light, improving deployment speeds and security.
+- **Docker volumes** are mandatory to prevent database data loss.
+- **Network isolation** shields databases from external intrusion.
+- **Service health checks** prevent API startup crashes caused by database connection delays.

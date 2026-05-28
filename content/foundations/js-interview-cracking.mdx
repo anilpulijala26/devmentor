@@ -1,0 +1,149 @@
+---
+title: "JavaScript Interview Cracking Guide"
+description: "A comprehensive compile of junior, mid, and senior level JavaScript interview questions and answers covering closures, event loop priorities, debounce/throttle algorithms, and prototype mechanics"
+tags: ["javascript", "interview", "career", "scoping"]
+estimatedTime: "50 minutes"
+---
+
+# JavaScript Interview Cracking Guide
+
+Securing front-end and full-stack positions requires a deep understanding of JavaScript engines, compilation phases, scope binding, scheduling algorithms, and optimization patterns.
+
+---
+
+## 1. Junior Level Questions
+
+### Q1: What is Hoisting in JavaScript? How do `var`, `let`, and `const` differ?
+* **Answer:** Hoisting is the JavaScript engine's behavior of moving variable and function declarations to the top of their containing scope during the compilation phase, before execution.
+  * **Function declarations** are fully hoisted, meaning they can be called before they are declared in the code.
+  * **`var` declarations** are hoisted and initialized with `undefined`. Calling them before declaration returns `undefined`.
+  * **`let` and `const` declarations** are hoisted but are *not* initialized. They reside in the **Temporal Dead Zone (TDZ)** from the start of the block until the line of declaration is reached. Accessing them early throws a `ReferenceError`.
+
+```javascript
+// Hoisting comparison:
+console.log(x); // returns undefined (hoisted var)
+var x = 5;
+
+console.log(y); // Throws ReferenceError (TDZ let)
+let y = 10;
+```
+
+### Q2: What is the difference between double equals `==` and triple equals `===`?
+* **Answer:** 
+  * **`==` (Loose Equality)** compares two values for equality after performing **type coercion** (converting the values to a common type first).
+  * **`===` (Strict Equality)** compares both the value and the type. No type coercion occurs; if the types are different, it returns `false`.
+
+```javascript
+console.log(5 == "5");  // true (string coerced to number)
+console.log(5 === "5"); // false (number !== string)
+console.log(null == undefined);  // true
+console.log(null === undefined); // false
+```
+
+### Q3: What is a closure? Provide a simple code example.
+* **Answer:** A closure is the combination of a function bundled together with references to its surrounding state (the lexical environment). In other words, a closure gives an inner function access to the outer function's scope even after the outer function has finished executing.
+
+```javascript
+function multiplier(factor) {
+  return function (num) {
+    return num * factor; // "factor" is captured by closure!
+  };
+}
+
+const double = multiplier(2);
+console.log(double(5)); // 10
+```
+
+---
+
+## 2. Mid Level Questions
+
+### Q4: Explain the Event Loop. What is the priority difference between Microtasks and Macrotasks?
+* **Answer:** JavaScript is single-threaded. To handle asynchronous execution without blocking, the engine uses the **Event Loop**.
+  * Synchronous code in the **Call Stack** runs first.
+  * When the stack is empty, the Event Loop executes all callbacks in the **Microtask Queue** (Promises, `queueMicrotask`).
+  * Once the Microtask Queue is completely empty, the Event Loop executes the first callback in the **Macrotask Queue** (Timers like `setTimeout`, DOM events, network fetches).
+  * The loop then immediately checks for new microtasks before running another macrotask, allowing microtasks to prioritize high-speed resolutions.
+
+### Q5: How do `call`, `apply`, and `bind` differ?
+* **Answer:** All three methods change the execution context (`this` binding) of a function:
+  * **`call`**: Invokes the function immediately, passing arguments individually (comma-separated).
+  * **`apply`**: Invokes the function immediately, passing arguments as an array.
+  * **`bind`**: Returns a *new* function with `this` bound, allowing arguments to be pre-filled. It does not invoke the function immediately.
+
+```javascript
+const user = { name: "Alice" };
+function greet(greeting, punctuation) {
+  console.log(`${greeting}, ${this.name}${punctuation}`);
+}
+
+greet.call(user, "Hello", "!");    // "Hello, Alice!"
+greet.apply(user, ["Hi", "."]);    // "Hi, Alice."
+const bound = greet.bind(user);
+bound("Welcome", "!");              // "Welcome, Alice!"
+```
+
+---
+
+## 3. Senior Level Questions
+
+### Q6: Write a custom implementation of `debounce` and `throttle`. Explain their differences and production use cases.
+* **Answer:**
+  * **Debounce**: Delays function execution until a specified idle time has passed since the last trigger. Ideal for auto-complete search inputs.
+  * **Throttle**: Restricts function execution to at most once per specified time interval. Ideal for scroll/resize listeners.
+
+```javascript
+// Debounce Implementation
+function debounce(fn, delay) {
+  let timeoutId;
+  return function (...args) {
+    clearTimeout(timeoutId);
+    timeoutId = setTimeout(() => {
+      fn.apply(this, args);
+    }, delay);
+  };
+}
+
+// Throttle Implementation
+function throttle(fn, limit) {
+  let inThrottle = false;
+  return function (...args) {
+    if (!inThrottle) {
+      fn.apply(this, args);
+      inThrottle = true;
+      setTimeout(() => {
+        inThrottle = false;
+      }, limit);
+    }
+  };
+}
+```
+
+### Q7: Explain prototypical inheritance in JavaScript. What happens under the hood when we use the `class` keyword?
+* **Answer:** JavaScript classes do not use classical OOP class inheritance. Instead, they compile to **Prototypical Inheritance**.
+  * When a class is declared (e.g. `class Dog extends Animal`), JS creates function constructors.
+  * Method declarations inside class templates are bound to the constructor function's `.prototype` object, rather than copied to every instance.
+  * When an instance method is called, the JavaScript engine searches the instance object properties. If not found, it travels the prototype chain via `__proto__` to locate the method on the class prototype.
+  * Prototypical inheritance saves system memory because methods are allocated once on the constructor prototype, rather than duplicated across millions of instances.
+
+---
+
+<Checklist
+  title="JavaScript Interview Preparation Checklist"
+  items={[
+    "Explain hoisting behaviors and lexical scoping rules of var vs let vs const",
+    "Describe loose vs strict equality rules and type coercion mechanisms",
+    "Illustrate closure use cases including data privatization closures",
+    "Evaluate execution ordering across Call Stack, Microtask, and Macrotask queues",
+    "Bind functions to custom execution contexts using call, apply, and bind helpers",
+    "Implement debounce and throttle algorithms to control high-frequency function invocation rates"
+  ]}
+/>
+
+## Key Takeaways
+
+* **Hoisting** moves declarations to the top of their block, leaving `let`/`const` inside the TDZ.
+* **Closures** bind lexical scopes, creating encapsulation.
+* **`bind`/`call`/`apply`** override the execution context `this`.
+* **Debouncing** aggregates calls into a single trigger, while **throttling** spaces calls out at a set frequency.
+* **Prototypical chains** enable memory-efficient class structures.

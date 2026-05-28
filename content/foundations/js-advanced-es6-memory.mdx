@@ -1,0 +1,172 @@
+---
+title: "Advanced JS & Memory Management"
+description: "Master closures, prototypical inheritance chains, modern ES6-ES15 APIs, and memory leak prevention techniques"
+tags: ["javascript", "memory", "closures", "es6"]
+estimatedTime: "55 minutes"
+---
+
+# Advanced JS & Memory Management
+
+Writing scalable JavaScript requires understanding how the engine allocates memory, binds scope, links prototypes, and cleans up references. Without this knowledge, applications will eventually experience memory leaks and degradation over time.
+
+---
+
+## 1. Closures & Scoping
+
+A **closure** is created when a nested function retains access to variables from its outer scope, even after the outer function has finished executing.
+
+```javascript
+function createCounter() {
+  let count = 0; // Private state variable
+  
+  return {
+    increment: () => {
+      count++;
+      return count;
+    },
+    decrement: () => {
+      count--;
+      return count;
+    }
+  };
+}
+
+const counter = createCounter();
+console.log(counter.increment()); // 1
+console.log(counter.increment()); // 2
+// The variable "count" cannot be accessed directly from the outside!
+```
+
+### Production Use Cases:
+* **Data Encapsulation**: Creating private variables that cannot be overwritten by outside scripts.
+* **Currying and Partial Application**: Preserving configurations or state setups across sequential function calls.
+
+---
+
+## 2. Prototypical Inheritance
+
+Unlike class-based languages (like Java or C++), JavaScript uses **Prototypical Inheritance**. Under the hood, the modern `class` keyword is syntactic sugar over prototype chains.
+
+Every object in JavaScript has an internal link to another object called its **prototype** (`[[Prototype]]` or accessed via `Object.getPrototypeOf`).
+
+```javascript
+const animal = {
+  eats: true,
+  walk() {
+    console.log("Animal walking...");
+  }
+};
+
+const dog = Object.create(animal); // Links dog's prototype to animal
+dog.barks = true;
+
+dog.walk(); // "Animal walking..." (Found by traveling up the prototype chain!)
+console.log(dog.eats); // true
+```
+
+When you read a property from an object:
+1. The engine checks the object's own properties.
+2. If not found, it travels up the prototype chain (`object.__proto__`) until it either finds the property or reaches the end (`null`).
+
+---
+
+## 3. Modern JavaScript API Updates (ES6 - ES15)
+
+Production codebases expect developers to write concise, expressive code using modern language additions.
+
+* **Optional Chaining (`?.`)** & **Nullish Coalescing (`??`)**:
+  ```javascript
+  // Prevents crash if user or profile is missing. Nullish coalescing checks for null/undefined only.
+  const theme = user?.profile?.settings?.theme ?? "light";
+  ```
+* **Structured Cloning (`structuredClone`)**:
+  Historically, deep-copying objects required importing loadash or running `JSON.parse(JSON.stringify(obj))`, which crashes on dates or regex. Use native `structuredClone`:
+  ```javascript
+  const deepCopy = structuredClone(originalObject);
+  ```
+* **WeakMap & WeakSet**:
+  Regular Maps and Sets hold strong references to keys, preventing them from being garbage-collected. `WeakMap` keys must be objects, and they hold **weak** references, allowing the garbage collector to clean them up if there are no other references to them.
+  ```javascript
+  const metadata = new WeakMap();
+  let element = document.getElementById("main-card");
+  
+  metadata.set(element, { clicked: false });
+  // If element is removed from DOM and dereferenced:
+  element = null; // The WeakMap automatically releases memory for both key and metadata!
+  ```
+
+---
+
+## 4. Memory Leak Detection & Prevention
+
+JavaScript handles memory automatically using a **Garbage Collector** via the **Mark-and-Sweep algorithm**. An object is marked as garbage if it is unreachable from the root (`window` or global execution context).
+
+### Common Memory Leaks in Single Page Applications:
+
+#### 1. Dangling Event Listeners:
+If you add an event listener to the global window inside a component and delete the component, the listener remains in memory, holding a reference to the component state.
+```javascript
+// ❌ BAD: React hook without clean-up
+useEffect(() => {
+  window.addEventListener("resize", handleResize);
+}, []);
+
+// ✅ GOOD: Always remove listeners on unmount
+useEffect(() => {
+  window.addEventListener("resize", handleResize);
+  return () => window.removeEventListener("resize", handleResize);
+}, []);
+```
+
+#### 2. Forgotten Timers:
+A `setInterval` callback continues executing even if the page that spawned it is closed:
+```javascript
+// ❌ BAD: Timer runs forever
+setInterval(() => {
+  fetchData();
+}, 1000);
+
+// ✅ GOOD: Clear interval
+const timerId = setInterval(fetchData, 1000);
+// Clear using clearInterval(timerId) when route changes or component unmounts.
+```
+
+#### 3. Out of DOM References:
+Saving references to DOM elements in Javascript arrays prevents the browser from deleting them even if they are removed from the page.
+```javascript
+const elements = {
+  button: document.getElementById("action-btn")
+};
+document.body.removeChild(elements.button);
+// elements.button still references the node! Fix: elements.button = null;
+```
+
+<SeniorNote>
+To diagnose memory leaks, open Chrome DevTools, navigate to the <strong>Memory</strong> panel, and take consecutive <strong>Heap Snapshots</strong>. Filter by "Detached DOM elements" to see nodes that have been removed from the page but are still held in memory by JavaScript.
+</SeniorNote>
+
+<Pitfall>
+Be careful when using closures inside loops. A closure created inside a loop can accidentally capture variables that you expect to change, leading to stale closures. Always verify that closures capture current state references.
+</Pitfall>
+
+---
+
+<Checklist
+  title="JavaScript Memory & Core Checklist"
+  items={[
+    "Implement closures to encapsulate private states within functions",
+    "Attach shared methods to constructor prototypes to avoid duplicate allocations",
+    "Deep copy complex structures using structuredClone instead of JSON stringify hacks",
+    "Use WeakMap when storing temporary metadata linked to DOM nodes",
+    "Return clean-up functions in useEffect hooks to clear event listeners",
+    "Clear active intervals and timers on component unmount phases"
+  ]}
+/>
+
+## Key Takeaways
+
+* **Closures** preserve scope references, creating private variables.
+* **Prototypical Inheritance** connects objects, letting child elements access parent methods.
+* **Modern ES6-ES15 APIs** simplify tasks like deep copying (`structuredClone`) and dynamic properties checking (`?.`).
+* **Memory leaks** occur when objects are kept reachable from the root after they are no longer needed.
+* **Garbage collection** cleans up unreachable elements from memory.

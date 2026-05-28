@@ -8,92 +8,195 @@ import {
   ShieldCheck,
   Boxes,
   Rocket,
+  ArrowUpRight,
+  GitBranch,
+  Terminal,
+  Cpu,
+  Workflow
 } from "lucide-react";
 
 export default function Home() {
   return (
-    <div className="min-h-screen bg-slate-50">
-      {/* Hero Section - Full Width Colorful Banner */}
-      <div className="relative w-full overflow-hidden bg-gradient-to-br from-indigo-600 via-purple-600 to-indigo-700">
-        {/* Animated background elements */}
-        <div className="absolute inset-0 overflow-hidden">
-          <div className="absolute top-0 -left-40 w-80 h-80 bg-purple-400 rounded-full mix-blend-multiply filter blur-3xl opacity-20 animate-blob" />
-          <div className="absolute top-0 -right-40 w-80 h-80 bg-indigo-400 rounded-full mix-blend-multiply filter blur-3xl opacity-20 animate-blob animation-delay-2000" />
-          <div className="absolute -bottom-8 left-20 w-80 h-80 bg-indigo-300 rounded-full mix-blend-multiply filter blur-3xl opacity-20 animate-blob animation-delay-4000" />
+    <div className="min-h-screen bg-slate-50 text-slate-800 antialiased font-sans">
+      {/* Premium Hero Section with Two-Column Grid & Glowing Backdrops */}
+      <div className="relative w-full overflow-hidden bg-slate-950 py-20 lg:py-28 border-b border-slate-900">
+        {/* Glow meshes */}
+        <div className="absolute inset-0 pointer-events-none overflow-hidden">
+          <div className="absolute -top-40 -left-40 w-96 h-96 bg-indigo-500 rounded-full mix-blend-screen filter blur-[120px] opacity-25 animate-pulse" />
+          <div className="absolute top-20 right-10 w-[500px] h-[500px] bg-purple-600 rounded-full mix-blend-screen filter blur-[150px] opacity-20" />
+          <div className="absolute -bottom-20 left-1/3 w-80 h-80 bg-blue-500 rounded-full mix-blend-screen filter blur-[100px] opacity-15" />
         </div>
 
-        {/* Content */}
-        <div className="relative max-w-6xl mx-auto px-4 py-24">
-          <div className="max-w-3xl">
-            <div className="inline-flex items-center gap-2 bg-white/20 backdrop-blur-sm border border-white/30 px-4 py-2 rounded-full mb-6">
-              <Sparkles className="w-4 h-4 text-white" />
-              <span className="text-sm font-semibold text-white">
-                Master Web Development from a Senior
-              </span>
+        <div className="relative max-w-6xl mx-auto px-4 z-10">
+          <div className="grid lg:grid-cols-12 gap-12 lg:gap-8 items-center">
+            {/* Hero Details Column */}
+            <div className="lg:col-span-7 space-y-8 text-left">
+              <div className="inline-flex items-center gap-2.5 bg-indigo-500/10 backdrop-blur-md border border-indigo-500/30 px-4 py-2 rounded-full shadow-inner">
+                <Sparkles className="w-4 h-4 text-indigo-400 animate-spin" style={{ animationDuration: '4s' }} />
+                <span className="text-xs md:text-sm font-semibold tracking-wide text-indigo-300">
+                  Production-Ready Engineering Curriculum
+                </span>
+              </div>
+
+              <h1 className="text-4xl sm:text-5xl md:text-6xl font-black tracking-tight text-white leading-none">
+                Bridge the Gap <br />
+                <span className="text-transparent bg-clip-text bg-gradient-to-r from-indigo-400 via-purple-400 to-pink-400">
+                  Between Code & Systems
+                </span>
+              </h1>
+
+              <p className="text-lg md:text-xl text-slate-300 leading-relaxed max-w-2xl">
+                For <strong className="text-indigo-400 font-semibold">Interns</strong>: Build and deploy full-stack production systems independently. <br />
+                For <strong className="text-purple-400 font-semibold">Mid & Senior Developers</strong>: Master advanced system architecture, caching, and performance profiling.
+              </p>
+
+              <div className="flex flex-wrap gap-4 pt-2">
+                <Link
+                  href="/learn"
+                  className="inline-flex items-center gap-2.5 bg-indigo-600 text-white px-8 py-4 rounded-2xl font-bold hover:bg-indigo-500 hover:scale-[1.02] active:scale-95 transition-all duration-300 shadow-[0_4px_20px_0_rgba(79,70,229,0.3)]"
+                >
+                  Start Learning <ArrowRight className="w-5 h-5" />
+                </Link>
+
+                <Link
+                  href="/learn"
+                  className="inline-flex items-center gap-2 border-2 border-slate-800 text-slate-300 px-8 py-4 rounded-2xl font-semibold hover:bg-white/5 hover:border-slate-700 transition-all duration-300"
+                >
+                  Browse Tracks
+                </Link>
+              </div>
             </div>
 
-            <h1 className="text-6xl md:text-7xl font-bold mb-6 text-white leading-tight">
-              Learn to Build Production Web Applications
-            </h1>
+            {/* Interactive Pipeline Visualization (Right Column) */}
+            <div className="lg:col-span-5 relative">
+              {/* Glassmorphic Container Card */}
+              <div className="w-full bg-slate-900/60 backdrop-blur-xl border border-slate-800/80 rounded-3xl p-6 sm:p-8 shadow-2xl relative">
+                {/* Header tag */}
+                <div className="flex items-center justify-between border-b border-slate-800/80 pb-4 mb-6">
+                  <div className="flex items-center gap-2.5">
+                    <span className="flex h-2.5 w-2.5 rounded-full bg-green-400 animate-ping" />
+                    <span className="text-xs font-mono text-slate-400 uppercase tracking-widest">DevMentor-Pipeline // Active</span>
+                  </div>
+                  <Terminal className="w-4 h-4 text-slate-500" />
+                </div>
 
-            <p className="text-xl text-indigo-100 mb-8 leading-relaxed max-w-2xl">
-              Master modern web development from a senior engineer. Real-world
-              guidance, practical examples, and production-ready patterns.
-            </p>
+                {/* Trajectory pipeline stack */}
+                <div className="space-y-6 relative">
+                  {/* Vertical connecting line */}
+                  <div className="absolute left-[22px] top-4 bottom-4 w-0.5 bg-gradient-to-b from-indigo-500 via-purple-500 to-pink-500 opacity-30" />
 
-            <div className="flex gap-4 flex-wrap">
-              <Link
-                href="/learn"
-                className="inline-flex items-center gap-2 bg-white text-indigo-700 px-8 py-4 rounded-xl font-semibold hover:bg-indigo-50 transition shadow-lg hover:shadow-xl"
-              >
-                Start Learning <ArrowRight className="w-5 h-5" />
-              </Link>
+                  {/* Stage 1: Intern */}
+                  <div className="flex items-start gap-4 group">
+                    <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-indigo-950 border border-indigo-500/40 text-indigo-400 shadow-sm transition-all duration-300 group-hover:scale-110 group-hover:bg-indigo-900 group-hover:border-indigo-400 z-10">
+                      <Code2 className="w-5 h-5" />
+                    </div>
+                    <div className="space-y-1">
+                      <div className="flex items-center gap-2">
+                        <h4 className="font-bold text-white text-base">Intern / Junior</h4>
+                        <span className="text-[10px] font-semibold text-indigo-300 bg-indigo-950/80 border border-indigo-500/20 px-2 py-0.5 rounded-full">Real-world Practice</span>
+                      </div>
+                      <p className="text-xs text-slate-400 leading-normal">
+                        Ditch placeholder HTML/CSS. Build production environments with database pooling and rate limiting.
+                      </p>
+                    </div>
+                  </div>
 
-              <Link
-                href="/learn"
-                className="inline-flex items-center gap-2 border-2 border-white text-white px-8 py-4 rounded-xl font-semibold hover:bg-white/10 transition"
-              >
-                Browse Tracks
-              </Link>
+                  {/* Stage 2: Mid-Level */}
+                  <div className="flex items-start gap-4 group">
+                    <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-purple-950 border border-purple-500/40 text-purple-400 shadow-sm transition-all duration-300 group-hover:scale-110 group-hover:bg-purple-900 group-hover:border-purple-400 z-10">
+                      <Workflow className="w-5 h-5" />
+                    </div>
+                    <div className="space-y-1">
+                      <div className="flex items-center gap-2">
+                        <h4 className="font-bold text-white text-base">Mid-Level Developer</h4>
+                        <span className="text-[10px] font-semibold text-purple-300 bg-purple-950/80 border border-purple-500/20 px-2 py-0.5 rounded-full">Modular Architecture</span>
+                      </div>
+                      <p className="text-xs text-slate-400 leading-normal">
+                        Master React Fiber scheduling, parallel routes, and middleware security policies.
+                      </p>
+                    </div>
+                  </div>
+
+                  {/* Stage 3: Senior */}
+                  <div className="flex items-start gap-4 group">
+                    <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-pink-950 border border-pink-500/40 text-pink-400 shadow-sm transition-all duration-300 group-hover:scale-110 group-hover:bg-pink-900 group-hover:border-pink-400 z-10">
+                      <Cpu className="w-5 h-5" />
+                    </div>
+                    <div className="space-y-1">
+                      <div className="flex items-center gap-2">
+                        <h4 className="font-bold text-white text-base">Senior Engineer</h4>
+                        <span className="text-[10px] font-semibold text-pink-300 bg-pink-950/80 border border-pink-500/20 px-2 py-0.5 rounded-full">System Scaling</span>
+                      </div>
+                      <p className="text-xs text-slate-400 leading-normal">
+                        Implement Nesting caching rules, multi-stage Docker builds, Sentry logging, and performance analysis.
+                      </p>
+                    </div>
+                  </div>
+
+                  {/* Stage 4: Staff/Lead */}
+                  <div className="flex items-start gap-4 group">
+                    <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-slate-900 border border-emerald-500/40 text-emerald-400 shadow-sm transition-all duration-300 group-hover:scale-110 group-hover:bg-slate-800 group-hover:border-emerald-400 z-10">
+                      <GitBranch className="w-5 h-5 animate-pulse" />
+                    </div>
+                    <div className="space-y-1">
+                      <div className="flex items-center gap-2">
+                        <h4 className="font-bold text-white text-base">System Architect</h4>
+                        <span className="text-[10px] font-semibold text-emerald-300 bg-emerald-950/80 border border-emerald-500/20 px-2 py-0.5 rounded-full">Zero-Downtime</span>
+                      </div>
+                      <p className="text-xs text-slate-400 leading-normal">
+                        Design expand-and-contract migrations, serverless pooling, and robust microservices boundaries.
+                      </p>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Glassmorphic accent background badge */}
+                <div className="mt-6 pt-4 border-t border-slate-800/80 flex items-center justify-between text-xs text-slate-400">
+                  <span>Interactive Curriculum Map</span>
+                  <Link href="/learn" className="inline-flex items-center gap-1 text-indigo-400 hover:text-indigo-300 transition-colors font-medium">
+                    Explore Now <ArrowUpRight className="w-3.5 h-3.5" />
+                  </Link>
+                </div>
+              </div>
             </div>
           </div>
         </div>
       </div>
 
-      {/* Stats Banner */}
-      <div className="max-w-6xl mx-auto px-4 -mt-10 relative z-10">
-        <div className="grid md:grid-cols-3 gap-6">
-          <div className="bg-white rounded-2xl p-6 shadow-lg border border-indigo-100">
+      {/* Modern Stats Banner with Elevated Cards */}
+      <div className="max-w-6xl mx-auto px-4 -mt-8 relative z-20">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+          <div className="bg-white rounded-2xl p-6 shadow-[0_8px_30px_rgb(0,0,0,0.04)] border border-slate-100/80 hover:shadow-xl transition-all duration-300 group">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm font-semibold text-indigo-600">Tracks</p>
-                <p className="text-3xl font-bold text-slate-900 mt-2">3</p>
+                <p className="text-xs font-bold text-indigo-600 uppercase tracking-widest">Learning Tracks</p>
+                <p className="text-3xl font-black text-slate-900 mt-2">3 Dedicated</p>
               </div>
-              <div className="h-12 w-12 rounded-full bg-indigo-100 flex items-center justify-center text-indigo-600">
+              <div className="h-12 w-12 rounded-2xl bg-indigo-50 flex items-center justify-center text-indigo-600 group-hover:scale-110 transition-transform">
                 <Layers className="w-6 h-6" />
               </div>
             </div>
           </div>
 
-          <div className="bg-white rounded-2xl p-6 shadow-lg border border-purple-100">
+          <div className="bg-white rounded-2xl p-6 shadow-[0_8px_30px_rgb(0,0,0,0.04)] border border-slate-100/80 hover:shadow-xl transition-all duration-300 group">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm font-semibold text-purple-600">Modules</p>
-                <p className="text-3xl font-bold text-slate-900 mt-2">11+</p>
+                <p className="text-xs font-bold text-purple-600 uppercase tracking-widest">Active Modules</p>
+                <p className="text-3xl font-black text-slate-900 mt-2">11 Core Areas</p>
               </div>
-              <div className="h-12 w-12 rounded-full bg-purple-100 flex items-center justify-center text-purple-600">
+              <div className="h-12 w-12 rounded-2xl bg-purple-50 flex items-center justify-center text-purple-600 group-hover:scale-110 transition-transform">
                 <BookOpen className="w-6 h-6" />
               </div>
             </div>
           </div>
 
-          <div className="bg-white rounded-2xl p-6 shadow-lg border border-indigo-100">
+          <div className="bg-white rounded-2xl p-6 shadow-[0_8px_30px_rgb(0,0,0,0.04)] border border-slate-100/80 hover:shadow-xl transition-all duration-300 group">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm font-semibold text-indigo-600">Lessons</p>
-                <p className="text-3xl font-bold text-slate-900 mt-2">20+</p>
+                <p className="text-xs font-bold text-pink-600 uppercase tracking-widest">Interactive Lessons</p>
+                <p className="text-3xl font-black text-slate-900 mt-2">25+ Deep Dives</p>
               </div>
-              <div className="h-12 w-12 rounded-full bg-indigo-100 flex items-center justify-center text-indigo-600">
+              <div className="h-12 w-12 rounded-2xl bg-pink-50 flex items-center justify-center text-pink-600 group-hover:scale-110 transition-transform">
                 <ShieldCheck className="w-6 h-6" />
               </div>
             </div>
@@ -101,29 +204,29 @@ export default function Home() {
         </div>
       </div>
 
-      {/* Core Concepts Banner */}
-      <div className="max-w-6xl mx-auto px-4 mt-12">
-        <div className="bg-gradient-to-r from-amber-400 to-orange-500 rounded-3xl p-8 shadow-lg">
-          <div className="flex flex-wrap items-center justify-between gap-4">
-            <div className="flex items-center gap-3">
-              <span className="inline-flex h-12 w-12 items-center justify-center rounded-full bg-white/30 backdrop-blur-sm text-white">
-                <Sparkles className="h-6 w-6" />
+      {/* Core Concepts Sticky Banner */}
+      <div className="max-w-6xl mx-auto px-4 mt-16">
+        <div className="bg-gradient-to-r from-slate-900 via-indigo-950 to-purple-950 rounded-3xl p-8 shadow-xl border border-slate-800">
+          <div className="flex flex-wrap items-center justify-between gap-6">
+            <div className="flex items-center gap-4">
+              <span className="inline-flex h-12 w-12 items-center justify-center rounded-2xl bg-indigo-500/10 border border-indigo-500/30 text-indigo-400">
+                <Sparkles className="h-6 w-6 animate-pulse" />
               </span>
               <div>
-                <p className="text-xs font-bold uppercase tracking-wide text-white/80">
-                  Get Started with Core Concepts
+                <p className="text-xs font-bold uppercase tracking-wider text-indigo-300/80">
+                  Pre-requisites & Foundations
                 </p>
                 <h2 className="text-2xl font-bold text-white mt-1">
-                  Know These Before You Code
+                  Master the Fundamentals
                 </h2>
               </div>
             </div>
 
-            <div className="flex flex-wrap gap-2">
-              {["HTML", "CSS", "JavaScript", "TypeScript", "React"].map((item) => (
+            <div className="flex flex-wrap gap-2.5">
+              {["HTML5 & Accessibility", "Modern CSS Layouts", "Vanilla JavaScript ES6", "Strict TypeScript", "React Rendering"].map((item) => (
                 <span
                   key={item}
-                  className="rounded-full bg-white/20 backdrop-blur-sm px-4 py-2 text-sm font-semibold text-white border border-white/30"
+                  className="rounded-xl bg-white/5 backdrop-blur-md px-4 py-2 text-xs font-semibold text-slate-200 border border-slate-800/80 hover:bg-white/10 hover:border-slate-700/60 transition-all cursor-default"
                 >
                   {item}
                 </span>
@@ -135,491 +238,272 @@ export default function Home() {
 
       {/* Core Concepts Grid */}
       <div className="max-w-6xl mx-auto px-4 py-20">
-        <div className="flex items-center justify-between mb-12">
-          <div>
-            <h2 className="text-4xl font-bold text-slate-900 mb-2">
-              Core Concepts You Should Know
-            </h2>
-            <p className="text-lg text-slate-600">
-              Master the foundations of modern web development
-            </p>
-          </div>
+        <div className="text-center max-w-2xl mx-auto mb-16 space-y-3">
+          <h2 className="text-3xl sm:text-4xl font-extrabold text-slate-900 tracking-tight">
+            Curriculum Core Pillars
+          </h2>
+          <p className="text-lg text-slate-600">
+            A cohesive path engineered to transition developers from sandbox syntax to production deployment.
+          </p>
         </div>
 
         <div className="grid md:grid-cols-3 gap-6">
-          <div className="group rounded-2xl border border-indigo-200 bg-gradient-to-br from-indigo-50 to-indigo-100/50 p-6 shadow-md transition hover:shadow-lg hover:-translate-y-1">
-            <div className="flex items-center gap-3 mb-3">
-              <span className="inline-flex h-10 w-10 items-center justify-center rounded-full bg-indigo-600 text-white">
+          {/* Pillar 1 */}
+          <div className="group rounded-2xl border border-slate-200 bg-white p-6 shadow-sm hover:shadow-lg hover:-translate-y-1 transition-all duration-300">
+            <div className="flex items-center gap-3.5 mb-4">
+              <span className="inline-flex h-11 w-11 items-center justify-center rounded-xl bg-indigo-50 text-indigo-600 group-hover:bg-indigo-600 group-hover:text-white transition-all">
                 <Code2 className="h-5 w-5" />
               </span>
-              <h3 className="text-lg font-semibold text-slate-900">
-                HTML Semantics
+              <h3 className="text-lg font-bold text-slate-900">
+                HTML Semantics & A11y
               </h3>
             </div>
-            <p className="text-slate-700">
-              Structure your pages with meaning for accessibility and SEO.
+            <p className="text-sm text-slate-600 leading-relaxed">
+              Structure code with true accessibility (ARIA parameters) and layout shift mitigation strategies to satisfy modern SEO requirements.
             </p>
           </div>
 
-          <div className="group rounded-2xl border border-purple-200 bg-gradient-to-br from-purple-50 to-purple-100/50 p-6 shadow-md transition hover:shadow-lg hover:-translate-y-1">
-            <div className="flex items-center gap-3 mb-3">
-              <span className="inline-flex h-10 w-10 items-center justify-center rounded-full bg-purple-600 text-white">
+          {/* Pillar 2 */}
+          <div className="group rounded-2xl border border-slate-200 bg-white p-6 shadow-sm hover:shadow-lg hover:-translate-y-1 transition-all duration-300">
+            <div className="flex items-center gap-3.5 mb-4">
+              <span className="inline-flex h-11 w-11 items-center justify-center rounded-xl bg-purple-50 text-purple-600 group-hover:bg-purple-600 group-hover:text-white transition-all">
                 <Layers className="h-5 w-5" />
               </span>
-              <h3 className="text-lg font-semibold text-slate-900">
-                CSS Layout Systems
+              <h3 className="text-lg font-bold text-slate-900">
+                CSS Grid & Custom Properties
               </h3>
             </div>
-            <p className="text-slate-700">
-              Master Flexbox and Grid to build responsive layouts fast.
+            <p className="text-sm text-slate-600 leading-relaxed">
+              Create responsive styling architectures with native nesting and containers, avoiding bulky Tailwind boilerplate for core grids.
             </p>
           </div>
 
-          <div className="group rounded-2xl border border-pink-200 bg-gradient-to-br from-pink-50 to-pink-100/50 p-6 shadow-md transition hover:shadow-lg hover:-translate-y-1">
-            <div className="flex items-center gap-3 mb-3">
-              <span className="inline-flex h-10 w-10 items-center justify-center rounded-full bg-pink-600 text-white">
+          {/* Pillar 3 */}
+          <div className="group rounded-2xl border border-slate-200 bg-white p-6 shadow-sm hover:shadow-lg hover:-translate-y-1 transition-all duration-300">
+            <div className="flex items-center gap-3.5 mb-4">
+              <span className="inline-flex h-11 w-11 items-center justify-center rounded-xl bg-pink-50 text-pink-600 group-hover:bg-pink-600 group-hover:text-white transition-all">
                 <Boxes className="h-5 w-5" />
               </span>
-              <h3 className="text-lg font-semibold text-slate-900">
-                JavaScript Fundamentals
+              <h3 className="text-lg font-bold text-slate-900">
+                Event Loop & Memory
               </h3>
             </div>
-            <p className="text-slate-700">
-              Understand data, functions, and async to power interactivity.
+            <p className="text-sm text-slate-600 leading-relaxed">
+              Understand the Call Stack, microtasks vs macrotasks, and closures to prevent common rendering freezes and memory leak bottlenecks.
             </p>
           </div>
 
-          <div className="group rounded-2xl border border-cyan-200 bg-gradient-to-br from-cyan-50 to-cyan-100/50 p-6 shadow-md transition hover:shadow-lg hover:-translate-y-1">
-            <div className="flex items-center gap-3 mb-3">
-              <span className="inline-flex h-10 w-10 items-center justify-center rounded-full bg-cyan-600 text-white">
+          {/* Pillar 4 */}
+          <div className="group rounded-2xl border border-slate-200 bg-white p-6 shadow-sm hover:shadow-lg hover:-translate-y-1 transition-all duration-300">
+            <div className="flex items-center gap-3.5 mb-4">
+              <span className="inline-flex h-11 w-11 items-center justify-center rounded-xl bg-cyan-50 text-cyan-600 group-hover:bg-cyan-600 group-hover:text-white transition-all">
                 <ShieldCheck className="h-5 w-5" />
               </span>
-              <h3 className="text-lg font-semibold text-slate-900">
-                TypeScript Safety
+              <h3 className="text-lg font-bold text-slate-900">
+                Strict Type-Safety
               </h3>
             </div>
-            <p className="text-slate-700">
-              Add types to reduce bugs and refactor with confidence.
+            <p className="text-sm text-slate-600 leading-relaxed">
+              Apply advanced generic bounds, discriminated unions, and mapped modifier properties to build reusable, resilient APIs.
             </p>
           </div>
 
-          <div className="group rounded-2xl border border-green-200 bg-gradient-to-br from-green-50 to-green-100/50 p-6 shadow-md transition hover:shadow-lg hover:-translate-y-1">
-            <div className="flex items-center gap-3 mb-3">
-              <span className="inline-flex h-10 w-10 items-center justify-center rounded-full bg-green-600 text-white">
+          {/* Pillar 5 */}
+          <div className="group rounded-2xl border border-slate-200 bg-white p-6 shadow-sm hover:shadow-lg hover:-translate-y-1 transition-all duration-300">
+            <div className="flex items-center gap-3.5 mb-4">
+              <span className="inline-flex h-11 w-11 items-center justify-center rounded-xl bg-green-50 text-green-600 group-hover:bg-green-600 group-hover:text-white transition-all">
                 <Rocket className="h-5 w-5" />
               </span>
-              <h3 className="text-lg font-semibold text-slate-900">
-                React Thinking
+              <h3 className="text-lg font-bold text-slate-900">
+                React Reconciliation & Fiber
               </h3>
             </div>
-            <p className="text-slate-700">
-              Compose UIs with components, props, and state.
+            <p className="text-sm text-slate-600 leading-relaxed">
+              Learn the internal details of Fiber node trees, concurrent scheduling, state mutations, and optimization profiling metrics.
             </p>
           </div>
 
-          <div className="group rounded-2xl border border-orange-200 bg-gradient-to-br from-orange-50 to-orange-100/50 p-6 shadow-md transition hover:shadow-lg hover:-translate-y-1">
-            <div className="flex items-center gap-3 mb-3">
-              <span className="inline-flex h-10 w-10 items-center justify-center rounded-full bg-orange-600 text-white">
+          {/* Pillar 6 */}
+          <div className="group rounded-2xl border border-slate-200 bg-white p-6 shadow-sm hover:shadow-lg hover:-translate-y-1 transition-all duration-300">
+            <div className="flex items-center gap-3.5 mb-4">
+              <span className="inline-flex h-11 w-11 items-center justify-center rounded-xl bg-amber-50 text-amber-600 group-hover:bg-amber-600 group-hover:text-white transition-all">
                 <Sparkles className="h-5 w-5" />
               </span>
-              <h3 className="text-lg font-semibold text-slate-900">
-                Production Mindset
+              <h3 className="text-lg font-bold text-slate-900">
+                Server Caching & Auth
               </h3>
             </div>
-            <p className="text-slate-700">
-              Build maintainable apps with clean patterns and checks.
+            <p className="text-sm text-slate-600 leading-relaxed">
+              Implement Request Memoization, Data Caching layers, secure HTTPOnly JWT rotation, and Sentry pipeline error-reporting.
             </p>
           </div>
         </div>
       </div>
 
-      {/* Animated Visuals */}
-      <div className="max-w-6xl mx-auto px-4 pb-16">
-        <div className="grid md:grid-cols-3 gap-6">
-          <div className="group rounded-2xl border border-slate-200 bg-white p-6 shadow-sm transition hover:-translate-y-0.5 hover:border-indigo-200 hover:shadow-md">
-            <div className="flex items-center justify-between mb-4">
-              <h3 className="text-lg font-semibold text-slate-900">
-                HTML Structure
-              </h3>
-              <span className="text-xs font-semibold text-indigo-700 bg-indigo-50 px-2 py-1 rounded-full">
-                Beginner
-              </span>
-            </div>
-            <div className="h-32 rounded-xl bg-slate-50 border border-slate-200 flex items-center justify-center">
-              <svg width="140" height="80" viewBox="0 0 140 80" fill="none">
-                <rect
-                  x="8"
-                  y="8"
-                  width="124"
-                  height="16"
-                  rx="6"
-                  className="fill-indigo-100"
-                />
-                <rect
-                  x="16"
-                  y="32"
-                  width="108"
-                  height="16"
-                  rx="6"
-                  className="fill-slate-200"
-                />
-                <rect
-                  x="24"
-                  y="56"
-                  width="92"
-                  height="16"
-                  rx="6"
-                  className="fill-indigo-200"
-                />
-                <circle
-                  cx="20"
-                  cy="16"
-                  r="3"
-                  className="fill-indigo-500 animate-pulse"
-                />
-                <circle
-                  cx="28"
-                  cy="40"
-                  r="3"
-                  className="fill-indigo-500 animate-pulse"
-                />
-                <circle
-                  cx="36"
-                  cy="64"
-                  r="3"
-                  className="fill-indigo-500 animate-pulse"
-                />
-              </svg>
-            </div>
-            <p className="mt-4 text-sm text-slate-600">
-              Think of HTML as stacked blocks that define the page structure.
+      {/* Premium UI Mockups & Visual Micro-Animations */}
+      <div className="bg-slate-900 text-white py-20 border-y border-slate-800">
+        <div className="max-w-6xl mx-auto px-4">
+          <div className="text-center max-w-2xl mx-auto mb-16 space-y-3">
+            <h2 className="text-3xl sm:text-4xl font-extrabold tracking-tight">
+              Interactive Web Mechanics
+            </h2>
+            <p className="text-slate-400">
+              Interactive diagrams used throughout the tracks help clarify complex, non-visual engine processes in single glance.
             </p>
           </div>
 
-          <div className="group rounded-2xl border border-slate-200 bg-white p-6 shadow-sm transition hover:-translate-y-0.5 hover:border-indigo-200 hover:shadow-md">
-            <div className="flex items-center justify-between mb-4">
-              <h3 className="text-lg font-semibold text-slate-900">CSS Layout</h3>
-              <span className="text-xs font-semibold text-indigo-700 bg-indigo-50 px-2 py-1 rounded-full">
-                Flexbox
-              </span>
+          <div className="grid md:grid-cols-3 gap-8">
+            {/* Diagram Preview 1 */}
+            <div className="bg-slate-950/60 border border-slate-800/80 rounded-2xl p-6 shadow-lg hover:border-slate-700/80 transition-colors">
+              <div className="flex items-center justify-between mb-4">
+                <h3 className="font-bold text-slate-200">HTML Layout Box Model</h3>
+                <span className="text-[10px] font-bold text-indigo-400 bg-indigo-500/10 px-2.5 py-1 rounded-full uppercase tracking-wider">Structure</span>
+              </div>
+              <div className="h-32 rounded-xl bg-slate-900 border border-slate-800 flex items-center justify-center relative overflow-hidden">
+                <svg width="140" height="80" viewBox="0 0 140 80" fill="none">
+                  <rect x="8" y="8" width="124" height="64" rx="8" className="fill-slate-950 stroke-indigo-500/30" strokeWidth="1" />
+                  <rect x="20" y="20" width="100" height="40" rx="6" className="fill-indigo-500/10 stroke-indigo-500/50" strokeWidth="1.5" />
+                  <rect x="36" y="32" width="68" height="16" rx="4" className="fill-indigo-500/25 stroke-indigo-400" strokeWidth="1.5" />
+                  <circle cx="20" cy="20" r="3" className="fill-indigo-400 animate-ping" />
+                  <circle cx="120" cy="60" r="3" className="fill-pink-400 animate-ping" style={{ animationDelay: "1s" }} />
+                </svg>
+              </div>
+              <p className="mt-4 text-xs text-slate-400 leading-relaxed">
+                Visualizing content bounds, padding, border regions, and margins recursively to debug nested document layout problems.
+              </p>
             </div>
-            <div className="h-32 rounded-xl bg-slate-50 border border-slate-200 flex items-center justify-center">
-              <svg width="140" height="80" viewBox="0 0 140 80" fill="none">
-                <rect
-                  x="10"
-                  y="18"
-                  width="120"
-                  height="44"
-                  rx="10"
-                  className="fill-slate-200"
-                />
-                <rect
-                  x="22"
-                  y="28"
-                  width="26"
-                  height="24"
-                  rx="6"
-                  className="fill-indigo-200"
-                />
-                <rect
-                  x="57"
-                  y="28"
-                  width="26"
-                  height="24"
-                  rx="6"
-                  className="fill-indigo-300"
-                />
-                <rect
-                  x="92"
-                  y="28"
-                  width="26"
-                  height="24"
-                  rx="6"
-                  className="fill-indigo-200"
-                />
-                <path
-                  d="M22 20c10-8 24-8 34 0"
-                  className="stroke-indigo-500"
-                  strokeWidth="2"
-                  fill="none"
-                >
-                  <animate
-                    attributeName="d"
-                    dur="2.2s"
-                    repeatCount="indefinite"
-                    values="M22 20c10-8 24-8 34 0; M22 20c10 8 24 8 34 0; M22 20c10-8 24-8 34 0"
-                  />
-                </path>
-              </svg>
-            </div>
-            <p className="mt-4 text-sm text-slate-600">
-              Flexbox aligns items in rows or columns with predictable spacing.
-            </p>
-          </div>
 
-          <div className="group rounded-2xl border border-slate-200 bg-white p-6 shadow-sm transition hover:-translate-y-0.5 hover:border-indigo-200 hover:shadow-md">
-            <div className="flex items-center justify-between mb-4">
-              <h3 className="text-lg font-semibold text-slate-900">
-                JavaScript Flow
-              </h3>
-              <span className="text-xs font-semibold text-indigo-700 bg-indigo-50 px-2 py-1 rounded-full">
-                Async
-              </span>
+            {/* Diagram Preview 2 */}
+            <div className="bg-slate-950/60 border border-slate-800/80 rounded-2xl p-6 shadow-lg hover:border-slate-700/80 transition-colors">
+              <div className="flex items-center justify-between mb-4">
+                <h3 className="font-bold text-slate-200">Flexbox Alignment</h3>
+                <span className="text-[10px] font-bold text-purple-400 bg-purple-500/10 px-2.5 py-1 rounded-full uppercase tracking-wider">CSS Flex</span>
+              </div>
+              <div className="h-32 rounded-xl bg-slate-900 border border-slate-800 flex items-center justify-center relative overflow-hidden">
+                <svg width="140" height="80" viewBox="0 0 140 80" fill="none">
+                  <rect x="10" y="15" width="120" height="50" rx="8" className="fill-slate-950 stroke-purple-500/20" strokeWidth="1.5" />
+                  <rect x="20" y="25" width="25" height="30" rx="4" className="fill-purple-500/10 stroke-purple-400" strokeWidth="1.5" />
+                  <rect x="58" y="25" width="25" height="30" rx="4" className="fill-purple-500/20 stroke-purple-300" strokeWidth="1.5" />
+                  <rect x="95" y="25" width="25" height="30" rx="4" className="fill-purple-500/10 stroke-purple-400" strokeWidth="1.5" />
+                  <path d="M20 18h100" className="stroke-indigo-500/20" strokeDasharray="3 3" />
+                  <path d="M20 62h100" className="stroke-indigo-500/20" strokeDasharray="3 3" />
+                </svg>
+              </div>
+              <p className="mt-4 text-xs text-slate-400 leading-relaxed">
+                Interactively testing distribution schemas (space-between, space-around) to layout interfaces with maximum alignment precision.
+              </p>
             </div>
-            <div className="h-32 rounded-xl bg-slate-50 border border-slate-200 flex items-center justify-center">
-              <svg width="140" height="80" viewBox="0 0 140 80" fill="none">
-                <circle cx="24" cy="40" r="10" className="fill-indigo-200" />
-                <circle cx="70" cy="40" r="10" className="fill-indigo-300" />
-                <circle cx="116" cy="40" r="10" className="fill-indigo-200" />
-                <path d="M34 40h26" className="stroke-indigo-500" strokeWidth="2" />
-                <path d="M80 40h26" className="stroke-indigo-500" strokeWidth="2" />
-                <circle cx="24" cy="40" r="4" className="fill-indigo-600">
-                  <animate
-                    attributeName="cx"
-                    dur="2.4s"
-                    repeatCount="indefinite"
-                    values="24;70;116;24"
-                  />
-                </circle>
-              </svg>
+
+            {/* Diagram Preview 3 */}
+            <div className="bg-slate-950/60 border border-slate-800/80 rounded-2xl p-6 shadow-lg hover:border-slate-700/80 transition-colors">
+              <div className="flex items-center justify-between mb-4">
+                <h3 className="font-bold text-slate-200">Asynchronous Loop</h3>
+                <span className="text-[10px] font-bold text-pink-400 bg-pink-500/10 px-2.5 py-1 rounded-full uppercase tracking-wider">Engine</span>
+              </div>
+              <div className="h-32 rounded-xl bg-slate-900 border border-slate-800 flex items-center justify-center relative overflow-hidden">
+                <svg width="140" height="80" viewBox="0 0 140 80" fill="none">
+                  <circle cx="70" cy="40" r="22" className="stroke-pink-500/30" strokeWidth="1.5" />
+                  <circle cx="70" cy="40" r="14" className="stroke-pink-500/20" strokeWidth="1" strokeDasharray="2 2" />
+                  <circle cx="70" cy="18" r="4" className="fill-pink-500">
+                    <animateTransform
+                      attributeName="transform"
+                      type="rotate"
+                      from="0 70 40"
+                      to="360 70 40"
+                      dur="3s"
+                      repeatCount="indefinite"
+                    />
+                  </circle>
+                  <circle cx="70" cy="26" r="3" className="fill-purple-400">
+                    <animateTransform
+                      attributeName="transform"
+                      type="rotate"
+                      from="360 70 40"
+                      to="0 70 40"
+                      dur="2s"
+                      repeatCount="indefinite"
+                    />
+                  </circle>
+                </svg>
+              </div>
+              <p className="mt-4 text-xs text-slate-400 leading-relaxed">
+                Illustrating event execution and frame-paint operations to diagnose stack frame bottlenecks and UI lags.
+              </p>
             </div>
-            <p className="mt-4 text-sm text-slate-600">
-              Async tasks move through steps without blocking the UI.
-            </p>
           </div>
         </div>
       </div>
 
-      {/* Additional Concept Visuals */}
-      <div className="max-w-6xl mx-auto px-4 py-16 border-b border-slate-200/50">
-        <h3 className="text-2xl font-bold mb-8 text-slate-900">
-          How Web Apps Work
-        </h3>
-
-        <div className="grid md:grid-cols-3 gap-6">
-          {/* The DOM */}
-          <div className="group rounded-2xl border border-slate-200 bg-white p-6 shadow-sm transition hover:-translate-y-0.5 hover:border-indigo-200 hover:shadow-md">
-            <div className="flex items-center justify-between mb-4">
-              <h3 className="text-lg font-semibold text-slate-900">The DOM</h3>
-              <span className="text-xs font-semibold text-indigo-700 bg-indigo-50 px-2 py-1 rounded-full">
-                Tree
-              </span>
-            </div>
-            <div className="h-32 rounded-xl bg-slate-50 border border-slate-200 flex items-center justify-center">
-              <svg width="140" height="80" viewBox="0 0 140 80" fill="none">
-                <circle cx="70" cy="10" r="7" className="fill-indigo-600" />
-                <line x1="70" y1="17" x2="42" y2="32" className="stroke-indigo-300" strokeWidth="2" />
-                <line x1="70" y1="17" x2="70" y2="32" className="stroke-indigo-300" strokeWidth="2" />
-                <line x1="70" y1="17" x2="98" y2="32" className="stroke-indigo-300" strokeWidth="2" />
-                <circle cx="42" cy="38" r="6" className="fill-indigo-400" />
-                <circle cx="70" cy="38" r="6" className="fill-indigo-400" />
-                <circle cx="98" cy="38" r="6" className="fill-indigo-400" />
-                <line x1="42" y1="44" x2="28" y2="56" className="stroke-indigo-300" strokeWidth="1.5" />
-                <line x1="42" y1="44" x2="56" y2="56" className="stroke-indigo-300" strokeWidth="1.5" />
-                <circle cx="28" cy="60" r="4" className="fill-indigo-300" />
-                <circle cx="56" cy="60" r="4" className="fill-indigo-300" />
-              </svg>
-            </div>
-            <p className="mt-4 text-sm text-slate-600">
-              The DOM is a tree of HTML elements that browsers render and JavaScript controls.
-            </p>
-          </div>
-
-          {/* Events */}
-          <div className="group rounded-2xl border border-slate-200 bg-white p-6 shadow-sm transition hover:-translate-y-0.5 hover:border-indigo-200 hover:shadow-md">
-            <div className="flex items-center justify-between mb-4">
-              <h3 className="text-lg font-semibold text-slate-900">Events</h3>
-              <span className="text-xs font-semibold text-indigo-700 bg-indigo-50 px-2 py-1 rounded-full">
-                Listener
-              </span>
-            </div>
-            <div className="h-32 rounded-xl bg-slate-50 border border-slate-200 flex items-center justify-center">
-              <svg width="140" height="80" viewBox="0 0 140 80" fill="none">
-                <rect
-                  x="20"
-                  y="20"
-                  width="100"
-                  height="40"
-                  rx="8"
-                  className="fill-indigo-100 stroke-indigo-300"
-                  strokeWidth="2"
-                />
-                {/* Note: plain SVG text; className won't apply tailwind typography here unless you style via CSS */}
-                <text x="70" y="48" textAnchor="middle" fill="#4338CA" fontSize="12" fontWeight="700">
-                  Click Me
-                </text>
-                <circle cx="70" cy="20" r="5" className="fill-indigo-500">
-                  <animate attributeName="r" dur="1.2s" repeatCount="indefinite" values="5;8;5" />
-                </circle>
-              </svg>
-            </div>
-            <p className="mt-4 text-sm text-slate-600">
-              Events trigger code when users click, type, hover, or scroll.
-            </p>
-          </div>
-
-          {/* Components */}
-          <div className="group rounded-2xl border border-slate-200 bg-white p-6 shadow-sm transition hover:-translate-y-0.5 hover:border-indigo-200 hover:shadow-md">
-            <div className="flex items-center justify-between mb-4">
-              <h3 className="text-lg font-semibold text-slate-900">Components</h3>
-              <span className="text-xs font-semibold text-indigo-700 bg-indigo-50 px-2 py-1 rounded-full">
-                React
-              </span>
-            </div>
-            <div className="h-32 rounded-xl bg-slate-50 border border-slate-200 flex items-center justify-center">
-              <svg width="140" height="80" viewBox="0 0 140 80" fill="none">
-                <rect x="15" y="15" width="28" height="28" rx="4" className="fill-indigo-200" />
-                <rect x="56" y="15" width="28" height="28" rx="4" className="fill-indigo-300" />
-                <rect x="97" y="15" width="28" height="28" rx="4" className="fill-indigo-200" />
-                <path d="M28 43L40 55" className="stroke-indigo-400" strokeWidth="2" />
-                <path d="M70 43L70 55" className="stroke-indigo-400" strokeWidth="2" />
-                <path d="M112 43L100 55" className="stroke-indigo-400" strokeWidth="2" />
-                <circle cx="28" cy="62" r="5" className="fill-indigo-300" />
-                <circle cx="70" cy="62" r="5" className="fill-indigo-400" />
-                <circle cx="112" cy="62" r="5" className="fill-indigo-300" />
-              </svg>
-            </div>
-            <p className="mt-4 text-sm text-slate-600">
-              Reusable UI pieces that manage their own state and logic.
-            </p>
-          </div>
-
-          {/* State Management */}
-          <div className="group rounded-2xl border border-slate-200 bg-white p-6 shadow-sm transition hover:-translate-y-0.5 hover:border-indigo-200 hover:shadow-md">
-            <div className="flex items-center justify-between mb-4">
-              <h3 className="text-lg font-semibold text-slate-900">State Management</h3>
-              <span className="text-xs font-semibold text-indigo-700 bg-indigo-50 px-2 py-1 rounded-full">
-                Data
-              </span>
-            </div>
-            <div className="h-32 rounded-xl bg-slate-50 border border-slate-200 flex items-center justify-center">
-              <svg width="140" height="80" viewBox="0 0 140 80" fill="none">
-                <rect x="30" y="25" width="80" height="30" rx="8" className="fill-indigo-100 stroke-indigo-300" strokeWidth="2" />
-                <circle cx="50" cy="40" r="6" className="fill-indigo-500" />
-                <circle cx="70" cy="40" r="6" className="fill-indigo-600" />
-                <circle cx="90" cy="40" r="6" className="fill-indigo-500" />
-                <path d="M50 32v4m20 0v4m20 0v4" className="stroke-indigo-600" strokeWidth="1" />
-              </svg>
-            </div>
-            <p className="mt-4 text-sm text-slate-600">
-              Data that changes triggers re-renders to keep the UI in sync.
-            </p>
-          </div>
-
-          {/* Request/Response */}
-          <div className="group rounded-2xl border border-slate-200 bg-white p-6 shadow-sm transition hover:-translate-y-0.5 hover:border-indigo-200 hover:shadow-md">
-            <div className="flex items-center justify-between mb-4">
-              <h3 className="text-lg font-semibold text-slate-900">Request/Response</h3>
-              <span className="text-xs font-semibold text-indigo-700 bg-indigo-50 px-2 py-1 rounded-full">
-                HTTP
-              </span>
-            </div>
-            <div className="h-32 rounded-xl bg-slate-50 border border-slate-200 flex items-center justify-center">
-              <svg width="140" height="80" viewBox="0 0 140 80" fill="none">
-                <rect x="10" y="28" width="45" height="24" rx="6" className="fill-indigo-300" />
-                <text x="32" y="46" textAnchor="middle" fill="#FFFFFF" fontSize="12" fontWeight="700">
-                  Client
-                </text>
-                <rect x="85" y="28" width="45" height="24" rx="6" className="fill-indigo-600" />
-                <text x="107" y="46" textAnchor="middle" fill="#FFFFFF" fontSize="12" fontWeight="700">
-                  Server
-                </text>
-                <path d="M55 36L75 36" className="stroke-indigo-500 fill-none" strokeWidth="2" />
-                <path d="M75 44L55 44" className="stroke-indigo-400 fill-none" strokeWidth="2" />
-              </svg>
-            </div>
-            <p className="mt-4 text-sm text-slate-600">
-              Apps talk to servers to fetch and send data over the network.
-            </p>
-          </div>
-
-          {/* TypeScript Safety */}
-          <div className="group rounded-2xl border border-slate-200 bg-white p-6 shadow-sm transition hover:-translate-y-0.5 hover:border-indigo-200 hover:shadow-md">
-            <div className="flex items-center justify-between mb-4">
-              <h3 className="text-lg font-semibold text-slate-900">TypeScript Safety</h3>
-              <span className="text-xs font-semibold text-indigo-700 bg-indigo-50 px-2 py-1 rounded-full">
-                Types
-              </span>
-            </div>
-            <div className="h-32 rounded-xl bg-slate-50 border border-slate-200 flex items-center justify-center">
-              <svg width="140" height="80" viewBox="0 0 140 80" fill="none">
-                <circle cx="35" cy="32" r="12" className="fill-slate-300" />
-                <circle cx="105" cy="32" r="12" className="fill-indigo-400" />
-                <text x="35" y="38" textAnchor="middle" fill="#334155" fontSize="12" fontWeight="800">
-                  ?
-                </text>
-                <text x="105" y="38" textAnchor="middle" fill="#FFFFFF" fontSize="12" fontWeight="800">
-                  ✓
-                </text>
-                <path d="M47 32L93 32" className="stroke-indigo-500 fill-none" strokeWidth="2" />
-                <text x="70" y="65" textAnchor="middle" fill="#4F46E5" fontSize="12" fontWeight="600">
-                  No more type errors
-                </text>
-              </svg>
-            </div>
-            <p className="mt-4 text-sm text-slate-600">
-              Types prevent bugs and make refactoring safe and fast.
-            </p>
-          </div>
+      {/* Google Material-based Value Propositions */}
+      <div className="max-w-6xl mx-auto px-4 py-24">
+        <div className="text-center max-w-2xl mx-auto mb-20 space-y-3">
+          <h2 className="text-3xl sm:text-4xl font-extrabold text-slate-900 tracking-tight">
+            Why DevMentor is Different
+          </h2>
+          <p className="text-lg text-slate-600">
+            Engineered lessons written to simulate structural tasks faced by senior teams at technology firms.
+          </p>
         </div>
-      </div>
-
-      {/* Features Section */}
-      <div className="max-w-6xl mx-auto px-4 py-16 bg-gradient-to-b from-slate-50 to-white border-b border-slate-200/50">
-        <h2 className="text-3xl font-bold mb-12 text-slate-900">Why Learn Here?</h2>
 
         <div className="grid md:grid-cols-3 gap-8">
-          <div className="border border-indigo-100 rounded-2xl p-8 bg-gradient-to-br from-indigo-50/50 to-white shadow-sm transition hover:shadow-md">
-            <BookOpen className="w-8 h-8 text-indigo-700 mb-4" />
-            <h3 className="text-xl font-semibold mb-2 text-slate-900">
-              Production-Ready Content
+          <div className="border border-slate-200/80 rounded-3xl p-8 bg-white shadow-xs hover:shadow-lg transition-all duration-300 group">
+            <div className="h-12 w-12 rounded-2xl bg-indigo-50 flex items-center justify-center text-indigo-600 mb-6 group-hover:scale-110 transition-transform">
+              <BookOpen className="w-6 h-6" />
+            </div>
+            <h3 className="text-xl font-bold mb-3 text-slate-900">
+              No Sandbox Code
             </h3>
-            <p className="text-slate-600">
-              Not toy examples. Real patterns used in production applications by
-              thousands of engineers.
+            <p className="text-slate-600 text-sm leading-relaxed">
+              We skip elementary tutorials. Every lesson builds on real architectural code, teaching rates, security structures, and zero-downtime deployment pipelines.
             </p>
           </div>
 
-          <div className="border border-indigo-100 rounded-2xl p-8 bg-gradient-to-br from-indigo-50/50 to-white shadow-sm transition hover:shadow-md">
-            <BookOpen className="w-8 h-8 text-indigo-700 mb-4" />
-            <h3 className="text-xl font-semibold mb-2 text-slate-900">
-              Senior Guidance
+          <div className="border border-slate-200/80 rounded-3xl p-8 bg-white shadow-xs hover:shadow-lg transition-all duration-300 group">
+            <div className="h-12 w-12 rounded-2xl bg-purple-50 flex items-center justify-center text-purple-600 mb-6 group-hover:scale-110 transition-transform">
+              <GitBranch className="w-6 h-6" />
+            </div>
+            <h3 className="text-xl font-bold mb-3 text-slate-900">
+              Senior engineer Guidance
             </h3>
-            <p className="text-slate-600">
-              Learn from someone with 10+ years building products at scale.
-              Avoid common pitfalls and mistakes.
+            <p className="text-slate-600 text-sm leading-relaxed">
+              Learn code design choices, file structures, Sentry log hooks, performance metrics, and caching layer boundaries directly from senior specialists.
             </p>
           </div>
 
-          <div className="border border-indigo-100 rounded-2xl p-8 bg-gradient-to-br from-indigo-50/50 to-white shadow-sm transition hover:shadow-md">
-            <BookOpen className="w-8 h-8 text-indigo-700 mb-4" />
-            <h3 className="text-xl font-semibold mb-2 text-slate-900">
+          <div className="border border-slate-200/80 rounded-3xl p-8 bg-white shadow-xs hover:shadow-lg transition-all duration-300 group">
+            <div className="h-12 w-12 rounded-2xl bg-pink-50 flex items-center justify-center text-pink-600 mb-6 group-hover:scale-110 transition-transform">
+              <Workflow className="w-6 h-6" />
+            </div>
+            <h3 className="text-xl font-bold mb-3 text-slate-900">
               Full-Stack Coverage
             </h3>
-            <p className="text-slate-600">
-              From HTML fundamentals through TypeScript, React, Next.js, and
-              full-stack applications.
+            <p className="text-slate-600 text-sm leading-relaxed">
+              Move step-by-step from core HTML semantics and rendering properties up through TypeScript generic structures, Prisma migrations, and Docker configurations.
             </p>
           </div>
         </div>
       </div>
 
-      {/* CTA Section */}
-      <div className="bg-gradient-to-r from-indigo-700 to-indigo-600">
-        <div className="max-w-6xl mx-auto px-4 py-20">
-          <div className="text-center">
-            <h2 className="text-3xl font-bold mb-4 text-white">
-              Ready to Level Up?
-            </h2>
-            <p className="text-lg text-indigo-100 mb-8">
-              Choose a learning track below and start mastering web development.
-            </p>
+      {/* Sleek CTA Section */}
+      <div className="relative overflow-hidden bg-slate-950 py-24 border-t border-slate-900">
+        <div className="absolute inset-0 pointer-events-none overflow-hidden">
+          <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[300px] bg-indigo-500/10 rounded-full filter blur-[120px]" />
+        </div>
 
+        <div className="relative max-w-6xl mx-auto px-4 text-center z-10 space-y-8">
+          <h2 className="text-3xl sm:text-5xl font-black text-white tracking-tight">
+            Ready to Build at Production Level?
+          </h2>
+          <p className="text-lg text-slate-400 max-w-xl mx-auto leading-relaxed">
+            Select your learning track. Master vanilla foundations, front-end ecosystems, or high-performance back-ends.
+          </p>
+
+          <div>
             <Link
               href="/learn"
-              className="inline-flex items-center gap-2 bg-white text-indigo-700 px-8 py-4 rounded-lg font-semibold hover:bg-indigo-50 transition text-lg"
+              className="inline-flex items-center gap-2.5 bg-white text-slate-950 px-8 py-4.5 rounded-2xl font-bold hover:bg-slate-100 hover:scale-[1.02] active:scale-95 transition-all duration-300 shadow-xl"
             >
-              Explore All Tracks <ArrowRight className="w-5 h-5" />
+              Explore All Learning Tracks <ArrowRight className="w-5 h-5 text-indigo-600" />
             </Link>
           </div>
         </div>

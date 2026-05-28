@@ -1,0 +1,182 @@
+---
+title: "Performance & Profiling"
+description: "Master React performance optimization: memo, useMemo, useCallback, virtualization, and profiling with DevTools"
+tags: ["react", "performance", "profiling", "dev-tools"]
+estimatedTime: "85 minutes"
+---
+
+# Performance Optimization & Profiling
+
+React is fast by default, but heavy components or improper state design can cause UI lag. Understanding how React decides to render, how to optimize renders, and how to use profiling tools is key for production success.
+
+---
+
+## 1. What is a Re-render? (Junior Level)
+
+A component re-renders when:
+1. **State changes:** The state of the component changes (`useState`, `useReducer`).
+2. **Parent re-renders:** The component's parent re-renders (this triggers a cascade downward).
+3. **Context changes:** A context value the component consumes updates.
+
+Let's clarify a common misconception: **Props changing does not trigger a re-render by itself.** If a parent re-renders, the child will re-render even if its props did not change!
+
+---
+
+## 2. Memoization: memo, useMemo, and useCallback (Mid-Level)
+
+To prevent unnecessary calculations or DOM updates, React provides three optimization APIs.
+
+### A. React.memo
+Prevents a component from re-rendering if its props have not changed. It does a **shallow comparison** of props.
+
+```tsx
+import React from "react";
+
+interface UserProfileProps {
+  name: string;
+  role: string;
+}
+
+// Without memo: Re-renders every time the parent renders
+// With memo: Only re-renders if name or role changes
+export const UserProfile = React.memo(({ name, role }: UserProfileProps) => {
+  console.log("UserProfile rendered!");
+  return (
+    <div className="p-4 border rounded shadow-sm bg-white">
+      <h3 className="font-bold">{name}</h3>
+      <p className="text-gray-600">{role}</p>
+    </div>
+  );
+});
+
+UserProfile.displayName = "UserProfile";
+```
+
+### B. useMemo
+Memoizes the result of an expensive calculation so it doesn't run on every single render.
+
+```tsx
+import { useMemo } from "react";
+
+const ProductAnalyzer = ({ items }: { items: number[] }) => {
+  // Only recalculate the sum when items array changes
+  const totalSum = useMemo(() => {
+    console.log("Calculating heavy sum...");
+    return items.reduce((sum, num) => sum + num, 0);
+  }, [items]);
+
+  return <p>Total sum of items: {totalSum}</p>;
+};
+```
+
+### C. useCallback
+Memoizes a function reference itself. Helpful when passing callback functions to memoized child components.
+
+```tsx
+import { useState, useCallback } from "react";
+import { UserProfile } from "./UserProfile";
+
+export const Dashboard = () => {
+  const [count, setCount] = useState(0);
+
+  // Without useCallback: a new function is created on every render,
+  // which causes the child (UserProfile) to re-render even with React.memo!
+  // With useCallback: function reference stays the same.
+  const handleUserClick = useCallback(() => {
+    console.log("User profile clicked");
+  }, []); // Empty dependency array keeps reference stable
+
+  return (
+    <div>
+      <button onClick={() => setCount((c) => c + 1)}>Clicks: {count}</button>
+      <UserProfile name="Amit" role="Developer" onClick={handleUserClick} />
+    </div>
+  );
+};
+```
+
+<Pitfall>
+<strong>Avoid Premature Optimization.</strong> Do not wrap every component in <code>React.memo</code> or every function in <code>useCallback</code>. Memoization has memory and CPU overhead (React must run dependency checks and store cache values). If a component is simple and renders fast, optimization is slower than the render itself.
+</Pitfall>
+
+---
+
+## 3. List Virtualization (Senior Level)
+
+If you render a list of 10,000 items in React using standard `.map()`, the browser will create 10,000 HTML elements. This blocks the browser's main thread, causing severe lag and scroll stutter.
+
+**Solution:** **List Virtualization (Windowing)**. Only render the items currently visible in the screen window (plus a small buffer). As the user scrolls, items outside are destroyed and new visible ones are mounted.
+
+In real-world production projects, you should use popular libraries such as `react-window` or `react-virtuoso` rather than writing your own virtualization logic from scratch.
+
+```tsx
+import { FixedSizeList as List } from "react-window";
+
+const Row = ({ index, style }: { index: number; style: React.CSSProperties }) => (
+  <div style={style} className="p-2 border-b bg-white flex items-center">
+    Row item #{index}
+  </div>
+);
+
+export const MassiveList = () => (
+  // Only renders ~10 elements in the DOM instead of 5,000!
+  <List
+    height={400}
+    itemCount={5000}
+    itemSize={40}
+    width="100%"
+  >
+    {Row}
+  </List>
+);
+```
+
+---
+
+## 4. Profiling with React DevTools (Senior/Interview)
+
+To pinpoint why components are slow, use the **React DevTools Profiler** (available as a browser extension).
+
+### How to Profile:
+1. Open Chrome DevTools and click the **React Profiler** tab.
+2. Click the blue **Record** circle.
+3. Interact with your application (e.g., click a button or type in an input).
+4. Click **Stop recording**.
+
+### Reading the Profiler Charts:
+- **Flamegraph Chart:** Shows the state of the component tree for each render. Gray bars mean the component did not render. Yellow/orange bars mean they took a long time to render.
+- **Ranked Chart:** Shows components ordered by how long they took to render, making it easy to identify the worst bottleneck.
+- **"Why did this render?":** In Profiler settings, check "Record why each component rendered". It will tell you precisely if state, props, or context caused the render.
+
+```
++-------------------------------------------------------------+
+| Flamegraph (Top to Bottom tree)                            |
+| [ App: 12ms (Yellow) ]                                      |
+|   +-- [ Navigation: 0.1ms (Gray) ]                          |
+|   +-- [ ListContainer: 10ms (Orange) ]                     |
+|         +-- [ ListItem: 0.5ms (Green) ]                     |
++-------------------------------------------------------------+
+```
+
+<ProTip>
+React 19 compiles your code automatically under the hood to memoize elements (via React Compiler / React Forget). However, senior engineers must know how the hooks work manually to debug older React apps (v16–v18) and answer core architecture interview questions.
+</ProTip>
+
+<Checklist
+  title="Performance Checklist"
+  items={[
+    "Explain what causes a component to re-render in React",
+    "Apply React.memo to keep static components from re-rendering",
+    "Identify when useMemo and useCallback are appropriate",
+    "Recognize the memory costs of overusing memoization",
+    "Implement list virtualization using libraries like react-window",
+    "Use Chrome React DevTools Profiler to audit rendering bottlenecks"
+  ]}
+/>
+
+## Key Takeaways
+
+- Renders flow downward; optimize the parent to save children.
+- Use `React.memo` to compare props, `useMemo` to cache values, and `useCallback` to cache functions.
+- For massive lists, virtualize them to keep the DOM node count low.
+- Profile before you optimize: let facts and metrics guide your changes.

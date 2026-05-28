@@ -1,0 +1,131 @@
+---
+title: "React Interview Cracking Guide"
+description: "A comprehensive compilation of top React interview questions and detailed answers categorized by Junior, Mid, and Senior levels"
+tags: ["react", "interview", "career", "career-guide"]
+estimatedTime: "90 minutes"
+---
+
+# React Interview Cracking Guide
+
+Landing a great React role requires not just coding skill, but also the ability to communicate core principles clearly. This guide provides answers to the most common React interview questions, categorized by experience level.
+
+## 1. Junior Level Questions (Freshers)
+
+<Collapsible title="Q1: What is the difference between State and Props?">
+*   **Props** (short for properties) are read-only configuration objects passed from a parent component down to a child. A component cannot modify its own props.
+*   **State** represents internal component data that can change over time. When state changes, React re-renders the component to update the UI.
+
+| Property | Props | State |
+| :--- | :--- | :--- |
+| **Source** | Passed by Parent | Declared inside Component |
+| **Mutable?** | ❌ Read-Only | ✅ Mutable (via `setState`) |
+| **Triggers Render?**| Yes (if parent passes new props) | Yes (when state updates) |
+</Collapsible>
+
+<Collapsible title="Q2: What are keys in React and why are they required?">
+* Keys are unique string identifiers that you pass to elements in a list.
+* **Why they are required:** During reconciliation (diffing), React compares the new Virtual DOM with the old one. Keys help React identify which items have changed, been added, or been removed.
+* **Warning:** Never use array indices as keys if the list can be reordered, filtered, or deleted. If list order changes, using indices will cause React to map state to the wrong DOM nodes, causing rendering bugs.
+</Collapsible>
+
+<Collapsible title="Q3: Explain the rules of Hooks.">
+React has two fundamental rules for Hooks:
+1. **Only Call Hooks at the Top Level:** Do not call hooks inside loops, conditional blocks, or nested functions. This ensures hooks are called in the exact same order on every render, allowing React to maintain hook state correctly.
+2. **Only Call Hooks from React Functions:** Call hooks from React functional components or custom hooks, not from regular JavaScript helper functions.
+</Collapsible>
+
+## 2. Mid-Level Questions
+
+<Collapsible title="Q1: What are controlled vs uncontrolled components?">
+They represent two ways to handle form input elements in React.
+* **Controlled Component:** The input value is driven by React state. React is the single source of truth.
+* **Uncontrolled Component:** The input value is driven by the browser's DOM itself. We access values using a `ref` (Reference).
+
+```tsx
+// Controlled Component
+const ControlledInput = () => {
+  const [value, setValue] = useState("");
+  return <input value={value} onChange={e => setValue(e.target.value)} />;
+};
+
+// Uncontrolled Component
+const UncontrolledInput = () => {
+  const inputRef = useRef<HTMLInputElement>(null);
+  const handleSubmit = () => {
+    console.log(inputRef.current?.value); // Direct DOM read
+  };
+  return <input ref={inputRef} />;
+};
+```
+</Collapsible>
+
+<Collapsible title="Q2: What are the performance limitations of the Context API?">
+Context API is not a dedicated state management library. Its main drawback is that **every component consuming the context will re-render when any part of the context value object changes**, even if the component only uses a property that stayed the same.
+* **How to optimize it:**
+  1. Split context into multiple smaller contexts (e.g. `UserContext` and `ThemeContext`).
+  2. Separate the state value context from the state updater function context.
+  3. Memoize children or wrap components in `React.memo`.
+</Collapsible>
+
+<Collapsible title="Q3: Explain the difference between useMemo and useCallback.">
+Both are memoization hooks that prevent unnecessary calculations or function re-creation across renders.
+* `useMemo` returns a **memoized value** (caches the result of a calculation).
+* `useCallback` returns a **memoized function reference** (caches the function itself).
+
+```typescript
+// useMemo: caches the result (number/object)
+const computedValue = useMemo(() => computeHeavyValue(a, b), [a, b]);
+
+// useCallback: caches the function signature/reference
+const handleClick = useCallback(() => { doSomething(a); }, [a]);
+```
+</Collapsible>
+
+## 3. Senior Level Questions
+
+<Collapsible title="Q1: How does React's reconciliation engine (Fiber) work?">
+Fiber is a complete rewrite of React's core rendering engine.
+* **Stack Reconciler (Legacy):** Recursively traversed the component tree. Since it was synchronous and blocked JS threads, large trees caused UI freeze (jank).
+* **Fiber Reconciler:** Represents the component tree as a singly-linked list of fiber nodes. Traversal is iteration-based using a loop, meaning work can be paused, restarted, or aborted.
+* **Phases:** It divides work into:
+  1. **Render Phase:** Asynchronous, non-blocking. Compares trees (diffing) to find changes.
+  2. **Commit Phase:** Synchronous, blocking. Writes changes directly to the browser DOM.
+</Collapsible>
+
+<Collapsible title="Q2: What is the difference between React Server Components (RSC) and Server-Side Rendering (SSR)?">
+* **SSR** is a rendering process. It takes a standard React tree on the server and converts it to HTML, which is then sent to the client. The client still downloads the JavaScript for *all* those components to attach event listeners (**Hydration**).
+* **RSC** is a component architecture. Server components run *only* on the server. The client receives their pre-rendered UI structure in JSON format and downloads **zero JavaScript** for them.
+* **Summary:** SSR deals with initial page speed and HTML output. RSC deals with component isolation, data access, and client-side bundle size optimization.
+</Collapsible>
+
+<Collapsible title="Q3: How do you profile and debug memory leaks in a React application?">
+1. **Detecting bottlenecks:** Record user flows in Chrome DevTools' **React Profiler** tab. Look at the *Flamegraph* and *Ranked Charts* to find components that re-render too often or take too long.
+2. **Identifying Memory Leaks:** Take **Heap Snapshots** in Chrome DevTools Memory tab. Compare snapshots before and after interacting with a feature. Look for detached DOM nodes or un-cleaned subscriptions.
+3. **Common fixes:**
+   * Return cleanup functions in `useEffect` to clear timeouts, event listeners, and WebSockets.
+   * Implement List Virtualization (`react-window`) to reduce DOM nodes.
+   * Cancel pending API fetch requests on unmount using `AbortController`.
+</Collapsible>
+
+<ProTip>
+In senior interviews, when answering technical questions, always discuss trade-offs. For example, when asked about state management, explain that while Redux is powerful and standard, it requires high boilerplate, whereas Zustand is better for simple state because of its hook-centric API, and Context is best for static data. This shows maturity.
+</ProTip>
+
+<Checklist
+  title="React Interview Must-Known Topics"
+  items={[
+    "Explain state vs props with clean distinction",
+    "Warn against using index values as React map keys",
+    "Describe Controlled vs Uncontrolled forms patterns",
+    "Discuss Context rendering bottlenecks and fixes",
+    "Explain how Fiber nodes act as virtual stack frames",
+    "Differentiate React Server Components from SSR rendering",
+    "Summarize performance profiling and memory leak debugging steps"
+  ]}
+/>
+
+## Must-Known Points
+
+- Junior interviews focus on syntax, basic hooks, JSX, and simple state design.
+- Mid-level interviews focus on optimization, context limitations, custom hooks, and lifecycle.
+- Senior interviews focus on browser paint cycles, Fiber internals, rendering paradigms (RSC vs SSR), security (XSS/CSRF), and testing architecture.

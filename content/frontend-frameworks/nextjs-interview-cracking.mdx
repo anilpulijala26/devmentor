@@ -1,0 +1,111 @@
+---
+title: "Next.js Interview Cracking Guide"
+description: "A comprehensive compilation of top Next.js interview questions and answers categorized by Junior, Mid, and Senior levels"
+tags: ["nextjs", "interview", "career", "career-guide"]
+estimatedTime: "90 minutes"
+---
+
+# Next.js Interview Cracking Guide
+
+Landing a great full-stack React or Next.js developer role requires the ability to explain Next.js rendering, routing, caching internals, and security implications clearly. This guide provides answers to the most common Next.js interview questions, categorized by experience level.
+
+---
+
+## 1. Junior Level Questions (Freshers)
+
+### Q1: What is Next.js and why should we use it instead of vanilla React?
+- **Answer:** Next.js is a React meta-framework that provides built-in structures and tools for production app development.
+  - **Vanilla React:** Bundles all JavaScript and runs it client-side (Client-Side Rendering - CSR). This causes slow initial page load (blank screen), bad SEO (web crawlers cannot read empty HTML), and requires manually configuring Webpack, routing libraries, and image optimizations.
+  - **Next.js:** Provides Server-Side Rendering (SSR), Static Site Generation (SSG), and React Server Components (RSC) out-of-the-box. It speeds up page loading, supports full-stack development via Server Actions and API routes, optimizes images automatically, and uses file-based routing.
+
+### Q2: Explain the differences between Pages Router and App Router.
+- **Answer:**
+  - **Pages Router (Legacy):** Routes are defined in the `pages/` directory. All components inside pages are Client Components by default. Data fetching is done via special methods: `getStaticProps`, `getServerSideProps`, and `getStaticPaths`.
+  - **App Router (Modern):** Routes are defined in the `app/` directory and leverage React Server Components (RSC) by default. It introduces **nested layouts**, streaming with Suspense, and allows data fetching using standard `async/await` directly in components.
+
+### Q3: How do Server Components differ from Client Components?
+- **Answer:**
+  - **Server Components:** Render *only* on the server. They have zero client-side JavaScript size (saving browser bandwidth), can query databases directly, and keep API keys secure. They cannot use state (`useState`), effects (`useEffect`), or browser-only APIs (`window`, `document`).
+  - **Client Components:** Marked with `"use client"`. They compile and hydrate in the browser, allowing event listeners, hooks, and browser API calls.
+
+---
+
+## 2. Mid-Level Questions
+
+### Q1: Explain the difference between SSR, SSG, and ISR.
+- **Answer:**
+  - **Server-Side Rendering (SSR):** The HTML page is generated on the server for **every** request. Good for highly dynamic user feeds, but increases server load.
+  - **Static Site Generation (SSG):** Pages are pre-rendered into HTML at **build time**. Perfect for static documentation or landing pages. It is extremely fast but requires a full project rebuild to update content.
+  - **Incremental Static Regeneration (ISR):** Pages are generated statically at build time, but revalidated in the background after a specified duration (e.g. 60 seconds) when a user visits. This keeps static pages updated without rebuilding the entire application.
+
+### Q2: What is a Hydration Mismatch error, why does it happen, and how do you fix it?
+- **Answer:** A Hydration Mismatch error occurs when the pre-rendered HTML sent from the server does not match the HTML structure the client-side JavaScript generates during its first render pass.
+  - **Common Causes:** Rendering dynamic values like `new Date()` or browser-specific objects like `window.innerWidth` directly in component bodies, or using invalid HTML tags (like nesting a `<div>` inside a `<p>`).
+  - **Fixes:**
+    1. Wrap browser checks in `useEffect` so they only execute after client mount:
+       ```typescript
+       const [isClient, setIsClient] = useState(false);
+       useEffect(() => setIsClient(true), []);
+       return isClient ? <div>{window.innerWidth}</div> : <Skeleton />;
+       ```
+    2. Enforce standard HTML hierarchies.
+    3. Use the `suppressHydrationWarning` attribute (only for small discrepancies like timestamps).
+
+### Q3: How does Next.js handle caching for fetch requests?
+- **Answer:** By default, Next.js caches all `fetch` GET requests on the server in the **Data Cache**. It persists across requests and server restarts.
+  - To cache a fetch request with a timer (ISR): `fetch(url, { next: { revalidate: 3600 } })`
+  - To opt out of caching (always request fresh data): `fetch(url, { cache: 'no-store' })`
+
+---
+
+## 3. Senior Level Questions
+
+### Q1: Deep dive into the four caching layers in Next.js and how to invalidate them.
+- **Answer:**
+  1. **Request Memoization:** Deduplicates GET fetch requests in the same React render tree. Lifespan is one request. Safe against duplication; no manual purge needed.
+  2. **Data Cache:** Persists fetched data on the server across user requests. Invalidated via time-based revalidation (`next: { revalidate }`) or on-demand revalidation (`revalidateTag("tag")` or `revalidatePath("/path")`).
+  3. **Full Route Cache:** Caches rendered HTML and RSC payload on the server for static routes. Invalidated when the underlying Data Cache is revalidated.
+  4. **Router Cache:** Client-side cache of visited pages in browser memory. Invalidated by calling `router.refresh()` in client code, or triggering server revalidations.
+
+### Q2: How do you build modal views with separate shareable URLs in Next.js?
+- **Answer:** By combining **Parallel Routes** and **Intercepting Routes**:
+  1. Create a parallel route slot, e.g. `@modal`, that renders in the parent layout.
+  2. Inside `@modal`, create an intercepting route matching the path, e.g. `(.)photo/[id]`. This catches the navigation event and renders the modal popup inside the current feed context.
+  3. Provide a fallback `default.tsx` file inside `@modal` returning `null` so initial loads do not crash.
+  4. Define the regular `photo/[id]` page route in the base `app/` folder. When a user loads the link directly or refreshes, the app bypasses the interception and displays the full detail layout page.
+
+### Q3: What are the security vulnerabilities of Server Actions, and how do you secure them?
+- **Answer:** Under the hood, Next.js compiles Server Actions into **public POST endpoints** with hashed URL keys. They are exposed to the public internet.
+  - **Vulnerabilities:** Parameter manipulation, unauthorized calls, DDoS spamming.
+  - **Mitigation:**
+    1. **Authenticate and Authorize:** Validate session tokens and user roles inside the action itself:
+       ```typescript
+       const user = await getCurrentUser();
+       if (!user || user.role !== 'ADMIN') throw new Error('Unauthorized');
+       ```
+    2. **Sanitize Inputs:** Always parse and validate form data payloads using schemas (like Zod) to prevent database injections or malicious payloads.
+    3. **Rate Limiting:** Protect mutations using rate-limiting hooks (e.g. checking client IPs via Redis tokens) to prevent automation scripts.
+
+---
+
+<ProTip>
+When asked about Next.js performance in senior interviews, discuss the Web Vitals impact. Emphasize how next/image prevents Layout Shifts (CLS) by enforcing dimensions, next/font pre-downloads local fonts, and code splitting with next/dynamic keeps the Largest Contentful Paint (LCP) small.
+</ProTip>
+
+<Checklist
+  title="Next.js Interview Checklist"
+  items={[
+    "Explain CSR vs SSR vs RSC rendering performance differences",
+    "Describe nested layout propagation and default.tsx fallbacks",
+    "Troubleshoot and fix client-server hydration mismatch exceptions",
+    "Detail how headers and dynamic functions opt out of Full Route Cache",
+    "Implement Modal overlays using Intercepting routes",
+    "Apply Zod verification and session checks inside Server Actions for security"
+  ]}
+/>
+
+## Key Takeaways
+
+- Junior developers should focus on routing, SSG vs SSR, and Server vs Client component boundaries.
+- Mid-level developers should master caching controls, dynamic database fetching, and hydration fixes.
+- Senior developers must explain execution mechanics: the Edge Runtime constraints, the four caching layers, intercepting routes, and Server Actions API security parameters.

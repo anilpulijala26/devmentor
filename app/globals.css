@@ -17,4 +17,82 @@ body {
   background: var(--background);
   color: var(--foreground);
   font-family: var(--font-geist-sans), Arial, Helvetica, sans-serif;
+  transition: background-color 0.3s ease, color 0.3s ease;
 }
+
+/* Animations */
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(12px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes pulseGlow {
+  0%, 100% {
+    box-shadow: 0 0 5px rgba(99, 102, 241, 0.4), 0 0 0 1px rgba(99, 102, 241, 0.2);
+  }
+  50% {
+    box-shadow: 0 0 20px rgba(99, 102, 241, 0.8), 0 0 0 3px rgba(99, 102, 241, 0.4);
+  }
+}
+
+.animate-fade-in {
+  animation: fadeIn 0.5s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+.animate-pulse-glow {
+  animation: pulseGlow 2.5s infinite ease-in-out;
+}
+
+/* Reader Mode Custom Themes (scoped to .reader-mode) */
+.reader-mode.theme-cream {
+  background-color: #fbfbf8 !important;
+  color: #2c2c2c !important;
+}
+
+.reader-mode.theme-sepia {
+  background-color: #f5edd6 !important;
+  color: #433422 !important;
+}
+
+.reader-mode.theme-slate {
+  background-color: #0f172a !important;
+  color: #e2e8f0 !important;
+}
+
+/* Subtle link overrides for different themes */
+.reader-mode.theme-cream a {
+  color: #4f46e5;
+}
+.reader-mode.theme-sepia a {
+  color: #b45309;
+}
+.reader-mode.theme-slate a {
+  color: #818cf8;
+}
+
+/* Typography styles for spacious mode */
+.reader-spacious p,
+.reader-spacious div.text-base,
+.reader-spacious li {
+  line-height: 2.1 !important;
+}
+
+.reader-normal p,
+.reader-normal div.text-base,
+.reader-normal li {
+  line-height: 1.75 !important;
+}
+
+/* Smooth micro-interactions */
+.premium-card-hover {
+  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+}
+.premium-card-hover:hover {
+  transform: translateY(-4px) scale(1.01);
+  box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.05), 0 10px 10px -5px rgba(0, 0, 0, 0.02);
+}
+
+.dark .premium-card-hover:hover {
+  box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.3), 0 10px 10px -5px rgba(0, 0, 0, 0.2);
+}
+

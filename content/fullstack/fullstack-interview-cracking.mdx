@@ -1,0 +1,111 @@
+---
+title: "Full-Stack Interview Cracking Guide"
+description: "A comprehensive compile of junior, mid, and senior level full-stack interview questions and answers covering databases, APIs, performance, and infrastructure"
+tags: ["fullstack", "interview", "career", "system-design", "database"]
+estimatedTime: "90 minutes"
+---
+
+# Full-Stack Interview Cracking Guide
+
+Securing a Full-Stack developer role requires demonstrating competence across database schema design, backend logic, server infrastructure, containerization, and system deployment. This guide compiles the most common full-stack interview questions and answers, categorized by experience level.
+
+## 1. Junior Level Questions (Freshers)
+
+<Collapsible title="Q1: How do you choose between a SQL (e.g. PostgreSQL) and a NoSQL (e.g. MongoDB) database?">
+The choice depends on data structure, relationship complexity, and transactional integrity:
+- **SQL (PostgreSQL):** Ideal for structured data with strong relations (e.g., users, orders, items). It guarantees **ACID compliance** (Atomicity, Consistency, Isolation, Durability), making it the standard choice for financial systems and transactional processing.
+- **NoSQL (MongoDB):** Ideal for unstructured or semi-structured data (e.g., product catalogs, logs, social feeds) with rapidly changing schemas. It scales horizontally easily but does not naturally enforce complex table joins or cross-collection relations.
+</Collapsible>
+
+<Collapsible title="Q2: What are the differences between REST and GraphQL APIs?">
+- **REST (Representational State Transfer):** Uses standard HTTP methods (GET, POST, PUT, DELETE) and endpoints mapped to resources (e.g., `/api/users`). It is easy to cache at the HTTP level but can suffer from **over-fetching** (receiving more data fields than needed) or **under-fetching** (requiring multiple API requests to fetch related data).
+- **GraphQL:** A query language where clients send a single POST request specifying the exact fields and nested relationships they require (e.g. users with their posts). This solves over-fetching but requires more complex backend schemas and makes standard HTTP caching harder.
+</Collapsible>
+
+<Collapsible title="Q3: What is a JSON Web Token (JWT) and what are its three parts?">
+A JWT is a compact, URL-safe means of representing claims to be transferred between two parties. It is composed of three parts separated by dots (`.`):
+1. **Header:** Contains the token type (JWT) and signing algorithm (e.g., HS256).
+2. **Payload:** Contains the claims, which are user details and metadata (e.g., `userId`, `role`, expiration time).
+3. **Signature:** Created by hashing the header, payload, and a secret key on the server to verify the token was not altered during transmission.
+</Collapsible>
+
+## 2. Mid Level Questions (Mid-Level Engineers)
+
+<Collapsible title="Q4: Explain Database Normalization vs. Denormalization. When would you use each?">
+- **Normalization:** The process of organizing a relational database to reduce data redundancy and improve data integrity (e.g., separating users and addresses into different tables). Use this when writing/updating data frequently (Write-Heavy) to prevent data anomalies.
+- **Denormalization:** The process of adding redundant data to speed up database reads (e.g., storing a user's address directly inside the order table). Use this in Read-Heavy systems or analytics systems to avoid running expensive table joins across millions of rows.
+</Collapsible>
+
+<Collapsible title="Q5: How do you protect a JWT access token from Cross-Site Scripting (XSS) attacks?">
+If you store access tokens in `localStorage` or `sessionStorage`, any malicious third-party script injected into your application can read your token and hijack the user session. 
+- **The Fix:** Store the JWT in an **HttpOnly cookie**. The browser automatically sends HttpOnly cookies along with HTTP requests, but client-side JavaScript (`document.cookie`) cannot access or read them. Combine this with `sameSite: "strict"` or `sameSite: "lax"` to mitigate CSRF (Cross-Site Request Forgery).
+</Collapsible>
+
+<Collapsible title="Q6: How do you identify and troubleshoot a database connection pool leak in a Node.js Express application?">
+A connection pool leak occurs when database connections are checked out of the pool but never released back, eventually causing the application to lock up with connection timeouts.
+- **Detection:** Monitor active pool client metrics (e.g., checking `pool.totalCount`, `pool.idleCount`, `pool.waitingCount` in `pg`).
+- **Fixing the code:** Ensure every query is wrapped in a `try...catch...finally` block. If you acquire a client manually using `pool.connect()`, you **must** call `client.release()` inside the `finally` block:
+    ```typescript
+    const client = await pool.connect();
+    try {
+      await client.query("BEGIN");
+      // execute queries...
+      await client.query("COMMIT");
+    } catch (e) {
+      await client.query("ROLLBACK");
+      throw e;
+    } finally {
+      client.release(); // Relinquish client back to the connection pool
+    }
+    ```
+</Collapsible>
+
+## 3. Senior Level Questions (Senior Engineers & System Architects)
+
+<Collapsible title="Q7: How do you analyze and optimize a slow query running in a PostgreSQL production database?">
+Use the following systematic approach:
+1. **Locate**: Identify slow queries using PostgreSQL logs (`log_min_duration_statement`) or monitoring tools (e.g., Datadog, pg_stat_statements).
+2. **Analyze**: Run `EXPLAIN ANALYZE <query>` to see how Postgres builds its execution plan. Look for **Sequential Scans** (scanning the whole table) instead of **Index Scans**.
+3. **Optimize**:
+   - Add indexes on columns used in `WHERE`, `JOIN`, and `ORDER BY` operations.
+   - Rewrite the query: avoid subqueries, use `EXISTS` instead of `IN`, and limit the return columns (avoid `SELECT *`).
+   - Optimize database configuration: adjust shared buffers and memory parameters.
+   - Implement application caching (e.g. Redis) for heavy read data.
+</Collapsible>
+
+<Collapsible title="Q8: What are database deadlocks and how do you prevent them in high-concurrency Node.js APIs?">
+A deadlock occurs when Transaction A locks Row 1 and waits for Row 2, while Transaction B locks Row 2 and waits for Row 1. Neither transaction can proceed, and Postgres eventually terminates one of them.
+- **Prevention Strategies:**
+  1. **Consistent Locking Order:** Ensure all database queries access resources in the exact same order (e.g. always update Table A before Table B).
+  2. **Keep Transactions Short:** Perform computations *before* opening transactions; do not put slow operations (like third-party API calls) inside transaction blocks.
+  3. **Optimistic Locking:** Use version numbers on rows (e.g., checking `WHERE version = current_version` when updating) rather than locking rows explicitly.
+</Collapsible>
+
+<Collapsible title="Q9: Contrast the 'Database-per-Service' pattern with the 'Shared Database' pattern in microservices.">
+- **Shared Database:** All microservices connect to a single database schema. It is easy to query and join data, but it represents a **Single Point of Failure (SPOF)**, causes database connection limits to be reached quickly, and couples service schemas tightly (schema changes in Service A might break Service B).
+- **Database-per-Service (Senior Standard):** Each microservice owns its private database. Services communicate only via API calls (REST/GraphQL) or event buses (RabbitMQ/Kafka). This ensures complete isolation, but makes distributed transaction management (Saga Pattern) and aggregate data reporting more complex.
+</Collapsible>
+
+<Collapsible title="Q10: What are the differences between Blue-Green and Canary deployments?">
+- **Blue-Green Deployment:** You maintain two identical production environments (Blue is active, Green is idle). You deploy the new code to Green, test it, and then instantly switch the router/load balancer to Green. If anything goes wrong, you switch back to Blue immediately. This requires double the infrastructure cost.
+- **Canary Deployment:** You deploy the new code to a small subset of servers (e.g. 5% of traffic). You monitor error rates and server health logs. If stable, you gradually roll out the update to the remaining 95% of servers. This minimizes blast radius if bugs slip through.
+</Collapsible>
+
+<Checklist
+  title="Full-Stack Interview Must-Known Topics"
+  items={[
+    "Explain SQL ACID compliance vs NoSQL scalability characteristics",
+    "Identify security exposures when storing JWTs in localStorage vs HttpOnly cookies",
+    "Analyze query performance plans using EXPLAIN ANALYZE",
+    "Write try-catch-finally pools release handlers to avoid database connection leaks",
+    "Implement consistent table accessing orders to avoid database deadlocks",
+    "Describe distributed architectural constraints (Database-per-Service, Canary deployments)"
+  ]}
+/>
+
+## Must-Known Points
+
+- **ACID properties** are key to relational database integrity, whereas **NoSQL** prioritizes read/write speeds and flexibility.
+- **Session safety** is heavily dependent on HTTP headers and HttpOnly cookie configurations.
+- **Explain plans** reveal exactly where indexes are missing.
+- **Distributed architectures** swap query joining convenience for high scalability.

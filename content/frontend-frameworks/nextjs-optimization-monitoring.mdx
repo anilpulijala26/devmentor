@@ -1,0 +1,224 @@
+---
+title: "Performance Optimization & Scale"
+description: "Master enterprise optimization: next/font, next/script, next/dynamic, bundle analyzing, Winston/Pino production logging, and Turborepo monorepos"
+tags: ["nextjs", "performance", "logging", "monitoring", "turborepo"]
+estimatedTime: "85 minutes"
+---
+
+# Performance Optimization & Production Scale
+
+Building a Next.js application that scales to millions of users requires attention to asset sizes, script loading priorities, production-grade error reporting, and monorepo code sharing. Let&apos;s master how to audit, optimize, and log your application at scale.
+
+---
+
+## 1. Asset Optimization: Fonts and Scripts
+
+### Next/Font (Zero CLS)
+Google Fonts loaded via standard `<link>` tags cause **Cumulative Layout Shift (CLS)** because the browser renders fallback fonts before the real font finishes downloading over the network.
+Next.js solves this by downloading fonts at build time and hosting them locally.
+
+```tsx
+// app/layout.tsx
+import { Inter, Outfit } from "next/font/google";
+
+const inter = Inter({
+  subsets: ["latin"],
+  variable: "--font-inter", // Custom CSS variable name
+  display: "swap"
+});
+
+const outfit = Outfit({
+  subsets: ["latin"],
+  variable: "--font-outfit",
+  display: "swap"
+});
+
+export default function RootLayout({ children }: { children: React.ReactNode }) {
+  return (
+    <html lang="en" className={`${inter.variable} ${outfit.variable}`}>
+      <body className="font-sans">{children}</body>
+    </html>
+  );
+}
+```
+
+### Next/Script (Script loading strategies)
+Loading third-party scripts (like Google Analytics, chatbots, or tracking pixels) incorrectly blocks rendering. The `next/script` component optimizes scripts using four strategies:
+
+- **`beforeInteractive`:** Loads before any Next.js code. Use for critical scripts (like security bots).
+- **`afterInteractive` (Default):** Loads after the page becomes interactive. Use for standard analytics.
+- **`lazyOnload`:** Loads during browser idle time. Use for heavy widgets (chatbots).
+- **`worker`:** Loads inside a Web Worker thread (experimental, keeps main thread free).
+
+```tsx
+import Script from "next/script";
+
+export default function App() {
+  return (
+    <div>
+      {/* Standard Google Analytics tag loaded after hydration */}
+      <Script 
+        src="https://www.googletagmanager.com/gtag/js?id=GA_MEASUREMENT_ID"
+        strategy="afterInteractive"
+      />
+      {/* Heavy chatbot widget loaded during browser idle */}
+      <Script 
+        src="https://example.com/chat-widget.js"
+        strategy="lazyOnload"
+      />
+    </div>
+  );
+}
+```
+
+---
+
+## 2. Code Splitting & Bundle Auditing
+
+### Dynamic Imports (next/dynamic)
+By default, Next.js packages all components imported in a file into a single bundle. If a page has a heavy modal or graph component that only renders on click, you can load it lazily using `next/dynamic` to shrink the initial bundle size.
+
+```tsx
+"use client";
+
+import { useState } from "react";
+import dynamic from "next/dynamic";
+
+// Load heavy Chart component only when requested (disables Server-Side pre-rendering)
+const HeavyChart = dynamic(() => import("@/components/HeavyChart"), {
+  ssr: false,
+  loading: () => <p>Loading chart widget...</p>
+});
+
+export default function AnalyticsDashboard() {
+  const [showChart, setShowChart] = useState(false);
+
+  return (
+    <div className="p-6">
+      <button onClick={() => setShowChart(true)} className="bg-indigo-600 text-white p-2 rounded">
+        Load Analytics Report
+      </button>
+      {showChart && <HeavyChart />}
+    </div>
+  );
+}
+```
+
+### Bundle Auditing (Webpack Bundle Analyzer)
+To check which NPM packages are bloating your production site:
+
+#### Step 1: Install Analyzer
+`npm install -D @next/bundle-analyzer`
+
+#### Step 2: Configure next.config.ts
+```typescript
+import withBundleAnalyzer from "@next/bundle-analyzer";
+
+const nextConfig = {
+  // Your base config options here
+};
+
+export default withBundleAnalyzer({
+  enabled: process.env.ANALYZE === "true",
+})(nextConfig);
+```
+
+#### Step 3: Run Audit
+Run `ANALYZE=true npm run build` to open dynamic HTML charts showing exactly how much bytes each library contributes.
+
+---
+
+## 3. Production Logging & Error Tracking
+
+Standard `console.log` statements are synchronous and block execution in production Node.js servers. Additionally, they do not collect structured metadata (timestamps, environment, error details).
+
+### Production Logger Pattern (Pino)
+Pino is an extremely fast, JSON-based server-side logger.
+
+```typescript
+// lib/logger.ts
+import pino from "pino";
+
+const isProduction = process.env.NODE_ENV === "production";
+
+export const logger = pino({
+  level: isProduction ? "info" : "debug",
+  transport: isProduction
+    ? undefined
+    : {
+        target: "pino-pretty", // human-readable terminal output for dev
+        options: { colorize: true }
+      }
+});
+```
+
+### Usage in API Routes or Server Components:
+```typescript
+// app/api/checkout/route.ts
+import { NextResponse } from "next/server";
+import { logger } from "@/lib/logger";
+
+export async function POST(request: Request) {
+  try {
+    const { items, userId } = await request.json();
+    
+    // Log structured context
+    logger.info({ userId, itemsCount: items.length }, "Checkout process started");
+
+    // Checkout database logic...
+
+    return NextResponse.json({ success: true });
+  } catch (error: any) {
+    logger.error({ error: error.message }, "Checkout process failed");
+    return NextResponse.json({ error: "Failed to process order" }, { status: 500 });
+  }
+}
+```
+
+<Pitfall>
+Never log raw personal information (PII) like user passwords, full credit card details, or auth tokens. Clean or strip payload objects before passing them to the logger.
+</Pitfall>
+
+---
+
+## 4. Scaling Next.js with Monorepos (Turborepo)
+
+When organizations grow, managing 5 different repositories (e.g. dashboard, public website, component library, docs, and backend types) leads to dependency drift. 
+A **Monorepo** stores all packages in a single repository.
+
+**Turborepo** is Next.js&apos;s build tool for monorepos. It:
+- **Caches build outputs:** If a component package didn&apos;t change, Turborepo skips building it.
+- **Coordinates task execution:** Runs builds, tests, and lints in parallel.
+- **Shares code easily:** Import a shared UI components package directly into multiple Next.js apps.
+
+```
+/my-turborepo
+  package.json
+  turbo.json
+  /apps
+    /dashboard          → Next.js app (imports @repo/ui)
+    /landing-page       → Next.js app (imports @repo/ui)
+  /packages
+    /ui                 → Shared Tailwind/React component library
+    /tsconfig           → Shared TypeScript config files
+```
+
+<Checklist
+  title="Optimization & Scale Checklist"
+  items={[
+    "Implement next/font to eliminate Cumulative Layout Shift (CLS)",
+    "Apply next/script loading strategies (beforeInteractive, lazyOnload)",
+    "Use next/dynamic to lazily load heavy widgets on user demand",
+    "Set up @next/bundle-analyzer to audit production bundle sizes",
+    "Configure a structured JSON logger (Pino) for server environments",
+    "Understand the core caching and task runner benefits of Turborepo"
+  ]}
+/>
+
+## Key Takeaways
+
+- **Google Fonts** should always be loaded via `next/font` to avoid CLS.
+- Defer non-critical scripts (chatbots, pixels) using `next/script` with `lazyOnload`.
+- Shrink initial bundle sizes by lazily loading heavy libraries with **Dynamic Imports**.
+- For production servers, use **Pino** or Winston to write non-blocking structured logs.
+- Use **Turborepo** to orchestrate large projects and share configurations across applications.

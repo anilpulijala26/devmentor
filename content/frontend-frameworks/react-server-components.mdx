@@ -1,0 +1,174 @@
+---
+title: "Server Components (RSC)"
+description: "Learn React Server Components (RSC) paradigm, hydration, client boundaries, and modern data fetching patterns"
+tags: ["react", "rsc", "nextjs", "hydration"]
+estimatedTime: "80 minutes"
+---
+
+# Server Components (RSC)
+
+React Server Components (RSC) represent a major shift in how we build React applications. By rendering components on the server, we can reduce bundle sizes, load pages faster, and simplify data fetching.
+
+---
+
+## 1. Rendering Paradigms: CSR, SSR, and RSC (Junior/Mid-Level)
+
+To understand React Server Components, we must contrast them with other rendering approaches.
+
+### Client-Side Rendering (CSR)
+The server sends a blank HTML file and a bundle of JavaScript. The browser downloads the JS, compiles it, and builds the UI.
+*   **Drawback:** Slow initial page load (blank screen), bad SEO, heavy client bundle.
+
+### Server-Side Rendering (SSR)
+The server renders the component tree into HTML and sends it to the browser. The user sees the page instantly, but it is not interactive until the JavaScript bundle downloads and runs to attach event handlers. This process is called **Hydration**.
+*   **Drawback:** The client still has to download and run JavaScript for the *entire* page, even for static content (like headers, footers, and static text).
+
+### React Server Components (RSC)
+Components can render **only** on the server. The client receives pre-rendered UI structure (in a lightweight JSON format) and **zero JavaScript** for those components.
+*   **Benefit:** Zero-bundle size for static parts of the page, direct backend database access, and faster page loading times.
+
+---
+
+## 2. Server Components vs Client Components (Mid-Level)
+
+By default, in modern frameworks like Next.js, all components are Server Components. If you need client interactivity, you must declare it using the `"use client"` directive at the top of the file.
+
+Let's look at their capabilities:
+
+| Feature | Server Components | Client Components (`"use client"`) |
+| :--- | :--- | :--- |
+| **State & Hooks** | ❌ No (`useState`, `useEffect`) | ✅ Yes |
+| **Browser APIs** | ❌ No (`window`, `localStorage`) | ✅ Yes |
+| **Backend Access** | ✅ Yes (DB query, File system) | ❌ No |
+| **Secrets** | ✅ Yes (API Keys, private variables) | ❌ No (Could leak to public) |
+| **Dependencies** | ✅ Yes (Kept on server bundle) | ❌ No (Downloaded by client browser) |
+
+### Boundary Rules
+Server components can render Client components. However, Client components cannot import Server components directly. If a Client component needs to display a Server component, it must pass it as a `children` prop.
+
+```tsx
+// ✅ Correct Pattern
+// ServerComponent.tsx
+import { ClientComponent } from "./ClientComponent";
+import { StaticComponent } from "./StaticComponent";
+
+export default function ServerComponent() {
+  return (
+    <ClientComponent>
+      <StaticComponent /> {/* Passed as children prop */}
+    </ClientComponent>
+  );
+}
+```
+
+---
+
+## 3. Hydration & Serialization Boundaries (Senior Level)
+
+### Serializable Props
+When a Server Component passes data to a Client Component, that data must travel over the network. Therefore, props passed across the server-client boundary must be **serializable**.
+- **Allowed:** Strings, numbers, booleans, objects, arrays, null.
+- **Forbidden:** Functions (callbacks), class instances, symbols.
+
+```tsx
+// ❌ Error: Cannot pass functions across the boundary!
+<ClientComponent onClick={() => console.log('click')} />
+```
+
+### Hydration Mismatches
+A hydration mismatch occurs when the server-rendered HTML does not match what the client expects to render on its first pass.
+*   **Cause:** Using browser-specific values (`window.innerWidth`, `localStorage`) or dynamic elements like `new Date()` directly in renders.
+*   **Fix:** Wrap browser checks in `useEffect` so they only execute after hydration, or disable SSR for that specific component.
+
+```tsx
+// ❌ Hydration Mismatch Risk
+const DateComponent = () => {
+  return <p>{new Date().toLocaleTimeString()}</p>; // Server time differs from client time!
+};
+
+// ✅ Safe Pattern
+const DateComponentSafe = () => {
+  const [time, setTime] = useState("");
+  useEffect(() => {
+    setTime(new Date().toLocaleTimeString());
+  }, []);
+  return <p>{time}</p>;
+};
+```
+
+---
+
+## 4. Production Data Fetching Patterns (Senior Level)
+
+RSCs simplify data fetching by making components asynchronous. You can use standard `async/await` directly inside the component body:
+
+```tsx
+// db.ts - Mock database call
+export async function getProducts() {
+  const res = await fetch("https://api.example.com/products", {
+    next: { revalidate: 3600 } // Cache and revalidate every hour
+  });
+  return res.json();
+}
+
+// ProductCatalog.tsx (Server Component)
+import { getProducts } from "./db";
+import { FavoriteButton } from "./FavoriteButton"; // Client component
+
+export default async function ProductCatalog() {
+  const products = await getProducts(); // Direct server fetch!
+
+  return (
+    <div className="grid grid-cols-3 gap-4">
+      {products.map((product: any) => (
+        <div key={product.id} className="border p-4 rounded">
+          <h4>{product.name}</h4>
+          <p>${product.price}</p>
+          <FavoriteButton productId={product.id} />
+        </div>
+      ))}
+    </div>
+  );
+}
+```
+
+### Suspense & Streaming
+If a server component is fetching slow database items, it can block the whole page load. We can wrap the slow component in `<Suspense>` to **stream** the rest of the HTML instantly while displaying a fallback loading state for the slow component.
+
+```tsx
+import { Suspense } from "react";
+import ProductCatalog from "./ProductCatalog";
+import LoadingSkeleton from "./LoadingSkeleton";
+
+export default function Page() {
+  return (
+    <main className="p-8">
+      <h1>Store Dashboard</h1>
+      {/* Stream the product catalog asynchronously */}
+      <Suspense fallback={<LoadingSkeleton />}>
+        <ProductCatalog />
+      </Suspense>
+    </main>
+  );
+}
+```
+
+<Checklist
+  title="Server Components Checklist"
+  items={[
+    "Explain CSR, SSR, and RSC rendering differences",
+    "Identify where component code runs (server vs client)",
+    "Apply 'use client' correctly on interactive leaf components",
+    "Avoid hydration mismatches using client-only mount checks",
+    "Ensure all props passing across boundaries are serializable",
+    "Utilize async/await in Server Components for database fetching",
+    "Stream HTML sections using Suspense boundaries"
+  ]}
+/>
+
+## Key Takeaways
+
+- Modern React separates UI into Server Components (default, zero bundle size) and Client Components (interactive).
+- Server Components excel at data fetching, keeping heavy npm packages off the client bundle, and keeping keys secure.
+- Client Components handle state, effects, and event handling.
+- Hydration connects event listeners from client JS to server-rendered HTML. Avoid rendering dynamic or browser-specific data on the server.
