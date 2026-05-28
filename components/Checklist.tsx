@@ -9,8 +9,8 @@ interface ChecklistProps {
   title?: string;
 }
 
-export function Checklist({ items, title = "Learning Checklist" }: ChecklistProps) {
-  const normalizedItems = items.map((item) =>
+export function Checklist({ items = [], title = "Learning Checklist" }: ChecklistProps) {
+  const normalizedItems = (items || []).map((item) =>
     typeof item === "string" ? { text: item } : item
   );
 

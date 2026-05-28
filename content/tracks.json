@@ -105,7 +105,12 @@
             {
               "slug": "ts-intro",
               "title": "TypeScript Fundamentals",
-              "order": 1
+              "order": 1,
+              "objectives": [],
+              "sections": [],
+              "examples": [],
+              "exercises": [],
+              "resources": []
             },
             {
               "slug": "ts-advanced-generics",

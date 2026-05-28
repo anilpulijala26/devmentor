@@ -10,12 +10,22 @@ export interface Frontmatter {
   tags: string[];
   estimatedTime: string;
   youtubeId?: string;
+  objectives?: string[];
+  sections?: any[];
+  examples?: any[];
+  exercises?: any[];
+  resources?: any[];
 }
 
 export interface LessonMeta {
   slug: string;
   frontmatter: Frontmatter;
   content: string;
+  objectives?: string[];
+  sections?: any[];
+  examples?: any[];
+  exercises?: any[];
+  resources?: any[];
 }
 
 export interface LessonWithPath extends LessonMeta {
@@ -41,6 +51,11 @@ export function getLessonContent(track: string, slug: string): LessonWithPath {
     frontmatter: data as Frontmatter,
     content,
     path: filePath,
+    objectives: data.objectives || [],
+    sections: data.sections || [],
+    examples: data.examples || [],
+    exercises: data.exercises || [],
+    resources: data.resources || [],
   };
 }
 
@@ -85,7 +100,7 @@ export function getLessonsByTrack(trackSlug: string): Lesson[] {
 
   const lessons: Lesson[] = [];
   track.modules.forEach((module) => {
-    lessons.push(...module.lessons.map((lesson) => ({ ...lesson })));
+    lessons.push(...(module.lessons || []).map((lesson) => ({ ...lesson })));
   });
   return lessons;
 }
@@ -95,12 +110,19 @@ export function generateStaticParamsForLesson() {
   const params: Array<{ track: string; lesson: string }> = [];
 
   tracks.forEach((track) => {
-    track.modules.forEach((module) => {
-      module.lessons.forEach((lesson) => {
-        params.push({
-          track: track.slug,
-          lesson: lesson.slug,
-        });
+    (track.modules || []).forEach((module) => {
+      (module.lessons || []).forEach((lesson) => {
+        try {
+          const filePath = getLessonPath(track.slug, lesson.slug);
+          if (fs.existsSync(filePath)) {
+            params.push({
+              track: track.slug,
+              lesson: lesson.slug,
+            });
+          }
+        } catch {
+          // ignore missing or unreadable files gracefully
+        }
       });
     });
   });

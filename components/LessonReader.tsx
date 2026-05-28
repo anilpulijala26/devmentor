@@ -137,20 +137,20 @@ export function LessonReader({
 
             {/* Modules & Lessons tree list */}
             <div className="space-y-6">
-              {track.modules.map((mod, modIdx) => (
-                <div key={mod.slug}>
+              {(track.modules || []).map((mod, modIdx) => (
+                <div key={mod?.slug || modIdx}>
                   <h3 className="text-xs font-extrabold uppercase tracking-wider text-indigo-500 mb-2">
-                    {modIdx + 1}. {mod.title}
+                    {modIdx + 1}. {mod?.title || "Module"}
                   </h3>
                   <ul className="space-y-1 pl-1">
-                    {mod.lessons
-                      .sort((a, b) => a.order - b.order)
+                    {(mod?.lessons ? [...mod.lessons] : [])
+                      .sort((a, b) => (a?.order || 0) - (b?.order || 0))
                       .map((l) => {
-                        const isActive = pathname.endsWith(`/${l.slug}`);
+                        const isActive = pathname.endsWith(`/${l?.slug}`);
                         return (
-                          <li key={l.slug}>
+                          <li key={l?.slug}>
                             <Link
-                              href={`/learn/${track.slug}/${l.slug}`}
+                              href={`/learn/${track.slug}/${l?.slug}`}
                               className={`block rounded-lg px-3 py-2 text-xs font-semibold transition-all duration-200 ${
                                 isActive
                                   ? "bg-indigo-500 text-white shadow-sm"
@@ -159,7 +159,7 @@ export function LessonReader({
                                     }`
                               }`}
                             >
-                              {l.title}
+                              {l?.title}
                             </Link>
                           </li>
                         );
@@ -347,14 +347,14 @@ export function LessonReader({
               </p>
 
               <div className="flex flex-wrap gap-4 text-xs mt-4">
-                {lesson.frontmatter.tags && lesson.frontmatter.tags.length > 0 && (
+                {lesson?.frontmatter?.tags && lesson.frontmatter.tags.length > 0 && (
                   <div className="flex items-center gap-2">
                     <span className="font-semibold text-slate-500">Tags:</span>
                     <div className="flex gap-1.5">
-                      {lesson.frontmatter.tags.map((tag: string) => (
+                      {(lesson.frontmatter.tags || []).map((tag: string) => (
                         <span
-                          key={tag}
-                          className="bg-indigo-50 text-indigo-700 dark:bg-slate-800 dark:text-slate-300 px-2 py-0.5 rounded-lg border border-indigo-100/50 dark:border-slate-700 font-semibold"
+                           key={tag}
+                           className="bg-indigo-50 text-indigo-700 dark:bg-slate-800 dark:text-slate-300 px-2 py-0.5 rounded-lg border border-indigo-100/50 dark:border-slate-700 font-semibold"
                         >
                           {tag}
                         </span>
