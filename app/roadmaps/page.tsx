@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { roadmaps } from "@/lib/roadmaps";
-import { ArrowRight, Sparkles, Clock, Compass, BookOpen } from "lucide-react";
+import { ArrowRight, Sparkles, Clock, Compass, BookOpen, ChevronRight, Check } from "lucide-react";
 
 export const metadata = {
   title: "Developer Roadmaps - CodeNivra",
@@ -10,28 +10,44 @@ export const metadata = {
 export default function RoadmapsPage() {
   const getBadgeColor = (level: string) => {
     return {
-      Beginner: "bg-blue-50 text-blue-700 border-blue-200 dark:bg-slate-800 dark:text-blue-400",
-      Intermediate: "bg-violet-50 text-violet-700 border-violet-200 dark:bg-slate-800 dark:text-violet-400",
-      Advanced: "bg-emerald-50 text-emerald-700 border-emerald-200 dark:bg-slate-800 dark:text-emerald-400",
-      Professional: "bg-pink-50 text-pink-700 border-pink-200 dark:bg-slate-800 dark:text-pink-400",
-      "Interview Prep": "bg-purple-50 text-purple-700 border-purple-200 dark:bg-slate-800 dark:text-purple-400",
-    }[level] || "bg-slate-50 text-slate-700";
+      Beginner: "bg-blue-50 text-blue-700 border-blue-100",
+      Intermediate: "bg-violet-50 text-violet-700 border-violet-100",
+      Advanced: "bg-emerald-50 text-emerald-700 border-emerald-100",
+      Professional: "bg-pink-50 text-pink-700 border-pink-100",
+      "Interview Prep": "bg-purple-50 text-purple-700 border-purple-100",
+    }[level] || "bg-slate-50 text-slate-700 border-slate-100";
   };
 
+  const timelineSteps = [
+    { title: "Intern", desc: "Foundations", label: "Beginner" },
+    { title: "Junior Frontend", desc: "React & TS", label: "Intermediate" },
+    { title: "Mid Full-Stack", desc: "APIs & Databases", label: "Advanced" },
+    { title: "Senior UI", desc: "Architecture & Docker", label: "Professional" },
+    { title: "Interview Prep", desc: "Pitches & Audits", label: "Interview Prep" }
+  ];
+
+  const comparisonCards = [
+    { label: "Beginner Friendly", desc: "HTML, CSS, Git, and JS basics to kickstart coding." },
+    { label: "Frontend Focused", desc: "TypeScript and React states for interactive UI development." },
+    { label: "Full-Stack Path", desc: "Server APIs, relational schemas, and Docker containers." },
+    { label: "Interview Preparation", desc: "System design pitches, guides, and checklist code reviews." }
+  ];
+
   return (
-    <div className="min-h-screen bg-slate-50/50 pb-20 relative overflow-hidden">
-      {/* Decorative gradients */}
+    <div className="min-h-screen bg-slate-50/50 pb-20 relative overflow-hidden font-sans">
+      {/* Decorative background shapes */}
       <div className="absolute top-0 left-1/4 w-96 h-96 bg-indigo-200/20 rounded-full blur-3xl pointer-events-none" />
       <div className="absolute top-80 right-1/4 w-[500px] h-[500px] bg-violet-200/10 rounded-full blur-3xl pointer-events-none" />
 
-      <div className="max-w-6xl mx-auto px-6 py-12 relative animate-fade-in">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 md:py-14 lg:py-20 relative animate-fade-in space-y-16">
+        
         {/* Header */}
-        <div className="mb-12 text-center md:text-left">
-          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-indigo-50 border border-indigo-100 text-indigo-750 text-xs font-semibold mb-4 dark:bg-slate-900 dark:border-slate-800 dark:text-indigo-400">
+        <div className="text-center md:text-left space-y-4">
+          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-indigo-50 border border-indigo-100 text-indigo-700 text-xs font-semibold">
             <Sparkles className="w-3.5 h-3.5" />
             Curated Career Timelines
           </div>
-          <h1 className="text-4xl md:text-5xl font-black tracking-tight mb-4 text-transparent bg-clip-text bg-gradient-to-r from-slate-900 via-indigo-950 to-indigo-900">
+          <h1 className="text-3xl sm:text-4xl lg:text-[48px] lg:leading-[56px] font-extrabold tracking-tight text-slate-900">
             Role-Based Learning Roadmaps
           </h1>
           <p className="text-base sm:text-lg text-slate-600 max-w-2xl leading-relaxed">
@@ -39,83 +55,149 @@ export default function RoadmapsPage() {
           </p>
         </div>
 
-        {/* Path Grid */}
-        <div className="grid gap-8 md:grid-cols-2 lg:grid-cols-3">
-          {roadmaps.map((roadmap) => (
-            <div
-              key={roadmap.slug}
-              className="group relative flex flex-col justify-between rounded-3xl border border-slate-200/80 bg-white p-6 shadow-sm transition-all duration-300 hover:border-slate-300 hover:shadow-md hover:-translate-y-1"
-            >
-              <div className="space-y-4">
-                {/* Level / Duration Badge Row */}
-                <div className="flex items-center justify-between">
-                  <span className={`inline-block px-2.5 py-0.5 rounded-full text-xs font-bold border ${getBadgeColor(roadmap.level)}`}>
-                    {roadmap.level}
+        {/* 1. Career Timeline Stepper */}
+        <section className="bg-white border border-slate-100 rounded-3xl p-6 lg:p-8 shadow-[0_8px_30px_rgba(0,0,0,0.015)] space-y-6">
+          <h2 className="text-xs font-bold text-slate-400 uppercase tracking-widest text-center">
+            Your Career Progression Path
+          </h2>
+          <div className="flex flex-col md:flex-row justify-between items-stretch gap-4 relative">
+            {timelineSteps.map((step, idx) => (
+              <div key={idx} className="flex-1 flex flex-col md:flex-row items-center md:items-start text-center md:text-left gap-4 relative group">
+                <div className="flex flex-col items-center md:items-start space-y-1">
+                  <span className="text-[10px] font-extrabold px-2 py-0.5 rounded bg-indigo-50 text-indigo-700 uppercase tracking-wider">
+                    Stage 0{idx + 1}
                   </span>
-                  <div className="flex items-center gap-1 text-slate-500 text-xs font-medium">
-                    <Clock className="w-3.5 h-3.5" />
-                    <span>{roadmap.duration}</span>
-                  </div>
+                  <h3 className="font-bold text-slate-900 text-sm md:text-base">{step.title}</h3>
+                  <p className="text-xs text-slate-400 font-medium">{step.desc}</p>
                 </div>
-
-                {/* Title & Description */}
-                <div>
-                  <h3 className="text-xl font-bold text-slate-900 group-hover:text-indigo-750 transition-colors">
-                    {roadmap.title}
-                  </h3>
-                  <p className="text-xs sm:text-sm text-slate-600 leading-relaxed mt-2 line-clamp-3">
-                    {roadmap.description}
-                  </p>
-                </div>
-
-                {/* Stats Row */}
-                <div className="grid grid-cols-2 gap-4 py-3 border-y border-slate-100">
-                  <div className="flex items-center gap-2 text-slate-600">
-                    <BookOpen className="w-4.5 h-4.5 text-indigo-500 shrink-0" />
-                    <div>
-                      <p className="text-2xs font-extrabold text-slate-400 uppercase tracking-widest leading-none">Lessons</p>
-                      <p className="text-sm font-bold text-slate-800 mt-1">{roadmap.recommendedLessons.length} Modules</p>
-                    </div>
+                {idx < 4 && (
+                  <div className="hidden md:flex items-center justify-center text-slate-300 self-center pl-4 lg:pl-8">
+                    <ChevronRight className="w-5 h-5 group-hover:translate-x-0.5 transition-transform" />
                   </div>
-
-                  <div className="flex items-center gap-2 text-slate-600">
-                    <Compass className="w-4.5 h-4.5 text-emerald-500 shrink-0" />
-                    <div>
-                      <p className="text-2xs font-extrabold text-slate-400 uppercase tracking-widest leading-none">Labs</p>
-                      <p className="text-sm font-bold text-slate-800 mt-1">{roadmap.projectTasks.length} Projects</p>
-                    </div>
-                  </div>
-                </div>
-
-                {/* Skills covered */}
-                <div>
-                  <p className="text-2xs font-extrabold text-slate-400 uppercase tracking-widest mb-2">Target Skills</p>
-                  <div className="flex flex-wrap gap-1">
-                    {roadmap.skillsCovered.map((skill, idx) => (
-                      <span
-                        key={idx}
-                        className="bg-slate-50 border border-slate-200/80 px-2 py-0.5 rounded-lg text-2xs font-semibold text-slate-700"
-                      >
-                        {skill}
-                      </span>
-                    ))}
-                  </div>
-                </div>
+                )}
               </div>
+            ))}
+          </div>
+        </section>
 
-              {/* Action Button */}
-              <div className="mt-8 pt-4 border-t border-slate-200/45">
-                <Link
-                  href={`/roadmaps/${roadmap.slug}`}
-                  className="w-full inline-flex items-center justify-center gap-2 bg-indigo-600 hover:bg-indigo-700 text-white py-3 rounded-2xl text-xs font-bold transition shadow-xs"
-                >
-                  Start Learning Path
-                  <ArrowRight className="w-4 h-4" />
-                </Link>
+        {/* 2. Comparison Summary Row */}
+        <section className="grid sm:grid-cols-2 lg:grid-cols-4 gap-6">
+          {comparisonCards.map((card, idx) => (
+            <div
+              key={idx}
+              className="bg-white border border-slate-100 rounded-2xl p-5 shadow-2xs hover:shadow-[0_8px_30px_rgba(0,0,0,0.02)] transition-all duration-300 flex items-start gap-3"
+            >
+              <div className="w-7 h-7 rounded-lg bg-emerald-50 border border-emerald-100 text-emerald-600 flex items-center justify-center shrink-0 mt-0.5">
+                <Check className="w-4 h-4" />
+              </div>
+              <div className="space-y-1">
+                <h3 className="text-xs font-extrabold text-slate-900 uppercase tracking-wider">{card.label}</h3>
+                <p className="text-xs text-slate-500 leading-normal font-semibold">{card.desc}</p>
               </div>
             </div>
           ))}
-        </div>
+        </section>
+
+        {/* 3. Roadmaps Path Grid */}
+        <section className="space-y-8">
+          <h2 className="text-xl sm:text-2xl font-extrabold text-slate-900 border-b border-slate-100 pb-4 text-center md:text-left">
+            Select Your Role Pathway
+          </h2>
+          
+          <div className="grid gap-8 md:grid-cols-2 lg:grid-cols-3">
+            {roadmaps.map((roadmap) => {
+              const visibleSkills = roadmap.skillsCovered.slice(0, 3);
+              const extraSkillsCount = roadmap.skillsCovered.length - 3;
+
+              return (
+                <div
+                  key={roadmap.slug}
+                  className="group bg-white border border-slate-100 rounded-3xl p-6 lg:p-8 shadow-[0_8px_30px_rgba(0,0,0,0.015)] hover:shadow-[0_15px_40px_rgba(0,0,0,0.03)] hover:-translate-y-[3px] transition-all duration-300 flex flex-col justify-between h-full"
+                >
+                  <div className="space-y-5">
+                    {/* Level / Duration Badge Row */}
+                    <div className="flex items-center justify-between">
+                      <span className={`inline-block px-2.5 py-0.5 rounded-full text-xs font-bold border ${getBadgeColor(roadmap.level)}`}>
+                        {roadmap.level}
+                      </span>
+                      <div className="flex items-center gap-1.5 text-slate-400 text-xs font-semibold">
+                        <Clock className="w-3.5 h-3.5" />
+                        <span>{roadmap.duration}</span>
+                      </div>
+                    </div>
+
+                    {/* Role Title */}
+                    <h3 className="text-lg sm:text-xl font-bold text-slate-900 group-hover:text-indigo-650 transition-colors">
+                      {roadmap.title}
+                    </h3>
+
+                    {/* Outcome Description */}
+                    <p className="text-sm text-slate-550 leading-relaxed line-clamp-2 font-normal">
+                      {roadmap.description}
+                    </p>
+
+                    {/* Stats Row */}
+                    <div className="grid grid-cols-2 gap-4 py-3 border-y border-slate-50 text-slate-500">
+                      <div className="flex items-center gap-2">
+                        <BookOpen className="w-4 h-4 text-indigo-500 shrink-0" />
+                        <div>
+                          <p className="text-[9px] font-bold text-slate-400 uppercase tracking-wider leading-none">Lessons</p>
+                          <p className="text-xs sm:text-sm font-bold text-slate-800 mt-1">{roadmap.recommendedLessons.length} Modules</p>
+                        </div>
+                      </div>
+
+                      <div className="flex items-center gap-2">
+                        <Compass className="w-4 h-4 text-emerald-500 shrink-0" />
+                        <div>
+                          <p className="text-[9px] font-bold text-slate-400 uppercase tracking-wider leading-none">Labs</p>
+                          <p className="text-xs sm:text-sm font-bold text-slate-800 mt-1">{roadmap.projectTasks.length} Projects</p>
+                        </div>
+                      </div>
+                    </div>
+
+                    {/* Skill Preview */}
+                    <div className="space-y-2">
+                      <p className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Skill preview</p>
+                      <div className="flex flex-wrap gap-1">
+                        {visibleSkills.map((skill, idx) => (
+                          <span
+                            key={idx}
+                            className="bg-slate-50 border border-slate-200/50 px-2 py-0.5 rounded-md text-[10px] font-semibold text-slate-600"
+                          >
+                            {skill}
+                          </span>
+                        ))}
+                        {extraSkillsCount > 0 && (
+                          <span className="bg-indigo-50 border border-indigo-100 px-2 py-0.5 rounded-md text-[10px] font-bold text-indigo-700">
+                            +{extraSkillsCount} more skills
+                          </span>
+                        )}
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* CTA Area */}
+                  <div className="mt-8 pt-4 border-t border-slate-50 flex flex-col gap-3">
+                    <Link
+                      href={`/roadmaps/${roadmap.slug}`}
+                      className="w-full h-12 inline-flex items-center justify-center gap-2 bg-indigo-600 hover:bg-indigo-700 text-white rounded-xl text-sm font-semibold transition shadow-2xs cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 focus-visible:ring-offset-2"
+                    >
+                      Start Learning Path
+                      <ArrowRight className="w-4 h-4 transition-transform duration-200 group-hover:translate-x-0.5" />
+                    </Link>
+                    <Link
+                      href={`/roadmaps/${roadmap.slug}`}
+                      className="text-xs font-semibold text-slate-500 hover:text-indigo-600 text-center transition underline underline-offset-4 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 rounded px-1 w-fit mx-auto"
+                    >
+                      View Details
+                    </Link>
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+        </section>
+
       </div>
     </div>
   );

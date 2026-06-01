@@ -16,7 +16,7 @@ export function Footer() {
             <ul className="space-y-2.5 text-sm font-semibold">
               <li>
                 <Link href="/learn" className="text-slate-600 hover:text-indigo-600 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 rounded px-1">
-                  Learning Tracks
+                  Learning Hub
                 </Link>
               </li>
               <li>
@@ -25,8 +25,8 @@ export function Footer() {
                 </Link>
               </li>
               <li>
-                <Link href="/tasks" className="text-slate-600 hover:text-indigo-600 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 rounded px-1">
-                  Daily Tasks
+                <Link href="/projects" className="text-slate-600 hover:text-indigo-600 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 rounded px-1">
+                  Project Labs
                 </Link>
               </li>
             </ul>
@@ -35,12 +35,14 @@ export function Footer() {
             <h3 className="font-bold text-slate-900 mb-4 text-base">Resources</h3>
             <ul className="space-y-2.5 text-sm font-semibold">
               <li>
-                <Link href="/code-review" className="text-slate-600 hover:text-indigo-600 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 rounded px-1">
-                  Code Review Guidelines
+                <Link href="/tasks" className="text-slate-600 hover:text-indigo-600 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 rounded px-1">
+                  Daily Tasks
                 </Link>
               </li>
               <li>
-                <span className="text-slate-500 font-medium">Static Markdown Guides</span>
+                <Link href="/code-review" className="text-slate-600 hover:text-indigo-600 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 rounded px-1">
+                  Code Review Guidelines
+                </Link>
               </li>
             </ul>
           </div>

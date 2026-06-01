@@ -11,10 +11,11 @@ export function Navbar() {
 
   const navItems = [
     { name: "Home", href: "/" },
-    { name: "Learning Tracks", href: "/learn" },
-    { name: "Curriculum", href: "/roadmaps" },
-    { name: "Resources", href: "/tasks" },
-    { name: "About", href: "/code-review" },
+    { name: "Learning Hub", href: "/learn" },
+    { name: "Roadmaps", href: "/roadmaps" },
+    { name: "Project Labs", href: "/projects" },
+    { name: "Daily Tasks", href: "/tasks" },
+    { name: "Code Review", href: "/code-review" },
   ];
 
   return (
