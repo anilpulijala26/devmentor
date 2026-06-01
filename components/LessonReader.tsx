@@ -65,9 +65,9 @@ export function LessonReader({
 
   useEffect(() => {
     // Read persisted reader preferences if any
-    const savedTheme = localStorage.getItem("devmentor-reader-theme");
-    const savedTextSize = localStorage.getItem("devmentor-reader-textsize");
-    const savedSpacing = localStorage.getItem("devmentor-reader-spacing");
+    const savedTheme = localStorage.getItem("CodeNivra-reader-theme");
+    const savedTextSize = localStorage.getItem("CodeNivra-reader-textsize");
+    const savedSpacing = localStorage.getItem("CodeNivra-reader-spacing");
 
     setTimeout(() => {
       if (savedTheme) setTheme(savedTheme as "system" | "cream" | "sepia" | "slate");
@@ -83,17 +83,17 @@ export function LessonReader({
 
   const changeTheme = (newTheme: typeof theme) => {
     setTheme(newTheme);
-    localStorage.setItem("devmentor-reader-theme", newTheme);
+    localStorage.setItem("CodeNivra-reader-theme", newTheme);
   };
 
   const changeTextSize = (newSize: typeof textSize) => {
     setTextSize(newSize);
-    localStorage.setItem("devmentor-reader-textsize", newSize);
+    localStorage.setItem("CodeNivra-reader-textsize", newSize);
   };
 
   const changeSpacing = (newSpacing: typeof lineSpacing) => {
     setLineSpacing(newSpacing);
-    localStorage.setItem("devmentor-reader-spacing", newSpacing);
+    localStorage.setItem("CodeNivra-reader-spacing", newSpacing);
   };
 
   // Determine current display percentage helper
@@ -106,9 +106,8 @@ export function LessonReader({
 
   return (
     <div
-      className={`min-h-screen transition-colors duration-300 flex flex-col ${
-        theme !== "system" ? `reader-mode theme-${theme}` : "bg-slate-50 text-slate-800"
-      }`}
+      className={`min-h-screen transition-colors duration-300 flex flex-col ${theme !== "system" ? `reader-mode theme-${theme}` : "bg-slate-50 text-slate-800"
+        }`}
     >
       {/* Sticky top scroll indicator */}
       <div className="fixed top-0 left-0 w-full h-[3px] bg-slate-200 z-50">
@@ -122,9 +121,8 @@ export function LessonReader({
       <div className="flex flex-1 relative mt-14">
         {/* Course Directory Left Sidebar */}
         <aside
-          className={`fixed top-14 bottom-0 left-0 z-30 w-80 border-r border-slate-200 bg-white transition-transform duration-300 overflow-y-auto ${
-            sidebarOpen ? "translate-x-0" : "-translate-x-full"
-          } ${theme === "slate" ? "bg-slate-900 border-slate-800 text-slate-100" : "bg-white text-slate-800"}`}
+          className={`fixed top-14 bottom-0 left-0 z-30 w-80 border-r border-slate-200 bg-white transition-transform duration-300 overflow-y-auto ${sidebarOpen ? "translate-x-0" : "-translate-x-full"
+            } ${theme === "slate" ? "bg-slate-900 border-slate-800 text-slate-100" : "bg-white text-slate-800"}`}
         >
           <div className="p-6">
             <div className="flex items-center justify-between mb-6 pb-4 border-b border-slate-100 dark:border-slate-800">
@@ -156,13 +154,11 @@ export function LessonReader({
                           <li key={l?.slug}>
                             <Link
                               href={`/learn/${track.slug}/${l?.slug}`}
-                              className={`block rounded-lg px-3 py-2 text-xs font-semibold transition-all duration-200 ${
-                                isActive
+                              className={`block rounded-lg px-3 py-2 text-xs font-semibold transition-all duration-200 ${isActive
                                   ? "bg-indigo-500 text-white shadow-sm"
-                                  : `hover:bg-slate-100 dark:hover:bg-slate-800 ${
-                                      theme === "slate" ? "text-slate-300" : "text-slate-600"
-                                    }`
-                              }`}
+                                  : `hover:bg-slate-100 dark:hover:bg-slate-800 ${theme === "slate" ? "text-slate-300" : "text-slate-600"
+                                  }`
+                                }`}
                             >
                               {l?.title}
                             </Link>
@@ -186,9 +182,8 @@ export function LessonReader({
 
         {/* Right Content Space */}
         <main
-          className={`flex-1 transition-all duration-300 px-4 md:px-8 py-8 ${
-            sidebarOpen ? "lg:pl-[340px]" : "pl-4 md:pl-8"
-          }`}
+          className={`flex-1 transition-all duration-300 px-4 md:px-8 py-8 ${sidebarOpen ? "lg:pl-[340px]" : "pl-4 md:pl-8"
+            }`}
         >
           <div className="max-w-4xl mx-auto">
             {/* Top Toolbar */}
@@ -196,9 +191,8 @@ export function LessonReader({
               <div className="flex items-center gap-2">
                 <button
                   onClick={() => setSidebarOpen(!sidebarOpen)}
-                  className={`p-2 rounded-xl border border-slate-200 dark:border-slate-800 transition hover:bg-slate-100 dark:hover:bg-slate-800 flex items-center gap-1.5 text-xs font-bold ${
-                    sidebarOpen ? "bg-indigo-500 border-indigo-500 text-white hover:bg-indigo-600" : ""
-                  }`}
+                  className={`p-2 rounded-xl border border-slate-200 dark:border-slate-800 transition hover:bg-slate-100 dark:hover:bg-slate-800 flex items-center gap-1.5 text-xs font-bold ${sidebarOpen ? "bg-indigo-500 border-indigo-500 text-white hover:bg-indigo-600" : ""
+                    }`}
                   title="Toggle course directory sidebar"
                 >
                   <Sidebar className="w-4 h-4" />
@@ -215,11 +209,10 @@ export function LessonReader({
 
                 <button
                   onClick={() => toggleLessonComplete(lesson.slug)}
-                  className={`p-2 rounded-xl border transition text-xs font-bold flex items-center gap-1.5 ${
-                    isLessonCompleted
+                  className={`p-2 rounded-xl border transition text-xs font-bold flex items-center gap-1.5 ${isLessonCompleted
                       ? "bg-emerald-500 border-emerald-500 text-white hover:bg-emerald-600"
                       : "border-slate-200 dark:border-slate-800 hover:bg-slate-100 dark:hover:bg-slate-800"
-                  }`}
+                    }`}
                 >
                   <CheckCircle2 className="w-4 h-4" />
                   <span>{isLessonCompleted ? "Completed" : "Mark Complete"}</span>
@@ -230,9 +223,8 @@ export function LessonReader({
               <div className="relative">
                 <button
                   onClick={() => setShowControls(!showControls)}
-                  className={`p-2 rounded-xl border border-slate-200 dark:border-slate-800 transition hover:bg-slate-100 dark:hover:bg-slate-800 flex items-center gap-1.5 text-xs font-bold ${
-                    showControls ? "bg-indigo-500 border-indigo-500 text-white hover:bg-indigo-600" : ""
-                  }`}
+                  className={`p-2 rounded-xl border border-slate-200 dark:border-slate-800 transition hover:bg-slate-100 dark:hover:bg-slate-800 flex items-center gap-1.5 text-xs font-bold ${showControls ? "bg-indigo-500 border-indigo-500 text-white hover:bg-indigo-600" : ""
+                    }`}
                 >
                   <Settings className="w-4 h-4" />
                   <span>Reader Controls</span>
@@ -255,35 +247,31 @@ export function LessonReader({
                         <div className="grid grid-cols-4 gap-1.5">
                           <button
                             onClick={() => changeTheme("system")}
-                            className={`px-2 py-1.5 text-[10px] font-bold rounded-lg border transition ${
-                              theme === "system"
+                            className={`px-2 py-1.5 text-[10px] font-bold rounded-lg border transition ${theme === "system"
                                 ? "border-indigo-600 bg-indigo-50 text-indigo-700 dark:bg-indigo-950 dark:text-indigo-400"
                                 : "border-slate-200 hover:bg-slate-50 dark:border-slate-800 dark:hover:bg-slate-800"
-                            }`}
+                              }`}
                           >
                             Default
                           </button>
                           <button
                             onClick={() => changeTheme("cream")}
-                            className={`px-2 py-1.5 text-[10px] font-bold rounded-lg border transition bg-[#fbfbf8] text-[#2c2c2c] ${
-                              theme === "cream" ? "border-indigo-600 ring-2 ring-indigo-100" : "border-slate-200"
-                            }`}
+                            className={`px-2 py-1.5 text-[10px] font-bold rounded-lg border transition bg-[#fbfbf8] text-[#2c2c2c] ${theme === "cream" ? "border-indigo-600 ring-2 ring-indigo-100" : "border-slate-200"
+                              }`}
                           >
                             Cream
                           </button>
                           <button
                             onClick={() => changeTheme("sepia")}
-                            className={`px-2 py-1.5 text-[10px] font-bold rounded-lg border transition bg-[#f5edd6] text-[#433422] ${
-                              theme === "sepia" ? "border-indigo-600 ring-2 ring-indigo-100" : "border-slate-200"
-                            }`}
+                            className={`px-2 py-1.5 text-[10px] font-bold rounded-lg border transition bg-[#f5edd6] text-[#433422] ${theme === "sepia" ? "border-indigo-600 ring-2 ring-indigo-100" : "border-slate-200"
+                              }`}
                           >
                             Sepia
                           </button>
                           <button
                             onClick={() => changeTheme("slate")}
-                            className={`px-2 py-1.5 text-[10px] font-bold rounded-lg border transition bg-[#0f172a] text-[#e2e8f0] ${
-                              theme === "slate" ? "border-indigo-600 ring-2 ring-indigo-900" : "border-slate-700"
-                            }`}
+                            className={`px-2 py-1.5 text-[10px] font-bold rounded-lg border transition bg-[#0f172a] text-[#e2e8f0] ${theme === "slate" ? "border-indigo-600 ring-2 ring-indigo-900" : "border-slate-700"
+                              }`}
                           >
                             Slate
                           </button>
@@ -304,11 +292,10 @@ export function LessonReader({
                             <button
                               key={sz}
                               onClick={() => changeTextSize(sz)}
-                              className={`px-2 py-1 text-[11px] font-bold rounded-lg border transition ${
-                                textSize === sz
+                              className={`px-2 py-1 text-[11px] font-bold rounded-lg border transition ${textSize === sz
                                   ? "border-indigo-600 bg-indigo-50 text-indigo-700 dark:bg-indigo-950 dark:text-indigo-400"
                                   : "border-slate-200 hover:bg-slate-50 dark:border-slate-800 dark:hover:bg-slate-800"
-                              }`}
+                                }`}
                             >
                               {sz === "text-sm" ? "A-" : sz === "text-xl" ? "A+" : sz === "text-base" ? "100%" : "115%"}
                             </button>
@@ -325,21 +312,19 @@ export function LessonReader({
                         <div className="grid grid-cols-2 gap-2">
                           <button
                             onClick={() => changeSpacing("normal")}
-                            className={`px-2 py-1.5 text-[10px] font-bold rounded-lg border transition ${
-                              lineSpacing === "normal"
+                            className={`px-2 py-1.5 text-[10px] font-bold rounded-lg border transition ${lineSpacing === "normal"
                                 ? "border-indigo-600 bg-indigo-50 text-indigo-700 dark:bg-indigo-950 dark:text-indigo-400"
                                 : "border-slate-200 hover:bg-slate-50 dark:border-slate-800"
-                            }`}
+                              }`}
                           >
                             Compact/Normal
                           </button>
                           <button
                             onClick={() => changeSpacing("spacious")}
-                            className={`px-2 py-1.5 text-[10px] font-bold rounded-lg border transition ${
-                              lineSpacing === "spacious"
+                            className={`px-2 py-1.5 text-[10px] font-bold rounded-lg border transition ${lineSpacing === "spacious"
                                 ? "border-indigo-600 bg-indigo-50 text-indigo-700 dark:bg-indigo-950 dark:text-indigo-400"
                                 : "border-slate-200 hover:bg-slate-50 dark:border-slate-800"
-                            }`}
+                              }`}
                           >
                             Spacious/Relaxed
                           </button>
@@ -370,8 +355,8 @@ export function LessonReader({
                     <div className="flex gap-1.5">
                       {(lesson.frontmatter.tags || []).map((tag: string) => (
                         <span
-                           key={tag}
-                           className="bg-indigo-50 text-indigo-700 dark:bg-slate-800 dark:text-slate-300 px-2 py-0.5 rounded-lg border border-indigo-100/50 dark:border-slate-700 font-semibold"
+                          key={tag}
+                          className="bg-indigo-50 text-indigo-700 dark:bg-slate-800 dark:text-slate-300 px-2 py-0.5 rounded-lg border border-indigo-100/50 dark:border-slate-700 font-semibold"
                         >
                           {tag}
                         </span>
@@ -391,9 +376,8 @@ export function LessonReader({
             {/* MDX Content wrapper */}
             <div
               ref={contentRef}
-              className={`max-w-3xl mx-auto ${textSize} ${
-                lineSpacing === "spacious" ? "reader-spacious" : "reader-normal"
-              }`}
+              className={`max-w-3xl mx-auto ${textSize} ${lineSpacing === "spacious" ? "reader-spacious" : "reader-normal"
+                }`}
             >
               {children}
             </div>
@@ -406,11 +390,10 @@ export function LessonReader({
               </div>
               <button
                 onClick={() => toggleLessonComplete(lesson.slug)}
-                className={`px-5 py-2.5 rounded-xl text-xs font-bold transition flex items-center gap-2 ${
-                  isLessonCompleted
+                className={`px-5 py-2.5 rounded-xl text-xs font-bold transition flex items-center gap-2 ${isLessonCompleted
                     ? "bg-emerald-600 hover:bg-emerald-700 text-white"
                     : "bg-indigo-600 hover:bg-indigo-700 text-white"
-                }`}
+                  }`}
               >
                 <CheckCircle2 className="w-4 h-4" />
                 {isLessonCompleted ? "Completed - Mark Incomplete" : "Mark as Completed"}

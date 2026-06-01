@@ -5,7 +5,7 @@ import { ProjectChecklist } from "@/components/mdx/ProjectChecklist";
 import { InterviewExplanation } from "@/components/mdx/InterviewExplanation";
 
 export const metadata = {
-  title: "E-commerce Listing - Project Lab | DevMentor",
+  title: "E-commerce Listing - Project Lab | CodeNivra",
   description: "Detailed system design, requirements, and templates for the E-commerce Product Listing App.",
 };
 
@@ -33,7 +33,7 @@ export default function EcommerceListingPage() {
         {/* Project Header */}
         <div className="mb-10">
           <div className="flex items-center gap-2 mb-3">
-            <span className="inline-block px-3 py-1 rounded-full text-xs font-bold border bg-violet-50 text-violet-750 border-violet-150">
+            <span className="inline-block px-3 py-1 rounded-full text-xs font-bold border bg-violet-50 text-violet-700 border-violet-200">
               Intermediate Lab
             </span>
             <span className="text-xs text-slate-500 font-semibold">2 - 3 Weeks Duration</span>
@@ -86,7 +86,7 @@ export default function EcommerceListingPage() {
 
             <div>
               <p className="text-xs font-bold text-slate-800 uppercase tracking-wider mb-2">Core Features List</p>
-              <ul className="list-disc list-inside space-y-1.5 pl-2 text-xs sm:text-sm text-slate-650">
+              <ul className="list-disc list-inside space-y-1.5 pl-2 text-xs sm:text-sm text-slate-600">
                 <li><strong className="text-slate-900">Debounced Search Input:</strong> Queries items safely without rendering stutter.</li>
                 <li><strong className="text-slate-900">Multi-Option Filters:</strong> Categorize by categories, ratings, availability.</li>
                 <li><strong className="text-slate-900">URL Query Syncing:</strong> Filters map to query params for shareable states.</li>
@@ -120,7 +120,7 @@ export default function EcommerceListingPage() {
           </div>
 
           <pre className="bg-slate-950 text-slate-200 p-4 rounded-2xl border border-slate-900 font-mono text-xs overflow-x-auto leading-relaxed">
-{`ecommerce-listing/
+            {`ecommerce-listing/
 ├── src/
 │   ├── app/
 │   │   ├── page.tsx               # Main catalog layout
@@ -151,7 +151,7 @@ export default function EcommerceListingPage() {
             7. Component Breakdown
           </h2>
 
-          <div className="space-y-4 text-xs sm:text-sm text-slate-650">
+          <div className="space-y-4 text-xs sm:text-sm text-slate-600">
             <div>
               <p className="font-bold text-slate-800 mb-1">`CatalogGrid` Component</p>
               <p className="leading-relaxed">Maps filtered product sets into responsive grids, featuring load skeleton placeholders and empty-result fallback screens.</p>
@@ -176,9 +176,9 @@ export default function EcommerceListingPage() {
 
           <div className="space-y-6 text-sm text-slate-700">
             <div>
-              <h3 className="font-bold text-slate-905 mb-2 text-xs uppercase tracking-wider">GET `/api/products` Contract</h3>
+              <h3 className="font-bold text-slate-900 mb-2 text-xs uppercase tracking-wider">GET `/api/products` Contract</h3>
               <pre className="bg-slate-950 text-slate-200 p-4 rounded-xl border border-slate-900 font-mono text-xs overflow-x-auto">
-{`Request Query Params:
+                {`Request Query Params:
 ?search=shoes&category=footwear&minPrice=20&maxPrice=150&rating=4&sort=price_desc
 
 Response (200 OK):
@@ -191,7 +191,7 @@ Response (200 OK):
       "category": "footwear",
       "rating": 4.5,
       "inStock": true,
-      "imageUrl": "https://cdn.devmentor.io/products/runner.jpg"
+      "imageUrl": "https://cdn.codenivra.io/products/runner.jpg"
     }
   ],
   "totalCount": 1
@@ -200,9 +200,9 @@ Response (200 OK):
             </div>
 
             <div>
-              <h3 className="font-bold text-slate-905 mb-2 text-xs uppercase tracking-wider">PostgreSQL Database Schema</h3>
+              <h3 className="font-bold text-slate-900 mb-2 text-xs uppercase tracking-wider">PostgreSQL Database Schema</h3>
               <pre className="bg-slate-950 text-slate-200 p-4 rounded-xl border border-slate-900 font-mono text-xs overflow-x-auto">
-{`CREATE TABLE categories (
+                {`CREATE TABLE categories (
   slug VARCHAR(50) PRIMARY KEY,
   name VARCHAR(100) NOT NULL
 );
@@ -242,12 +242,12 @@ CREATE INDEX idx_products_price ON products(price);`}
               { phase: "Phase 5: Persistent Cart Sliding Drawer", desc: "Design sliding drawer menus triggering subtotal computations. Enforce stock availability checks before allowing quantity increments." }
             ].map((p, idx) => (
               <div key={idx} className="flex gap-4">
-                <span className="h-6 w-6 rounded-full bg-indigo-50 text-indigo-650 font-bold text-xs flex items-center justify-center shrink-0">
+                <span className="h-6 w-6 rounded-full bg-indigo-50 text-indigo-600 font-bold text-xs flex items-center justify-center shrink-0">
                   {idx + 1}
                 </span>
                 <div>
                   <h4 className="font-bold text-slate-900">{p.phase}</h4>
-                  <p className="text-slate-650 text-xs mt-0.5 leading-relaxed">{p.desc}</p>
+                  <p className="text-slate-600 text-xs mt-0.5 leading-relaxed">{p.desc}</p>
                 </div>
               </div>
             ))}
@@ -277,7 +277,7 @@ CREATE INDEX idx_products_price ON products(price);`}
         </section>
 
         {/* 14. Senior Developer Notes */}
-        <section className="my-8 p-6 bg-indigo-50/20 border border-indigo-150 rounded-3xl shadow-xs space-y-4">
+        <section className="my-8 p-6 bg-indigo-50/20 border border-indigo-200 rounded-3xl shadow-xs space-y-4">
           <h2 className="text-lg font-extrabold text-indigo-950 flex items-center gap-2 pb-3 border-b border-indigo-100">
             <Sparkles className="w-5 h-5 text-indigo-600" />
             14. Senior Developer Advice

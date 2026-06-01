@@ -24,9 +24,9 @@ export function ProgressProvider({ children }: { children: React.ReactNode }) {
     // Read from localStorage on mount
     const timer = setTimeout(() => {
       try {
-        const lessons = localStorage.getItem("devmentor-progress-lessons");
-        const tasks = localStorage.getItem("devmentor-progress-tasks");
-        const projects = localStorage.getItem("devmentor-progress-projects");
+        const lessons = localStorage.getItem("CodeNivra-progress-lessons");
+        const tasks = localStorage.getItem("CodeNivra-progress-tasks");
+        const projects = localStorage.getItem("CodeNivra-progress-projects");
 
         if (lessons) setCompletedLessons(JSON.parse(lessons));
         if (tasks) setCompletedTasks(JSON.parse(tasks));
@@ -42,7 +42,7 @@ export function ProgressProvider({ children }: { children: React.ReactNode }) {
   const toggleLessonComplete = (slug: string) => {
     setCompletedLessons((prev) => {
       const next = prev.includes(slug) ? prev.filter((s) => s !== slug) : [...prev, slug];
-      localStorage.setItem("devmentor-progress-lessons", JSON.stringify(next));
+      localStorage.setItem("CodeNivra-progress-lessons", JSON.stringify(next));
       return next;
     });
   };
@@ -50,7 +50,7 @@ export function ProgressProvider({ children }: { children: React.ReactNode }) {
   const toggleTaskComplete = (slug: string) => {
     setCompletedTasks((prev) => {
       const next = prev.includes(slug) ? prev.filter((s) => s !== slug) : [...prev, slug];
-      localStorage.setItem("devmentor-progress-tasks", JSON.stringify(next));
+      localStorage.setItem("CodeNivra-progress-tasks", JSON.stringify(next));
       return next;
     });
   };
@@ -58,7 +58,7 @@ export function ProgressProvider({ children }: { children: React.ReactNode }) {
   const toggleProjectComplete = (slug: string) => {
     setCompletedProjects((prev) => {
       const next = prev.includes(slug) ? prev.filter((s) => s !== slug) : [...prev, slug];
-      localStorage.setItem("devmentor-progress-projects", JSON.stringify(next));
+      localStorage.setItem("CodeNivra-progress-projects", JSON.stringify(next));
       return next;
     });
   };
@@ -71,9 +71,9 @@ export function ProgressProvider({ children }: { children: React.ReactNode }) {
           completedLessons: [],
           completedTasks: [],
           completedProjects: [],
-          toggleLessonComplete: () => {},
-          toggleTaskComplete: () => {},
-          toggleProjectComplete: () => {},
+          toggleLessonComplete: () => { },
+          toggleTaskComplete: () => { },
+          toggleProjectComplete: () => { },
           getTrackProgress: () => 0,
         }}
       >

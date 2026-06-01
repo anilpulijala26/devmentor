@@ -23,13 +23,13 @@ export async function generateMetadata({ params }: Props) {
     const track = getTrackBySlug(trackSlug);
     if (track) {
       return {
-        title: `${track.title} Path - DevMentor`,
+        title: `${track.title} Path - CodeNivra`,
         description: track.description,
       };
     }
-  } catch {}
+  } catch { }
   return {
-    title: "Track Roadmap - DevMentor",
+    title: "Track Roadmap - CodeNivra",
   };
 }
 
@@ -55,7 +55,7 @@ export default async function TrackPage({ params }: Props) {
   const recommendedProjects = Array.from(
     new Set(trackTopicMappings.flatMap((topic) => topic.relatedProjects))
   ).map((pSlug) => getProjectBySlug(pSlug))
-   .filter((p): p is NonNullable<typeof p> => p !== undefined);
+    .filter((p): p is NonNullable<typeof p> => p !== undefined);
 
   // Dynamic theme configurations
   const themeMap: Record<
@@ -109,7 +109,7 @@ export default async function TrackPage({ params }: Props) {
       badge: "Advanced Web Apps",
       colorClass: "from-indigo-600 to-violet-600",
       bgClass: "bg-violet-50",
-      textClass: "text-violet-750",
+      textClass: "text-violet-700",
       borderClass: "border-violet-100",
       hours: "18 Hours",
       level: "Advanced",
@@ -188,7 +188,7 @@ export default async function TrackPage({ params }: Props) {
       <div className="absolute bottom-20 left-1/4 w-[400px] h-[400px] bg-violet-200/10 rounded-full blur-3xl pointer-events-none" />
 
       <div className="max-w-4xl mx-auto px-6 py-10 relative animate-fade-in">
-        
+
         {/* Navigation header bar */}
         <div className="sticky top-16 z-40 -mx-4 px-4 py-3 bg-slate-50/90 backdrop-blur-md border-b border-slate-100 mb-8 flex items-center justify-between rounded-b-xl shadow-xs">
           <Link
@@ -209,7 +209,7 @@ export default async function TrackPage({ params }: Props) {
             <span className={`inline-flex items-center rounded-full bg-gradient-to-r ${theme.colorClass} px-3 py-1 text-xs font-bold text-white shadow-sm`}>
               {theme.badge}
             </span>
-            <span className="inline-flex items-center rounded-full bg-slate-100 px-2.5 py-0.5 text-xs font-semibold text-slate-655">
+            <span className="inline-flex items-center rounded-full bg-slate-100 px-2.5 py-0.5 text-xs font-semibold text-slate-600">
               {theme.level} Path
             </span>
           </div>
@@ -259,8 +259,8 @@ export default async function TrackPage({ params }: Props) {
             <h2 className="text-sm font-extrabold text-slate-900 mb-3 uppercase tracking-wider">Target Competencies You Will Gain</h2>
             <ul className="space-y-3">
               {theme.skillsGained.map((skill, idx) => (
-                <li key={idx} className="flex gap-2.5 items-start text-xs sm:text-sm text-slate-650 leading-relaxed">
-                  <span className="h-5 w-5 bg-indigo-50 border border-indigo-150 rounded-md flex items-center justify-center shrink-0 mt-0.5 text-indigo-650 font-bold text-2xs">
+                <li key={idx} className="flex gap-2.5 items-start text-xs sm:text-sm text-slate-600 leading-relaxed">
+                  <span className="h-5 w-5 bg-indigo-50 border border-indigo-200 rounded-md flex items-center justify-center shrink-0 mt-0.5 text-indigo-600 font-bold text-2xs">
                     {idx + 1}
                   </span>
                   <span>{skill}</span>
@@ -282,7 +282,7 @@ export default async function TrackPage({ params }: Props) {
               <div className="absolute -left-[25px] top-1.5 flex h-[18px] w-[18px] items-center justify-center rounded-full bg-slate-300 border-4 border-slate-50 dark:border-slate-900 group-hover/module:bg-indigo-600 group-hover/module:border-indigo-100 transition-all duration-300 z-10" />
 
               <div className="mb-4">
-                <span className="text-[10px] font-extrabold text-indigo-605 tracking-widest uppercase">
+                <span className="text-[10px] font-extrabold text-indigo-600 tracking-widest uppercase">
                   PHASE {idx + 1}
                 </span>
                 <h2 className="text-xl font-extrabold text-slate-900 mt-1 tracking-tight">
@@ -304,14 +304,14 @@ export default async function TrackPage({ params }: Props) {
                       >
                         <div className="flex items-center justify-between">
                           <div className="flex items-center gap-3">
-                            <span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-indigo-50 text-[10px] font-bold text-indigo-650 group-hover/lesson:bg-indigo-600 group-hover/lesson:text-white transition">
+                            <span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-indigo-50 text-[10px] font-bold text-indigo-600 group-hover/lesson:bg-indigo-600 group-hover/lesson:text-white transition">
                               {idx + 1}.{lessonIdx + 1}
                             </span>
                             <h3 className="font-bold text-slate-800 text-sm group-hover/lesson:text-indigo-600 transition">
                               {lesson.title}
                             </h3>
                           </div>
-                          <div className="flex items-center gap-1 text-xs font-semibold text-indigo-500 opacity-0 group-hover/lesson:opacity-100 group-hover/lesson:translate-x-1 transition">
+                          <div className="flex items-center gap-1 text-xs font-bold text-indigo-600 transition group-hover/lesson:translate-x-1">
                             Start Guide <ArrowRight className="w-4 h-4" />
                           </div>
                         </div>
@@ -373,7 +373,7 @@ export default async function TrackPage({ params }: Props) {
         <section className="my-8 p-6 bg-indigo-600 rounded-3xl text-white flex flex-col sm:flex-row items-center justify-between gap-4 shadow-sm">
           <div className="space-y-1 text-center sm:text-left">
             <h3 className="text-base font-extrabold">Ready to Audit Your Code?</h3>
-            <p className="text-xs text-indigo-150 leading-relaxed font-medium">
+            <p className="text-xs text-indigo-200 leading-relaxed font-medium">
               Validate your task solutions and project outputs against senior coding standards.
             </p>
           </div>
@@ -393,8 +393,8 @@ export default async function TrackPage({ params }: Props) {
           </h2>
           <ul className="space-y-3">
             {theme.interviewReadiness.map((topic, idx) => (
-              <li key={idx} className="flex gap-2.5 items-start text-xs sm:text-sm text-slate-650 leading-relaxed">
-                <span className="h-5 w-5 bg-purple-50 border border-purple-150 rounded-lg flex items-center justify-center shrink-0 text-purple-700">
+              <li key={idx} className="flex gap-2.5 items-start text-xs sm:text-sm text-slate-600 leading-relaxed">
+                <span className="h-5 w-5 bg-purple-50 border border-purple-200 rounded-lg flex items-center justify-center shrink-0 text-purple-700">
                   ✔
                 </span>
                 <span>{topic}</span>
@@ -404,14 +404,14 @@ export default async function TrackPage({ params }: Props) {
         </section>
 
         {/* Completion Outcome Checklist */}
-        <section className="my-8 p-6 bg-slate-905 border border-slate-950 rounded-3xl text-slate-100 space-y-4">
+        <section className="my-8 p-6 bg-slate-900 border border-slate-950 rounded-3xl text-slate-100 space-y-4">
           <h2 className="text-base font-extrabold flex items-center gap-2 border-b border-slate-800 pb-2">
             <Sparkles className="w-4.5 h-4.5 text-indigo-400" />
             Milestone Completion Outcomes
           </h2>
           <div className="space-y-3">
             {theme.completionOutcomes.map((outcome, idx) => (
-              <div key={idx} className="flex gap-2.5 items-start text-xs font-semibold text-slate-350 leading-relaxed">
+              <div key={idx} className="flex gap-2.5 items-start text-xs font-semibold text-slate-300 leading-relaxed">
                 <span className="h-4.5 w-4.5 bg-indigo-950 border border-indigo-500/20 rounded-md flex items-center justify-center shrink-0 mt-0.5 text-indigo-400">
                   ✓
                 </span>
@@ -423,13 +423,13 @@ export default async function TrackPage({ params }: Props) {
 
         {/* Next Step Recommendation */}
         <section className="my-8 p-6 border border-dashed border-indigo-200 bg-indigo-50/20 rounded-3xl text-center space-y-3">
-          <h3 className="text-sm font-bold text-slate-850">Your Next Learning Step</h3>
+          <h3 className="text-sm font-bold text-slate-800">Your Next Learning Step</h3>
           <p className="text-xs text-slate-600 leading-relaxed max-w-xl mx-auto font-medium">
             Once you have completed the module lessons and practice tasks in this path, click below to proceed.
           </p>
           <Link
             href={theme.nextStep.url}
-            className="inline-flex items-center gap-1.5 bg-indigo-650 hover:bg-indigo-755 text-white px-5 py-2.5 rounded-2xl text-xs font-bold transition"
+            className="inline-flex items-center gap-1.5 bg-indigo-600 hover:bg-indigo-700 text-white px-5 py-2.5 rounded-2xl text-xs font-bold transition"
           >
             {theme.nextStep.label} <ArrowRight className="w-4 h-4" />
           </Link>

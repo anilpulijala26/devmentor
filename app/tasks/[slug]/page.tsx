@@ -18,7 +18,7 @@ export function generateStaticParams() {
 }
 
 export const metadata = {
-  title: "Developer Task Solution - DevMentor",
+  title: "Developer Task Solution - CodeNivra",
   description: "View daily developer tasks requirements, hints, checklists, and code solutions.",
 };
 
@@ -32,9 +32,9 @@ export default async function TaskDetailPage({ params }: Props) {
 
   const getLevelColor = (level: string) => {
     return {
-      Beginner: "bg-blue-50 text-blue-700 border-blue-150",
-      Intermediate: "bg-violet-50 text-violet-705 border-violet-150",
-      Advanced: "bg-emerald-50 text-emerald-755 border-emerald-150"
+      Beginner: "bg-blue-50 text-blue-700 border-blue-200",
+      Intermediate: "bg-violet-50 text-violet-700 border-violet-200",
+      Advanced: "bg-emerald-50 text-emerald-700 border-emerald-200"
     }[level] || "bg-slate-50 text-slate-700";
   };
 
@@ -48,7 +48,7 @@ export default async function TaskDetailPage({ params }: Props) {
         <div className="sticky top-16 z-40 -mx-4 px-4 py-3 bg-slate-50/90 backdrop-blur-md border-b border-slate-200/60 mb-8 flex items-center justify-between rounded-b-xl shadow-xs">
           <Link
             href="/tasks"
-            className="inline-flex items-center gap-2 text-xs sm:text-sm font-semibold text-slate-655 hover:text-indigo-700 transition-colors"
+            className="inline-flex items-center gap-2 text-xs sm:text-sm font-semibold text-slate-600 hover:text-indigo-700 transition-colors"
           >
             <ChevronLeft className="w-4 h-4" />
             Back to Daily Tasks
@@ -80,7 +80,7 @@ export default async function TaskDetailPage({ params }: Props) {
             <Terminal className="w-5 h-5 text-indigo-500" />
             Requirements
           </h2>
-          <p className="text-sm text-slate-650 leading-relaxed">
+          <p className="text-sm text-slate-600 leading-relaxed">
             {task.requirement}
           </p>
 
@@ -100,8 +100,8 @@ export default async function TaskDetailPage({ params }: Props) {
           </h2>
           <ul className="space-y-3.5">
             {task.hints.map((hint, idx) => (
-              <li key={idx} className="flex gap-3 items-start text-xs sm:text-sm text-slate-650 leading-relaxed">
-                <span className="h-5 w-5 bg-indigo-50 border border-indigo-150 rounded-lg flex items-center justify-center text-[10px] font-bold text-indigo-700 shrink-0">
+              <li key={idx} className="flex gap-3 items-start text-xs sm:text-sm text-slate-600 leading-relaxed">
+                <span className="h-5 w-5 bg-indigo-50 border border-indigo-200 rounded-lg flex items-center justify-center text-[10px] font-bold text-indigo-700 shrink-0">
                   {idx + 1}
                 </span>
                 <span>{hint}</span>

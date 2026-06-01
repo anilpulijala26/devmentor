@@ -5,7 +5,7 @@ import { ProjectChecklist } from "@/components/mdx/ProjectChecklist";
 import { InterviewExplanation } from "@/components/mdx/InterviewExplanation";
 
 export const metadata = {
-  title: "Admin Dashboard - Project Lab | DevMentor",
+  title: "Admin Dashboard - Project Lab | CodeNivra",
   description: "Detailed system design, requirements, folders, and interview templates for the Admin Dashboard lab.",
 };
 
@@ -33,7 +33,7 @@ export default function AdminDashboardPage() {
         {/* Project Header */}
         <div className="mb-10">
           <div className="flex items-center gap-2 mb-3">
-            <span className="inline-block px-3 py-1 rounded-full text-xs font-bold border bg-violet-50 text-violet-750 border-violet-150">
+            <span className="inline-block px-3 py-1 rounded-full text-xs font-bold border bg-violet-50 text-violet-700 border-violet-200">
               Intermediate Lab
             </span>
             <span className="text-xs text-slate-500 font-semibold">3 - 4 Weeks Duration</span>
@@ -53,7 +53,7 @@ export default function AdminDashboardPage() {
               <Info className="w-4.5 h-4.5 text-indigo-500" />
               1. Project Overview
             </h2>
-            <p className="text-xs sm:text-sm text-slate-650 leading-relaxed">
+            <p className="text-xs sm:text-sm text-slate-600 leading-relaxed">
               This lab guides you through constructing a high-fidelity SaaS administration panel. It focuses on rendering complex, real-time charts and data grids that stay synchronized with browser URLs.
             </p>
           </section>
@@ -86,7 +86,7 @@ export default function AdminDashboardPage() {
 
             <div>
               <p className="text-xs font-bold text-slate-800 uppercase tracking-wider mb-2">Core Features List</p>
-              <ul className="list-disc list-inside space-y-1.5 pl-2 text-xs sm:text-sm text-slate-650">
+              <ul className="list-disc list-inside space-y-1.5 pl-2 text-xs sm:text-sm text-slate-600">
                 <li><strong className="text-slate-900">Telemetry Cards:</strong> Stats with percentage change markers.</li>
                 <li><strong className="text-slate-900">Interactive Line Charts:</strong> Multi-axis charts displaying visual analytics.</li>
                 <li><strong className="text-slate-900">Full-Featured User Table:</strong> Fuzzy matching search inputs, pagination, and sorting.</li>
@@ -120,7 +120,7 @@ export default function AdminDashboardPage() {
           </div>
 
           <pre className="bg-slate-950 text-slate-200 p-4 rounded-2xl border border-slate-900 font-mono text-xs overflow-x-auto leading-relaxed">
-{`admin-dashboard/
+            {`admin-dashboard/
 ├── app/
 │   ├── (auth)/
 │   │   └── login/page.tsx         # Secure login view
@@ -151,7 +151,7 @@ export default function AdminDashboardPage() {
             7. Component Breakdown
           </h2>
 
-          <div className="space-y-4 text-xs sm:text-sm text-slate-650">
+          <div className="space-y-4 text-xs sm:text-sm text-slate-600">
             <div>
               <p className="font-bold text-slate-800 mb-1">`Sidebar` Component</p>
               <p className="leading-relaxed">A collapsible sidebar containing dynamic links that filters views according to user roles (Admin, Editor, Viewer).</p>
@@ -176,9 +176,9 @@ export default function AdminDashboardPage() {
 
           <div className="space-y-6 text-sm text-slate-700">
             <div>
-              <h3 className="font-bold text-slate-905 mb-2 text-xs uppercase tracking-wider">GET `/api/users` Contract</h3>
+              <h3 className="font-bold text-slate-900 mb-2 text-xs uppercase tracking-wider">GET `/api/users` Contract</h3>
               <pre className="bg-slate-950 text-slate-200 p-4 rounded-xl border border-slate-900 font-mono text-xs overflow-x-auto">
-{`Request:
+                {`Request:
 GET /api/users?page=1&limit=10&search=john&sortBy=name&sortOrder=asc
 
 Response (200 OK):
@@ -199,9 +199,9 @@ Response (200 OK):
             </div>
 
             <div>
-              <h3 className="font-bold text-slate-905 mb-2 text-xs uppercase tracking-wider">PUT `/api/users/:id` Contract</h3>
+              <h3 className="font-bold text-slate-900 mb-2 text-xs uppercase tracking-wider">PUT `/api/users/:id` Contract</h3>
               <pre className="bg-slate-950 text-slate-200 p-4 rounded-xl border border-slate-900 font-mono text-xs overflow-x-auto">
-{`Request:
+                {`Request:
 PUT /api/users/usr_90210
 Body: { "name": "John Updated", "role": "editor" }
 
@@ -219,9 +219,9 @@ Response (200 OK):
             </div>
 
             <div>
-              <h3 className="font-bold text-slate-905 mb-2 text-xs uppercase tracking-wider">PostgreSQL Database Schema</h3>
+              <h3 className="font-bold text-slate-900 mb-2 text-xs uppercase tracking-wider">PostgreSQL Database Schema</h3>
               <pre className="bg-slate-950 text-slate-200 p-4 rounded-xl border border-slate-900 font-mono text-xs overflow-x-auto">
-{`CREATE TABLE users (
+                {`CREATE TABLE users (
   id VARCHAR(50) PRIMARY KEY,
   name VARCHAR(100) NOT NULL,
   email VARCHAR(150) UNIQUE NOT NULL,
@@ -262,12 +262,12 @@ CREATE INDEX idx_logs_timestamp ON system_logs(timestamp);`}
               { phase: "Phase 5: Authorization Context Wall", desc: "Enforce route validation. Create client-side session contexts that redirect unauthenticated traffic back to login portals." }
             ].map((p, idx) => (
               <div key={idx} className="flex gap-4">
-                <span className="h-6 w-6 rounded-full bg-indigo-50 text-indigo-650 font-bold text-xs flex items-center justify-center shrink-0">
+                <span className="h-6 w-6 rounded-full bg-indigo-50 text-indigo-600 font-bold text-xs flex items-center justify-center shrink-0">
                   {idx + 1}
                 </span>
                 <div>
                   <h4 className="font-bold text-slate-900">{p.phase}</h4>
-                  <p className="text-slate-650 text-xs mt-0.5 leading-relaxed">{p.desc}</p>
+                  <p className="text-slate-600 text-xs mt-0.5 leading-relaxed">{p.desc}</p>
                 </div>
               </div>
             ))}
@@ -297,7 +297,7 @@ CREATE INDEX idx_logs_timestamp ON system_logs(timestamp);`}
         </section>
 
         {/* 14. Senior Developer Notes */}
-        <section className="my-8 p-6 bg-indigo-50/20 border border-indigo-150 rounded-3xl shadow-xs space-y-4">
+        <section className="my-8 p-6 bg-indigo-50/20 border border-indigo-200 rounded-3xl shadow-xs space-y-4">
           <h2 className="text-lg font-extrabold text-indigo-950 flex items-center gap-2 pb-3 border-b border-indigo-100">
             <Sparkles className="w-5 h-5 text-indigo-600" />
             14. Senior Developer Advice
@@ -356,7 +356,7 @@ CREATE INDEX idx_logs_timestamp ON system_logs(timestamp);`}
             <Sparkles className="w-5 h-5 text-indigo-500" />
             16. Future Enhancements
           </h2>
-          <ul className="list-disc list-inside space-y-2 text-xs sm:text-sm text-slate-650 leading-relaxed">
+          <ul className="list-disc list-inside space-y-2 text-xs sm:text-sm text-slate-600 leading-relaxed">
             <li>Integrate a drag-and-drop widget customizer using `@dnd-kit/core` to let admins arrange telemetry blocks.</li>
             <li>Add WebSockets support for live active user indicators and system event streams.</li>
             <li>Configure export utilities to download table records as CSV or PDF documents directly.</li>

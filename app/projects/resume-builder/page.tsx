@@ -5,7 +5,7 @@ import { ProjectChecklist } from "@/components/mdx/ProjectChecklist";
 import { InterviewExplanation } from "@/components/mdx/InterviewExplanation";
 
 export const metadata = {
-  title: "Resume Builder - Project Lab | DevMentor",
+  title: "Resume Builder - Project Lab | CodeNivra",
   description: "Detailed system design, requirements, and templates for the Resume Builder App.",
 };
 
@@ -33,7 +33,7 @@ export default function ResumeBuilderPage() {
         {/* Project Header */}
         <div className="mb-10">
           <div className="flex items-center gap-2 mb-3">
-            <span className="inline-block px-3 py-1 rounded-full text-xs font-bold border bg-violet-50 text-violet-750 border-violet-150">
+            <span className="inline-block px-3 py-1 rounded-full text-xs font-bold border bg-violet-50 text-violet-700 border-violet-200">
               Intermediate Lab
             </span>
             <span className="text-xs text-slate-500 font-semibold">2 - 3 Weeks Duration</span>
@@ -86,7 +86,7 @@ export default function ResumeBuilderPage() {
 
             <div>
               <p className="text-xs font-bold text-slate-800 uppercase tracking-wider mb-2">Core Features List</p>
-              <ul className="list-disc list-inside space-y-1.5 pl-2 text-xs sm:text-sm text-slate-650">
+              <ul className="list-disc list-inside space-y-1.5 pl-2 text-xs sm:text-sm text-slate-600">
                 <li><strong className="text-slate-900">Multi-Step Form Wizard:</strong> Tabs separating Info, Experience, and Education.</li>
                 <li><strong className="text-slate-900">Dynamic List Mutator:</strong> Add, edit, reorder, or delete experience cards.</li>
                 <li><strong className="text-slate-900">Live Preview Canvas:</strong> Side-by-side rendering window reflecting edits.</li>
@@ -120,7 +120,7 @@ export default function ResumeBuilderPage() {
           </div>
 
           <pre className="bg-slate-950 text-slate-200 p-4 rounded-2xl border border-slate-900 font-mono text-xs overflow-x-auto leading-relaxed">
-{`resume-builder/
+            {`resume-builder/
 ├── app/
 │   ├── page.tsx               # Primary editing grid workspace
 │   └── layout.tsx
@@ -176,9 +176,9 @@ export default function ResumeBuilderPage() {
 
           <div className="space-y-6 text-sm text-slate-700">
             <div>
-              <h3 className="font-bold text-slate-905 mb-2 text-xs uppercase tracking-wider">POST `/api/resumes` Contract</h3>
+              <h3 className="font-bold text-slate-900 mb-2 text-xs uppercase tracking-wider">POST `/api/resumes` Contract</h3>
               <pre className="bg-slate-950 text-slate-200 p-4 rounded-xl border border-slate-900 font-mono text-xs overflow-x-auto">
-{`Request body payload:
+                {`Request body payload:
 {
   "title": "My Software Engineer Resume",
   "templateId": "modern-classic",
@@ -208,9 +208,9 @@ Response (201 Created):
             </div>
 
             <div>
-              <h3 className="font-bold text-slate-905 mb-2 text-xs uppercase tracking-wider">PostgreSQL Database Schema</h3>
+              <h3 className="font-bold text-slate-900 mb-2 text-xs uppercase tracking-wider">PostgreSQL Database Schema</h3>
               <pre className="bg-slate-950 text-slate-200 p-4 rounded-xl border border-slate-900 font-mono text-xs overflow-x-auto">
-{`CREATE TABLE resumes (
+                {`CREATE TABLE resumes (
   id VARCHAR(50) PRIMARY KEY,
   user_id VARCHAR(50) NOT NULL,
   title VARCHAR(150) NOT NULL DEFAULT 'Untitled Resume',
@@ -245,12 +245,12 @@ CREATE INDEX idx_resumes_user ON resumes(user_id);`}
               { phase: "Phase 5: Print Export & Download", desc: "Incorporate client PDF print engines or custom CSS media print setups to compile A4 documents cleanly." }
             ].map((p, idx) => (
               <div key={idx} className="flex gap-4">
-                <span className="h-6 w-6 rounded-full bg-indigo-50 text-indigo-650 font-bold text-xs flex items-center justify-center shrink-0">
+                <span className="h-6 w-6 rounded-full bg-indigo-50 text-indigo-600 font-bold text-xs flex items-center justify-center shrink-0">
                   {idx + 1}
                 </span>
                 <div>
                   <h4 className="font-bold text-slate-900">{p.phase}</h4>
-                  <p className="text-slate-650 text-xs mt-0.5 leading-relaxed">{p.desc}</p>
+                  <p className="text-slate-600 text-xs mt-0.5 leading-relaxed">{p.desc}</p>
                 </div>
               </div>
             ))}
@@ -280,7 +280,7 @@ CREATE INDEX idx_resumes_user ON resumes(user_id);`}
         </section>
 
         {/* 14. Senior Developer Notes */}
-        <section className="my-8 p-6 bg-indigo-50/20 border border-indigo-150 rounded-3xl shadow-xs space-y-4">
+        <section className="my-8 p-6 bg-indigo-50/20 border border-indigo-200 rounded-3xl shadow-xs space-y-4">
           <h2 className="text-lg font-extrabold text-indigo-950 flex items-center gap-2 pb-3 border-b border-indigo-100">
             <Sparkles className="w-5 h-5 text-indigo-600" />
             14. Senior Developer Advice

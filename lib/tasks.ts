@@ -292,7 +292,7 @@ export function ControlledForm() {
           value={email}
           onBlur={() => setTouched({ ...touched, email: true })}
           onChange={e => setEmail(e.target.value)}
-          class={\`border p-2 rounded w-full \${emailError ? "border-red-500" : "border-slate-350"}\`}
+          class={\`border p-2 rounded w-full \${emailError ? "border-red-500" : "border-slate-300"}\`}
         />
         {emailError && <p class="text-xs text-red-500 mt-1">{emailError}</p>}
       </div>
@@ -399,7 +399,7 @@ export async function generateMetadata({ params }: ProductProps) {
   const { slug } = await params;
   const product = await getProduct(slug);
   return {
-    title: product ? \`\${product.title} | DevMentor\` : "Product Not Found",
+    title: product ? \`\${product.title} | CodeNivra\` : "Product Not Found",
   };
 }
 
@@ -412,7 +412,7 @@ export default async function ProductPage({ params }: ProductProps) {
   return (
     <div class="p-6">
       <h1 class="text-2xl font-black">{product.title}</h1>
-      <p class="text-slate-650 mt-2">{product.desc}</p>
+      <p class="text-slate-600 mt-2">{product.desc}</p>
     </div>
   );
 }`,

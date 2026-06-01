@@ -115,7 +115,7 @@ export function CodeReviewClient() {
   const [checkedState, setCheckedState] = useState<Record<string, boolean>>({});
 
   useEffect(() => {
-    const saved = localStorage.getItem("devmentor-senior-codereview");
+    const saved = localStorage.getItem("CodeNivra-senior-codereview");
     if (saved) {
       try {
         const parsed = JSON.parse(saved);
@@ -132,13 +132,13 @@ export function CodeReviewClient() {
     const key = `${categoryId}-${itemIdx}`;
     const updated = { ...checkedState, [key]: !checkedState[key] };
     setCheckedState(updated);
-    localStorage.setItem("devmentor-senior-codereview", JSON.stringify(updated));
+    localStorage.setItem("CodeNivra-senior-codereview", JSON.stringify(updated));
   };
 
   const resetAll = () => {
     if (confirm("Are you sure you want to reset all checklist categories?")) {
       setCheckedState({});
-      localStorage.removeItem("devmentor-senior-codereview");
+      localStorage.removeItem("CodeNivra-senior-codereview");
     }
   };
 
@@ -158,7 +158,7 @@ export function CodeReviewClient() {
           <h1 className="text-4xl font-black tracking-tight text-transparent bg-clip-text bg-gradient-to-r from-slate-900 via-indigo-950 to-indigo-900">
             Senior Code Review Checklist
           </h1>
-          <p className="text-sm sm:text-base text-slate-655 mt-2 max-w-2xl leading-relaxed">
+          <p className="text-sm sm:text-base text-slate-600 mt-2 max-w-2xl leading-relaxed">
             Before shipping to production or requesting team approvals, verify your code against this list of senior guidelines.
           </p>
         </div>
@@ -176,8 +176,8 @@ export function CodeReviewClient() {
       {/* Global Progress Bar */}
       <div className="bg-white border border-slate-200 p-6 rounded-3xl mb-10 shadow-xs dark:bg-slate-900 dark:border-slate-800">
         <div className="flex justify-between items-center mb-3">
-          <span className="text-sm font-bold text-slate-800 flex items-center gap-2 dark:text-slate-150">
-            <ClipboardCheck className="w-5 h-5 text-indigo-650" /> Audit Progress
+          <span className="text-sm font-bold text-slate-800 flex items-center gap-2 dark:text-slate-200">
+            <ClipboardCheck className="w-5 h-5 text-indigo-600" /> Audit Progress
           </span>
           <span className="text-sm font-black text-indigo-700 bg-indigo-50 px-3 py-0.5 rounded-full dark:bg-slate-800 dark:text-indigo-400">
             {progressPercent}% ({totalChecked} / {totalItems} Guidelines checked)
@@ -224,11 +224,11 @@ export function CodeReviewClient() {
                       className="w-full flex items-start gap-3 text-left p-2.5 rounded-xl transition hover:bg-slate-50 dark:hover:bg-slate-800/40 cursor-pointer"
                     >
                       {isChecked ? (
-                        <CheckSquare className="w-5 h-5 text-indigo-650 shrink-0 mt-0.5" />
+                        <CheckSquare className="w-5 h-5 text-indigo-600 shrink-0 mt-0.5" />
                       ) : (
-                        <Square className="w-5 h-5 text-slate-350 shrink-0 mt-0.5" />
+                        <Square className="w-5 h-5 text-slate-300 shrink-0 mt-0.5" />
                       )}
-                      <span className={`text-sm font-medium ${isChecked ? "text-slate-400 line-through" : "text-slate-650 dark:text-slate-300"}`}>
+                      <span className={`text-sm font-medium ${isChecked ? "text-slate-400 line-through" : "text-slate-600 dark:text-slate-300"}`}>
                         {item}
                       </span>
                     </button>

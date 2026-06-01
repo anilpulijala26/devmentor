@@ -2,10 +2,10 @@ import { projects } from "@/lib/projects";
 import { ProjectsClient } from "@/components/ProjectsClient";
 
 export const metadata = {
-  title: "Project Labs - DevMentor",
+  title: "Project Labs - CodeNivra",
   description: "Tackle real-time full-stack projects featuring system architecture designs, API contracts, folder layouts, and deployment details.",
   openGraph: {
-    title: "Project Labs - DevMentor",
+    title: "Project Labs - CodeNivra",
     description: "Learn to build production-style applications with structured contracts and DB models.",
     type: "website",
   }

@@ -16,12 +16,12 @@ export async function generateMetadata({ params }: Props) {
     if (lesson && track) {
       return {
         title: `${lesson.frontmatter.title} | ${track.title} Track`,
-        description: lesson.frontmatter.description || "DevMentor Professional Developer Lesson",
+        description: lesson.frontmatter.description || "CodeNivra Professional Developer Lesson",
       };
     }
-  } catch {}
+  } catch { }
   return {
-    title: "Lesson Guide - DevMentor",
+    title: "Lesson Guide - CodeNivra",
   };
 }
 

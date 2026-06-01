@@ -3,18 +3,18 @@ import { roadmaps } from "@/lib/roadmaps";
 import { ArrowRight, Sparkles, Clock, Compass, BookOpen } from "lucide-react";
 
 export const metadata = {
-  title: "Developer Roadmaps - DevMentor",
+  title: "Developer Roadmaps - CodeNivra",
   description: "Accelerate your path from intern to senior software engineer with structured learning pathways.",
 };
 
 export default function RoadmapsPage() {
   const getBadgeColor = (level: string) => {
     return {
-      Beginner: "bg-blue-50 text-blue-700 border-blue-150 dark:bg-slate-800 dark:text-blue-405",
-      Intermediate: "bg-violet-50 text-violet-750 border-violet-150 dark:bg-slate-800 dark:text-violet-405",
-      Advanced: "bg-emerald-50 text-emerald-750 border-emerald-150 dark:bg-slate-800 dark:text-emerald-405",
-      Professional: "bg-pink-50 text-pink-750 border-pink-150 dark:bg-slate-800 dark:text-pink-405",
-      "Interview Prep": "bg-purple-50 text-purple-750 border-purple-150 dark:bg-slate-800 dark:text-purple-405",
+      Beginner: "bg-blue-50 text-blue-700 border-blue-200 dark:bg-slate-800 dark:text-blue-400",
+      Intermediate: "bg-violet-50 text-violet-700 border-violet-200 dark:bg-slate-800 dark:text-violet-400",
+      Advanced: "bg-emerald-50 text-emerald-700 border-emerald-200 dark:bg-slate-800 dark:text-emerald-400",
+      Professional: "bg-pink-50 text-pink-700 border-pink-200 dark:bg-slate-800 dark:text-pink-400",
+      "Interview Prep": "bg-purple-50 text-purple-700 border-purple-200 dark:bg-slate-800 dark:text-purple-400",
     }[level] || "bg-slate-50 text-slate-700";
   };
 
@@ -44,7 +44,7 @@ export default function RoadmapsPage() {
           {roadmaps.map((roadmap) => (
             <div
               key={roadmap.slug}
-              className="group relative flex flex-col justify-between rounded-3xl border border-slate-200/80 bg-white p-6 shadow-sm transition-all duration-300 hover:border-slate-350 hover:shadow-md hover:-translate-y-1"
+              className="group relative flex flex-col justify-between rounded-3xl border border-slate-200/80 bg-white p-6 shadow-sm transition-all duration-300 hover:border-slate-300 hover:shadow-md hover:-translate-y-1"
             >
               <div className="space-y-4">
                 {/* Level / Duration Badge Row */}
@@ -104,7 +104,7 @@ export default function RoadmapsPage() {
               </div>
 
               {/* Action Button */}
-              <div className="mt-8 pt-4 border-t border-slate-150/45">
+              <div className="mt-8 pt-4 border-t border-slate-200/45">
                 <Link
                   href={`/roadmaps/${roadmap.slug}`}
                   className="w-full inline-flex items-center justify-center gap-2 bg-indigo-600 hover:bg-indigo-700 text-white py-3 rounded-2xl text-xs font-bold transition shadow-xs"

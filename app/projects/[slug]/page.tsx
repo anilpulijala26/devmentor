@@ -22,13 +22,13 @@ export async function generateMetadata({ params }: Props) {
     const project = getProjectBySlug(slug);
     if (project) {
       return {
-        title: `${project.title} - Project Lab | DevMentor`,
+        title: `${project.title} - Project Lab | CodeNivra`,
         description: project.description,
       };
     }
-  } catch {}
+  } catch { }
   return {
-    title: "Project Lab Guide - DevMentor",
+    title: "Project Lab Guide - CodeNivra",
   };
 }
 
@@ -42,9 +42,9 @@ export default async function ProjectDetailPage({ params }: Props) {
 
   const getLevelColor = (level: string) => {
     return {
-      Beginner: "bg-blue-50 text-blue-700 border-blue-150",
-      Intermediate: "bg-violet-50 text-violet-750 border-violet-150",
-      Advanced: "bg-emerald-50 text-emerald-750 border-emerald-150"
+      Beginner: "bg-blue-50 text-blue-700 border-blue-200",
+      Intermediate: "bg-violet-50 text-violet-700 border-violet-200",
+      Advanced: "bg-emerald-50 text-emerald-700 border-emerald-200"
     }[level] || "bg-slate-50 text-slate-700";
   };
 
@@ -124,9 +124,9 @@ export default async function ProjectDetailPage({ params }: Props) {
 
             <div>
               <p className="text-xs font-bold text-slate-800 uppercase tracking-wider mb-2">Core Features List</p>
-              <ul className="list-disc list-inside space-y-1.5 pl-2 text-xs sm:text-sm text-slate-655">
+              <ul className="list-disc list-inside space-y-1.5 pl-2 text-xs sm:text-sm text-slate-600">
                 {project.features.map((feature, idx) => (
-                  <li key={idx} className="text-xs sm:text-sm text-slate-650">{feature}</li>
+                  <li key={idx} className="text-xs sm:text-sm text-slate-600">{feature}</li>
                 ))}
               </ul>
             </div>
@@ -182,7 +182,7 @@ export default async function ProjectDetailPage({ params }: Props) {
 
           <div className="space-y-6 text-sm text-slate-700">
             <div>
-              <h3 className="font-bold text-slate-905 mb-2 text-xs uppercase tracking-wider">REST API Interface Contract</h3>
+              <h3 className="font-bold text-slate-900 mb-2 text-xs uppercase tracking-wider">REST API Interface Contract</h3>
               <pre className="bg-slate-950 text-slate-200 p-4 rounded-xl border border-slate-900 font-mono text-xs overflow-x-auto">
                 {project.apiContract}
               </pre>
@@ -190,7 +190,7 @@ export default async function ProjectDetailPage({ params }: Props) {
 
             {project.databaseSchema && (
               <div>
-                <h3 className="font-bold text-slate-905 mb-2 text-xs uppercase tracking-wider">PostgreSQL Database Schema</h3>
+                <h3 className="font-bold text-slate-900 mb-2 text-xs uppercase tracking-wider">PostgreSQL Database Schema</h3>
                 <pre className="bg-slate-950 text-slate-200 p-4 rounded-xl border border-slate-900 font-mono text-xs overflow-x-auto">
                   {project.databaseSchema}
                 </pre>
@@ -209,12 +209,12 @@ export default async function ProjectDetailPage({ params }: Props) {
           <div className="space-y-4 text-sm text-slate-700">
             {project.implementationPhases.map((phase, idx) => (
               <div key={idx} className="flex gap-4">
-                <span className="h-6 w-6 rounded-full bg-indigo-50 text-indigo-650 font-bold text-xs flex items-center justify-center shrink-0">
+                <span className="h-6 w-6 rounded-full bg-indigo-50 text-indigo-600 font-bold text-xs flex items-center justify-center shrink-0">
                   {idx + 1}
                 </span>
                 <div>
                   <h4 className="font-bold text-slate-900">{phase.phase}</h4>
-                  <p className="text-slate-650 text-xs mt-0.5 leading-relaxed">{phase.desc}</p>
+                  <p className="text-slate-600 text-xs mt-0.5 leading-relaxed">{phase.desc}</p>
                 </div>
               </div>
             ))}
@@ -227,10 +227,10 @@ export default async function ProjectDetailPage({ params }: Props) {
             <ShieldAlert className="w-5 h-5 text-red-600" />
             13. Common Mistakes to Avoid
           </h2>
-          <ul className="space-y-3.5 text-xs sm:text-sm text-slate-755 leading-relaxed">
+          <ul className="space-y-3.5 text-xs sm:text-sm text-slate-600 leading-relaxed">
             {project.commonMistakes.map((mistake, idx) => (
               <li key={idx} className="flex gap-2 items-start">
-                <span className="text-red-655 font-bold shrink-0">✕</span>
+                <span className="text-red-600 font-bold shrink-0">✕</span>
                 <span className="text-slate-700">{mistake}</span>
               </li>
             ))}
@@ -238,7 +238,7 @@ export default async function ProjectDetailPage({ params }: Props) {
         </section>
 
         {/* 14. Senior Developer Notes */}
-        <section className="my-8 p-6 bg-indigo-50/20 border border-indigo-150 rounded-3xl shadow-xs space-y-4">
+        <section className="my-8 p-6 bg-indigo-50/20 border border-indigo-200 rounded-3xl shadow-xs space-y-4">
           <h2 className="text-lg font-extrabold text-indigo-950 flex items-center gap-2 pb-3 border-b border-indigo-100">
             <Sparkles className="w-5 h-5 text-indigo-600" />
             14. Senior Developer Advice
@@ -283,7 +283,7 @@ export default async function ProjectDetailPage({ params }: Props) {
             <Sparkles className="w-5 h-5 text-indigo-500" />
             16. Future Enhancements
           </h2>
-          <ul className="list-disc list-inside space-y-2 text-xs sm:text-sm text-slate-650 leading-relaxed">
+          <ul className="list-disc list-inside space-y-2 text-xs sm:text-sm text-slate-600 leading-relaxed">
             {project.futureEnhancements.map((enh, idx) => (
               <li key={idx} className="text-slate-600">{enh}</li>
             ))}

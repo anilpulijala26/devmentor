@@ -47,7 +47,7 @@ export function CommonMistake({
             <CheckCircle className="w-4 h-4 shrink-0" />
             <span className="text-xs font-bold uppercase tracking-wider">Good Practice</span>
           </div>
-          <p className="text-xs text-slate-655 dark:text-slate-400 leading-relaxed min-h-[36px]">
+          <p className="text-xs text-slate-600 dark:text-slate-400 leading-relaxed min-h-[36px]">
             {goodDesc}
           </p>
           <div className="rounded-xl border border-emerald-200/60 overflow-hidden">

@@ -2,10 +2,10 @@ import { developerTasks } from "@/lib/tasks";
 import { TasksClient } from "@/components/TasksClient";
 
 export const metadata = {
-  title: "Daily Developer Tasks - DevMentor",
+  title: "Daily Developer Tasks - CodeNivra",
   description: "Improve your frontend and backend skills. Build reusable components, code dynamic filters, set auth guards, and handle rendering failures daily.",
   openGraph: {
-    title: "Daily Developer Tasks - DevMentor",
+    title: "Daily Developer Tasks - CodeNivra",
     description: "Write code daily to master production structures and react patterns.",
     type: "website",
   }

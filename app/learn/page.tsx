@@ -1,13 +1,13 @@
 import Link from "next/link";
 import { getAllTracks } from "@/lib/content";
-import { 
-  ArrowRight, BookOpen, Award, Layers, Sparkles, 
-  Layout, Code2, Server, Compass, CheckCircle2, Play, 
-  Terminal, ShieldCheck, HelpCircle 
+import {
+  ArrowRight, BookOpen, Award, Layers, Sparkles,
+  Layout, Code2, Server, Compass, CheckCircle2, Play,
+  Terminal, ShieldCheck, HelpCircle
 } from "lucide-react";
 
 export const metadata = {
-  title: "Learning Hub - DevMentor",
+  title: "Learning Hub - CodeNivra",
   description: "Gain hands-on developer experience. Follow guided paths, practice daily tasks, build project blueprints, and crack interviews.",
 };
 
@@ -26,13 +26,13 @@ export default function LearnPage() {
       title: "Junior Frontend",
       slug: "junior-frontend",
       desc: "Master React, TypeScript, state components, and client-side fetching.",
-      color: "border-violet-200 bg-violet-50/50 text-violet-750 hover:border-violet-400"
+      color: "border-violet-200 bg-violet-50/50 text-violet-700 hover:border-violet-400"
     },
     {
       title: "Mid-Level Full-Stack",
       slug: "mid-level-fullstack",
       desc: "Build Next.js App Router applications, Node.js APIs, and database relations.",
-      color: "border-emerald-200 bg-emerald-50/50 text-emerald-750 hover:border-emerald-400"
+      color: "border-emerald-200 bg-emerald-50/50 text-emerald-700 hover:border-emerald-400"
     },
     {
       title: "Senior UI Developer",
@@ -102,7 +102,7 @@ export default function LearnPage() {
       <div className="absolute top-80 right-1/4 w-[500px] h-[500px] bg-violet-200/10 rounded-full blur-3xl pointer-events-none" />
 
       <div className="max-w-6xl mx-auto px-6 py-12 relative animate-fade-in">
-        
+
         {/* Header */}
         <div className="mb-12 text-center md:text-left">
           <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-indigo-50 border border-indigo-100 text-indigo-700 text-xs font-semibold mb-4 dark:bg-slate-900 dark:border-slate-800 dark:text-indigo-400">
@@ -139,7 +139,7 @@ export default function LearnPage() {
               <p className="text-xs text-slate-600 leading-relaxed">
                 If you already know JavaScript and React, skip straight to <strong>Next.js App Router</strong> or the <strong>Technical Interview Preparation</strong> roadmap to practice system designs and project explanations.
               </p>
-              <Link href="/roadmaps/interview-preparation" className="inline-flex items-center gap-1.5 text-xs font-bold text-purple-750 hover:underline">
+              <Link href="/roadmaps/interview-preparation" className="inline-flex items-center gap-1.5 text-xs font-bold text-purple-700 hover:underline">
                 Start interview prep <ArrowRight className="w-3.5 h-3.5" />
               </Link>
             </div>
@@ -150,13 +150,13 @@ export default function LearnPage() {
         <section className="mb-12 p-6 bg-white border border-slate-200/80 rounded-3xl shadow-xs">
           <h2 className="text-lg font-extrabold text-slate-900 flex items-center gap-2 pb-3 border-b border-slate-100 mb-6">
             <Compass className="w-5 h-5 text-indigo-500" />
-            The DevMentor Workflow
+            The CodeNivra Workflow
           </h2>
           <div className="grid grid-cols-1 sm:grid-cols-5 gap-4">
             {[
               { step: "1. Learn", desc: "Read structured concepts and senior developer logs.", color: "bg-indigo-50 text-indigo-700 border-indigo-100", icon: <BookOpen className="w-4.5 h-4.5" /> },
               { step: "2. Practice", desc: "Complete daily coding tasks with instant outcomes.", color: "bg-emerald-50 text-emerald-700 border-emerald-100", icon: <Terminal className="w-4.5 h-4.5" /> },
-              { step: "3. Build", desc: "Develop real projects with database schemas.", color: "bg-violet-50 text-violet-750 border-violet-100", icon: <Layers className="w-4.5 h-4.5" /> },
+              { step: "3. Build", desc: "Develop real projects with database schemas.", color: "bg-violet-50 text-violet-700 border-violet-100", icon: <Layers className="w-4.5 h-4.5" /> },
               { step: "4. Review", desc: "Perform code reviews using senior audit checklists.", color: "bg-pink-50 text-pink-700 border-pink-100", icon: <ShieldCheck className="w-4.5 h-4.5" /> },
               { step: "5. Explain", desc: "Prepare project pitches for technical interviews.", color: "bg-amber-50 text-amber-700 border-amber-100", icon: <Award className="w-4.5 h-4.5" /> }
             ].map((item, idx) => (
@@ -255,17 +255,17 @@ export default function LearnPage() {
 
                 {/* Grid layout: Left is track modules list, Right is audit details card */}
                 <div className="grid md:grid-cols-12 gap-8 items-start">
-                  
+
                   {/* Left Column: Modules list */}
                   <div className="md:col-span-7 space-y-6">
                     {track.modules.map((module) => (
                       <div
                         key={module.slug}
-                        className="bg-white border border-slate-200/80 rounded-3xl p-5 shadow-xs transition duration-200 hover:border-slate-350"
+                        className="bg-white border border-slate-200/80 rounded-3xl p-5 shadow-xs transition duration-200 hover:border-slate-300"
                       >
                         <span className="text-[10px] font-extrabold text-indigo-600 tracking-widest uppercase">MODULE</span>
                         <h3 className="text-base font-bold text-slate-800 mt-0.5 mb-3">{module.title}</h3>
-                        
+
                         <div className="space-y-2">
                           {module.lessons
                             .sort((a, b) => a.order - b.order)
@@ -290,7 +290,7 @@ export default function LearnPage() {
                   <div className="md:col-span-5 bg-white border border-slate-200/80 rounded-3xl p-6 shadow-xs space-y-6">
                     <div>
                       <h4 className="text-xs font-extrabold uppercase tracking-wider text-slate-400">Best For</h4>
-                      <p className="text-xs font-semibold text-slate-650 mt-1 leading-relaxed">{details.bestFor}</p>
+                      <p className="text-xs font-semibold text-slate-600 mt-1 leading-relaxed">{details.bestFor}</p>
                     </div>
 
                     <div>
@@ -320,10 +320,10 @@ export default function LearnPage() {
                       <h4 className="text-xs font-extrabold uppercase tracking-wider text-slate-400">Project Blueprint</h4>
                       <div className="p-3 bg-violet-50/50 border border-violet-100 rounded-xl mt-2 flex items-center justify-between">
                         <div>
-                          <p className="text-xs font-bold text-violet-850">{details.project.title}</p>
+                          <p className="text-xs font-bold text-violet-800">{details.project.title}</p>
                           <span className="text-[9px] font-bold text-violet-500 uppercase tracking-widest mt-0.5 block">PROJECT LAB</span>
                         </div>
-                        <Link href={`/projects/${details.project.slug}`} className="p-1.5 bg-violet-600 text-white rounded-lg hover:bg-violet-750 transition">
+                        <Link href={`/projects/${details.project.slug}`} className="p-1.5 bg-violet-600 text-white rounded-lg hover:bg-violet-700 transition">
                           <ArrowRight className="w-3.5 h-3.5" />
                         </Link>
                       </div>
@@ -350,7 +350,7 @@ export default function LearnPage() {
                       </Link>
                       <Link
                         href={`/projects/${details.project.slug}`}
-                        className="bg-violet-55/10 border border-violet-150 text-violet-750 py-2 rounded-xl text-3xs font-bold text-center hover:bg-violet-100 transition"
+                        className="bg-violet-50/10 border border-violet-200 text-violet-700 py-2 rounded-xl text-3xs font-bold text-center hover:bg-violet-100 transition"
                       >
                         Build Project
                       </Link>

@@ -14,7 +14,7 @@ export function ProjectChecklist({ title, items, storageKey }: ProjectChecklistP
 
   useEffect(() => {
     if (storageKey) {
-      const saved = localStorage.getItem(`devmentor-checklist-${storageKey}`);
+      const saved = localStorage.getItem(`CodeNivra-checklist-${storageKey}`);
       if (saved) {
         try {
           const parsed = JSON.parse(saved);
@@ -32,7 +32,7 @@ export function ProjectChecklist({ title, items, storageKey }: ProjectChecklistP
     const updated = { ...checkedItems, [idx]: !checkedItems[idx] };
     setCheckedItems(updated);
     if (storageKey) {
-      localStorage.setItem(`devmentor-checklist-${storageKey}`, JSON.stringify(updated));
+      localStorage.setItem(`CodeNivra-checklist-${storageKey}`, JSON.stringify(updated));
     }
   };
 

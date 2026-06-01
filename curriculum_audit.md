@@ -1,18 +1,18 @@
-# Curriculum Audit: DevMentor Platform Upgrade
+# Curriculum Audit: CodeNivra Platform Upgrade
 
-This document outlines the comprehensive audit of the current DevMentor learning platform's curriculum, roadmaps, daily developer tasks, project labs, and lesson structure. It identifies core gaps, analyzes structural consistency, and proposes a phase-wise roadmap to elevate DevMentor into an industry-grade, project-based self-guided learning platform.
+This document outlines the comprehensive audit of the current CodeNivra learning platform's curriculum, roadmaps, daily developer tasks, project labs, and lesson structure. It identifies core gaps, analyzes structural consistency, and proposes a phase-wise roadmap to elevate CodeNivra into an industry-grade, project-based self-guided learning platform.
 
 ---
 
 ## 1. Current Curriculum Summary
 
-DevMentor's learning content is currently organized into **3 Tracks**, mapping to **43 MDX lessons** in the codebase. The role-based pathways are structured around **5 Roadmaps**, supported by **10 Daily Tasks** and **8 Project Labs**.
+CodeNivra's learning content is currently organized into **3 Tracks**, mapping to **43 MDX lessons** in the codebase. The role-based pathways are structured around **5 Roadmaps**, supported by **10 Daily Tasks** and **8 Project Labs**.
 
 ### Tracks & MDX Lessons
 
 ```mermaid
 graph TD
-    A[DevMentor Curriculum] --> B[Web Foundations Track]
+    A[CodeNivra Curriculum] --> B[Web Foundations Track]
     A --> C[Frontend Frameworks Track]
     A --> D[Full-Stack Applications Track]
 
@@ -170,7 +170,7 @@ An audit of the existing MDX lessons against industry requirements for self-guid
 Existing MDX lessons were analyzed to check for structural consistency. 
 
 > [!IMPORTANT]
-> A critical structural mismatch exists: **Only one lesson ([html-intro.mdx](file:///C:/DevMentor/content/foundations/html-intro.mdx)) implements the premium custom components** (`<TaskBox>`, `<AssignmentBox>`, `<InterviewExplanation>`, `<CommonMistake>`, `<InterviewTip>`, `<RealTimeExample>`).
+> A critical structural mismatch exists: **Only one lesson ([html-intro.mdx](file:///C:/CodeNivra/content/foundations/html-intro.mdx)) implements the premium custom components** (`<TaskBox>`, `<AssignmentBox>`, `<InterviewExplanation>`, `<CommonMistake>`, `<InterviewTip>`, `<RealTimeExample>`).
 > Almost all other 42 lessons rely on standard Markdown notes, using deprecated or un-registered components (e.g. `<Pitfall>`, `<ProTip>`, `<Checklist>`). They lack capstone assignments, tasks, and interview prep guides.
 
 Below is the status of every lesson:
@@ -439,7 +439,7 @@ The platform upgrade will follow a structured, phase-wise implementation plan.
 
 ```mermaid
 gantt
-    title DevMentor Upgrade Timeline
+    title CodeNivra Upgrade Timeline
     dateFormat  YYYY-MM-DD
     section Phase 2A: UX
     Learn Page & Spacing Improvements :active, 2026-06-01, 3d

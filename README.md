@@ -1,10 +1,10 @@
-# DevMentor - Static Tutorial Platform
+# CodeNivra - Static Tutorial Platform
 
 A fully static, production-quality tutorial web application built with modern web technologies. All content is authored in MDX and statically generated at build time.
 
 ## Project Overview
 
-DevMentor is a tutorial platform that feels like a senior software engineer mentoring an intern. It focuses on production-ready guidance, real-world patterns, and modern tooling. There is **no database and no backend**. Everything is static and stored in the repository.
+CodeNivra is a tutorial platform that feels like a senior software engineer mentoring an intern. It focuses on production-ready guidance, real-world patterns, and modern tooling. There is **no database and no backend**. Everything is static and stored in the repository.
 
 ## Why MDX
 

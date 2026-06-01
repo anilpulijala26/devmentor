@@ -126,7 +126,7 @@ export function InterviewExplanation({
               </button>
 
               {isOpen && (
-                <div className="px-5 pb-5 pt-1 text-sm text-slate-655 leading-relaxed dark:text-slate-300 border-t border-purple-50 dark:border-slate-800/80">
+                <div className="px-5 pb-5 pt-1 text-sm text-slate-600 leading-relaxed dark:text-slate-300 border-t border-purple-50 dark:border-slate-800/80">
                   {qa.answer}
                 </div>
               )}

@@ -15,7 +15,7 @@ export function generateStaticParams() {
 }
 
 export const metadata = {
-  title: "Roadmap Timeline - DevMentor",
+  title: "Roadmap Timeline - CodeNivra",
   description: "Walk through step-by-step career timelines, concepts lessons, projects, and checklist questions.",
 };
 
@@ -29,11 +29,11 @@ export default async function RoadmapDetailPage({ params }: Props) {
 
   const getBadgeColor = (level: string) => {
     return {
-      Beginner: "bg-blue-50 text-blue-700 border-blue-150",
-      Intermediate: "bg-violet-50 text-violet-750 border-violet-150",
-      Advanced: "bg-emerald-50 text-emerald-750 border-emerald-150",
-      Professional: "bg-pink-50 text-pink-750 border-pink-150",
-      "Interview Prep": "bg-purple-50 text-purple-750 border-purple-150",
+      Beginner: "bg-blue-50 text-blue-700 border-blue-200",
+      Intermediate: "bg-violet-50 text-violet-700 border-violet-200",
+      Advanced: "bg-emerald-50 text-emerald-700 border-emerald-200",
+      Professional: "bg-pink-50 text-pink-700 border-pink-200",
+      "Interview Prep": "bg-purple-50 text-purple-700 border-purple-200",
     }[level] || "bg-slate-50 text-slate-700";
   };
 
@@ -148,7 +148,7 @@ export default async function RoadmapDetailPage({ params }: Props) {
                       className="group flex items-center justify-between p-4 border border-slate-200 rounded-2xl bg-white hover:border-emerald-300 hover:shadow-xs transition duration-200"
                     >
                       <div className="flex items-center gap-3">
-                        <span className="h-6 w-6 rounded-full bg-emerald-50 text-emerald-700 font-bold text-xs flex items-center justify-center shrink-0 group-hover:bg-emerald-650 group-hover:text-white transition">
+                        <span className="h-6 w-6 rounded-full bg-emerald-50 text-emerald-700 font-bold text-xs flex items-center justify-center shrink-0 group-hover:bg-emerald-600 group-hover:text-white transition">
                           P
                         </span>
                         <div>
@@ -160,7 +160,7 @@ export default async function RoadmapDetailPage({ params }: Props) {
                           </span>
                         </div>
                       </div>
-                      <ArrowRight className="w-4 h-4 text-slate-400 group-hover:translate-x-0.5 group-hover:text-emerald-650 transition" />
+                      <ArrowRight className="w-4 h-4 text-slate-400 group-hover:translate-x-0.5 group-hover:text-emerald-600 transition" />
                     </Link>
                   ))}
                 </div>
@@ -204,7 +204,7 @@ export default async function RoadmapDetailPage({ params }: Props) {
                 <ClipboardCheck className="w-4 h-4 text-indigo-600" />
                 Senior Checklist
               </h3>
-              
+
               <p className="text-2xs text-slate-500 leading-relaxed mb-4">
                 Verify your progression. Can you confidently check off these expectations?
               </p>
@@ -212,7 +212,7 @@ export default async function RoadmapDetailPage({ params }: Props) {
               <div className="space-y-3.5">
                 {roadmap.checklist.map((item, idx) => (
                   <div key={idx} className="flex gap-2.5 items-start">
-                    <span className="h-5 w-5 bg-indigo-50 border border-indigo-150 rounded-md flex items-center justify-center shrink-0 mt-0.5 text-indigo-600">
+                    <span className="h-5 w-5 bg-indigo-50 border border-indigo-200 rounded-md flex items-center justify-center shrink-0 mt-0.5 text-indigo-600">
                       <Check className="w-3 h-3" />
                     </span>
                     <p className="text-xs font-semibold text-slate-700 leading-relaxed">
@@ -230,7 +230,7 @@ export default async function RoadmapDetailPage({ params }: Props) {
               </div>
               <div>
                 <h4 className="text-sm font-bold">Graduation Goal</h4>
-                <p className="text-xs text-slate-350 leading-relaxed mt-1">
+                <p className="text-xs text-slate-300 leading-relaxed mt-1">
                   Complete the exercises, build the requested projects, run senior audit checks, and review interview QA blocks.
                 </p>
               </div>

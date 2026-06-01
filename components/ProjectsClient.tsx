@@ -18,9 +18,9 @@ export function ProjectsClient({ initialProjects }: ProjectsClientProps) {
 
   const getLevelColor = (level: string) => {
     return {
-      Beginner: "bg-blue-50 text-blue-700 border-blue-150 dark:bg-slate-800 dark:text-blue-400",
-      Intermediate: "bg-violet-50 text-violet-750 border-violet-150 dark:bg-slate-800 dark:text-violet-400",
-      Advanced: "bg-emerald-50 text-emerald-750 border-emerald-150 dark:bg-slate-800 dark:text-emerald-400"
+      Beginner: "bg-blue-50 text-blue-700 border-blue-200 dark:bg-slate-800 dark:text-blue-400",
+      Intermediate: "bg-violet-50 text-violet-700 border-violet-200 dark:bg-slate-800 dark:text-violet-400",
+      Advanced: "bg-emerald-50 text-emerald-700 border-emerald-200 dark:bg-slate-800 dark:text-emerald-400"
     }[level] || "bg-slate-50 text-slate-700";
   };
 
@@ -29,7 +29,7 @@ export function ProjectsClient({ initialProjects }: ProjectsClientProps) {
       {/* Header */}
       <div className="mb-12 text-center md:text-left flex flex-col md:flex-row md:items-end justify-between gap-6">
         <div className="max-w-2xl">
-          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-emerald-50 border border-emerald-100 text-emerald-750 text-xs font-semibold mb-4 dark:bg-slate-900 dark:border-slate-800 dark:text-emerald-400">
+          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-emerald-50 border border-emerald-100 text-emerald-700 text-xs font-semibold mb-4 dark:bg-slate-900 dark:border-slate-800 dark:text-emerald-400">
             <Sparkles className="w-3.5 h-3.5" />
             Real-World Applications
           </div>
@@ -50,7 +50,7 @@ export function ProjectsClient({ initialProjects }: ProjectsClientProps) {
               className={`px-4 py-2 rounded-xl text-xs font-bold transition duration-200 cursor-pointer ${
                 activeFilter === filter
                   ? "bg-indigo-600 text-white shadow-sm"
-                  : "text-slate-650 hover:bg-slate-100 dark:text-slate-300 dark:hover:bg-slate-800"
+                  : "text-slate-600 hover:bg-slate-100 dark:text-slate-300 dark:hover:bg-slate-800"
               }`}
             >
               {filter}
@@ -64,7 +64,7 @@ export function ProjectsClient({ initialProjects }: ProjectsClientProps) {
         {filtered.map((proj) => (
           <div
             key={proj.slug}
-            className="group flex flex-col justify-between rounded-3xl border border-slate-205 bg-white p-6 shadow-sm transition-all duration-300 hover:border-slate-350 hover:shadow-md dark:bg-slate-900 dark:border-slate-800"
+            className="group flex flex-col justify-between rounded-3xl border border-slate-200 bg-white p-6 shadow-sm transition-all duration-300 hover:border-slate-300 hover:shadow-md dark:bg-slate-900 dark:border-slate-800"
           >
             <div className="space-y-4">
               {/* Level & Duration Badge Row */}
@@ -93,7 +93,7 @@ export function ProjectsClient({ initialProjects }: ProjectsClientProps) {
                 <p className="text-2xs font-extrabold text-slate-400 uppercase tracking-widest">Scope / Deliverables</p>
                 <ul className="space-y-1.5 pl-1.5">
                   {proj.features.slice(0, 2).map((item, idx) => (
-                    <li key={idx} className="flex gap-2 items-start text-xs font-medium text-slate-655 leading-relaxed dark:text-slate-300">
+                    <li key={idx} className="flex gap-2 items-start text-xs font-medium text-slate-600 leading-relaxed dark:text-slate-300">
                       <span className="h-1.5 w-1.5 rounded-full bg-emerald-500 shrink-0 mt-2" />
                       <span>{item}</span>
                     </li>
@@ -118,7 +118,7 @@ export function ProjectsClient({ initialProjects }: ProjectsClientProps) {
             </div>
 
             {/* Start Project CTA Button */}
-            <div className="mt-8 pt-4 border-t border-slate-150/45 dark:border-slate-800">
+            <div className="mt-8 pt-4 border-t border-slate-200/45 dark:border-slate-800">
               <Link
                 href={`/projects/${proj.slug}`}
                 className="w-full inline-flex items-center justify-center gap-2 bg-indigo-600 hover:bg-indigo-700 text-white py-3 rounded-2xl text-xs font-bold transition shadow-xs cursor-pointer"
