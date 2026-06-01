@@ -94,11 +94,11 @@ export default function Home() {
                   <span className="inline-block text-[9px] font-semibold text-amber-700 bg-amber-50 px-2.5 py-0.5 rounded-full border border-amber-100 uppercase tracking-wider">
                     DAILY CODE
                   </span>
-                  <h3 className="font-bold text-slate-955 text-sm">Build a Reusable Button</h3>
-                  <p className="text-xs text-slate-400 leading-relaxed font-normal">Practice component configurations. Write size variants, loaders, and disabled flags.</p>
+                  <h3 className="font-bold text-slate-955 text-sm">React Controlled Forms</h3>
+                  <p className="text-xs text-slate-400 leading-relaxed font-normal">Practice component state. Build a login form with controlled components and dynamic error blur bindings.</p>
                 </div>
                 <Link
-                  href="/tasks/reusable-button"
+                  href="/tasks/react-controlled-form"
                   className="mt-4 inline-flex items-center gap-1 text-xs font-semibold text-indigo-600 hover:text-indigo-700 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 rounded px-1 cursor-pointer"
                 >
                   <span>Try Daily Task</span>
