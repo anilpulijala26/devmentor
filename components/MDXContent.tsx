@@ -2,12 +2,21 @@
 import { MDXRemote } from "next-mdx-remote/rsc";
 import remarkGfm from "remark-gfm";
 import { CodeBlock } from "./CodeBlock";
-import { SeniorNote } from "./SeniorNote";
+import { SeniorNote } from "./mdx/SeniorNote";
 import { Pitfall } from "./Pitfall";
 import { ProTip } from "./ProTip";
 import { Checklist } from "./Checklist";
 import { YouTubeEmbed } from "./YouTubeEmbed";
 import { Collapsible } from "./Collapsible";
+
+import { RealTimeExample } from "./mdx/RealTimeExample";
+import { TaskBox } from "./mdx/TaskBox";
+import { CommonMistake } from "./mdx/CommonMistake";
+import { InterviewTip } from "./mdx/InterviewTip";
+import { ProjectChecklist } from "./mdx/ProjectChecklist";
+import { DeploymentNote } from "./mdx/DeploymentNote";
+import { AssignmentBox } from "./mdx/AssignmentBox";
+import { InterviewExplanation } from "./mdx/InterviewExplanation";
 
 function getHeadingText(children: any): string {
   if (typeof children === "string") return children;
@@ -24,6 +33,14 @@ const components = {
   Checklist,
   YouTubeEmbed: () => null,
   Collapsible,
+  RealTimeExample,
+  TaskBox,
+  CommonMistake,
+  InterviewTip,
+  ProjectChecklist,
+  DeploymentNote,
+  AssignmentBox,
+  InterviewExplanation,
   // Add default HTML components with styling
   h1: () => null,
   h2: (props: any) => {
@@ -84,7 +101,9 @@ const components = {
   ),
   img: (props: any) => (
     <span className="block my-8 text-center">
+      {/* eslint-disable-next-line @next/next/no-img-element */}
       <img
+        alt={props.alt ?? ""}
         className="mx-auto rounded-2xl border border-slate-200/80 shadow-lg max-w-full h-auto bg-slate-950"
         {...props}
       />

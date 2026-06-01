@@ -3,23 +3,21 @@ import {
   ArrowRight,
   BookOpen,
   Code2,
-  Layers,
   Sparkles,
-  ShieldCheck,
-  Boxes,
-  Rocket,
-  ArrowUpRight,
-  GitBranch,
   Terminal,
-  Cpu,
-  Workflow
+  FileCheck2,
+  Play
 } from "lucide-react";
+import { roadmaps } from "@/lib/roadmaps";
+import { projects } from "@/lib/projects";
+import { developerTasks } from "@/lib/tasks";
+import { DashboardHighlights } from "@/components/DashboardHighlights";
 
 export default function Home() {
   return (
     <div className="min-h-screen bg-slate-50 text-slate-800 antialiased font-sans">
-      {/* Premium Hero Section with Two-Column Grid & Glowing Backdrops */}
-      <div className="relative w-full overflow-hidden bg-slate-950 py-20 lg:py-28 border-b border-slate-900">
+      {/* Premium Hero Section */}
+      <section className="relative w-full overflow-hidden bg-slate-950 py-20 lg:py-28 border-b border-slate-900">
         {/* Glow meshes */}
         <div className="absolute inset-0 pointer-events-none overflow-hidden">
           <div className="absolute -top-40 -left-40 w-96 h-96 bg-indigo-500 rounded-full mix-blend-screen filter blur-[120px] opacity-25 animate-pulse" />
@@ -27,487 +25,488 @@ export default function Home() {
           <div className="absolute -bottom-20 left-1/3 w-80 h-80 bg-blue-500 rounded-full mix-blend-screen filter blur-[100px] opacity-15" />
         </div>
 
-        <div className="relative max-w-6xl mx-auto px-4 z-10">
-          <div className="grid lg:grid-cols-12 gap-12 lg:gap-8 items-center">
+        <div className="relative max-w-6xl mx-auto px-6 z-10">
+          <div className="grid lg:grid-cols-12 gap-12 items-center">
             {/* Hero Details Column */}
             <div className="lg:col-span-7 space-y-8 text-left">
-              <div className="inline-flex items-center gap-2.5 bg-indigo-500/10 backdrop-blur-md border border-indigo-500/30 px-4 py-2 rounded-full shadow-inner">
-                <Sparkles className="w-4 h-4 text-indigo-400 animate-spin" style={{ animationDuration: '4s' }} />
-                <span className="text-xs md:text-sm font-semibold tracking-wide text-indigo-300">
-                  Production-Ready Engineering Curriculum
+              <div className="inline-flex items-center gap-2 bg-indigo-500/10 backdrop-blur-md border border-indigo-500/30 px-3.5 py-1.5 rounded-full">
+                <Sparkles className="w-4 h-4 text-indigo-400 animate-pulse" />
+                <span className="text-xs font-bold tracking-wide text-indigo-300 uppercase">
+                  Project-Based Learning Flow
                 </span>
               </div>
 
-              <h1 className="text-4xl sm:text-5xl md:text-6xl font-black tracking-tight text-white leading-none">
-                Bridge the Gap <br />
+              <h1 className="text-4xl sm:text-5xl md:text-6xl font-black tracking-tight text-white leading-tight">
+                Learn Real-Time <br />
                 <span className="text-transparent bg-clip-text bg-gradient-to-r from-indigo-400 via-purple-400 to-pink-400">
-                  Between Code & Systems
+                  Web Development
                 </span>
               </h1>
 
               <p className="text-lg md:text-xl text-slate-300 leading-relaxed max-w-2xl">
-                For <strong className="text-indigo-400 font-semibold">Interns</strong>: Build and deploy full-stack production systems independently. <br />
-                For <strong className="text-purple-400 font-semibold">Mid & Senior Developers</strong>: Master advanced system architecture, caching, and performance profiling.
+                Learn real-time web development by building production-style applications from intern to senior level. Master architecture, write clean TypeScript, and practice senior reviews.
               </p>
 
               <div className="flex flex-wrap gap-4 pt-2">
                 <Link
-                  href="/learn"
-                  className="inline-flex items-center gap-2.5 bg-indigo-600 text-white px-8 py-4 rounded-2xl font-bold hover:bg-indigo-500 hover:scale-[1.02] active:scale-95 transition-all duration-300 shadow-[0_4px_20px_0_rgba(79,70,229,0.3)]"
+                  href="/roadmaps"
+                  className="inline-flex items-center gap-2.5 bg-indigo-600 text-white px-7 py-3.5 rounded-2xl font-bold hover:bg-indigo-500 hover:scale-[1.02] active:scale-95 transition-all duration-300 shadow-[0_4px_20px_rgba(79,70,229,0.3)]"
                 >
                   Start Learning <ArrowRight className="w-5 h-5" />
                 </Link>
 
                 <Link
-                  href="/learn"
-                  className="inline-flex items-center gap-2 border-2 border-slate-800 text-slate-300 px-8 py-4 rounded-2xl font-semibold hover:bg-white/5 hover:border-slate-700 transition-all duration-300"
+                  href="/projects"
+                  className="inline-flex items-center gap-2 bg-white/10 hover:bg-white/15 border border-white/20 text-white px-7 py-3.5 rounded-2xl font-bold transition-all duration-300"
                 >
-                  Browse Tracks
+                  Explore Projects
+                </Link>
+                
+                <Link
+                  href="/tasks"
+                  className="inline-flex items-center gap-2 text-indigo-400 hover:text-indigo-300 font-semibold px-4 py-2 transition"
+                >
+                  Daily Tasks &rarr;
                 </Link>
               </div>
             </div>
 
-            {/* Interactive Pipeline Visualization (Right Column) */}
+            {/* Visual Flow Indicator */}
             <div className="lg:col-span-5 relative">
-              {/* Glassmorphic Container Card */}
-              <div className="w-full bg-slate-900/60 backdrop-blur-xl border border-slate-800/80 rounded-3xl p-6 sm:p-8 shadow-2xl relative">
-                {/* Header tag */}
-                <div className="flex items-center justify-between border-b border-slate-800/80 pb-4 mb-6">
-                  <div className="flex items-center gap-2.5">
-                    <span className="flex h-2.5 w-2.5 rounded-full bg-green-400 animate-ping" />
-                    <span className="text-xs font-mono text-slate-400 uppercase tracking-widest">DevMentor-Pipeline // Active</span>
+              <div className="w-full bg-slate-900/60 backdrop-blur-xl border border-slate-800 rounded-3xl p-6 sm:p-8 shadow-2xl relative">
+                <div className="flex items-center justify-between border-b border-slate-800 pb-4 mb-6">
+                  <div className="flex items-center gap-2">
+                    <span className="flex h-2.5 w-2.5 rounded-full bg-indigo-400 animate-ping" />
+                    <span className="text-xs font-mono text-slate-400 uppercase tracking-wider">LEARNING PIPELINE</span>
                   </div>
                   <Terminal className="w-4 h-4 text-slate-500" />
                 </div>
 
-                {/* Trajectory pipeline stack */}
-                <div className="space-y-6 relative">
-                  {/* Vertical connecting line */}
-                  <div className="absolute left-[22px] top-4 bottom-4 w-0.5 bg-gradient-to-b from-indigo-500 via-purple-500 to-pink-500 opacity-30" />
-
-                  {/* Stage 1: Intern */}
-                  <div className="flex items-start gap-4 group">
-                    <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-indigo-950 border border-indigo-500/40 text-indigo-400 shadow-sm transition-all duration-300 group-hover:scale-110 group-hover:bg-indigo-900 group-hover:border-indigo-400 z-10">
-                      <Code2 className="w-5 h-5" />
-                    </div>
-                    <div className="space-y-1">
-                      <div className="flex items-center gap-2">
-                        <h4 className="font-bold text-white text-base">Intern / Junior</h4>
-                        <span className="text-[10px] font-semibold text-indigo-300 bg-indigo-950/80 border border-indigo-500/20 px-2 py-0.5 rounded-full">Real-world Practice</span>
+                <div className="space-y-4">
+                  {[
+                    { step: "Learn", desc: "Master concepts through interactive MDX guides & senior notes.", color: "border-blue-500/30 text-blue-400 bg-blue-950/20" },
+                    { step: "Practice", desc: "Test skills immediately with daily developer code challenges.", color: "border-amber-500/30 text-amber-400 bg-amber-950/20" },
+                    { step: "Build", desc: "Build full-stack applications with database or auth layers.", color: "border-emerald-500/30 text-emerald-400 bg-emerald-950/20" },
+                    { step: "Review", desc: "Run your code through checklists modeled after senior logic.", color: "border-pink-500/30 text-pink-400 bg-pink-950/20" },
+                    { step: "Explain", desc: "Practice explaining your choices with mock interview templates.", color: "border-purple-500/30 text-purple-400 bg-purple-950/20" }
+                  ].map((item, idx) => (
+                    <div key={idx} className="flex gap-4 items-start">
+                      <span className={`w-8 h-8 rounded-lg border flex items-center justify-center shrink-0 text-xs font-black ${item.color}`}>
+                        {idx + 1}
+                      </span>
+                      <div>
+                        <h4 className="font-bold text-white text-sm">{item.step}</h4>
+                        <p className="text-xs text-slate-400 leading-relaxed">{item.desc}</p>
                       </div>
-                      <p className="text-xs text-slate-400 leading-normal">
-                        Ditch placeholder HTML/CSS. Build production environments with database pooling and rate limiting.
-                      </p>
                     </div>
-                  </div>
-
-                  {/* Stage 2: Mid-Level */}
-                  <div className="flex items-start gap-4 group">
-                    <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-purple-950 border border-purple-500/40 text-purple-400 shadow-sm transition-all duration-300 group-hover:scale-110 group-hover:bg-purple-900 group-hover:border-purple-400 z-10">
-                      <Workflow className="w-5 h-5" />
-                    </div>
-                    <div className="space-y-1">
-                      <div className="flex items-center gap-2">
-                        <h4 className="font-bold text-white text-base">Mid-Level Developer</h4>
-                        <span className="text-[10px] font-semibold text-purple-300 bg-purple-950/80 border border-purple-500/20 px-2 py-0.5 rounded-full">Modular Architecture</span>
-                      </div>
-                      <p className="text-xs text-slate-400 leading-normal">
-                        Master React Fiber scheduling, parallel routes, and middleware security policies.
-                      </p>
-                    </div>
-                  </div>
-
-                  {/* Stage 3: Senior */}
-                  <div className="flex items-start gap-4 group">
-                    <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-pink-950 border border-pink-500/40 text-pink-400 shadow-sm transition-all duration-300 group-hover:scale-110 group-hover:bg-pink-900 group-hover:border-pink-400 z-10">
-                      <Cpu className="w-5 h-5" />
-                    </div>
-                    <div className="space-y-1">
-                      <div className="flex items-center gap-2">
-                        <h4 className="font-bold text-white text-base">Senior Engineer</h4>
-                        <span className="text-[10px] font-semibold text-pink-300 bg-pink-950/80 border border-pink-500/20 px-2 py-0.5 rounded-full">System Scaling</span>
-                      </div>
-                      <p className="text-xs text-slate-400 leading-normal">
-                        Implement Nesting caching rules, multi-stage Docker builds, Sentry logging, and performance analysis.
-                      </p>
-                    </div>
-                  </div>
-
-                  {/* Stage 4: Staff/Lead */}
-                  <div className="flex items-start gap-4 group">
-                    <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-slate-900 border border-emerald-500/40 text-emerald-400 shadow-sm transition-all duration-300 group-hover:scale-110 group-hover:bg-slate-800 group-hover:border-emerald-400 z-10">
-                      <GitBranch className="w-5 h-5 animate-pulse" />
-                    </div>
-                    <div className="space-y-1">
-                      <div className="flex items-center gap-2">
-                        <h4 className="font-bold text-white text-base">System Architect</h4>
-                        <span className="text-[10px] font-semibold text-emerald-300 bg-emerald-950/80 border border-emerald-500/20 px-2 py-0.5 rounded-full">Zero-Downtime</span>
-                      </div>
-                      <p className="text-xs text-slate-400 leading-normal">
-                        Design expand-and-contract migrations, serverless pooling, and robust microservices boundaries.
-                      </p>
-                    </div>
-                  </div>
-                </div>
-
-                {/* Glassmorphic accent background badge */}
-                <div className="mt-6 pt-4 border-t border-slate-800/80 flex items-center justify-between text-xs text-slate-400">
-                  <span>Interactive Curriculum Map</span>
-                  <Link href="/learn" className="inline-flex items-center gap-1 text-indigo-400 hover:text-indigo-300 transition-colors font-medium">
-                    Explore Now <ArrowUpRight className="w-3.5 h-3.5" />
-                  </Link>
+                  ))}
                 </div>
               </div>
             </div>
           </div>
         </div>
-      </div>
+      </section>
 
-      {/* Modern Stats Banner with Elevated Cards */}
-      <div className="max-w-6xl mx-auto px-4 -mt-8 relative z-20">
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-          <div className="bg-white rounded-2xl p-6 shadow-[0_8px_30px_rgb(0,0,0,0.04)] border border-slate-100/80 hover:shadow-xl transition-all duration-300 group">
-            <div className="flex items-center justify-between">
+      {/* NEW: Developer Console Dashboard Section */}
+      <section className="max-w-6xl mx-auto px-6 -mt-10 relative z-20">
+        <div className="bg-white rounded-3xl border border-slate-200/80 p-6 sm:p-8 shadow-xl">
+          <div className="flex items-center justify-between border-b border-slate-100 pb-4 mb-6 flex-wrap gap-4">
+            <div className="flex items-center gap-2.5">
+              <span className="flex h-3 w-3 rounded-full bg-emerald-500" />
               <div>
-                <p className="text-xs font-bold text-indigo-600 uppercase tracking-widest">Learning Tracks</p>
-                <p className="text-3xl font-black text-slate-900 mt-2">3 Dedicated</p>
+                <h2 className="text-lg font-black text-slate-900 tracking-tight">Student Developer Console</h2>
+                <p className="text-2xs font-semibold text-slate-400 uppercase tracking-widest mt-0.5">Telemetry overview & quick starts</p>
               </div>
-              <div className="h-12 w-12 rounded-2xl bg-indigo-50 flex items-center justify-center text-indigo-600 group-hover:scale-110 transition-transform">
-                <Layers className="w-6 h-6" />
-              </div>
+            </div>
+            <div className="flex items-center gap-2">
+              <span className="text-2xs font-extrabold bg-indigo-50 text-indigo-700 px-3 py-1 rounded-full">ACTIVE SESSION</span>
             </div>
           </div>
 
-          <div className="bg-white rounded-2xl p-6 shadow-[0_8px_30px_rgb(0,0,0,0.04)] border border-slate-100/80 hover:shadow-xl transition-all duration-300 group">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-xs font-bold text-purple-600 uppercase tracking-widest">Active Modules</p>
-                <p className="text-3xl font-black text-slate-900 mt-2">11 Core Areas</p>
-              </div>
-              <div className="h-12 w-12 rounded-2xl bg-purple-50 flex items-center justify-center text-purple-600 group-hover:scale-110 transition-transform">
-                <BookOpen className="w-6 h-6" />
-              </div>
-            </div>
-          </div>
-
-          <div className="bg-white rounded-2xl p-6 shadow-[0_8px_30px_rgb(0,0,0,0.04)] border border-slate-100/80 hover:shadow-xl transition-all duration-300 group">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-xs font-bold text-pink-600 uppercase tracking-widest">Interactive Lessons</p>
-                <p className="text-3xl font-black text-slate-900 mt-2">25+ Deep Dives</p>
-              </div>
-              <div className="h-12 w-12 rounded-2xl bg-pink-50 flex items-center justify-center text-pink-600 group-hover:scale-110 transition-transform">
-                <ShieldCheck className="w-6 h-6" />
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      {/* Core Concepts Sticky Banner */}
-      <div className="max-w-6xl mx-auto px-4 mt-16">
-        <div className="bg-gradient-to-r from-slate-900 via-indigo-950 to-purple-950 rounded-3xl p-8 shadow-xl border border-slate-800">
-          <div className="flex flex-wrap items-center justify-between gap-6">
-            <div className="flex items-center gap-4">
-              <span className="inline-flex h-12 w-12 items-center justify-center rounded-2xl bg-indigo-500/10 border border-indigo-500/30 text-indigo-400">
-                <Sparkles className="h-6 w-6 animate-pulse" />
-              </span>
-              <div>
-                <p className="text-xs font-bold uppercase tracking-wider text-indigo-300/80">
-                  Pre-requisites & Foundations
-                </p>
-                <h2 className="text-2xl font-bold text-white mt-1">
-                  Master the Fundamentals
-                </h2>
-              </div>
-            </div>
-
-            <div className="flex flex-wrap gap-2.5">
-              {["HTML5 & Accessibility", "Modern CSS Layouts", "Vanilla JavaScript ES6", "Strict TypeScript", "React Rendering"].map((item) => (
-                <span
-                  key={item}
-                  className="rounded-xl bg-white/5 backdrop-blur-md px-4 py-2 text-xs font-semibold text-slate-200 border border-slate-800/80 hover:bg-white/10 hover:border-slate-700/60 transition-all cursor-default"
+          <div className="grid md:grid-cols-12 gap-8 items-start">
+            {/* Quick starts grids */}
+            <div className="md:col-span-8 grid gap-4 sm:grid-cols-2">
+              {/* Continue Learning */}
+              <div className="border border-slate-100 bg-slate-50/50 p-5 rounded-2xl flex flex-col justify-between hover:border-slate-250 transition-all">
+                <div>
+                  <span className="text-[10px] font-bold text-indigo-600 bg-indigo-50 px-2 py-0.5 rounded uppercase tracking-wider">CONTINUE LEARNING</span>
+                  <h3 className="font-extrabold text-slate-900 text-sm mt-3">Web Foundations: Introduction to HTML</h3>
+                  <p className="text-xs text-slate-500 mt-1">Pick up where you left off. Learn Core HTML5 structures, semantics, and layouts.</p>
+                </div>
+                <Link
+                  href="/learn/foundations/html-intro"
+                  className="mt-4 inline-flex items-center gap-1.5 bg-indigo-600 hover:bg-indigo-700 text-white text-xs font-bold px-4 py-2.5 rounded-xl shadow-xs transition w-fit"
                 >
-                  {item}
-                </span>
-              ))}
+                  <Play className="w-3.5 h-3.5 fill-current" /> Resume Guide
+                </Link>
+              </div>
+
+              {/* Explore Roadmaps */}
+              <div className="border border-slate-100 bg-slate-50/50 p-5 rounded-2xl flex flex-col justify-between hover:border-slate-250 transition-all">
+                <div>
+                  <span className="text-[10px] font-bold text-violet-600 bg-violet-50 px-2 py-0.5 rounded uppercase tracking-wider">ROLE ROADMAPS</span>
+                  <h3 className="font-extrabold text-slate-900 text-sm mt-3">Junior Frontend Developer</h3>
+                  <p className="text-xs text-slate-500 mt-1">Interactive roadmap tracing React lifecycle rules, TypeScript generics, and state contexts.</p>
+                </div>
+                <Link
+                  href="/roadmaps/junior-frontend"
+                  className="mt-4 inline-flex items-center gap-1 text-xs font-bold text-indigo-650 hover:underline"
+                >
+                  View Pathway &rarr;
+                </Link>
+              </div>
+
+              {/* Start Project Labs */}
+              <div className="border border-slate-100 bg-slate-50/50 p-5 rounded-2xl flex flex-col justify-between hover:border-slate-250 transition-all">
+                <div>
+                  <span className="text-[10px] font-bold text-emerald-600 bg-emerald-50 px-2 py-0.5 rounded uppercase tracking-wider">PROJECT LABS</span>
+                  <h3 className="font-extrabold text-slate-900 text-sm mt-3">Admin Dashboard Interface</h3>
+                  <p className="text-xs text-slate-500 mt-1">Develop telemetry stats pages, sortable tables, and user edit side drawers.</p>
+                </div>
+                <Link
+                  href="/projects/admin-dashboard"
+                  className="mt-4 inline-flex items-center gap-1 text-xs font-bold text-indigo-655 hover:underline"
+                >
+                  Start Project Lab &rarr;
+                </Link>
+              </div>
+
+              {/* Try Daily Task */}
+              <div className="border border-slate-100 bg-slate-50/50 p-5 rounded-2xl flex flex-col justify-between hover:border-slate-250 transition-all">
+                <div>
+                  <span className="text-[10px] font-bold text-amber-600 bg-amber-50 px-2 py-0.5 rounded uppercase tracking-wider">DAILY CODE</span>
+                  <h3 className="font-extrabold text-slate-900 text-sm mt-3">Build a Reusable Button</h3>
+                  <p className="text-xs text-slate-500 mt-1">Practice component configurations. Write size variants, loaders, and disabled flags.</p>
+                </div>
+                <Link
+                  href="/tasks/reusable-button"
+                  className="mt-4 inline-flex items-center gap-1 text-xs font-bold text-indigo-655 hover:underline"
+                >
+                  Try Daily Task &rarr;
+                </Link>
+              </div>
+            </div>
+
+            {/* Right sidebar: Checklist telemetry & concept widgets */}
+            <div className="md:col-span-4 space-y-4">
+              {/* Code Review Checklist */}
+              <div className="border border-slate-150 p-5 rounded-2xl bg-white space-y-3">
+                <div className="flex items-center justify-between">
+                  <span className="text-[10px] font-bold text-pink-650 uppercase tracking-wider">CODE REVIEW TOOL</span>
+                  <span className="text-2xs font-extrabold bg-pink-50 text-pink-700 px-2 py-0.5 rounded">11 GUIDELINES</span>
+                </div>
+                <h4 className="font-bold text-sm text-slate-800">Senior Audit Checklist</h4>
+                <p className="text-xs text-slate-500">Run your repository files through the 11-step audit guidelines before code reviews.</p>
+                <Link
+                  href="/code-review"
+                  className="inline-flex items-center gap-1.5 text-xs font-bold text-indigo-650 hover:underline"
+                >
+                  Open Audit Console <ArrowRight className="w-3.5 h-3.5" />
+                </Link>
+              </div>
+
+              {/* Dynamic highlights widget */}
+              <DashboardHighlights />
             </div>
           </div>
         </div>
-      </div>
+      </section>
 
-      {/* Core Concepts Grid */}
-      <div className="max-w-6xl mx-auto px-4 py-20">
+      {/* Section: Who This Is For */}
+      <section className="py-20 max-w-6xl mx-auto px-6">
         <div className="text-center max-w-2xl mx-auto mb-16 space-y-3">
+          <span className="text-xs font-bold text-indigo-600 uppercase tracking-widest bg-indigo-50 px-3 py-1 rounded-full">
+            Target Audiences
+          </span>
           <h2 className="text-3xl sm:text-4xl font-extrabold text-slate-900 tracking-tight">
-            Curriculum Core Pillars
+            Who is DevMentor for?
           </h2>
-          <p className="text-lg text-slate-600">
-            A cohesive path engineered to transition developers from sandbox syntax to production deployment.
-          </p>
-        </div>
-
-        <div className="grid md:grid-cols-3 gap-6">
-          {/* Pillar 1 */}
-          <div className="group rounded-2xl border border-slate-200 bg-white p-6 shadow-sm hover:shadow-lg hover:-translate-y-1 transition-all duration-300">
-            <div className="flex items-center gap-3.5 mb-4">
-              <span className="inline-flex h-11 w-11 items-center justify-center rounded-xl bg-indigo-50 text-indigo-600 group-hover:bg-indigo-600 group-hover:text-white transition-all">
-                <Code2 className="h-5 w-5" />
-              </span>
-              <h3 className="text-lg font-bold text-slate-900">
-                HTML Semantics & A11y
-              </h3>
-            </div>
-            <p className="text-sm text-slate-600 leading-relaxed">
-              Structure code with true accessibility (ARIA parameters) and layout shift mitigation strategies to satisfy modern SEO requirements.
-            </p>
-          </div>
-
-          {/* Pillar 2 */}
-          <div className="group rounded-2xl border border-slate-200 bg-white p-6 shadow-sm hover:shadow-lg hover:-translate-y-1 transition-all duration-300">
-            <div className="flex items-center gap-3.5 mb-4">
-              <span className="inline-flex h-11 w-11 items-center justify-center rounded-xl bg-purple-50 text-purple-600 group-hover:bg-purple-600 group-hover:text-white transition-all">
-                <Layers className="h-5 w-5" />
-              </span>
-              <h3 className="text-lg font-bold text-slate-900">
-                CSS Grid & Custom Properties
-              </h3>
-            </div>
-            <p className="text-sm text-slate-600 leading-relaxed">
-              Create responsive styling architectures with native nesting and containers, avoiding bulky Tailwind boilerplate for core grids.
-            </p>
-          </div>
-
-          {/* Pillar 3 */}
-          <div className="group rounded-2xl border border-slate-200 bg-white p-6 shadow-sm hover:shadow-lg hover:-translate-y-1 transition-all duration-300">
-            <div className="flex items-center gap-3.5 mb-4">
-              <span className="inline-flex h-11 w-11 items-center justify-center rounded-xl bg-pink-50 text-pink-600 group-hover:bg-pink-600 group-hover:text-white transition-all">
-                <Boxes className="h-5 w-5" />
-              </span>
-              <h3 className="text-lg font-bold text-slate-900">
-                Event Loop & Memory
-              </h3>
-            </div>
-            <p className="text-sm text-slate-600 leading-relaxed">
-              Understand the Call Stack, microtasks vs macrotasks, and closures to prevent common rendering freezes and memory leak bottlenecks.
-            </p>
-          </div>
-
-          {/* Pillar 4 */}
-          <div className="group rounded-2xl border border-slate-200 bg-white p-6 shadow-sm hover:shadow-lg hover:-translate-y-1 transition-all duration-300">
-            <div className="flex items-center gap-3.5 mb-4">
-              <span className="inline-flex h-11 w-11 items-center justify-center rounded-xl bg-cyan-50 text-cyan-600 group-hover:bg-cyan-600 group-hover:text-white transition-all">
-                <ShieldCheck className="h-5 w-5" />
-              </span>
-              <h3 className="text-lg font-bold text-slate-900">
-                Strict Type-Safety
-              </h3>
-            </div>
-            <p className="text-sm text-slate-600 leading-relaxed">
-              Apply advanced generic bounds, discriminated unions, and mapped modifier properties to build reusable, resilient APIs.
-            </p>
-          </div>
-
-          {/* Pillar 5 */}
-          <div className="group rounded-2xl border border-slate-200 bg-white p-6 shadow-sm hover:shadow-lg hover:-translate-y-1 transition-all duration-300">
-            <div className="flex items-center gap-3.5 mb-4">
-              <span className="inline-flex h-11 w-11 items-center justify-center rounded-xl bg-green-50 text-green-600 group-hover:bg-green-600 group-hover:text-white transition-all">
-                <Rocket className="h-5 w-5" />
-              </span>
-              <h3 className="text-lg font-bold text-slate-900">
-                React Reconciliation & Fiber
-              </h3>
-            </div>
-            <p className="text-sm text-slate-600 leading-relaxed">
-              Learn the internal details of Fiber node trees, concurrent scheduling, state mutations, and optimization profiling metrics.
-            </p>
-          </div>
-
-          {/* Pillar 6 */}
-          <div className="group rounded-2xl border border-slate-200 bg-white p-6 shadow-sm hover:shadow-lg hover:-translate-y-1 transition-all duration-300">
-            <div className="flex items-center gap-3.5 mb-4">
-              <span className="inline-flex h-11 w-11 items-center justify-center rounded-xl bg-amber-50 text-amber-600 group-hover:bg-amber-600 group-hover:text-white transition-all">
-                <Sparkles className="h-5 w-5" />
-              </span>
-              <h3 className="text-lg font-bold text-slate-900">
-                Server Caching & Auth
-              </h3>
-            </div>
-            <p className="text-sm text-slate-600 leading-relaxed">
-              Implement Request Memoization, Data Caching layers, secure HTTPOnly JWT rotation, and Sentry pipeline error-reporting.
-            </p>
-          </div>
-        </div>
-      </div>
-
-      {/* Premium UI Mockups & Visual Micro-Animations */}
-      <div className="bg-slate-900 text-white py-20 border-y border-slate-800">
-        <div className="max-w-6xl mx-auto px-4">
-          <div className="text-center max-w-2xl mx-auto mb-16 space-y-3">
-            <h2 className="text-3xl sm:text-4xl font-extrabold tracking-tight">
-              Interactive Web Mechanics
-            </h2>
-            <p className="text-slate-400">
-              Interactive diagrams used throughout the tracks help clarify complex, non-visual engine processes in single glance.
-            </p>
-          </div>
-
-          <div className="grid md:grid-cols-3 gap-8">
-            {/* Diagram Preview 1 */}
-            <div className="bg-slate-950/60 border border-slate-800/80 rounded-2xl p-6 shadow-lg hover:border-slate-700/80 transition-colors">
-              <div className="flex items-center justify-between mb-4">
-                <h3 className="font-bold text-slate-200">HTML Layout Box Model</h3>
-                <span className="text-[10px] font-bold text-indigo-400 bg-indigo-500/10 px-2.5 py-1 rounded-full uppercase tracking-wider">Structure</span>
-              </div>
-              <div className="h-32 rounded-xl bg-slate-900 border border-slate-800 flex items-center justify-center relative overflow-hidden">
-                <svg width="140" height="80" viewBox="0 0 140 80" fill="none">
-                  <rect x="8" y="8" width="124" height="64" rx="8" className="fill-slate-950 stroke-indigo-500/30" strokeWidth="1" />
-                  <rect x="20" y="20" width="100" height="40" rx="6" className="fill-indigo-500/10 stroke-indigo-500/50" strokeWidth="1.5" />
-                  <rect x="36" y="32" width="68" height="16" rx="4" className="fill-indigo-500/25 stroke-indigo-400" strokeWidth="1.5" />
-                  <circle cx="20" cy="20" r="3" className="fill-indigo-400 animate-ping" />
-                  <circle cx="120" cy="60" r="3" className="fill-pink-400 animate-ping" style={{ animationDelay: "1s" }} />
-                </svg>
-              </div>
-              <p className="mt-4 text-xs text-slate-400 leading-relaxed">
-                Visualizing content bounds, padding, border regions, and margins recursively to debug nested document layout problems.
-              </p>
-            </div>
-
-            {/* Diagram Preview 2 */}
-            <div className="bg-slate-950/60 border border-slate-800/80 rounded-2xl p-6 shadow-lg hover:border-slate-700/80 transition-colors">
-              <div className="flex items-center justify-between mb-4">
-                <h3 className="font-bold text-slate-200">Flexbox Alignment</h3>
-                <span className="text-[10px] font-bold text-purple-400 bg-purple-500/10 px-2.5 py-1 rounded-full uppercase tracking-wider">CSS Flex</span>
-              </div>
-              <div className="h-32 rounded-xl bg-slate-900 border border-slate-800 flex items-center justify-center relative overflow-hidden">
-                <svg width="140" height="80" viewBox="0 0 140 80" fill="none">
-                  <rect x="10" y="15" width="120" height="50" rx="8" className="fill-slate-950 stroke-purple-500/20" strokeWidth="1.5" />
-                  <rect x="20" y="25" width="25" height="30" rx="4" className="fill-purple-500/10 stroke-purple-400" strokeWidth="1.5" />
-                  <rect x="58" y="25" width="25" height="30" rx="4" className="fill-purple-500/20 stroke-purple-300" strokeWidth="1.5" />
-                  <rect x="95" y="25" width="25" height="30" rx="4" className="fill-purple-500/10 stroke-purple-400" strokeWidth="1.5" />
-                  <path d="M20 18h100" className="stroke-indigo-500/20" strokeDasharray="3 3" />
-                  <path d="M20 62h100" className="stroke-indigo-500/20" strokeDasharray="3 3" />
-                </svg>
-              </div>
-              <p className="mt-4 text-xs text-slate-400 leading-relaxed">
-                Interactively testing distribution schemas (space-between, space-around) to layout interfaces with maximum alignment precision.
-              </p>
-            </div>
-
-            {/* Diagram Preview 3 */}
-            <div className="bg-slate-950/60 border border-slate-800/80 rounded-2xl p-6 shadow-lg hover:border-slate-700/80 transition-colors">
-              <div className="flex items-center justify-between mb-4">
-                <h3 className="font-bold text-slate-200">Asynchronous Loop</h3>
-                <span className="text-[10px] font-bold text-pink-400 bg-pink-500/10 px-2.5 py-1 rounded-full uppercase tracking-wider">Engine</span>
-              </div>
-              <div className="h-32 rounded-xl bg-slate-900 border border-slate-800 flex items-center justify-center relative overflow-hidden">
-                <svg width="140" height="80" viewBox="0 0 140 80" fill="none">
-                  <circle cx="70" cy="40" r="22" className="stroke-pink-500/30" strokeWidth="1.5" />
-                  <circle cx="70" cy="40" r="14" className="stroke-pink-500/20" strokeWidth="1" strokeDasharray="2 2" />
-                  <circle cx="70" cy="18" r="4" className="fill-pink-500">
-                    <animateTransform
-                      attributeName="transform"
-                      type="rotate"
-                      from="0 70 40"
-                      to="360 70 40"
-                      dur="3s"
-                      repeatCount="indefinite"
-                    />
-                  </circle>
-                  <circle cx="70" cy="26" r="3" className="fill-purple-400">
-                    <animateTransform
-                      attributeName="transform"
-                      type="rotate"
-                      from="360 70 40"
-                      to="0 70 40"
-                      dur="2s"
-                      repeatCount="indefinite"
-                    />
-                  </circle>
-                </svg>
-              </div>
-              <p className="mt-4 text-xs text-slate-400 leading-relaxed">
-                Illustrating event execution and frame-paint operations to diagnose stack frame bottlenecks and UI lags.
-              </p>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      {/* Google Material-based Value Propositions */}
-      <div className="max-w-6xl mx-auto px-4 py-24">
-        <div className="text-center max-w-2xl mx-auto mb-20 space-y-3">
-          <h2 className="text-3xl sm:text-4xl font-extrabold text-slate-900 tracking-tight">
-            Why DevMentor is Different
-          </h2>
-          <p className="text-lg text-slate-600">
-            Engineered lessons written to simulate structural tasks faced by senior teams at technology firms.
+          <p className="text-slate-600 text-sm sm:text-base leading-relaxed">
+            Whether starting your first internship or optimizing backend databases at scale, find curriculum structures built for your experience.
           </p>
         </div>
 
         <div className="grid md:grid-cols-3 gap-8">
-          <div className="border border-slate-200/80 rounded-3xl p-8 bg-white shadow-xs hover:shadow-lg transition-all duration-300 group">
-            <div className="h-12 w-12 rounded-2xl bg-indigo-50 flex items-center justify-center text-indigo-600 mb-6 group-hover:scale-110 transition-transform">
-              <BookOpen className="w-6 h-6" />
+          {[
+            {
+              role: "Interns / Juniors",
+              focus: "Core Foundations",
+              desc: "Transition past basic tutorials. Build real pages, learn semantic formatting, and deployment requirements to secure your first developer contract.",
+              color: "border-blue-100 bg-blue-50/20 text-blue-600"
+            },
+            {
+              role: "Mid-Level Developers",
+              focus: "Full-Stack System Design",
+              desc: "Model database schemas, implement secure HTTPOnly cookie authorization pipelines, construct modular architectures, and create solid API endpoints.",
+              color: "border-purple-100 bg-purple-50/20 text-purple-600"
+            },
+            {
+              role: "Seniors & Interview Candidates",
+              focus: "Performance & Pitching",
+              desc: "Master React Fiber reconcilers, server-side caching limits, multi-stage containers, and answer system design questions with high impact templates.",
+              color: "border-emerald-100 bg-emerald-50/20 text-emerald-600"
+            }
+          ].map((item, idx) => (
+            <div key={idx} className="border border-slate-200 bg-white rounded-3xl p-6 shadow-xs premium-card-hover">
+              <span className={`inline-block px-2.5 py-1 text-2xs font-extrabold rounded-md uppercase tracking-wider mb-4 ${item.color}`}>
+                {item.focus}
+              </span>
+              <h3 className="text-lg font-extrabold text-slate-900 mb-2">{item.role}</h3>
+              <p className="text-sm text-slate-600 leading-relaxed">{item.desc}</p>
             </div>
-            <h3 className="text-xl font-bold mb-3 text-slate-900">
-              No Sandbox Code
-            </h3>
-            <p className="text-slate-600 text-sm leading-relaxed">
-              We skip elementary tutorials. Every lesson builds on real architectural code, teaching rates, security structures, and zero-downtime deployment pipelines.
-            </p>
+          ))}
+        </div>
+      </section>
+
+      {/* Section: Roadmaps Preview */}
+      <section className="py-20 bg-white border-y border-slate-200">
+        <div className="max-w-6xl mx-auto px-6">
+          <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-16">
+            <div className="max-w-2xl space-y-3">
+              <span className="text-xs font-bold text-indigo-600 uppercase tracking-widest bg-indigo-50 px-3 py-1 rounded-full">
+                Structured Paths
+              </span>
+              <h2 className="text-3xl sm:text-4xl font-extrabold text-slate-900 tracking-tight">
+                Role-Based Learning Paths
+              </h2>
+              <p className="text-slate-600 text-sm">
+                Follow learning roadmaps constructed around actual developer titles. Each features recommended lessons, project lab targets, and completion milestones.
+              </p>
+            </div>
+            <Link
+              href="/roadmaps"
+              className="inline-flex items-center gap-2 bg-slate-100 hover:bg-slate-200 text-slate-800 font-bold px-6 py-3 rounded-xl text-xs transition duration-200 whitespace-nowrap"
+            >
+              View All Roadmaps <ArrowRight className="w-4.5 h-4.5 text-indigo-650" />
+            </Link>
           </div>
 
-          <div className="border border-slate-200/80 rounded-3xl p-8 bg-white shadow-xs hover:shadow-lg transition-all duration-300 group">
-            <div className="h-12 w-12 rounded-2xl bg-purple-50 flex items-center justify-center text-purple-600 mb-6 group-hover:scale-110 transition-transform">
-              <GitBranch className="w-6 h-6" />
-            </div>
-            <h3 className="text-xl font-bold mb-3 text-slate-900">
-              Senior engineer Guidance
-            </h3>
-            <p className="text-slate-600 text-sm leading-relaxed">
-              Learn code design choices, file structures, Sentry log hooks, performance metrics, and caching layer boundaries directly from senior specialists.
-            </p>
-          </div>
+          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {roadmaps.slice(0, 3).map((path) => (
+              <div key={path.slug} className="border border-slate-200 bg-slate-50/40 rounded-3xl p-6 flex flex-col justify-between hover:shadow-md transition">
+                <div className="space-y-4">
+                  <div className="flex items-center justify-between">
+                    <span className="text-[10px] font-extrabold bg-indigo-50 text-indigo-700 px-2.5 py-0.5 rounded-full uppercase tracking-wider">
+                      {path.level}
+                    </span>
+                    <span className="text-xs text-slate-500 font-medium">{path.duration}</span>
+                  </div>
+                  <h3 className="text-lg font-bold text-slate-900">{path.title}</h3>
+                  <p className="text-xs text-slate-600 leading-relaxed line-clamp-3">{path.description}</p>
+                  
+                  <div className="pt-2">
+                    <p className="text-2xs font-extrabold text-slate-400 uppercase tracking-wider mb-2">Skills Covered</p>
+                    <div className="flex flex-wrap gap-1">
+                      {path.skillsCovered.slice(0, 3).map((s, idx) => (
+                        <span key={idx} className="bg-white border border-slate-200 px-2 py-0.5 rounded-md text-[10px] font-semibold text-slate-700">
+                          {s}
+                        </span>
+                      ))}
+                    </div>
+                  </div>
+                </div>
 
-          <div className="border border-slate-200/80 rounded-3xl p-8 bg-white shadow-xs hover:shadow-lg transition-all duration-300 group">
-            <div className="h-12 w-12 rounded-2xl bg-pink-50 flex items-center justify-center text-pink-600 mb-6 group-hover:scale-110 transition-transform">
-              <Workflow className="w-6 h-6" />
-            </div>
-            <h3 className="text-xl font-bold mb-3 text-slate-900">
-              Full-Stack Coverage
-            </h3>
-            <p className="text-slate-600 text-sm leading-relaxed">
-              Move step-by-step from core HTML semantics and rendering properties up through TypeScript generic structures, Prisma migrations, and Docker configurations.
-            </p>
+                <div className="mt-6 pt-4 border-t border-slate-200/60">
+                  <Link
+                    href={`/roadmaps/${path.slug}`}
+                    className="w-full inline-flex items-center justify-center gap-1.5 bg-indigo-600 hover:bg-indigo-700 text-white py-2.5 rounded-xl text-xs font-bold transition shadow-xs"
+                  >
+                    Start Roadmap
+                  </Link>
+                </div>
+              </div>
+            ))}
           </div>
         </div>
-      </div>
+      </section>
 
-      {/* Sleek CTA Section */}
-      <div className="relative overflow-hidden bg-slate-950 py-24 border-t border-slate-900">
+      {/* Section: Project Labs Preview */}
+      <section className="py-20 max-w-6xl mx-auto px-6">
+        <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-16">
+          <div className="max-w-2xl space-y-3">
+            <span className="text-xs font-bold text-emerald-600 uppercase tracking-widest bg-emerald-50 px-3 py-1 rounded-full">
+              Production Labs
+            </span>
+            <h2 className="text-3xl sm:text-4xl font-extrabold text-slate-900 tracking-tight">
+              Project Labs
+            </h2>
+            <p className="text-slate-600 text-sm">
+              Tackle real-time projects built on realistic system architecture layouts. Includes design contracts, folder layouts, testing requirements, and deployment instructions.
+            </p>
+          </div>
+          <Link
+            href="/projects"
+            className="inline-flex items-center gap-2 bg-slate-100 hover:bg-slate-200 text-slate-800 font-bold px-6 py-3 rounded-xl text-xs transition duration-200 whitespace-nowrap"
+          >
+            Explore Project Labs <ArrowRight className="w-4.5 h-4.5 text-emerald-600" />
+          </Link>
+        </div>
+
+        <div className="grid md:grid-cols-2 gap-8">
+          {projects.slice(0, 2).map((proj) => (
+            <div key={proj.slug} className="border border-slate-250 bg-white rounded-3xl p-6 flex flex-col justify-between hover:shadow-lg transition premium-card-hover">
+              <div className="space-y-4">
+                <div className="flex items-center justify-between">
+                  <span className="text-[10px] font-extrabold bg-emerald-50 text-emerald-700 px-2.5 py-0.5 rounded-full uppercase tracking-wider">
+                    {proj.level}
+                  </span>
+                  <span className="text-xs text-slate-500 font-semibold">{proj.duration}</span>
+                </div>
+                
+                <div>
+                  <h3 className="text-xl font-bold text-slate-900">{proj.title}</h3>
+                  <p className="text-sm text-slate-600 mt-2 leading-relaxed">{proj.description}</p>
+                </div>
+
+                <div className="pt-2">
+                  <p className="text-2xs font-extrabold text-slate-400 uppercase tracking-wider mb-2">Tech Stack</p>
+                  <div className="flex flex-wrap gap-1.5">
+                    {proj.techStack.map((tech) => (
+                      <span key={tech} className="bg-slate-50 border border-slate-200 text-slate-700 px-2.5 py-0.5 rounded-lg text-xs font-semibold">
+                        {tech}
+                      </span>
+                    ))}
+                  </div>
+                </div>
+              </div>
+
+              <div className="mt-6 pt-4 border-t border-slate-100 flex items-center justify-between">
+                <Link
+                  href={`/projects/${proj.slug}`}
+                  className="inline-flex items-center gap-1 bg-indigo-650 hover:bg-indigo-755 text-white px-5 py-2.5 rounded-xl text-xs font-bold transition"
+                >
+                  Start Project <ArrowRight className="w-3.5 h-3.5" />
+                </Link>
+              </div>
+            </div>
+          ))}
+        </div>
+      </section>
+
+      {/* Section: Daily Developer Tasks Preview */}
+      <section className="py-20 bg-slate-900 text-white border-t border-slate-800">
+        <div className="max-w-6xl mx-auto px-6">
+          <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-16">
+            <div className="max-w-2xl space-y-3">
+              <span className="text-xs font-bold text-amber-400 uppercase tracking-widest bg-amber-500/10 px-3 py-1 rounded-full border border-amber-500/20">
+                Daily Coding
+              </span>
+              <h2 className="text-3xl sm:text-4xl font-extrabold tracking-tight">
+                Daily Developer Tasks
+              </h2>
+              <p className="text-slate-400 text-sm">
+                Commit to writing code every day. Build reusable UI nodes, fetch server datasets, code authorization routes, and handle error boundary states in typescript.
+              </p>
+            </div>
+            <Link
+              href="/tasks"
+              className="inline-flex items-center gap-2 bg-white/10 hover:bg-white/15 border border-white/20 text-white font-bold px-6 py-3 rounded-xl text-xs transition duration-200 whitespace-nowrap"
+            >
+              Practice Daily Tasks <ArrowRight className="w-4.5 h-4.5 text-amber-400" />
+            </Link>
+          </div>
+
+          <div className="grid md:grid-cols-3 gap-6">
+            {developerTasks.slice(0, 3).map((task) => (
+              <div key={task.slug} className="border border-slate-800 bg-slate-950/65 rounded-3xl p-6 flex flex-col justify-between hover:border-slate-700 transition">
+                <div className="space-y-4">
+                  <div className="flex items-center justify-between">
+                    <span className="text-[10px] font-bold bg-amber-500/10 text-amber-400 border border-amber-500/20 px-2 py-0.5 rounded-full uppercase tracking-wider">
+                      {task.level}
+                    </span>
+                  </div>
+                  <h3 className="text-base font-bold text-white">{task.title}</h3>
+                  <p className="text-xs text-slate-400 leading-relaxed line-clamp-3">{task.requirement}</p>
+                </div>
+                <Link
+                  href={`/tasks/${task.slug}`}
+                  className="mt-6 inline-flex items-center justify-center gap-1.5 text-amber-400 hover:text-amber-300 text-xs font-bold pt-3 border-t border-slate-800/80 transition"
+                >
+                  Solve Challenge &rarr;
+                </Link>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* Section: Why DevMentor is Different */}
+      <section className="py-24 max-w-6xl mx-auto px-6">
+        <div className="text-center max-w-2xl mx-auto mb-20 space-y-3">
+          <span className="text-xs font-bold text-indigo-600 uppercase tracking-widest bg-indigo-50 px-3 py-1 rounded-full">
+            Our Approach
+          </span>
+          <h2 className="text-3xl sm:text-4xl font-extrabold text-slate-900 tracking-tight">
+            Why DevMentor is Different
+          </h2>
+          <p className="text-slate-600 text-sm">
+            We bridge the chasm between simple tutorials and complex enterprise codebases.
+          </p>
+        </div>
+
+        <div className="grid md:grid-cols-3 gap-8">
+          {[
+            {
+              title: "Learn (Interactive MDX)",
+              desc: "Read explanations packed with senior advice callouts, production tips, and comparisons of common architectural errors.",
+              icon: <BookOpen className="w-6 h-6" />,
+              color: "bg-indigo-50 text-indigo-655"
+            },
+            {
+              title: "Practice & Build",
+              desc: "Solve granular code challenges, followed by building fully featured platforms like the Admin Dashboard or SaaS checkout engines.",
+              icon: <Code2 className="w-6 h-6" />,
+              color: "bg-emerald-50 text-emerald-655"
+            },
+            {
+              title: "Review & Explain",
+              desc: "Audit your files using senior review checklists and study Q&A templates designed to prepare you for system architecture interviews.",
+              icon: <FileCheck2 className="w-6 h-6" />,
+              color: "bg-pink-50 text-pink-655"
+            }
+          ].map((item, idx) => (
+            <div key={idx} className="border border-slate-200/80 rounded-3xl p-8 bg-white shadow-xs hover:shadow-md transition">
+              <div className={`h-12 w-12 rounded-2xl flex items-center justify-center mb-6 ${item.color}`}>
+                {item.icon}
+              </div>
+              <h3 className="text-lg font-bold mb-3 text-slate-900">{item.title}</h3>
+              <p className="text-slate-600 text-xs sm:text-sm leading-relaxed">{item.desc}</p>
+            </div>
+          ))}
+        </div>
+      </section>
+
+      {/* Sleek Bottom CTA Section */}
+      <section className="relative overflow-hidden bg-slate-950 py-24 border-t border-slate-900 text-white">
         <div className="absolute inset-0 pointer-events-none overflow-hidden">
           <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[300px] bg-indigo-500/10 rounded-full filter blur-[120px]" />
         </div>
 
-        <div className="relative max-w-6xl mx-auto px-4 text-center z-10 space-y-8">
-          <h2 className="text-3xl sm:text-5xl font-black text-white tracking-tight">
+        <div className="relative max-w-6xl mx-auto px-6 text-center z-10 space-y-8">
+          <h2 className="text-3xl sm:text-5xl font-black tracking-tight">
             Ready to Build at Production Level?
           </h2>
-          <p className="text-lg text-slate-400 max-w-xl mx-auto leading-relaxed">
-            Select your learning track. Master vanilla foundations, front-end ecosystems, or high-performance back-ends.
+          <p className="text-base sm:text-lg text-slate-400 max-w-xl mx-auto leading-relaxed">
+            Select a role-based roadmap path, build real projects, practice daily UI tasks, and prepare for interviews.
           </p>
 
-          <div>
+          <div className="flex flex-wrap justify-center gap-4">
             <Link
-              href="/learn"
-              className="inline-flex items-center gap-2.5 bg-white text-slate-950 px-8 py-4.5 rounded-2xl font-bold hover:bg-slate-100 hover:scale-[1.02] active:scale-95 transition-all duration-300 shadow-xl"
+              href="/roadmaps"
+              className="inline-flex items-center gap-2.5 bg-white text-slate-950 px-8 py-4 rounded-2xl font-bold hover:bg-slate-100 hover:scale-[1.02] active:scale-95 transition-all duration-300 shadow-xl"
             >
-              Explore All Learning Tracks <ArrowRight className="w-5 h-5 text-indigo-600" />
+              Explore Learning Roadmaps <ArrowRight className="w-5 h-5 text-indigo-650" />
+            </Link>
+            
+            <Link
+              href="/projects"
+              className="inline-flex items-center gap-2 border border-slate-700 bg-white/5 hover:bg-white/10 text-white px-8 py-4 rounded-2xl font-bold transition duration-200"
+            >
+              View Projects
             </Link>
           </div>
         </div>
-      </div>
+      </section>
     </div>
   );
 }

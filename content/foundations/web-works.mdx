@@ -1,0 +1,211 @@
+---
+title: "How the Web Works & Browser Rendering"
+description: "Understand the lifecycle of a web request: from typing a URL, DNS lookups, TCP handshakes, HTTP statuses, to how browser engines draw pixels on screens."
+tags: ["web-fundamentals", "browser-rendering", "networking", "beginner"]
+youtubeId: "hJHvdFMrZec"
+---
+
+## What You Will Learn
+
+- How the browser translates a domain name into an IP address using DNS.
+- The request-response lifecycle of HTTP/HTTPS protocols.
+- Browser critical rendering path (CRP) steps: DOM, CSSOM, Render Tree, Layout, Paint, and Composite.
+- How to write performant layouts that prevent render-blocking delays.
+
+---
+
+## Why This Matters in Real Projects
+
+In high-traffic applications, understanding the network latency and rendering cycles is critical. If your application bundles render-blocking resources in the header, or triggers layout shifts (CLS), users will experience visual lags. Knowing how the browser paints pixels lets you structure CSS and defer JavaScript correctly, securing high Core Web Vital ratings.
+
+<SeniorNote>
+In production, a delay of 100ms in load speed can decrease e-commerce conversion rates by 7%. Always bundle your assets with network latency in mind. Do not import massive render-blocking scripts in the HTML `<head>` tag.
+</SeniorNote>
+
+---
+
+## Concept Explanation
+
+### 1. The Network Request Lifecycle
+
+When a user requests a page (e.g., `https://devmentor.io`):
+1. **DNS Lookup**: The browser contacts DNS servers to translate the domain name into a target machine IP address.
+2. **TCP Connection**: A connection is opened. HTTPS requests execute TLS handshakes to encrypt data transfer channels.
+3. **HTTP Request**: The browser sends a `GET` request. The server validates headers, fetches database data, and returns an HTML body.
+4. **HTTP Status Codes**:
+   - `2xx`: Success (200 OK, 201 Created).
+   - `3xx`: Redirection (301 Moved Permanently, 302 Found).
+   - `4xx`: Client Error (400 Bad Request, 401 Unauthorized, 404 Not Found).
+   - `5xx`: Server Error (500 Internal Server Error).
+
+### 2. The Browser Critical Rendering Path (CRP)
+
+Once the HTML payload arrives, the browser engine executes these rendering steps:
+1. **DOM (Document Object Model)**: Parsers compile raw HTML tags into a DOM tree node tree structure.
+2. **CSSOM (CSS Object Model)**: Parsers parse stylesheets, creating the CSSOM styling rule tree.
+3. **Render Tree**: Combining DOM and CSSOM nodes, the browser compiles a Render Tree matching only visible elements on screen.
+4. **Layout**: The engine computes coordinates and sizing bounds of each card box.
+5. **Paint**: Pixels are rendered on screen.
+6. **Composite**: Overlapping layers are composited onto the viewport.
+
+---
+
+## Real-Time Project Example
+
+<RealTimeExample title="Core Web Vitals Optimization">
+When building static product catalogs, layout shifts occur if image sizes are left undefined. While fetching images, the browser allocates zero pixels of space. Once loaded, the page suddenly pushes content down, triggering Cumulative Layout Shift (CLS) penalties. By declaring explicit width/height ratios on image tags, the browser reserves layout boundaries in advance.
+</RealTimeExample>
+
+---
+
+## Code Example
+
+Below is a document structure utilizing CSS preloading and script deferring to maximize rendering speeds:
+
+```html
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Resilient Production Portal</title>
+    
+    <!-- Defer heavy non-critical scripts -->
+    <script src="heavy-analytics.js" defer></script>
+    
+    <!-- Inline critical styles for instant paint -->
+    <style>
+      body { font-family: sans-serif; margin: 0; background: #fafafa; }
+      .hero { padding: 4rem 2rem; text-align: center; }
+    </style>
+  </head>
+  <body>
+    <main>
+      <section class="hero">
+        <h1>How the Web Works</h1>
+        <p>This layout renders instantly without blockages.</p>
+      </section>
+    </main>
+  </body>
+</html>
+```
+
+---
+
+## Common Mistakes
+
+Here is an example of render-blocking setups vs clean, deferred configurations.
+
+<CommonMistake
+  title="Render-Blocking Script Import vs Deferred Execution"
+  badDesc="Placing heavy JavaScript files in the head block without defer tags. The browser halts parsing the HTML DOM tree until the script completes downloads, blocking first-paint timelines."
+  badCode={`<!-- BAD PRACTICE -->
+<head>
+  <script src="massive-chart-library.js"></script>
+</head>`}
+  goodDesc="Adding the defer attribute, instructing browser engines to download scripts asynchronously in the background and execute them only after DOM parsing finishes."
+  goodCode={`<!-- GOOD PRACTICE -->
+<head>
+  <script src="massive-chart-library.js" defer></script>
+</head>`}
+/>
+
+---
+
+## Practice Task
+
+Solidify your rendering knowledge by analyzing and correcting a loading pipeline.
+
+<TaskBox
+  title="Audit and Defer Script Blocks"
+  duration="15 Minutes"
+  requirements={[
+    "Identify script elements situated in head containers.",
+    "Apply the `defer` keyword to keep parsing threads active.",
+    "Verify inline styles are used only for first-screen hero cards."
+  ]}
+  expectedOutput={`<head>
+  <script src="/js/telemetry.js" defer></script>
+  <script src="/js/charts.js" defer></script>
+</head>`}
+>
+Add the defer attribute to your project head templates to optimize initial first-paint timelines.
+</TaskBox>
+
+---
+
+## Interview Tip
+
+<InterviewTip question="What is the difference between async and defer on script tags?">
+Both async and defer download scripts in the background, but they execute differently:
+1. **async**: Executes the script the instant it downloads, interrupting DOM parsing. Scripts execute out of order.
+2. **defer**: Waits for DOM parsing to complete before executing. Scripts run in the order they are declared.
+Use `defer` for scripts dependent on DOM elements or other scripts. Use `async` for independent scripts like analytics tracker tags.
+</InterviewTip>
+
+---
+
+## Project Checklist
+
+<ProjectChecklist
+  title="Critical Path Quality Verification"
+  storageKey="web-works-checklist"
+  items={[
+    "Confirm no non-critical JS tags reside in the head without async or defer.",
+    "Ensure all img tags feature explicit width and height dimensions to prevent CLS layout shifts.",
+    "Ensure status response codes from API integrations are caught within try-catch blocks.",
+    "Verify CSS pre-connect headers exist for third-party fonts API queries."
+  ]}
+/>
+
+---
+
+## Capstone Assignment
+
+<AssignmentBox
+  title="Optimized Landing Page Skeleton"
+  points="50 Points"
+  rubric={[
+    "Optimization attributes completeness (20pts)",
+    "Correct asset defer allocations (15pts)",
+    "Google Lighthouse performance target compliance (15pts)"
+  ]}
+>
+Create an HTML template containing a navigation header, hero layouts, and footer modules. Inline the critical styling classes needed to display the header instantly. Position scripts at the bottom or tag them with the `defer` attribute. Confirm that no layout shifts occur when assets load.
+</AssignmentBox>
+
+---
+
+## Interview Explanation
+
+Here is the template to explain this project design in interviews:
+
+<InterviewExplanation
+  projectName="Critical Rendering Path Optimization"
+  buildDesc="I structured a responsive landing page layout optimized to pass first-paint boundaries within 400ms."
+  approachDesc="I chose to inline critical CSS directly in the header, deferred heavy charting scripts using the defer keyword, and set explicit size tags on images."
+  challengesDesc="The primary challenge was managing Cumulative Layout Shift (CLS) caused by lazy-loaded graphics. I resolved this by utilizing CSS aspect-ratio properties."
+  performanceDesc="I minimized round-trip latencies by setting pre-connect tags on font domains and using tiny WebP format files."
+  errorsDesc="Errors are caught dynamically in loaders, rendering fallback placeholders if server assets fail to download."
+  structureDesc="The workspace isolates critical styles inside inline sections, non-critical stylesheets inside deferred links, and analytics codes inside async trackers."
+  productionImprovements={[
+    "Implement automated web vitals monitoring integrations.",
+    "Configure custom Service Workers to cache assets locally.",
+    "Deploy assets via Cloudflare CDN edges."
+  ]}
+/>
+
+---
+
+## Key Takeaways
+
+- Browsers build **DOM** and **CSSOM** trees, combining them to render visible layouts.
+- **Render-blocking assets** delay the First Contentful Paint (FCP) of your page.
+- Always add **defer** or **async** attributes to third-party script tags to prevent DOM parsing delays.
+- Enforce explicit image sizes to avoid layout shifts.
+
+---
+
+## Next Steps
+
+Next, proceed to [Semantic HTML](/learn/foundations/html-semantic) to learn how to write structured content layouts that search engines parse.

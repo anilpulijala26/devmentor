@@ -11,10 +11,10 @@ export interface Frontmatter {
   estimatedTime: string;
   youtubeId?: string;
   objectives?: string[];
-  sections?: any[];
-  examples?: any[];
-  exercises?: any[];
-  resources?: any[];
+  sections?: unknown[];
+  examples?: unknown[];
+  exercises?: unknown[];
+  resources?: unknown[];
 }
 
 export interface LessonMeta {
@@ -22,10 +22,10 @@ export interface LessonMeta {
   frontmatter: Frontmatter;
   content: string;
   objectives?: string[];
-  sections?: any[];
-  examples?: any[];
-  exercises?: any[];
-  resources?: any[];
+  sections?: unknown[];
+  examples?: unknown[];
+  exercises?: unknown[];
+  resources?: unknown[];
 }
 
 export interface LessonWithPath extends LessonMeta {

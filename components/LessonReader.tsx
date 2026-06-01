@@ -1,4 +1,5 @@
 "use client";
+/* eslint-disable @typescript-eslint/no-explicit-any */
 
 import React, { useState, useEffect, useRef } from "react";
 import Link from "next/link";
@@ -6,17 +7,17 @@ import { usePathname } from "next/navigation";
 import {
   ChevronLeft,
   ChevronRight,
-  BookOpen,
   Settings,
   Type,
   AlignJustify,
   Sidebar,
   Undo2,
-  Menu,
   X,
-  Clock
+  Clock,
+  CheckCircle2
 } from "lucide-react";
 import { Track, Module, Lesson } from "@/lib/content";
+import { useProgress } from "@/context/ProgressContext";
 
 interface LessonReaderProps {
   track: Track;
@@ -35,6 +36,9 @@ export function LessonReader({
   nextLesson,
   children
 }: LessonReaderProps) {
+  const { completedLessons, toggleLessonComplete } = useProgress();
+  const isLessonCompleted = completedLessons.includes(lesson.slug);
+
   // Client state
   const [theme, setTheme] = useState<"system" | "cream" | "sepia" | "slate">("system");
   const [textSize, setTextSize] = useState<"text-sm" | "text-base" | "text-lg" | "text-xl">("text-lg");
@@ -59,21 +63,22 @@ export function LessonReader({
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
-  // Keyboard accessibility & defaults
   useEffect(() => {
     // Read persisted reader preferences if any
     const savedTheme = localStorage.getItem("devmentor-reader-theme");
     const savedTextSize = localStorage.getItem("devmentor-reader-textsize");
     const savedSpacing = localStorage.getItem("devmentor-reader-spacing");
 
-    if (savedTheme) setTheme(savedTheme as any);
-    if (savedTextSize) setTextSize(savedTextSize as any);
-    if (savedSpacing) setLineSpacing(savedSpacing as any);
+    setTimeout(() => {
+      if (savedTheme) setTheme(savedTheme as "system" | "cream" | "sepia" | "slate");
+      if (savedTextSize) setTextSize(savedTextSize as "text-sm" | "text-base" | "text-lg" | "text-xl");
+      if (savedSpacing) setLineSpacing(savedSpacing as "normal" | "spacious");
 
-    // Auto-collapse sidebar on smaller screens
-    if (window.innerWidth < 1024) {
-      setSidebarOpen(false);
-    }
+      // Auto-collapse sidebar on smaller screens
+      if (window.innerWidth < 1024) {
+        setSidebarOpen(false);
+      }
+    }, 0);
   }, []);
 
   const changeTheme = (newTheme: typeof theme) => {
@@ -207,6 +212,18 @@ export function LessonReader({
                   <Undo2 className="w-4 h-4" />
                   <span className="hidden sm:inline">Back to Roadmap</span>
                 </Link>
+
+                <button
+                  onClick={() => toggleLessonComplete(lesson.slug)}
+                  className={`p-2 rounded-xl border transition text-xs font-bold flex items-center gap-1.5 ${
+                    isLessonCompleted
+                      ? "bg-emerald-500 border-emerald-500 text-white hover:bg-emerald-600"
+                      : "border-slate-200 dark:border-slate-800 hover:bg-slate-100 dark:hover:bg-slate-800"
+                  }`}
+                >
+                  <CheckCircle2 className="w-4 h-4" />
+                  <span>{isLessonCompleted ? "Completed" : "Mark Complete"}</span>
+                </button>
               </div>
 
               {/* Reader Preferences Controls Panel */}
@@ -379,6 +396,25 @@ export function LessonReader({
               }`}
             >
               {children}
+            </div>
+
+            {/* Completion Trigger */}
+            <div className="mt-12 p-6 bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl flex flex-col sm:flex-row items-center justify-between gap-4">
+              <div>
+                <h4 className="text-sm font-bold">Have you finished this guide?</h4>
+                <p className="text-xs text-slate-500 mt-0.5">Marking it complete updates your roadmap progress percentage.</p>
+              </div>
+              <button
+                onClick={() => toggleLessonComplete(lesson.slug)}
+                className={`px-5 py-2.5 rounded-xl text-xs font-bold transition flex items-center gap-2 ${
+                  isLessonCompleted
+                    ? "bg-emerald-600 hover:bg-emerald-700 text-white"
+                    : "bg-indigo-600 hover:bg-indigo-700 text-white"
+                }`}
+              >
+                <CheckCircle2 className="w-4 h-4" />
+                {isLessonCompleted ? "Completed - Mark Incomplete" : "Mark as Completed"}
+              </button>
             </div>
 
             {/* Navigation Bottom Controls */}

@@ -10,29 +10,34 @@
           "title": "HTML Fundamentals",
           "lessons": [
             {
+              "slug": "web-works",
+              "title": "How the Web Works & Browser Rendering",
+              "order": 1
+            },
+            {
               "slug": "html-intro",
               "title": "Introduction to HTML",
-              "order": 1
+              "order": 2
             },
             {
               "slug": "html-semantic",
               "title": "Semantic HTML",
-              "order": 2
+              "order": 3
             },
             {
               "slug": "html-forms-a11y",
               "title": "Form Validation & Accessibility",
-              "order": 3
+              "order": 4
             },
             {
               "slug": "html-seo-performance",
               "title": "SEO, Meta Tags & Performance",
-              "order": 4
+              "order": 5
             },
             {
               "slug": "html-interview-cracking",
               "title": "HTML Interview Cracking Guide",
-              "order": 5
+              "order": 6
             }
           ]
         },

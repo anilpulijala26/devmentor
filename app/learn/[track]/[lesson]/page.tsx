@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { getLessonContent, getTrackBySlug, generateStaticParamsForLesson } from "@/lib/content";
 import { notFound } from "next/navigation";
 import { MDXContent } from "@/components/MDXContent";
