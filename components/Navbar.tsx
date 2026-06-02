@@ -2,6 +2,7 @@
 
 import { useState, useRef, useEffect } from "react";
 import Link from "next/link";
+import Image from "next/image";
 import { usePathname } from "next/navigation";
 import { Menu, X, ArrowRight, ChevronDown, BookOpen, Map, Cpu, Database, Layers } from "lucide-react";
 
@@ -54,9 +55,16 @@ export function Navbar() {
         <Link
           href="/"
           onClick={closeMenus}
-          className="inline-flex items-center rounded-lg px-2.5 py-1 text-lg font-semibold tracking-tight text-slate-950 transition hover:text-indigo-700 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 focus-visible:ring-offset-2"
+          className="inline-flex items-center rounded-lg px-1 py-1 transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 focus-visible:ring-offset-2"
         >
-          CodeNivra
+          <Image
+            src="/logo.png"
+            alt="CodeNivra"
+            width={182}
+            height={40}
+            className="h-10 w-auto"
+            priority
+          />
         </Link>
 
         <nav className="hidden items-center gap-2 lg:gap-3 md:flex">
