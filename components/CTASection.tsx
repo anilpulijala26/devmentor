@@ -11,7 +11,7 @@ export function CTASection() {
       </div>
 
       <div className="relative max-w-5xl mx-auto px-6 text-center z-10 space-y-6">
-        <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-white/5 border border-white/10 text-slate-350 text-[9px] font-extrabold uppercase tracking-widest">
+        <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-white/5 border border-white/10 text-slate-300 text-[9px] font-extrabold uppercase tracking-widest">
           Build Without Limits
         </div>
         
@@ -31,7 +31,7 @@ export function CTASection() {
             href="/learn"
             className="inline-flex items-center gap-2 bg-white text-slate-900 px-6 py-3 rounded-xl font-extrabold hover:bg-slate-50 transition shadow-md hover:shadow-[0_0_30px_rgba(255,255,255,0.25)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-offset-2 transform hover:-translate-y-0.5 active:scale-98"
           >
-            Start Learning <ArrowRight className="w-4.5 h-4.5 text-indigo-605" />
+            Start Learning <ArrowRight className="w-4.5 h-4.5 text-indigo-600" />
           </Link>
 
           <Link

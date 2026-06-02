@@ -3,7 +3,7 @@ import { Sparkles, ArrowRight, CheckCircle2 } from "lucide-react";
 
 export function HeroSection() {
   return (
-    <section className="relative w-full bg-white pt-12 pb-16 md:pt-20 md:pb-26 overflow-hidden border-b border-slate-100/80">
+    <section className="relative w-full bg-white pt-12 pb-16 md:pt-20 md:pb-24 overflow-hidden border-b border-slate-100/80">
       {/* Soft background glow meshes */}
       <div className="absolute inset-0 pointer-events-none overflow-hidden">
         <div className="absolute top-[-10%] left-[-5%] w-[700px] h-[700px] bg-gradient-to-tr from-indigo-100/30 to-purple-100/20 rounded-full blur-[140px] opacity-80" />
@@ -17,15 +17,15 @@ export function HeroSection() {
         <div className="grid lg:grid-cols-12 gap-12 lg:gap-16 items-center">
           {/* Left Details Column */}
           <div className="lg:col-span-7 space-y-7 text-left animate-fade-in">
-            <div className="inline-flex items-center gap-2 bg-indigo-50 border border-indigo-100 px-3.5 py-1.5 rounded-full text-indigo-700 shadow-3xs">
-              <Sparkles className="w-3.5 h-3.5 text-indigo-650 animate-pulse" />
+            <div className="inline-flex items-center gap-2 bg-indigo-50 border border-indigo-100 px-3.5 py-1.5 rounded-full text-indigo-700 shadow-sm">
+              <Sparkles className="w-3.5 h-3.5 text-indigo-600 animate-pulse" />
               <span className="text-[10px] font-extrabold uppercase tracking-widest">
                 Production-ready developer learning platform
               </span>
             </div>
 
             <h1 className="text-4xl sm:text-5xl lg:text-[56px] font-black text-slate-900 tracking-tight leading-[1.1]">
-              Master <span className="text-transparent bg-clip-text bg-gradient-to-r from-indigo-600 via-indigo-700 to-purple-605">Full-Stack Development</span> <br />
+              Master <span className="text-transparent bg-clip-text bg-gradient-to-r from-indigo-600 via-indigo-700 to-purple-600">Full-Stack Development</span> <br />
               Through Real-World Practice
             </h1>
 
@@ -44,38 +44,23 @@ export function HeroSection() {
 
               <Link
                 href="/roadmaps"
-                className="inline-flex items-center justify-center gap-2 bg-white hover:bg-slate-50 border border-slate-200 text-slate-705 px-7 h-12 rounded-xl font-bold text-sm transition-all duration-300 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 focus-visible:ring-offset-2 min-h-[44px] cursor-pointer shadow-3xs hover:-translate-y-0.5 active:scale-98"
+                className="inline-flex items-center justify-center gap-2 bg-white hover:bg-slate-50 border border-slate-200 text-slate-700 px-7 h-12 rounded-xl font-bold text-sm transition-all duration-300 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 focus-visible:ring-offset-2 min-h-[44px] cursor-pointer shadow-sm hover:-translate-y-0.5 active:scale-98"
               >
                 Explore Roadmaps
               </Link>
-            </div>
-            
-            {/* Small Trust Line */}
-            <div className="pt-6 border-t border-slate-100">
-              <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest flex items-center gap-3.5 flex-wrap">
-                <span>Frontend</span>
-                <span className="text-slate-250">•</span>
-                <span>Backend</span>
-                <span className="text-slate-250">•</span>
-                <span>Projects</span>
-                <span className="text-slate-250">•</span>
-                <span>Code Review</span>
-                <span className="text-slate-250">•</span>
-                <span>Deployment</span>
-              </p>
             </div>
           </div>
 
           {/* Right Column: Premium Dashboard Preview Mockup Card */}
           <div className="lg:col-span-5 relative animate-fade-in-delayed">
             {/* Floating absolute badges for layered card depth */}
-            <div className="absolute -top-6 -left-6 z-20 bg-slate-900 text-white border border-slate-800 rounded-2xl p-3 shadow-lg flex items-center gap-3 animate-bounce-slow max-w-[200px]">
-              <span className="w-8 h-8 rounded-xl bg-indigo-500/20 text-indigo-400 flex items-center justify-center text-sm font-bold shrink-0">
+            <div className="absolute -top-6 -left-6 z-20 bg-white text-slate-800 border border-slate-200/80 rounded-2xl p-3 shadow-md flex items-center gap-3 animate-bounce-slow max-w-[200px]">
+              <span className="w-8 h-8 rounded-xl bg-indigo-50 text-indigo-600 flex items-center justify-center text-sm font-bold shrink-0">
                 🚀
               </span>
               <div>
-                <p className="text-[9px] font-bold text-slate-450 uppercase tracking-wider">Deployment</p>
-                <p className="text-xs font-black text-white truncate">Deploy to AWS Live</p>
+                <p className="text-[9px] font-bold text-slate-400 uppercase tracking-wider">Deployment</p>
+                <p className="text-xs font-black text-slate-800 truncate">Deploy to AWS Live</p>
               </div>
             </div>
 
@@ -84,7 +69,7 @@ export function HeroSection() {
                 <CheckCircle2 className="w-4 h-4" />
               </div>
               <div>
-                <p className="text-[9px] font-bold text-slate-450 uppercase tracking-wider">Code Audit</p>
+                <p className="text-[9px] font-bold text-slate-400 uppercase tracking-wider">Code Audit</p>
                 <p className="text-xs font-black text-slate-800">100% Passed</p>
               </div>
             </div>
@@ -127,7 +112,7 @@ export function HeroSection() {
                   <div className="flex justify-between items-start">
                     <div className="space-y-1">
                       <span className="text-[9px] font-extrabold text-indigo-500 uppercase tracking-widest">Active Path</span>
-                      <h3 className="text-sm font-black text-slate-805">Full-Stack Developer</h3>
+                      <h3 className="text-sm font-black text-slate-800">Full-Stack Developer</h3>
                     </div>
                     <span className="text-[10px] font-extrabold bg-indigo-50 border border-indigo-100 text-indigo-700 px-2.5 py-0.5 rounded-lg">
                       Tier 2
@@ -137,12 +122,12 @@ export function HeroSection() {
                   <div className="p-4 bg-slate-50/50 border border-slate-100 rounded-2xl space-y-3.5">
                     <div className="flex justify-between items-center text-2xs font-extrabold text-slate-500 uppercase tracking-wider">
                       <span>Next Recommended Action</span>
-                      <span className="text-indigo-650 font-black">Build Project</span>
+                      <span className="text-indigo-600 font-black">Build Project</span>
                     </div>
                     
                     {/* Progress bar */}
                     <div className="space-y-1.5">
-                      <div className="flex justify-between items-center text-xs font-black text-slate-800">
+                      <div className="flex justify-between items-center text-xs font-black text-slate-850">
                         <span>Task Manager Kanban</span>
                         <span>42% Complete</span>
                       </div>
@@ -152,10 +137,14 @@ export function HeroSection() {
                     </div>
                   </div>
 
-                  {/* Steps List horizontal layout */}
+                  {/* Steps List horizontal layout with connector lines */}
                   <div className="space-y-3 pt-2">
                     <span className="text-[9px] font-extrabold text-slate-400 uppercase tracking-widest block">Workflow Timeline</span>
-                    <div className="grid grid-cols-5 gap-1.5 relative">
+                    <div className="flex items-center justify-between relative z-10 px-1">
+                      {/* Connecting Line Connector */}
+                      <div className="absolute top-[8px] left-4 right-4 h-0.5 bg-slate-100 -z-10" />
+                      <div className="absolute top-[8px] left-4 w-[50%] h-0.5 bg-indigo-500 -z-10" />
+
                       {[
                         { name: "Learn", active: true },
                         { name: "Practice", active: true },
@@ -163,14 +152,12 @@ export function HeroSection() {
                         { name: "Review", active: false },
                         { name: "Deploy", active: false }
                       ].map((step, idx) => (
-                        <div key={idx} className="text-center space-y-1.5">
-                          <div className="flex justify-center">
-                            {step.active ? (
-                              <CheckCircle2 className="w-4.5 h-4.5 text-indigo-600 shrink-0" />
-                            ) : (
-                              <span className="w-4.5 h-4.5 rounded-full border-2 border-slate-200 bg-white block shrink-0" />
-                            )}
-                          </div>
+                        <div key={idx} className="flex flex-col items-center space-y-1.5 bg-white px-1">
+                          {step.active ? (
+                            <CheckCircle2 className="w-4.5 h-4.5 text-indigo-600 shrink-0 bg-white" />
+                          ) : (
+                            <span className="w-4.5 h-4.5 rounded-full border-2 border-slate-200 bg-white block shrink-0" />
+                          )}
                           <span className={`block text-[9px] font-extrabold ${step.active ? "text-indigo-700" : "text-slate-400"}`}>
                             {step.name}
                           </span>
