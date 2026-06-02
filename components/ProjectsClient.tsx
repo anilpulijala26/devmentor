@@ -4,6 +4,7 @@ import React, { useState } from "react";
 import Link from "next/link";
 import { Project } from "@/lib/projects";
 import { Sparkles, Clock, ArrowRight } from "lucide-react";
+import { GuidePanel } from "./GuidePanel";
 
 interface ProjectsClientProps {
   initialProjects: Project[];
@@ -60,6 +61,17 @@ export function ProjectsClient({ initialProjects }: ProjectsClientProps) {
           ))}
         </div>
       </div>
+
+      {/* Guide Panel */}
+      <GuidePanel
+        title="Project Labs Navigator"
+        what="Enterprise-style project blueprints built from specifications."
+        who="Developers looking to build high-quality portfolio applications."
+        first="Choose a project lab after completing its related roadmap modules."
+        next="Initialize your repository and build the schemas/endpoints."
+        outcome="Production-ready, deployable full-stack portfolio systems."
+        nextAction="Build a project after completing related roadmap modules."
+      />
 
       {/* Project cards grid */}
       <div className="grid gap-8 md:grid-cols-2">

@@ -10,7 +10,8 @@ import {
   Server,
   Cloud,
   Activity,
-  Award
+  Award,
+  UserCheck
 } from "lucide-react";
 import { getAllTracks } from "@/lib/content";
 import { DashboardHighlights } from "@/components/DashboardHighlights";
@@ -27,6 +28,292 @@ export default function Home() {
     <div className="min-h-screen bg-white text-slate-800 antialiased font-sans pb-12">
       {/* 1. Hero Section */}
       <HeroSection />
+
+      {/* Choose Your Experience Level */}
+      <section className="py-16 bg-slate-50/50 border-b border-slate-100">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="text-center max-w-3xl mx-auto mb-12 space-y-3">
+            <span className="text-[10px] font-extrabold uppercase tracking-widest text-indigo-600 bg-indigo-50 px-3 py-1 rounded-full">
+              Get Started
+            </span>
+            <h2 className="text-2xl sm:text-3xl font-extrabold text-slate-900 tracking-tight">
+              Choose Your Experience Level
+            </h2>
+            <p className="text-sm text-slate-500 max-w-xl mx-auto font-normal leading-relaxed">
+              Select your experience level to unlock a structured, step-by-step path designed to guide you from learning basics to production deployment.
+            </p>
+          </div>
+
+          <div className="grid md:grid-cols-3 gap-8 max-w-6xl mx-auto">
+            {/* Beginner Card */}
+            <div className="group bg-white border border-slate-100 rounded-3xl p-6 shadow-[0_8px_30px_rgba(0,0,0,0.015)] hover:shadow-[0_15px_40px_rgba(0,0,0,0.03)] hover:-translate-y-1 transition-all duration-300 flex flex-col justify-between focus-within:ring-2 focus-within:ring-indigo-500">
+              <div className="space-y-4">
+                <div className="w-10 h-10 rounded-2xl bg-indigo-50/50 flex items-center justify-center border border-indigo-100/50">
+                  <BookOpen className="w-5 h-5 text-indigo-650" />
+                </div>
+                <div className="space-y-2">
+                  <h3 className="font-bold text-slate-900 text-sm">Fresher / Beginner</h3>
+                  <p className="text-slate-500 text-xs leading-relaxed font-normal">
+                    Start with HTML, CSS, JavaScript, Git, React basics, daily practice, portfolio project, and deployment.
+                  </p>
+                </div>
+              </div>
+              <div className="mt-6 pt-4 border-t border-slate-50 space-y-3">
+                <Link
+                  href="/roadmaps/intern-developer"
+                  className="w-full inline-flex items-center justify-center gap-1.5 bg-indigo-600 hover:bg-indigo-755 text-white text-xs font-semibold py-2.5 px-4 rounded-xl transition duration-200"
+                >
+                  Start Beginner Path
+                </Link>
+                <p className="text-[10px] text-center text-slate-450 italic">
+                  &ldquo;New here? Start with Beginner Path.&rdquo;
+                </p>
+              </div>
+            </div>
+
+            {/* Mid-Level Card */}
+            <div className="group bg-white border border-slate-100 rounded-3xl p-6 shadow-[0_8px_30px_rgba(0,0,0,0.015)] hover:shadow-[0_15px_40px_rgba(0,0,0,0.03)] hover:-translate-y-1 transition-all duration-300 flex flex-col justify-between focus-within:ring-2 focus-within:ring-indigo-500">
+              <div className="space-y-4">
+                <div className="w-10 h-10 rounded-2xl bg-violet-50/50 flex items-center justify-center border border-violet-100/50">
+                  <Layers className="w-5 h-5 text-violet-650" />
+                </div>
+                <div className="space-y-2">
+                  <h3 className="font-bold text-slate-900 text-sm">Mid-Level Developer</h3>
+                  <p className="text-slate-500 text-xs leading-relaxed font-normal">
+                    Strengthen React, TypeScript, Next.js, Node.js, Express, APIs, databases, auth, and full-stack projects.
+                  </p>
+                </div>
+              </div>
+              <div className="mt-6 pt-4 border-t border-slate-50 space-y-3">
+                <Link
+                  href="/roadmaps/mid-level-fullstack"
+                  className="w-full inline-flex items-center justify-center gap-1.5 bg-indigo-600 hover:bg-indigo-755 text-white text-xs font-semibold py-2.5 px-4 rounded-xl transition duration-200"
+                >
+                  Start Mid-Level Path
+                </Link>
+                <p className="text-[10px] text-center text-slate-450 italic">
+                  &ldquo;Already know basics? Start with Mid-Level Path.&rdquo;
+                </p>
+              </div>
+            </div>
+
+            {/* Senior Card */}
+            <div className="group bg-white border border-slate-100 rounded-3xl p-6 shadow-[0_8px_30px_rgba(0,0,0,0.015)] hover:shadow-[0_15px_40px_rgba(0,0,0,0.03)] hover:-translate-y-1 transition-all duration-300 flex flex-col justify-between focus-within:ring-2 focus-within:ring-indigo-500">
+              <div className="space-y-4">
+                <div className="w-10 h-10 rounded-2xl bg-emerald-50/50 flex items-center justify-center border border-emerald-100/50">
+                  <Award className="w-5 h-5 text-emerald-650" />
+                </div>
+                <div className="space-y-2">
+                  <h3 className="font-bold text-slate-900 text-sm">Senior / Job-Ready Developer</h3>
+                  <p className="text-slate-500 text-xs leading-relaxed font-normal">
+                    Focus on architecture, performance, security, code review, CI/CD, AWS/Azure deployment, system design, and interview explanation.
+                  </p>
+                </div>
+              </div>
+              <div className="mt-6 pt-4 border-t border-slate-50 space-y-3">
+                <Link
+                  href="/roadmaps/devops-ready-full-stack"
+                  className="w-full inline-flex items-center justify-center gap-1.5 bg-indigo-600 hover:bg-indigo-755 text-white text-xs font-semibold py-2.5 px-4 rounded-xl transition duration-200"
+                >
+                  Start Senior Path
+                </Link>
+                <p className="text-[10px] text-center text-slate-450 italic">
+                  &ldquo;Preparing for senior interviews? Start with Job-Ready Path.&rdquo;
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Guided Study Mode */}
+      <section className="py-16 bg-white border-b border-slate-100">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="text-center max-w-3xl mx-auto mb-12 space-y-3">
+            <span className="text-[10px] font-extrabold uppercase tracking-widest text-indigo-600 bg-indigo-50 px-3 py-1 rounded-full">
+              Guided Study Mode
+            </span>
+            <h2 className="text-2xl sm:text-3xl font-extrabold text-slate-900 tracking-tight">
+              Self-Directed Study Timeline
+            </h2>
+            <p className="text-sm text-slate-500 max-w-xl mx-auto font-normal leading-relaxed">
+              No more guessing what to do next. Follow this structured flow to build and launch production software.
+            </p>
+          </div>
+
+          {/* Stepper Timeline */}
+          <div className="relative py-8 max-w-5xl mx-auto">
+            {/* Desktop connector line */}
+            <div className="hidden md:block absolute top-[44px] left-[5%] right-[5%] h-0.5 bg-slate-100" />
+            
+            <div className="grid grid-cols-2 md:grid-cols-7 gap-4 relative z-10">
+              {[
+                { label: "Select Level", desc: "Choose your starting point", icon: UserCheck },
+                { label: "Follow Roadmap", desc: "Step-by-step guidance", icon: Compass },
+                { label: "Practice Daily", desc: "Solve micro challenges", icon: Code2 },
+                { label: "Build Project", desc: "Create real portfolios", icon: Layers },
+                { label: "Code Review", desc: "Audit design standards", icon: Database },
+                { label: "Deploy", desc: "Launch live applications", icon: Cloud },
+                { label: "Explain", desc: "Ace your tech interviews", icon: Award }
+              ].map((item, idx) => {
+                const Icon = item.icon;
+                return (
+                  <div key={idx} className="text-center space-y-3 group flex flex-col items-center">
+                    <div className="w-12 h-12 rounded-2xl bg-white border-2 border-indigo-100 flex items-center justify-center group-hover:border-indigo-650 group-hover:bg-indigo-50/50 transition duration-300 shadow-2xs">
+                      <Icon className="w-5 h-5 text-indigo-650" aria-hidden="true" />
+                    </div>
+                    <div className="space-y-1">
+                      <span className="block text-[8px] font-extrabold text-indigo-500 uppercase tracking-widest">Step 0{idx + 1}</span>
+                      <h4 className="text-xs font-extrabold text-slate-900">{item.label}</h4>
+                      <p className="hidden md:block text-[10px] text-slate-400 font-normal leading-tight max-w-[110px]">{item.desc}</p>
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+          </div>
+
+          {/* Visual Learning Map Card */}
+          <div className="mt-12 bg-slate-50 border border-slate-100 rounded-3xl p-6 md:p-8 max-w-4xl mx-auto shadow-[0_8px_30px_rgba(0,0,0,0.01)] text-center space-y-6">
+            <div className="space-y-1">
+              <h3 className="font-extrabold text-slate-900 text-sm md:text-base">Visual Technology Learning Map</h3>
+              <p className="text-xs text-slate-450">A comprehensive progression from standard clients to enterprise architectures</p>
+            </div>
+
+            {/* Horizontal Flow on Desktop, wrapped on Mobile */}
+            <div className="flex flex-wrap items-center justify-center gap-2 md:gap-4 py-2 font-mono">
+              {[
+                { label: "Frontend", bg: "bg-blue-50 text-blue-700 border-blue-100" },
+                { label: "Backend", bg: "bg-emerald-50 text-emerald-700 border-emerald-100" },
+                { label: "Full-Stack", bg: "bg-purple-50 text-purple-700 border-purple-100" },
+                { label: "CI/CD", bg: "bg-amber-50 text-amber-700 border-amber-100" },
+                { label: "AWS/Azure", bg: "bg-cyan-50 text-cyan-700 border-cyan-100" },
+                { label: "Interview Prep", bg: "bg-pink-50 text-pink-700 border-pink-100" }
+              ].map((item, idx) => (
+                <div key={idx} className="flex items-center gap-2">
+                  <span className={`px-3 py-1 rounded-xl border text-[11px] font-extrabold tracking-wide ${item.bg}`}>
+                    {item.label}
+                  </span>
+                  {idx < 5 && <ArrowRight className="w-3.5 h-3.5 text-slate-350" />}
+                </div>
+              ))}
+            </div>
+
+            <div className="pt-4 border-t border-slate-200/60 text-xs font-semibold text-slate-500 flex flex-wrap justify-center gap-x-8 gap-y-2">
+              <span>📚 Learn concepts</span>
+              <span>⚡ Practice tasks</span>
+              <span>🛠️ Build projects</span>
+              <span>🔍 Review code</span>
+              <span>🚀 Deploy</span>
+              <span>🎤 Explain decisions</span>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Role-Based Learning Flow Mapping */}
+      <section className="py-16 bg-slate-50/50 border-b border-slate-100">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="text-center max-w-3xl mx-auto mb-12 space-y-3">
+            <span className="text-[10px] font-extrabold uppercase tracking-widest text-indigo-600 bg-indigo-50 px-3 py-1 rounded-full">
+              Flow Mappings
+            </span>
+            <h2 className="text-2xl sm:text-3xl font-extrabold text-slate-900 tracking-tight">
+              Targeted Learning Flows by Role
+            </h2>
+            <p className="text-sm text-slate-500 max-w-xl mx-auto font-normal leading-relaxed">
+              Each career goal requires a specific operational workflow. Follow the direct path tailored for your current level.
+            </p>
+          </div>
+
+          <div className="grid md:grid-cols-3 gap-8 max-w-6xl mx-auto">
+            {/* Fresher Flow */}
+            <div className="bg-white border border-slate-100 rounded-3xl p-6 shadow-[0_8px_30px_rgba(0,0,0,0.015)] hover:shadow-[0_12px_35px_rgba(0,0,0,0.02)] transition-all duration-300 space-y-4">
+              <div>
+                <h3 className="font-extrabold text-slate-900 text-sm">Fresher / Beginner Flow</h3>
+                <p className="text-[11px] text-slate-400 font-normal">Learn foundational structures and build a single client showcase.</p>
+              </div>
+              <div className="space-y-2.5 pt-2">
+                {[
+                  { label: "Roadmap", desc: "Start with Intern Developer path", color: "indigo" },
+                  { label: "Beginner Tasks", desc: "Solve HTML, CSS & JavaScript tasks", color: "indigo" },
+                  { label: "Portfolio Project", desc: "Build highly responsive portfolio website", color: "emerald" },
+                  { label: "Code Review", desc: "Run accessibility and HTML semantic checks", color: "pink" },
+                  { label: "Vercel Deployment", desc: "Host static portfolio live on Vercel", color: "violet" },
+                  { label: "Interview Explanation", desc: "Master pitch template for basic portfolio", color: "amber" }
+                ].map((step, idx) => (
+                  <div key={idx} className="flex gap-3 items-start">
+                    <span className="w-5 h-5 rounded-full bg-slate-100 flex items-center justify-center text-[10px] font-bold text-slate-650 shrink-0">
+                      {idx + 1}
+                    </span>
+                    <div>
+                      <h4 className="text-xs font-bold text-slate-800 leading-normal">{step.label}</h4>
+                      <p className="text-[10px] text-slate-450 leading-normal font-normal">{step.desc}</p>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            {/* Mid-Level Flow */}
+            <div className="bg-white border border-slate-100 rounded-3xl p-6 shadow-[0_8px_30px_rgba(0,0,0,0.015)] hover:shadow-[0_12px_35px_rgba(0,0,0,0.02)] transition-all duration-300 space-y-4">
+              <div>
+                <h3 className="font-extrabold text-slate-900 text-sm">Mid-Level Developer Flow</h3>
+                <p className="text-[11px] text-slate-400 font-normal">Strengthen full-stack capabilities and integrate server databases.</p>
+              </div>
+              <div className="space-y-2.5 pt-2">
+                {[
+                  { label: "Frontend/Backend Roadmap", desc: "Follow Junior Frontend or Backend path", color: "indigo" },
+                  { label: "Advanced Tasks", desc: "Solve TS generics & API route tasks", color: "indigo" },
+                  { label: "Full-Stack Project", desc: "Build Leave Manager or Blog CMS app", color: "emerald" },
+                  { label: "Code Review", desc: "Verify API response codes & input validations", color: "pink" },
+                  { label: "CI/CD Deployment", desc: "Deploy automatically using GitHub Actions", color: "violet" },
+                  { label: "Resume & Project Pitch", desc: "Structure database schema choices clearly", color: "amber" }
+                ].map((step, idx) => (
+                  <div key={idx} className="flex gap-3 items-start">
+                    <span className="w-5 h-5 rounded-full bg-slate-100 flex items-center justify-center text-[10px] font-bold text-slate-650 shrink-0">
+                      {idx + 1}
+                    </span>
+                    <div>
+                      <h4 className="text-xs font-bold text-slate-800 leading-normal">{step.label}</h4>
+                      <p className="text-[10px] text-slate-455 leading-normal font-normal">{step.desc}</p>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            {/* Senior Flow */}
+            <div className="bg-white border border-slate-100 rounded-3xl p-6 shadow-[0_8px_30px_rgba(0,0,0,0.015)] hover:shadow-[0_12px_35px_rgba(0,0,0,0.02)] transition-all duration-300 space-y-4">
+              <div>
+                <h3 className="font-extrabold text-slate-900 text-sm">Senior / Job-Ready Flow</h3>
+                <p className="text-[11px] text-slate-400 font-normal">Design robust architectures, cloud setups, and secure systems.</p>
+              </div>
+              <div className="space-y-2.5 pt-2">
+                {[
+                  { label: "Senior UI/DevOps Roadmap", desc: "Follow DevOps or Senior UI paths", color: "indigo" },
+                  { label: "Architecture Tasks", desc: "Solve containerization & telemetry challenges", color: "indigo" },
+                  { label: "Advanced Project", desc: "Build SaaS Auth or AI Assistant system", color: "emerald" },
+                  { label: "Security & Performance Audit", desc: "Profile queries, check CORS, and rate limits", color: "pink" },
+                  { label: "AWS/Azure Cloud Deployment", desc: "Deploy containers in Docker compose network", color: "violet" },
+                  { label: "System Design Explanation", desc: "Explain scaling pipelines & caching mechanisms", color: "amber" }
+                ].map((step, idx) => (
+                  <div key={idx} className="flex gap-3 items-start">
+                    <span className="w-5 h-5 rounded-full bg-slate-100 flex items-center justify-center text-[10px] font-bold text-slate-650 shrink-0">
+                      {idx + 1}
+                    </span>
+                    <div>
+                      <h4 className="text-xs font-bold text-slate-800 leading-normal">{step.label}</h4>
+                      <p className="text-[10px] text-slate-455 leading-normal font-normal">{step.desc}</p>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
 
       {/* 2. What You Can Do with CodeNivra */}
       <section className="py-16 bg-white border-b border-slate-100">

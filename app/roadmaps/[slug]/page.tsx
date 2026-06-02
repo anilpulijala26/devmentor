@@ -1,8 +1,9 @@
 import Link from "next/link";
 import { getRoadmapBySlug, roadmaps } from "@/lib/roadmaps";
 import { notFound } from "next/navigation";
-import { ChevronLeft, Sparkles, BookOpen, Compass, ClipboardCheck, ArrowRight, Check, Terminal } from "lucide-react";
+import { ChevronLeft } from "lucide-react";
 import { getAllDeveloperTasks } from "@/lib/tasks";
+import { RoadmapDetailClient } from "@/components/RoadmapDetailClient";
 
 interface Props {
   params: Promise<{ slug: string }>;
@@ -17,6 +18,73 @@ export function generateStaticParams() {
 export const metadata = {
   title: "Roadmap Timeline - CodeNivra",
   description: "Walk through step-by-step career timelines, concepts lessons, projects, and checklist questions.",
+};
+
+const weeklyPlans: Record<string, { week: string; topic: string; details: string }[]> = {
+  "intern-developer": [
+    { week: "Week 1", topic: "HTML, CSS, Git basics", details: "Learn semantic tagging, box model sizing, CSS selectors, git branching, commits, and remote repositories." },
+    { week: "Week 2", topic: "JavaScript fundamentals", details: "Master primitive types, array functions (map, filter, reduce), closures, scopes, and basic DOM event handlers." },
+    { week: "Week 3", topic: "React basics", details: "Learn component composition, JSX, properties, local state hooks, conditional rendering, and form bindings." },
+    { week: "Week 4", topic: "Portfolio project", details: "Initiate your static repository. Build a beautiful personal portfolio from scratch using raw CSS variables." },
+    { week: "Week 5", topic: "Daily tasks and code review", details: "Review daily beginner tasks, fix semantic issues, run WCAG color audits, and check outline hierarchies." },
+    { week: "Week 6", topic: "Deployment and interview explanation", details: "Connect your repo to Vercel, setup custom domains, and prepare a 2-minute architectural pitch." }
+  ],
+  "junior-frontend": [
+    { week: "Week 1", topic: "JavaScript refresher & TypeScript basics", details: "Deconstruct JS classes, promises, async/await, and configure typescript configurations." },
+    { week: "Week 2", topic: "React component structures & states", details: "Understand clean functional structures, parent-child props passing, and hooks rules." },
+    { week: "Week 3", topic: "React hooks & advanced state management", details: "Use useReducer, useContext, useRef, and manage complex dashboard structures." },
+    { week: "Week 4", topic: "API fetching, loading & error states", details: "Fetch server data, configure skeleton loaders, and handle bad network conditions." },
+    { week: "Week 5", topic: "CSS framework styling & layouts", details: "Build responsive grids, use Tailwind or vanilla styling systems, and check mobile break points." },
+    { week: "Week 6", topic: "Deployment & resume prep", details: "Launch application preview pipelines, set environment tokens, and write down resume bullets." }
+  ],
+  "mid-level-fullstack": [
+    { week: "Week 1", topic: "Frontend architecture", details: "Setup Next.js workspace folders, client routers, layout hierarchies, and basic route templates." },
+    { week: "Week 2", topic: "Backend APIs", details: "Setup express server routing, REST endpoints, JSON bodies parse, and custom exception middleware." },
+    { week: "Week 3", topic: "Database integration", details: "Setup PostgreSQL local and remote pools, write Prisma migrations, and script transactional inserts." },
+    { week: "Week 4", topic: "Auth and role-based access", details: "Verify JWT signatures, crypt password storage, set secure cookies, and route permissions." },
+    { week: "Week 5", topic: "Full-stack project", details: "Connect frontend client inputs to backend server endpoints. Handle validation errors across boundaries." },
+    { week: "Week 6", topic: "Code review and deployment", details: "Configure environment flags, audit files with review tools, and deploy backend to hosting servers." }
+  ],
+  "backend-developer": [
+    { week: "Week 1", topic: "Node.js and Express basics", details: "Deconstruct event loops, modules importing, and build simple route listening nodes." },
+    { week: "Week 2", topic: "REST APIs and validation", details: "Define resource naming rules, write query routes, and validate input JSON with Zod schemas." },
+    { week: "Week 3", topic: "PostgreSQL and Prisma", details: "Model database schemas, set foreign keys, map relational schemas, and query with Prisma client." },
+    { week: "Week 4", topic: "Authentication and authorization", details: "Understand security headers, cookies, token expirations, and secure routes verification." },
+    { week: "Week 5", topic: "Testing and file upload", details: "Write unit route checks, configure Multer file handlers, and write cloud upload endpoints." },
+    { week: "Week 6", topic: "Deployment and production checklist", details: "Setup database pools, environment parameters, production migrations, and server monitors." }
+  ],
+  "full-stack-developer": [
+    { week: "Week 1", topic: "Frontend architecture", details: "Setup Next.js workspace folders, client routers, layout hierarchies, and basic route templates." },
+    { week: "Week 2", topic: "Backend APIs", details: "Setup express server routing, REST endpoints, JSON bodies parse, and custom exception middleware." },
+    { week: "Week 3", topic: "Database integration", details: "Setup PostgreSQL local and remote pools, write Prisma migrations, and script transactional inserts." },
+    { week: "Week 4", topic: "Auth and role-based access", details: "Verify JWT signatures, crypt password storage, set secure cookies, and route permissions." },
+    { week: "Week 5", topic: "Full-stack project", details: "Connect frontend client inputs to backend server endpoints. Handle validation errors across boundaries." },
+    { week: "Week 6", topic: "Code review and deployment", details: "Configure environment flags, audit files with review tools, and deploy backend to hosting servers." }
+  ],
+  "senior-ui-developer": [
+    { week: "Week 1", topic: "Advanced TS generics & utility types", details: "Write strict interfaces, mapped generic keys, and validate dynamic parameters." },
+    { week: "Week 2", topic: "React Fiber internal mechanics & reconciliation", details: "Deconstruct fiber nodes, rendering phases, triggers, and state commit priorities." },
+    { week: "Week 3", topic: "Request memoization & Next.js caching", details: "Optimize client rendering, set server cache validation flags, and memoize parameters." },
+    { week: "Week 4", topic: "Performance profiling & optimization", details: "Record render logs, check rerender leakages, configure dynamic imports, and optimize bundles." },
+    { week: "Week 5", topic: "Multi-stage Docker packaging & compose", details: "Write cached dockerfiles, configure development compose services, and secure environment secrets." },
+    { week: "Week 6", topic: "Security audit checklist & mock pitches", details: "Audit CORS policies, setup rate filters, run checks sheets, and rehearse design pitches." }
+  ],
+  "devops-ready-full-stack": [
+    { week: "Week 1", topic: "Git and environment setup", details: "Define collaboration branching guidelines, structure mono workspaces, and test local env files." },
+    { week: "Week 2", topic: "GitHub Actions", details: "Write pipeline yml files. Standardize building, lint audits, and automated static preview deploys." },
+    { week: "Week 3", topic: "Docker", details: "Setup cached multi-stage Docker builds for client and backend. Orchestrate container services." },
+    { week: "Week 4", topic: "Frontend and backend deployment", details: "Automate server launches, wire domain routing nodes, and check CORS settings." },
+    { week: "Week 5", topic: "AWS/Azure basics", details: "Provision virtual containers (EC2/AppService), SQL clouds databases (RDS), and secure access vaults." },
+    { week: "Week 6", topic: "Monitoring and production checklist", details: "Wire logging sinks, configure alarms parameters, check rates, and draft system designs pitches." }
+  ],
+  "interview-preparation": [
+    { week: "Week 1", topic: "Core coding interview foundations", details: "Practice arrays, hashes, sliding windows, heaps, and tree traversals." },
+    { week: "Week 2", topic: "Browser engines & Event loop behaviors", details: "Master task/microtask scheduling, DOM painting loops, and layout cycles." },
+    { week: "Week 3", topic: "System design basics", details: "Understand CDNs, proxy nodes, database replication rules, caching, and rate limiting." },
+    { week: "Week 4", topic: "Project review & explanation structures", details: "Outline your main portfolio applications and build 2-minute architectural pitches." },
+    { week: "Week 5", topic: "Code review checklist self-assessments", details: "Run manual audits of your codebases to spot scaling bottlenecks." },
+    { week: "Week 6", topic: "Mock interviews & technical pitches", details: "Rehearse answers on concurrency, caching validation flags, and ORM query plans." }
+  ]
 };
 
 export default async function RoadmapDetailPage({ params }: Props) {
@@ -51,6 +119,7 @@ export default async function RoadmapDetailPage({ params }: Props) {
   };
 
   const tasksForThisPath = getTasksForRoadmapLevel(roadmap.level);
+  const plan = weeklyPlans[slug];
 
   return (
     <div className="min-h-screen bg-slate-50/50 pb-24 relative overflow-hidden">
@@ -74,7 +143,7 @@ export default async function RoadmapDetailPage({ params }: Props) {
         </div>
 
         {/* Roadmap Info Header */}
-        <div className="mb-10">
+        <div className="mb-8">
           <div className="flex items-center gap-2 mb-3">
             <span className={`inline-block px-3 py-1 rounded-full text-xs font-bold border ${getBadgeColor(roadmap.level)}`}>
               {roadmap.level}
@@ -84,159 +153,17 @@ export default async function RoadmapDetailPage({ params }: Props) {
           <h1 className="text-3xl sm:text-4xl md:text-5xl font-black tracking-tight mb-4 text-transparent bg-clip-text bg-gradient-to-r from-slate-900 via-indigo-950 to-indigo-900">
             {roadmap.title}
           </h1>
-          <p className="text-sm sm:text-base text-slate-600 leading-relaxed max-w-3xl font-medium">
+          <p className="text-sm sm:text-base text-slate-605 leading-relaxed max-w-3xl font-medium">
             {roadmap.description}
           </p>
         </div>
 
-        {/* Timeline Content Layout */}
-        <div className="grid md:grid-cols-12 gap-8 items-start">
-          {/* Main timeline module lists */}
-          <div className="md:col-span-8 space-y-12">
-            {/* Step 1: LEARN */}
-            <div className="border border-slate-200/80 bg-white rounded-3xl p-6 shadow-xs relative">
-              <div className="absolute -top-3.5 left-6 px-3 py-1 rounded-full text-[10px] font-black tracking-widest uppercase bg-indigo-600 text-white shadow-xs">
-                Step 1 // Learn
-              </div>
-              <h2 className="text-lg font-extrabold text-slate-900 mt-2 mb-6 flex items-center gap-2 pb-3 border-b border-slate-100">
-                <BookOpen className="w-5 h-5 text-indigo-500" />
-                Concept Lessons
-              </h2>
-
-              <div className="space-y-4">
-                {roadmap.recommendedLessons.map((lesson, idx) => (
-                  <Link
-                    key={lesson.slug}
-                    href={`/learn/${lesson.track}/${lesson.slug}`}
-                    className="group flex items-center justify-between p-4 border border-slate-200 rounded-2xl bg-white hover:border-indigo-300 hover:shadow-xs transition duration-200"
-                  >
-                    <div className="flex items-center gap-3">
-                      <span className="h-6 w-6 rounded-full bg-indigo-50 text-indigo-750 font-bold text-xs flex items-center justify-center shrink-0 group-hover:bg-indigo-600 group-hover:text-white transition">
-                        {idx + 1}
-                      </span>
-                      <div>
-                        <h4 className="text-sm font-bold text-slate-800 group-hover:text-indigo-700 transition-colors">
-                          {lesson.title}
-                        </h4>
-                        <span className="text-[10px] font-extrabold uppercase text-slate-400 tracking-wider">
-                          Module: {lesson.track}
-                        </span>
-                      </div>
-                    </div>
-                    <ArrowRight className="w-4 h-4 text-slate-400 group-hover:translate-x-0.5 group-hover:text-indigo-600 transition" />
-                  </Link>
-                ))}
-              </div>
-            </div>
-
-            {/* Step 2: PRACTICE */}
-            {tasksForThisPath.length > 0 && (
-              <div className="border border-slate-200/80 bg-white rounded-3xl p-6 shadow-xs relative">
-                <div className="absolute -top-3.5 left-6 px-3 py-1 rounded-full text-[10px] font-black tracking-widest uppercase bg-emerald-600 text-white shadow-xs">
-                  Step 2 // Practice
-                </div>
-                <h2 className="text-lg font-extrabold text-slate-900 mt-2 mb-6 flex items-center gap-2 pb-3 border-b border-slate-100">
-                  <Terminal className="w-5 h-5 text-emerald-500" />
-                  Daily Developer Tasks
-                </h2>
-
-                <div className="space-y-4">
-                  {tasksForThisPath.map((task) => (
-                    <Link
-                      key={task.slug}
-                      href={`/tasks/${task.slug}`}
-                      className="group flex items-center justify-between p-4 border border-slate-200 rounded-2xl bg-white hover:border-emerald-300 hover:shadow-xs transition duration-200"
-                    >
-                      <div className="flex items-center gap-3">
-                        <span className="h-6 w-6 rounded-full bg-emerald-50 text-emerald-700 font-bold text-xs flex items-center justify-center shrink-0 group-hover:bg-emerald-600 group-hover:text-white transition">
-                          P
-                        </span>
-                        <div>
-                          <h4 className="text-sm font-bold text-slate-800 group-hover:text-emerald-700 transition-colors">
-                            {task.title}
-                          </h4>
-                          <span className="inline-block px-1.5 py-0.2 rounded-md bg-slate-100 text-[9px] font-bold text-slate-500 uppercase tracking-wider mt-1">
-                            {task.level} Challenge
-                          </span>
-                        </div>
-                      </div>
-                      <ArrowRight className="w-4 h-4 text-slate-400 group-hover:translate-x-0.5 group-hover:text-emerald-600 transition" />
-                    </Link>
-                  ))}
-                </div>
-              </div>
-            )}
-
-            {/* Step 3: BUILD */}
-            <div className="border border-slate-200/80 bg-white rounded-3xl p-6 shadow-xs relative">
-              <div className="absolute -top-3.5 left-6 px-3 py-1 rounded-full text-[10px] font-black tracking-widest uppercase bg-violet-600 text-white shadow-xs">
-                Step 3 // Build
-              </div>
-              <h2 className="text-lg font-extrabold text-slate-900 mt-2 mb-6 flex items-center gap-2 pb-3 border-b border-slate-100">
-                <Compass className="w-5 h-5 text-violet-500" />
-                Project Labs Blueprint
-              </h2>
-
-              <div className="space-y-4">
-                {roadmap.projectTasks.map((project) => (
-                  <div key={project.projectSlug} className="p-5 border border-slate-200 hover:border-violet-300 bg-slate-50/20 rounded-2xl transition duration-200">
-                    <h3 className="text-sm font-extrabold text-slate-900">{project.title}</h3>
-                    <p className="text-xs text-slate-600 leading-relaxed mt-2">{project.description}</p>
-                    <div className="mt-4 flex items-center justify-between border-t border-slate-100 pt-3.5">
-                      <span className="text-[9px] font-mono text-slate-400 uppercase tracking-wider">LAB // {project.projectSlug.replace("-", "_").toUpperCase()}</span>
-                      <Link
-                        href={`/projects/${project.projectSlug}`}
-                        className="inline-flex items-center gap-1.5 text-xs font-bold text-indigo-600 hover:text-indigo-700 hover:underline"
-                      >
-                        Start Project Lab <ArrowRight className="w-3.5 h-3.5" />
-                      </Link>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            </div>
-          </div>
-
-          {/* Right Sidebar: Self-Assessment Checklist */}
-          <div className="md:col-span-4 space-y-6">
-            <div className="border border-slate-200/80 bg-white rounded-3xl p-6 shadow-xs">
-              <h3 className="text-sm font-extrabold uppercase tracking-wider text-slate-500 mb-4 flex items-center gap-1.5">
-                <ClipboardCheck className="w-4 h-4 text-indigo-600" />
-                Senior Checklist
-              </h3>
-
-              <p className="text-2xs text-slate-500 leading-relaxed mb-4">
-                Verify your progression. Can you confidently check off these expectations?
-              </p>
-
-              <div className="space-y-3.5">
-                {roadmap.checklist.map((item, idx) => (
-                  <div key={idx} className="flex gap-2.5 items-start">
-                    <span className="h-5 w-5 bg-indigo-50 border border-indigo-200 rounded-md flex items-center justify-center shrink-0 mt-0.5 text-indigo-600">
-                      <Check className="w-3 h-3" />
-                    </span>
-                    <p className="text-xs font-semibold text-slate-700 leading-relaxed">
-                      {item}
-                    </p>
-                  </div>
-                ))}
-              </div>
-            </div>
-
-            {/* Quick stats box */}
-            <div className="bg-gradient-to-r from-slate-900 via-indigo-950 to-indigo-900 rounded-3xl p-6 text-white space-y-4">
-              <div className="inline-flex p-2.5 rounded-2xl bg-white/10 border border-white/20">
-                <Sparkles className="w-5 h-5 text-indigo-400" />
-              </div>
-              <div>
-                <h4 className="text-sm font-bold">Graduation Goal</h4>
-                <p className="text-xs text-slate-300 leading-relaxed mt-1">
-                  Complete the exercises, build the requested projects, run senior audit checks, and review interview QA blocks.
-                </p>
-              </div>
-            </div>
-          </div>
-        </div>
+        {/* Client Side Interactive Component */}
+        <RoadmapDetailClient
+          roadmap={roadmap}
+          tasksForThisPath={tasksForThisPath}
+          plan={plan}
+        />
       </div>
     </div>
   );

@@ -20,6 +20,7 @@ import {
   FileCode,
   Rocket
 } from "lucide-react";
+import { GuidePanel } from "./GuidePanel";
 
 interface AuditCategory {
   id: string;
@@ -289,6 +290,17 @@ export function CodeReviewClient() {
           </button>
         </div>
       </div>
+
+      {/* Guide Panel */}
+      <GuidePanel
+        title="Code Review Navigator"
+        what="Self-assessment console for security, styling, and accessibility audits."
+        who="Developers validating tasks and projects before deployment."
+        first="Select a guideline category and review your local files."
+        next="Correct lint warnings, run build audits, and deploy."
+        outcome="MNC-grade code quality compliant with production standards."
+        nextAction="Audit your project before deployment."
+      />
 
       {/* 2. Audit Summary Section */}
       <section className="grid grid-cols-2 md:grid-cols-4 gap-4">

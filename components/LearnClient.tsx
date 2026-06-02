@@ -17,9 +17,11 @@ import {
   ChevronUp,
   Briefcase,
   HelpCircle,
-  Cloud
+  Cloud,
+  UserCheck
 } from "lucide-react";
 import { Track } from "@/lib/content";
+import { GuidePanel } from "./GuidePanel";
 
 interface LearnClientProps {
   tracks: Track[];
@@ -52,22 +54,6 @@ export function LearnClient({ tracks }: LearnClientProps) {
     { step: "4", title: "Review Code", desc: "Audit repos with checklists.", icon: <ShieldCheck className="w-5 h-5" />, color: "border-pink-100 bg-pink-50 text-pink-700" },
     { step: "5", title: "Explain in Interviews", desc: "Prepare mock system pitches.", icon: <Award className="w-5 h-5" />, color: "border-amber-100 bg-amber-50 text-amber-700" }
   ];
-
-  const startGuides = [
-    {
-      title: "New to Development",
-      guidance: "Master HTML, CSS, JavaScript, and Git fundamentals. Build your core concepts from scratch before introducing React.",
-      cta: "Start Foundations",
-      href: "/learn/foundations"
-    },
-    {
-      title: "Preparing for Interviews",
-      guidance: "Practice advanced system designs, full-stack database architectures, and senior-level architectural mock pitches.",
-      cta: "Start Prep",
-      href: "/roadmaps/interview-preparation"
-    }
-  ];
-
   const goals = [
     { label: "Build a Portfolio", target: "/projects/personal-portfolio", desc: "For beginners seeking jobs" },
     { label: "Master React & Next.js", target: "/learn/frontend-frameworks", desc: "For frontend jobs" },
@@ -245,6 +231,197 @@ export function LearnClient({ tracks }: LearnClientProps) {
         </p>
       </div>
 
+      {/* Guide Panel */}
+      <GuidePanel
+        title="Learning Hub Navigator"
+        what="Master frontend client layouts, backend server routing pipelines, database queries, and automated deployment architectures."
+        who="All experience levels (beginners starting out, mid-level developer transitions, and seniors target cloud-readiness)."
+        first="Choose your experience level below or select a specific technology learning track."
+        next="Follow the step-by-step roadmap lessons, write daily matching code tasks, and configure projects."
+        outcome="Deployable full-stack systems and professional architectural coding templates."
+        nextAction="Choose your experience level or roadmap."
+      />
+
+      {/* Choose Your Experience Level Grid */}
+      <section className="space-y-6">
+        <h2 className="text-lg sm:text-[22px] font-extrabold text-slate-900 flex items-center gap-2">
+          <UserCheck className="w-5 h-5 text-indigo-500" />
+          Choose Your Experience Level
+        </h2>
+        <div className="grid md:grid-cols-3 gap-6">
+          {/* Beginner Card */}
+          <div className="group bg-white border border-slate-100 rounded-3xl p-6 shadow-[0_8px_30px_rgba(0,0,0,0.015)] hover:shadow-[0_15px_40px_rgba(0,0,0,0.03)] hover:-translate-y-1 transition-all duration-300 flex flex-col justify-between focus-within:ring-2 focus-within:ring-indigo-500">
+            <div className="space-y-4">
+              <div className="w-10 h-10 rounded-2xl bg-indigo-50/50 flex items-center justify-center border border-indigo-100/50">
+                <BookOpen className="w-5 h-5 text-indigo-650" />
+              </div>
+              <div className="space-y-2">
+                <h3 className="font-bold text-slate-900 text-sm">Fresher / Beginner</h3>
+                <p className="text-slate-500 text-xs leading-relaxed font-normal">
+                  Start with HTML, CSS, JavaScript, Git, React basics, daily practice, portfolio project, and deployment.
+                </p>
+              </div>
+            </div>
+            <div className="mt-6 pt-4 border-t border-slate-50 space-y-3">
+              <Link
+                href="/roadmaps/intern-developer"
+                className="w-full inline-flex items-center justify-center gap-1.5 bg-indigo-600 hover:bg-indigo-755 text-white text-xs font-semibold py-2.5 px-4 rounded-xl transition duration-205"
+              >
+                Start Beginner Path
+              </Link>
+              <p className="text-[10px] text-center text-slate-450 italic">
+                &ldquo;New here? Start with Beginner Path.&rdquo;
+              </p>
+            </div>
+          </div>
+
+          {/* Mid-Level Card */}
+          <div className="group bg-white border border-slate-100 rounded-3xl p-6 shadow-[0_8px_30px_rgba(0,0,0,0.015)] hover:shadow-[0_15px_40px_rgba(0,0,0,0.03)] hover:-translate-y-1 transition-all duration-300 flex flex-col justify-between focus-within:ring-2 focus-within:ring-indigo-500">
+            <div className="space-y-4">
+              <div className="w-10 h-10 rounded-2xl bg-violet-50/50 flex items-center justify-center border border-violet-100/50">
+                <Layers className="w-5 h-5 text-violet-655" />
+              </div>
+              <div className="space-y-2">
+                <h3 className="font-bold text-slate-900 text-sm">Mid-Level Developer</h3>
+                <p className="text-slate-500 text-xs leading-relaxed font-normal">
+                  Strengthen React, TypeScript, Next.js, Node.js, Express, APIs, databases, auth, and full-stack projects.
+                </p>
+              </div>
+            </div>
+            <div className="mt-6 pt-4 border-t border-slate-50 space-y-3">
+              <Link
+                href="/roadmaps/mid-level-fullstack"
+                className="w-full inline-flex items-center justify-center gap-1.5 bg-indigo-600 hover:bg-indigo-755 text-white text-xs font-semibold py-2.5 px-4 rounded-xl transition duration-205"
+              >
+                Start Mid-Level Path
+              </Link>
+              <p className="text-[10px] text-center text-slate-450 italic">
+                &ldquo;Already know basics? Start with Mid-Level Path.&rdquo;
+              </p>
+            </div>
+          </div>
+
+          {/* Senior Card */}
+          <div className="group bg-white border border-slate-100 rounded-3xl p-6 shadow-[0_8px_30px_rgba(0,0,0,0.015)] hover:shadow-[0_15px_40px_rgba(0,0,0,0.03)] hover:-translate-y-1 transition-all duration-300 flex flex-col justify-between focus-within:ring-2 focus-within:ring-indigo-500">
+            <div className="space-y-4">
+              <div className="w-10 h-10 rounded-2xl bg-emerald-50/50 flex items-center justify-center border border-emerald-100/50">
+                <Award className="w-5 h-5 text-emerald-655" />
+              </div>
+              <div className="space-y-2">
+                <h3 className="font-bold text-slate-900 text-sm">Senior / Job-Ready Developer</h3>
+                <p className="text-slate-500 text-xs leading-relaxed font-normal">
+                  Focus on architecture, performance, security, code review, CI/CD, AWS/Azure deployment, system design, and interview explanation.
+                </p>
+              </div>
+            </div>
+            <div className="mt-6 pt-4 border-t border-slate-50 space-y-3">
+              <Link
+                href="/roadmaps/devops-ready-full-stack"
+                className="w-full inline-flex items-center justify-center gap-1.5 bg-indigo-650 hover:bg-indigo-755 text-white text-xs font-semibold py-2.5 px-4 rounded-xl transition duration-205"
+              >
+                Start Senior Path
+              </Link>
+              <p className="text-[10px] text-center text-slate-450 italic">
+                &ldquo;Preparing for senior interviews? Start with Job-Ready Path.&rdquo;
+              </p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Role-Based Learning Flow Mapping */}
+      <section className="space-y-6">
+        <h2 className="text-lg sm:text-[22px] font-extrabold text-slate-900 flex items-center gap-2">
+          <Layers className="w-5 h-5 text-indigo-500" />
+          Targeted Learning Flows by Role
+        </h2>
+        <div className="grid md:grid-cols-3 gap-6">
+          {/* Fresher Flow */}
+          <div className="bg-white border border-slate-100 rounded-3xl p-6 shadow-[0_8px_30px_rgba(0,0,0,0.015)] space-y-4">
+            <div>
+              <h3 className="font-extrabold text-slate-905 text-sm">Fresher / Beginner Flow</h3>
+              <p className="text-[11px] text-slate-400 font-normal">Learn foundational structures and build a single client showcase.</p>
+            </div>
+            <div className="space-y-2.5 pt-2">
+              {[
+                { label: "Roadmap", desc: "Start with Intern Developer path", color: "indigo" },
+                { label: "Beginner Tasks", desc: "Solve HTML, CSS & JavaScript tasks", color: "indigo" },
+                { label: "Portfolio Project", desc: "Build highly responsive portfolio website", color: "emerald" },
+                { label: "Code Review", desc: "Run accessibility and HTML semantic checks", color: "pink" },
+                { label: "Vercel Deployment", desc: "Host static portfolio live on Vercel", color: "violet" },
+                { label: "Interview Explanation", desc: "Master pitch template for basic portfolio", color: "amber" }
+              ].map((step, idx) => (
+                <div key={idx} className="flex gap-3 items-start">
+                  <span className="w-5 h-5 rounded-full bg-slate-100 flex items-center justify-center text-[10px] font-bold text-slate-650 shrink-0">
+                    {idx + 1}
+                  </span>
+                  <div>
+                    <h4 className="text-xs font-bold text-slate-800 leading-normal">{step.label}</h4>
+                    <p className="text-[10px] text-slate-450 leading-normal font-normal">{step.desc}</p>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          {/* Mid-Level Flow */}
+          <div className="bg-white border border-slate-100 rounded-3xl p-6 shadow-[0_8px_30px_rgba(0,0,0,0.015)] space-y-4">
+            <div>
+              <h3 className="font-extrabold text-slate-905 text-sm">Mid-Level Developer Flow</h3>
+              <p className="text-[11px] text-slate-400 font-normal">Strengthen full-stack capabilities and integrate server databases.</p>
+            </div>
+            <div className="space-y-2.5 pt-2">
+              {[
+                { label: "Frontend/Backend Roadmap", desc: "Follow Junior Frontend or Backend path", color: "indigo" },
+                { label: "Advanced Tasks", desc: "Solve TS generics & API route tasks", color: "indigo" },
+                { label: "Full-Stack Project", desc: "Build Leave Manager or Blog CMS app", color: "emerald" },
+                { label: "Code Review", desc: "Verify API response codes & input validations", color: "pink" },
+                { label: "CI/CD Deployment", desc: "Deploy automatically using GitHub Actions", color: "violet" },
+                { label: "Resume & Project Pitch", desc: "Structure database schema choices clearly", color: "amber" }
+              ].map((step, idx) => (
+                <div key={idx} className="flex gap-3 items-start">
+                  <span className="w-5 h-5 rounded-full bg-slate-100 flex items-center justify-center text-[10px] font-bold text-slate-655 shrink-0">
+                    {idx + 1}
+                  </span>
+                  <div>
+                    <h4 className="text-xs font-bold text-slate-800 leading-normal">{step.label}</h4>
+                    <p className="text-[10px] text-slate-455 leading-normal font-normal">{step.desc}</p>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          {/* Senior Flow */}
+          <div className="bg-white border border-slate-100 rounded-3xl p-6 shadow-[0_8px_30px_rgba(0,0,0,0.015)] space-y-4">
+            <div>
+              <h3 className="font-extrabold text-slate-905 text-sm">Senior / Job-Ready Flow</h3>
+              <p className="text-[11px] text-slate-400 font-normal">Design robust architectures, cloud setups, and secure systems.</p>
+            </div>
+            <div className="space-y-2.5 pt-2">
+              {[
+                { label: "Senior UI/DevOps Roadmap", desc: "Follow DevOps or Senior UI paths", color: "indigo" },
+                { label: "Architecture Tasks", desc: "Solve containerization & telemetry challenges", color: "indigo" },
+                { label: "Advanced Project", desc: "Build SaaS Auth or AI Assistant system", color: "emerald" },
+                { label: "Security & Performance Audit", desc: "Profile queries, check CORS, and rate limits", color: "pink" },
+                { label: "AWS/Azure Cloud Deployment", desc: "Deploy containers in Docker compose network", color: "violet" },
+                { label: "System Design Explanation", desc: "Explain scaling pipelines & caching mechanisms", color: "amber" }
+              ].map((step, idx) => (
+                <div key={idx} className="flex gap-3 items-start">
+                  <span className="w-5 h-5 rounded-full bg-slate-100 flex items-center justify-center text-[10px] font-bold text-slate-655 shrink-0">
+                    {idx + 1}
+                  </span>
+                  <div>
+                    <h4 className="text-xs font-bold text-slate-800 leading-normal">{step.label}</h4>
+                    <p className="text-[10px] text-slate-455 leading-normal font-normal">{step.desc}</p>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+      </section>
+
       {/* Workflow Stepper Strip */}
       <section className="bg-white border border-slate-100 rounded-3xl p-6 lg:p-8 shadow-[0_8px_30px_rgba(0,0,0,0.015)]">
         <h2 className="text-xs font-bold text-slate-400 uppercase tracking-widest text-center mb-8">
@@ -267,31 +444,6 @@ export function LearnClient({ tracks }: LearnClientProps) {
             </div>
           ))}
         </div>
-      </section>
-
-      {/* Start Guides */}
-      <section className="grid md:grid-cols-2 gap-6">
-        {startGuides.map((guide, idx) => (
-          <div
-            key={idx}
-            className="bg-white border border-slate-100 rounded-3xl p-6 lg:p-8 shadow-[0_8px_30px_rgba(0,0,0,0.015)] hover:shadow-[0_15px_40px_rgba(0,0,0,0.03)] hover:-translate-y-[3px] transition-all duration-300 flex flex-col justify-between space-y-4"
-          >
-            <div className="space-y-2">
-              <span className="text-[10px] font-extrabold text-indigo-600 uppercase tracking-wider">
-                {idx === 0 ? "RECOMMENDED FOR BEGINNERS" : "RECOMMENDED FOR SENIORS"}
-              </span>
-              <h3 className="text-lg font-bold text-slate-900">{guide.title}</h3>
-              <p className="text-sm text-slate-600 leading-relaxed font-normal">{guide.guidance}</p>
-            </div>
-            <Link
-              href={guide.href}
-              className="h-12 inline-flex items-center justify-center gap-1.5 bg-indigo-600 hover:bg-indigo-700 text-white rounded-xl text-sm font-semibold transition cursor-pointer w-fit px-6 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 focus-visible:ring-offset-2"
-            >
-              <span>{guide.cta}</span>
-              <ArrowRight className="w-4 h-4" />
-            </Link>
-          </div>
-        ))}
       </section>
 
       {/* Choose by Goal Grid */}

@@ -5,18 +5,55 @@ import Link from "next/link";
 import { DeveloperTask } from "@/lib/tasks";
 import { Sparkles, ArrowRight, CheckCircle2, Clock } from "lucide-react";
 import { useProgress } from "@/context/ProgressContext";
+import { GuidePanel } from "./GuidePanel";
 
 interface TasksClientProps {
   initialTasks: DeveloperTask[];
 }
 
 export function TasksClient({ initialTasks }: TasksClientProps) {
-  const [activeFilter, setActiveFilter] = useState<"All" | "Beginner" | "Intermediate" | "Advanced">("All");
+  const [activeFilter, setActiveFilter] = useState<"All" | "Beginner" | "Mid-Level" | "Senior" | "Frontend" | "Backend" | "Full-Stack" | "Deployment">("All");
   const { completedTasks } = useProgress();
 
-  const filtered = activeFilter === "All"
-    ? initialTasks
-    : initialTasks.filter((t) => t.level === activeFilter);
+  const getTaskCategory = (slug: string): "Frontend" | "Backend" | "Full-Stack" | "Deployment" => {
+    const frontendSlugs = [
+      "html-form-validation",
+      "responsive-pricing-cards",
+      "js-array-transformation",
+      "debounced-search",
+      "react-controlled-form",
+      "react-custom-hook",
+      "nextjs-dynamic-route",
+      "nextjs-loading-ui",
+      "accessibility-audit",
+      "performance-audit"
+    ];
+    const fullstackSlugs = [
+      "api-route-handler",
+      "postgres-crud-query",
+      "postgres-prisma",
+      "api-tests-supertest"
+    ];
+    const deploymentSlugs = [
+      "dockerize-node-api",
+      "deploy-backend-cloud"
+    ];
+    
+    if (frontendSlugs.includes(slug)) return "Frontend";
+    if (fullstackSlugs.includes(slug)) return "Full-Stack";
+    if (deploymentSlugs.includes(slug)) return "Deployment";
+    return "Backend";
+  };
+
+  const filtered = initialTasks.filter((task) => {
+    if (activeFilter === "All") return true;
+    if (activeFilter === "Beginner") return task.level === "Beginner";
+    if (activeFilter === "Mid-Level") return task.level === "Intermediate";
+    if (activeFilter === "Senior") return task.level === "Advanced";
+    
+    const category = getTaskCategory(task.slug);
+    return category === activeFilter;
+  });
 
   const getLevelColor = (level: string) => {
     return {
@@ -72,13 +109,13 @@ export function TasksClient({ initialTasks }: TasksClientProps) {
         </div>
 
         {/* Filter Tabs */}
-        <div className="flex gap-2 bg-white border border-slate-200/60 p-1.5 rounded-2xl shrink-0 self-start lg:self-end shadow-sm">
-          {(["All", "Beginner", "Intermediate", "Advanced"] as const).map((filter) => (
+        <div className="flex flex-wrap gap-2 bg-white border border-slate-200/60 p-1.5 rounded-2xl shrink-0 self-start lg:self-end shadow-sm max-w-full">
+          {(["All", "Beginner", "Mid-Level", "Senior", "Frontend", "Backend", "Full-Stack", "Deployment"] as const).map((filter) => (
             <button
               key={filter}
               onClick={() => setActiveFilter(filter)}
               aria-pressed={activeFilter === filter}
-              className={`px-4 py-2 rounded-xl text-xs font-bold transition duration-200 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 focus-visible:ring-offset-2 ${
+              className={`px-3.5 py-2 rounded-xl text-xs font-bold transition duration-200 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 focus-visible:ring-offset-2 ${
                 activeFilter === filter
                   ? "bg-indigo-600 text-white shadow-sm"
                   : "text-slate-600 hover:bg-slate-50"
@@ -89,6 +126,17 @@ export function TasksClient({ initialTasks }: TasksClientProps) {
           ))}
         </div>
       </div>
+
+      {/* Guide Panel */}
+      <GuidePanel
+        title="Daily Tasks Navigator"
+        what="Focused coding tasks to refine daily implementation confidence."
+        who="Developers practicing component hooks, routing, or schemas."
+        first="Pick a task based on your current roadmap level."
+        next="Review your solution against code review guidelines."
+        outcome="Clean coding habits and component-level code mastery."
+        nextAction="Pick a task based on your roadmap level."
+      />
 
       {/* Tasks List */}
       <div className="grid gap-8 md:grid-cols-2 lg:grid-cols-3">

@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { roadmaps } from "@/lib/roadmaps";
-import { ArrowRight, Sparkles, Clock, Compass, BookOpen, ChevronRight, Check } from "lucide-react";
+import { ArrowRight, Sparkles, Clock, Compass, BookOpen, ChevronRight, Check, Layers } from "lucide-react";
+import { GuidePanel } from "@/components/GuidePanel";
 
 export const metadata = {
   title: "Developer Roadmaps - CodeNivra",
@@ -56,6 +57,110 @@ export default function RoadmapsPage() {
             Ditch generic learning. Pick a dedicated roadmap mapped to industry roles. Master theory, complete practical tasks, and build real applications.
           </p>
         </div>
+
+        {/* Guide Panel */}
+        <GuidePanel
+          title="Roadmaps Navigator"
+          what="Visual career timelines mapped to production developer roles."
+          who="Developers seeking step-by-step guidance from start to finish."
+          first="Open the roadmap matching your career experience goals."
+          next="Start the first module and complete its matching daily task."
+          outcome="Clear career progression path and project implementation plan."
+          nextAction="Start first module and complete matching daily task."
+        />
+
+        {/* Role-Based Learning Flow Mapping */}
+        <section className="space-y-6">
+          <h2 className="text-lg sm:text-[22px] font-extrabold text-slate-900 flex items-center gap-2">
+            <Layers className="w-5 h-5 text-indigo-500" />
+            Targeted Learning Flows by Role
+          </h2>
+          <div className="grid md:grid-cols-3 gap-6">
+            {/* Fresher Flow */}
+            <div className="bg-white border border-slate-100 rounded-3xl p-6 shadow-[0_8px_30px_rgba(0,0,0,0.015)] space-y-4">
+              <div>
+                <h3 className="font-extrabold text-slate-900 text-sm">Fresher / Beginner Flow</h3>
+                <p className="text-[11px] text-slate-400 font-normal">Learn foundational structures and build a single client showcase.</p>
+              </div>
+              <div className="space-y-2.5 pt-2">
+                {[
+                  { label: "Roadmap", desc: "Start with Intern Developer path", color: "indigo" },
+                  { label: "Beginner Tasks", desc: "Solve HTML, CSS & JavaScript tasks", color: "indigo" },
+                  { label: "Portfolio Project", desc: "Build highly responsive portfolio website", color: "emerald" },
+                  { label: "Code Review", desc: "Run accessibility and HTML semantic checks", color: "pink" },
+                  { label: "Vercel Deployment", desc: "Host static portfolio live on Vercel", color: "violet" },
+                  { label: "Interview Explanation", desc: "Master pitch template for basic portfolio", color: "amber" }
+                ].map((step, idx) => (
+                  <div key={idx} className="flex gap-3 items-start">
+                    <span className="w-5 h-5 rounded-full bg-slate-100 flex items-center justify-center text-[10px] font-bold text-slate-650 shrink-0">
+                      {idx + 1}
+                    </span>
+                    <div>
+                      <h4 className="text-xs font-bold text-slate-800 leading-normal">{step.label}</h4>
+                      <p className="text-[10px] text-slate-450 leading-normal font-normal">{step.desc}</p>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            {/* Mid-Level Flow */}
+            <div className="bg-white border border-slate-100 rounded-3xl p-6 shadow-[0_8px_30px_rgba(0,0,0,0.015)] space-y-4">
+              <div>
+                <h3 className="font-extrabold text-slate-900 text-sm">Mid-Level Developer Flow</h3>
+                <p className="text-[11px] text-slate-400 font-normal">Strengthen full-stack capabilities and integrate server databases.</p>
+              </div>
+              <div className="space-y-2.5 pt-2">
+                {[
+                  { label: "Frontend/Backend Roadmap", desc: "Follow Junior Frontend or Backend path", color: "indigo" },
+                  { label: "Advanced Tasks", desc: "Solve TS generics & API route tasks", color: "indigo" },
+                  { label: "Full-Stack Project", desc: "Build Leave Manager or Blog CMS app", color: "emerald" },
+                  { label: "Code Review", desc: "Verify API response codes & input validations", color: "pink" },
+                  { label: "CI/CD Deployment", desc: "Deploy automatically using GitHub Actions", color: "violet" },
+                  { label: "Resume & Project Pitch", desc: "Structure database schema choices clearly", color: "amber" }
+                ].map((step, idx) => (
+                  <div key={idx} className="flex gap-3 items-start">
+                    <span className="w-5 h-5 rounded-full bg-slate-100 flex items-center justify-center text-[10px] font-bold text-slate-655 shrink-0">
+                      {idx + 1}
+                    </span>
+                    <div>
+                      <h4 className="text-xs font-bold text-slate-800 leading-normal">{step.label}</h4>
+                      <p className="text-[10px] text-slate-455 leading-normal font-normal">{step.desc}</p>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            {/* Senior Flow */}
+            <div className="bg-white border border-slate-100 rounded-3xl p-6 shadow-[0_8px_30px_rgba(0,0,0,0.015)] space-y-4">
+              <div>
+                <h3 className="font-extrabold text-slate-900 text-sm">Senior / Job-Ready Flow</h3>
+                <p className="text-[11px] text-slate-400 font-normal">Design robust architectures, cloud setups, and secure systems.</p>
+              </div>
+              <div className="space-y-2.5 pt-2">
+                {[
+                  { label: "Senior UI/DevOps Roadmap", desc: "Follow DevOps or Senior UI paths", color: "indigo" },
+                  { label: "Architecture Tasks", desc: "Solve containerization & telemetry challenges", color: "indigo" },
+                  { label: "Advanced Project", desc: "Build SaaS Auth or AI Assistant system", color: "emerald" },
+                  { label: "Security & Performance Audit", desc: "Profile queries, check CORS, and rate limits", color: "pink" },
+                  { label: "AWS/Azure Cloud Deployment", desc: "Deploy containers in Docker compose network", color: "violet" },
+                  { label: "System Design Explanation", desc: "Explain scaling pipelines & caching mechanisms", color: "amber" }
+                ].map((step, idx) => (
+                  <div key={idx} className="flex gap-3 items-start">
+                    <span className="w-5 h-5 rounded-full bg-slate-100 flex items-center justify-center text-[10px] font-bold text-slate-655 shrink-0">
+                      {idx + 1}
+                    </span>
+                    <div>
+                      <h4 className="text-xs font-bold text-slate-800 leading-normal">{step.label}</h4>
+                      <p className="text-[10px] text-slate-455 leading-normal font-normal">{step.desc}</p>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </div>
+        </section>
 
         {/* 1. Career Timeline Stepper */}
         <section className="bg-white border border-slate-100 rounded-3xl p-6 lg:p-8 shadow-[0_8px_30px_rgba(0,0,0,0.015)] space-y-6">
