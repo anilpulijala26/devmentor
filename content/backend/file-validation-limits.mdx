@@ -1,0 +1,104 @@
+---
+title: "File Validations & Signed URLs"
+description: "Secure upload pipelines. Enforce file type controls, verify MIME targets, and generate S3 pre-signed URLs."
+tags: ["file-upload","security"]
+---
+
+## What You Will Learn
+
+- Enforce strict file type validations.
+- Secure private files using S3 pre-signed URLs.
+- Protect endpoints from malicious script uploads.
+
+---
+
+## Why This Matters in Real Projects
+
+Exposing private files (like invoices or user contracts) via public URLs is a major security gap. Generating short-lived, pre-signed download URLs secures assets while granting access to authorized users.
+
+<SeniorNote>
+Always set a short expiration time (e.g. 5-15 minutes) on pre-signed URLs to prevent users from sharing links publicly.
+</SeniorNote>
+
+---
+
+## Concept Explanation
+
+### Upload Security & Pre-Signed URLs
+
+- **Content-Type Checks**: Enforces type validations on the backend to prevent users from uploading malicious executable scripts disguised as images.
+- **Pre-Signed URLs**: Generates short-lived, authenticated URLs that grant temporary access to private S3 bucket resources without exposing credentials.
+
+---
+
+## Real-Time Project Example
+
+<RealTimeExample title={"File Validations & Signed URLs Scenario"}>
+When generating invoices, the PDF is stored in a private S3 bucket. When users view the invoice, the server generates a pre-signed URL valid for 10 minutes to grant access.
+</RealTimeExample>
+
+---
+
+## Code Example
+
+Below is a configuration file matching senior standards:
+
+```javascript
+// Generating S3 pre-signed download URLs
+import { S3Client, GetObjectCommand } from '@aws-sdk/client-s3';
+import { getSignedUrl } from '@aws-sdk/s3-request-presigner';
+
+const s3 = new S3Client({ region: 'us-east-1' });
+
+export async function generateDownloadLink(fileKey) {
+  const command = new GetObjectCommand({
+    Bucket: process.env.AWS_S3_BUCKET,
+    Key: fileKey
+  });
+  
+  // Generate pre-signed URL valid for 15 minutes
+  const url = await getSignedUrl(s3, command, { expiresIn: 900 });
+  return url;
+}
+```
+
+---
+
+## Common Mistakes
+
+Here is an example of incorrect setups vs clean, optimized configurations.
+
+<CommonMistake
+  title={"Exposing Private Files via Public Bucket URLs"}
+  badDesc={"Making S3 buckets public and sharing raw, permanent links to sensitive files, allowing unauthorized users to download them."}
+  badCode={"// Raw S3 URL is permanent and accessible to anyone\nconst url = 'https://my-bucket.s3.amazonaws.com/invoices/user_1.pdf';"}
+  goodDesc={"Keeping buckets private and generating temporary pre-signed URLs for authenticated users."}
+  goodCode={"// Short-lived pre-signed URL expires in 15 minutes\nconst url = await generateDownloadLink('invoices/user_1.pdf');"}
+/>
+
+---
+
+## Practice Task
+
+Solidify your knowledge by implementing this exercise in your codebase.
+
+<TaskBox
+  title={"Build a Pre-Signed URL Generator"}
+  duration={"25 Minutes"}
+  requirements={[
+    "Create an endpoint to generate pre-signed download URLs.",
+    "Restrict access keys to authorized users.",
+    "Set URL expiration thresholds to 10 minutes."
+  ]}
+  expectedOutput={"// Endpoint returns secure temporary access links\n{ \"downloadUrl\": \"https://bucket-name.s3.amazonaws.com/...&Expires=...\" }"}
+>
+Complete this task to verify your configuration operates correctly.
+</TaskBox>
+
+---
+
+## Interview Tip
+
+<InterviewTip question={"How do you verify the true file type of an upload on the server?"}>
+Do not rely on the file extension. Read the first few bytes of the file (the magic numbers) to identify the file signature, or use validation libraries like file-type to verify MIME properties.
+</InterviewTip>

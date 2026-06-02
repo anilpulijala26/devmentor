@@ -1,0 +1,113 @@
+---
+title: "Logging, Uptime, Error, & Performance Monitoring"
+description: "Configure error logging telemetry, uptime checks, and telemetry dashboards."
+tags: ["production","monitoring"]
+---
+
+## What You Will Learn
+
+- Configure error monitoring utilities (Sentry/LogRocket).
+- Monitor application performance metrics (APM).
+- Establish automated uptime checks and alert channels.
+
+---
+
+## Why This Matters in Real Projects
+
+Relying on users to report crashes is not scalable. Automating performance monitoring and alert channels notifies teams instantly when server errors occur, speeding up bug fixes.
+
+<SeniorNote>
+Configure uptime checks to ping health check endpoints (/healthz) every minute. If endpoints fail, configure alert channels to notify teams immediately.
+</SeniorNote>
+
+---
+
+## Concept Explanation
+
+### Application Telemetry & Logging
+
+- **Error Monitoring**: Capture error stack traces and environment states in real time (e.g. Sentry).
+- **APM (Application Performance Monitoring)**: Tracks processing times, request volumes, and query latency (e.g. Datadog).
+- **Uptime Checks**: Automated HTTP ping checks that verify servers are active and responding.
+
+---
+
+## Real-Time Project Example
+
+<RealTimeExample title={"Logging, Uptime, Error, & Performance Monitoring Scenario"}>
+When API requests throw unhandled exceptions, monitoring tools log error stack traces and notify developers, allowing bugs to be fixed before users notice.
+</RealTimeExample>
+
+---
+
+## Code Example
+
+Below is a configuration file matching senior standards:
+
+```javascript
+// Integrating Sentry error monitoring in Express
+import express from 'express';
+import * as Sentry from '@sentry/node';
+
+const app = express();
+
+Sentry.init({
+  dsn: process.env.SENTRY_DSN,
+  environment: process.env.NODE_ENV
+});
+
+// Request handlers must be the first middleware
+app.use(Sentry.Handlers.requestHandler());
+
+app.get('/', (req, res) => {
+  res.send('Hello World');
+});
+
+// Error handlers must be registered before other error middlewares
+app.use(Sentry.Handlers.errorHandler());
+
+app.use((err, req, res, next) => {
+  res.status(500).json({ error: 'Internal Server Error' });
+});
+```
+
+---
+
+## Common Mistakes
+
+Here is an example of incorrect setups vs clean, optimized configurations.
+
+<CommonMistake
+  title={"Missing Centralized Logs in Production"}
+  badDesc={"Relying on container console logs to diagnose errors in production, which are lost when instances are restarted."}
+  badCode={"// App logs errors to console only, losing history"}
+  goodDesc={"Forwarding logs to centralized log management tools (like Loggly or Datadog)."}
+  goodCode={"// Winston config forwards logs to cloud management endpoints"}
+/>
+
+---
+
+## Practice Task
+
+Solidify your knowledge by implementing this exercise in your codebase.
+
+<TaskBox
+  title={"Configure an Error Monitoring integration"}
+  duration={"25 Minutes"}
+  requirements={[
+    "Install and initialize Sentry SDK clients.",
+    "Add error handlers to Express routes.",
+    "Test integrations by throwing errors to verify logs capture."
+  ]}
+  expectedOutput={"// Exceptions log to Sentry dashboard\nSentry -> Event captured (API database failure)"}
+>
+Complete this task to verify your configuration operates correctly.
+</TaskBox>
+
+---
+
+## Interview Tip
+
+<InterviewTip question={"What is the difference between logging and metrics?"}>
+Logging records specific events in detail (like stack traces on error runs). Metrics record numeric telemetry aggregates over time (like request counts, memory usage, or query latency).
+</InterviewTip>

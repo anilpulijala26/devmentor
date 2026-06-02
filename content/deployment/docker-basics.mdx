@@ -1,0 +1,109 @@
+---
+title: "Dockerfile & Multi-Stage Builds"
+description: "Write optimized production-ready Dockerfiles. Configure multi-stage builds to compile slim and secure container instances."
+tags: ["docker","containers"]
+---
+
+## What You Will Learn
+
+- Write multi-stage Dockerfiles.
+- Understand container image layering and cache optimization.
+- De-escalate security privileges using non-root user configurations.
+
+---
+
+## Why This Matters in Real Projects
+
+Default single-stage Docker configurations create massive images containing build tools, increasing deployment times. Multi-stage builds compile slim, production-only containers, reducing image sizes and security footprints.
+
+<SeniorNote>
+Always add a non-root user configuration to Dockerfiles. Running container processes as root exposes hosts to security vulnerabilities if containers are compromised.
+</SeniorNote>
+
+---
+
+## Concept Explanation
+
+### Docker Containers & Layers
+
+- **Docker Image**: Pre-configured templates containing code, runtime layers, and tools.
+- **Image Layering**: Every instruction in a Dockerfile creates an image layer. Reordering steps optimizes build caching.
+- **Multi-Stage Build**: Uses temporary build stages to compile assets, copying only production dependencies into final images to keep sizes small.
+
+---
+
+## Real-Time Project Example
+
+<RealTimeExample title={"Dockerfile & Multi-Stage Builds Scenario"}>
+When dockerizing React backends, multi-stage builds compile builds using Node images, copying only production assets to final images, reducing image sizes from 800MB to 80MB.
+</RealTimeExample>
+
+---
+
+## Code Example
+
+Below is a configuration file matching senior standards:
+
+```javascript
+// Production Multi-Stage Dockerfile example
+# Stage 1: Compile dependencies and build assets
+FROM node:20-alpine AS builder
+WORKDIR /app
+COPY package*.json ./
+RUN npm ci
+COPY . .
+RUN npm run build
+
+# Stage 2: Create production runner container
+FROM node:20-alpine AS runner
+WORKDIR /app
+COPY package*.json ./
+RUN npm ci --only=production
+COPY --from=builder /app/dist ./dist
+
+# De-escalate root credentials
+USER node
+EXPOSE 5000
+CMD ["node", "dist/app.js"]
+```
+
+---
+
+## Common Mistakes
+
+Here is an example of incorrect setups vs clean, optimized configurations.
+
+<CommonMistake
+  title={"Running Containers as Root"}
+  badDesc={"Omitting non-root user configurations in Dockerfiles. If containers are compromised, attackers gain root permissions on the host system."}
+  badCode={"FROM node:20-alpine\nWORKDIR /app\nCOPY . .\n# Runs process as root by default!\nCMD [\"node\", \"app.js\"]"}
+  goodDesc={"Always de-escalating privileges to non-root users inside runner stages."}
+  goodCode={"FROM node:20-alpine\n# Setup and build...\nUSER node # De-escalates root credentials\nCMD [\"node\", \"app.js\"]"}
+/>
+
+---
+
+## Practice Task
+
+Solidify your knowledge by implementing this exercise in your codebase.
+
+<TaskBox
+  title={"Write an optimized Dockerfile"}
+  duration={"25 Minutes"}
+  requirements={[
+    "Create a multi-stage Dockerfile for a Node.js API.",
+    "Configure caching steps to optimize package installs.",
+    "Test builds to verify small image size profiles."
+  ]}
+  expectedOutput={"// Slim production container built successfully\nDocker image build complete -> dist size 90MB"}
+>
+Complete this task to verify your configuration operates correctly.
+</TaskBox>
+
+---
+
+## Interview Tip
+
+<InterviewTip question={"What is a multi-stage Docker build?"}>
+A multi-stage Docker build uses temporary builder stages to install dependencies and compile code. It then copies only compiled production assets into a final, clean runner stage, keeping container image sizes small by omitting build tools.
+</InterviewTip>

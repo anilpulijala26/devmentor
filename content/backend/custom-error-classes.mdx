@@ -1,0 +1,120 @@
+---
+title: "Custom Error Classes & Async Catchers"
+description: "Write custom exception classes (e.g. NotFoundError, BadRequestError) and async handlers to simplify error handling."
+tags: ["express","errors"]
+---
+
+## What You Will Learn
+
+- Build custom Error classes inheriting from base Exception layers.
+- Eliminate try-catch boilerplates using higher-order handlers.
+- Assign custom status codes to specific error classes.
+
+---
+
+## Why This Matters in Real Projects
+
+Writing repetitive try-catch blocks inside route handlers clutters codebases. Custom error classes classify failures with specific status codes, and higher-order functions wrap handlers to clean up code.
+
+<SeniorNote>
+Always set `this.name = this.constructor.name` and capture stack traces using `Error.captureStackTrace(this, this.constructor)` inside custom Error class constructors to ensure accurate diagnostic details.
+</SeniorNote>
+
+---
+
+## Concept Explanation
+
+### Custom Error Classes
+
+By extending JavaScript's built-in `Error` class, we can bind HTTP metadata parameters directly to custom error objects:
+- **Class Classification**: Create specialized error classes (like `NotFoundError`, `BadRequestError`, `UnauthorizedError`).
+- **Dynamic Status**: Assign default status codes to each class.
+- **Async Catcher Wrappers**: Use higher-order functions to wrap async route handlers, catching rejections and passing them to `next()` automatically.
+
+---
+
+## Real-Time Project Example
+
+<RealTimeExample title={"Custom Error Classes & Async Catchers Scenario"}>
+When query records are missing in databases, throw a NotFoundError. The async wrapper catches it, and the global handler responds with a 404 status.
+</RealTimeExample>
+
+---
+
+## Code Example
+
+Below is a configuration file matching senior standards:
+
+```javascript
+// Custom error class and async wrapper implementation
+// 1. Create Base API Error class
+class APIError extends Error {
+  constructor(message, status = 500) {
+    super(message);
+    this.status = status;
+    this.name = this.constructor.name;
+    Error.captureStackTrace(this, this.constructor);
+  }
+}
+
+class NotFoundError extends APIError {
+  constructor(message = 'Resource not found.') {
+    super(message, 404);
+  }
+}
+
+// 2. Async Handler Catcher Wrapper
+const catchAsync = (fn) => (req, res, next) => {
+  Promise.resolve(fn(req, res, next)).catch(next);
+};
+
+// 3. Usage in route handler (No try-catch blocks!)
+app.get('/users/:id', catchAsync(async (req, res) => {
+  const user = await db.find(req.params.id);
+  if (!user) {
+    throw new NotFoundError('User record not found.'); // Caught and forwarded automatically
+  }
+  res.json(user);
+}));
+```
+
+---
+
+## Common Mistakes
+
+Here is an example of incorrect setups vs clean, optimized configurations.
+
+<CommonMistake
+  title={"Using Generic Errors for Everything"}
+  badDesc={"Throwing generic Error objects with messages like 'User not found' and manually setting status codes inside handlers."}
+  badCode={"app.get('/user', async (req, res, next) => {\n  if (!user) {\n    const err = new Error('User not found');\n    err.statusCode = 404; // Repetitive and error-prone!\n    return next(err);\n  }\n});"}
+  goodDesc={"Throwing semantic custom errors directly."}
+  goodCode={"app.get('/user', catchAsync(async (req, res) => {\n  if (!user) throw new NotFoundError('User not found.'); // Clean and semantic!\n}));"}
+/>
+
+---
+
+## Practice Task
+
+Solidify your knowledge by implementing this exercise in your codebase.
+
+<TaskBox
+  title={"Build custom Exception Classes and Async wrappers"}
+  duration={"25 Minutes"}
+  requirements={[
+    "Create NotFoundError, BadRequestError, and UnauthorizedError classes.",
+    "Implement a catchAsync higher-order handler function.",
+    "Verify exceptions are caught and resolved to their target status codes."
+  ]}
+  expectedOutput={"// API handles validation error correctly\nthrow new BadRequestError(\"Validation failed\") -> 400 Bad Request"}
+>
+Complete this task to verify your configuration operates correctly.
+</TaskBox>
+
+---
+
+## Interview Tip
+
+<InterviewTip question={"What is the purpose of Error.captureStackTrace in Node.js?"}>
+Error.captureStackTrace creates a '.stack' property on target objects. By passing the constructor name as the second parameter, it excludes constructor logic frames from stack traces, keeping log diagnostics clean.
+</InterviewTip>

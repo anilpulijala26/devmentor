@@ -8,16 +8,16 @@ import {
   Award,
   Layers,
   Sparkles,
-  Layout,
-  Code2,
-  Server,
+  Cpu,
+  Database,
   Play,
   Terminal,
   ShieldCheck,
-  HelpCircle,
   ChevronDown,
   ChevronUp,
-  Briefcase
+  Briefcase,
+  HelpCircle,
+  Cloud
 } from "lucide-react";
 import { Track } from "@/lib/content";
 
@@ -43,14 +43,6 @@ export function LearnClient({ tracks }: LearnClientProps) {
       ...prev,
       [moduleSlug]: !prev[moduleSlug]
     }));
-  };
-
-  const getTrackStats = (trackSlug: string) => {
-    return {
-      foundations: { duration: "4 weeks", level: "Beginner", modules: 3, lessons: 15 },
-      "frontend-frameworks": { duration: "6 weeks", level: "Intermediate", modules: 3, lessons: 17 },
-      fullstack: { duration: "8 weeks", level: "Advanced", modules: 2, lessons: 11 }
-    }[trackSlug] || { duration: "Self-paced", level: "Intermediate", modules: 2, lessons: 10 };
   };
 
   const workflowSteps = [
@@ -79,8 +71,8 @@ export function LearnClient({ tracks }: LearnClientProps) {
   const goals = [
     { label: "Build a Portfolio", target: "/projects/personal-portfolio", desc: "For beginners seeking jobs" },
     { label: "Master React & Next.js", target: "/learn/frontend-frameworks", desc: "For frontend jobs" },
-    { label: "Write Node APIs", target: "/learn/fullstack", desc: "For backend operations" },
-    { label: "Crack System Design", target: "/roadmaps/interview-preparation", desc: "For interview candidates" }
+    { label: "Write Node APIs", target: "/learn/backend", desc: "For backend operations" },
+    { label: "Docker & CI/CD", target: "/learn/deployment", desc: "For deployment & operations" }
   ];
 
   const roles = [
@@ -101,70 +93,138 @@ export function LearnClient({ tracks }: LearnClientProps) {
       color: "border-violet-100 bg-violet-50/20 text-violet-800 hover:border-violet-300"
     },
     {
-      title: "Mid-Level Full-Stack",
-      slug: "mid-level-fullstack",
-      outcome: "Build APIs & database relations.",
+      title: "Backend Developer",
+      slug: "backend-developer",
+      outcome: "Architect Node APIs & SQL.",
       duration: "12-16 Wks",
       level: "Advanced",
       color: "border-emerald-100 bg-emerald-50/20 text-emerald-800 hover:border-emerald-300"
     },
     {
-      title: "Senior UI Developer",
-      slug: "senior-ui-developer",
-      outcome: "Optimize Fiber, cache & Docker.",
+      title: "Full-Stack Developer",
+      slug: "full-stack-developer",
+      outcome: "Sync clients, servers & JWT.",
       duration: "16-20 Wks",
       level: "Professional",
       color: "border-pink-100 bg-pink-50/20 text-pink-800 hover:border-pink-300"
     },
     {
-      title: "Interview Prep",
-      slug: "interview-preparation",
-      outcome: "Crack mock pitches & systems.",
-      duration: "4 Wks",
-      level: "Prep",
+      title: "DevOps Full-Stack",
+      slug: "devops-ready-full-stack",
+      outcome: "Run Docker, Actions & AWS.",
+      duration: "20-24 Wks",
+      level: "Professional",
       color: "border-purple-100 bg-purple-50/20 text-purple-800 hover:border-purple-300"
     }
   ];
 
+  const visualTracks = [
+    {
+      slug: "frontend-frameworks",
+      title: "Frontend Track",
+      outcomeShort: "Master component-driven interfaces, React rendering lifecycles, and Next.js scale frameworks.",
+      level: "Intermediate",
+      duration: "10 Weeks",
+      modulesCount: 3,
+      lessonsCount: 22,
+      projectsCount: 3,
+      skills: ["React Rendering", "Next.js App Router", "TypeScript Generics"],
+      cta: "View Track",
+      href: "/learn/frontend-frameworks",
+      colorClass: "bg-blue-50 text-blue-700 border-blue-100",
+      icon: <Cpu className="w-5 h-5" />
+    },
+    {
+      slug: "backend",
+      title: "Backend Track",
+      outcomeShort: "Architect secure Node.js APIs, database transactional pipelines, and cloud file storage systems.",
+      level: "Advanced",
+      duration: "12 Weeks",
+      modulesCount: 10,
+      lessonsCount: 33,
+      projectsCount: 5,
+      skills: ["Express REST APIs", "PostgreSQL & Prisma", "JWT Auth & Security"],
+      cta: "View Track",
+      href: "/learn/backend",
+      colorClass: "bg-emerald-50 text-emerald-700 border-emerald-100",
+      icon: <Database className="w-5 h-5" />
+    },
+    {
+      slug: "fullstack",
+      title: "Full-Stack Track",
+      outcomeShort: "Link React frontends with Express server databases, managing cookies and monorepo files.",
+      level: "Professional",
+      duration: "8 Weeks",
+      modulesCount: 4,
+      lessonsCount: 16,
+      projectsCount: 3,
+      skills: ["Client-Server Sync", "HttpOnly Auth Cookies", "Monorepo Workspaces"],
+      cta: "View Track",
+      href: "/learn/fullstack",
+      colorClass: "bg-purple-50 text-purple-700 border-purple-100",
+      icon: <Layers className="w-5 h-5" />
+    },
+    {
+      slug: "deployment",
+      title: "Cloud & Deployment Track",
+      outcomeShort: "Containerize applications in Docker, write CI/CD Actions, and deploy to AWS & Azure.",
+      level: "Professional",
+      duration: "8 Weeks",
+      modulesCount: 10,
+      lessonsCount: 20,
+      projectsCount: 2,
+      skills: ["Docker Containers", "CI/CD Actions", "AWS S3 / Azure SQL"],
+      cta: "View Track",
+      href: "/learn/deployment",
+      colorClass: "bg-indigo-50 text-indigo-700 border-indigo-100",
+      icon: <Cloud className="w-5 h-5" />
+    },
+    {
+      slug: "interview",
+      title: "Interview Prep Track",
+      outcomeShort: "Practice conceptual templates, system designs, and code reviews to crack top-tier interviews.",
+      level: "Prep",
+      duration: "4 Weeks",
+      modulesCount: 1,
+      lessonsCount: 7,
+      projectsCount: 1,
+      skills: ["Interview Templates", "System Design Scale", "Code Review Checklist"],
+      cta: "View Track",
+      href: "/learn/interview",
+      colorClass: "bg-amber-50 text-amber-700 border-amber-100",
+      icon: <Award className="w-5 h-5" />
+    }
+  ];
+
   const trackDetails: Record<string, {
-    outcomeShort: string;
-    skills: string[];
-    tasks: string[];
-    project: { title: string; slug: string };
     outcome: string;
     bestFor: string;
-    colorClass: string;
-    icon: React.ReactNode;
+    project: { title: string; slug: string };
   }> = {
-    foundations: {
-      outcomeShort: "Write modern, accessible interfaces and script responsive DOM operations.",
-      skills: ["Semantic HTML5", "CSS Grid & Flexbox", "JavaScript ES6+", "TypeScript Basics", "Git Collaborative Flow"],
-      tasks: ["Native HTML Validation", "Responsive Pricing Cards", "JS Array Transformation"],
-      project: { title: "Portfolio Website", slug: "personal-portfolio" },
-      outcome: "You will write accessible, semantic code and understand the browser rendering and script execution lifecycle.",
-      bestFor: "Beginners, interns, and developers looking to solidify their core frontend and JavaScript knowledge.",
-      colorClass: "bg-indigo-50 text-indigo-700 border-indigo-100",
-      icon: <Code2 className="w-5 h-5" />
-    },
     "frontend-frameworks": {
-      outcomeShort: "Build state-driven web platforms and fast rendering routing paths.",
-      skills: ["React Reconciliation", "TypeScript Generics", "Next.js RSC Caching", "Server Actions", "Context Custom Hooks"],
-      tasks: ["Debounced Search Input", "React Custom Hook", "Next.js Dynamic Route"],
-      project: { title: "Resume Builder App", slug: "resume-builder" },
-      outcome: "You will build fast React applications, manage URL state filters, and deploy caching rendering paths.",
+      outcome: "Configure components, load route parameters, and optimize layout paint times.",
       bestFor: "Frontend developers transitioning to component state architectures and Next.js scale frameworks.",
-      colorClass: "bg-violet-50 text-violet-700 border-violet-100",
-      icon: <Layout className="w-5 h-5" />
+      project: { title: "Resume Builder App", slug: "resume-builder" }
+    },
+    backend: {
+      outcome: "Configure secure Express APIs, manage PostgreSQL ORMs, and run unit integrations tests.",
+      bestFor: "Developers wanting to build robust, secure, and well-tested server-side architectures.",
+      project: { title: "E-Commerce Backend API", slug: "ecommerce-backend-api" }
     },
     fullstack: {
-      outcomeShort: "Connect client pages with express backend APIs and Postgres ORMs.",
-      skills: ["Express Middlewares", "Zod Body Validations", "Postgres Indexing", "Docker Containers", "JWT Authorization"],
-      tasks: ["API Route Handler", "JWT Protected Route", "PostgreSQL CRUD Query"],
-      project: { title: "Blog CMS App", slug: "blog-cms" },
-      outcome: "You will design secure relational schemas, validate backend requests, configure JWT cookies, and containerize systems.",
-      bestFor: "Developers wanting to couple client interfaces with relational database storage and Docker containers.",
-      colorClass: "bg-purple-50 text-purple-700 border-purple-100",
-      icon: <Server className="w-5 h-5" />
+      outcome: "Link clients to servers, handle validations globally, and organize code in monorepos.",
+      bestFor: "Engineers looking to build end-to-end applications coupling react frontends with express.",
+      project: { title: "Task Management App", slug: "task-manager" }
+    },
+    deployment: {
+      outcome: "Package container instances, script actions workflows, and manage cloud assets.",
+      bestFor: "Full-stack engineers looking to deploy and monitor systems on AWS/Azure.",
+      project: { title: "Cloud Deployment Project", slug: "cloud-deployment" }
+    },
+    interview: {
+      outcome: "Structure system pitches and verify logic files against senior templates.",
+      bestFor: "Candidates preparing for technical frontend, backend, or full-stack interview reviews.",
+      project: { title: "Portfolio Website", slug: "personal-portfolio" }
     }
   };
 
@@ -180,7 +240,7 @@ export function LearnClient({ tracks }: LearnClientProps) {
         <h1 className="text-3xl sm:text-4xl lg:text-[48px] lg:leading-[56px] font-extrabold tracking-tight text-slate-900">
           Professional Learning Hub
         </h1>
-        <p className="text-base sm:text-lg text-slate-600 max-w-3xl leading-relaxed">
+        <p className="text-base sm:text-lg text-slate-600 max-w-3xl leading-relaxed font-normal">
           Skip sandbox tutorials. Expand your knowledge through structured tracks, daily programming code tasks, and real-world system templates.
         </p>
       </div>
@@ -277,9 +337,9 @@ export function LearnClient({ tracks }: LearnClientProps) {
                   </span>
                 </div>
                 <h3 className="text-sm font-bold text-slate-900 pt-1">{role.title}</h3>
-                <p className="text-xs text-slate-600 leading-normal font-medium">{role.outcome}</p>
+                <p className="text-xs text-slate-650 leading-normal font-semibold">{role.outcome}</p>
               </div>
-              <div className="mt-6 inline-flex items-center justify-center gap-1 h-10 w-full bg-white border border-slate-200 text-slate-700 hover:bg-slate-50 rounded-xl text-xs font-semibold transition">
+              <div className="mt-6 inline-flex items-center justify-center gap-1 h-10 w-full bg-white border border-slate-200 text-slate-700 hover:bg-slate-50 rounded-xl text-xs font-bold transition">
                 <span>Open Roadmap</span>
                 <ArrowRight className="w-3.5 h-3.5" />
               </div>
@@ -288,59 +348,52 @@ export function LearnClient({ tracks }: LearnClientProps) {
         </div>
       </section>
 
-      {/* Three Tracks Section (Dashboard Style with Accordions) */}
+      {/* Visual Tracks Section */}
       <section className="space-y-8">
         <div className="border-b border-slate-100 pb-4 text-center md:text-left">
           <h2 className="text-2xl sm:text-[28px] font-extrabold text-slate-900">
             Choose Your Learning Path
           </h2>
-          <p className="text-sm sm:text-base text-slate-500 mt-1">
+          <p className="text-sm sm:text-base text-slate-500 mt-1 font-normal">
             Pick a track, review outcomes, and expand the syllabus preview to inspect module chapters.
           </p>
         </div>
 
-        <div className="grid lg:grid-cols-3 gap-8 items-start">
-          {tracks.map((track) => {
-            const details = trackDetails[track.slug] || {
-              outcomeShort: "Gain core frontend and scripting competencies.",
-              skills: ["Core Variables", "Dynamic UI Elements"],
-              tasks: [],
-              project: { title: "Portfolio Website", slug: "personal-portfolio" },
-              outcome: "Gain core competencies.",
+        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8 items-start">
+          {visualTracks.map((visualTrack) => {
+            const track = tracks.find((t) => t.slug === visualTrack.slug);
+            const details = trackDetails[visualTrack.slug] || {
+              outcome: "Gain core development competencies.",
               bestFor: "Developers looking to expand knowledge.",
-              colorClass: "bg-slate-50 border border-slate-200 text-slate-700",
-              icon: <Code2 className="w-5 h-5" />
+              project: { title: "Portfolio Website", slug: "personal-portfolio" }
             };
 
-            const stats = getTrackStats(track.slug);
-            const isTrackOpen = !!openTracks[track.slug];
-            const visibleSkills = details.skills.slice(0, 3);
-            const extraSkills = details.skills.length - 3;
+            const isTrackOpen = !!openTracks[visualTrack.slug];
 
             return (
               <div
-                key={track.slug}
+                key={visualTrack.slug}
                 className="group bg-white border border-slate-100 rounded-3xl p-6 lg:p-8 shadow-[0_8px_30px_rgba(0,0,0,0.015)] hover:shadow-[0_15px_40px_rgba(0,0,0,0.03)] hover:-translate-y-[3px] transition-all duration-300 flex flex-col justify-between relative"
               >
                 <div className="space-y-5 w-full">
                   {/* Top Stats & Badge */}
                   <div className="flex items-center justify-between">
-                    <span className={`inline-flex items-center gap-1.5 rounded-full px-2.5 py-0.5 text-[11px] font-bold ${details.colorClass}`}>
-                      {details.icon}
-                      {stats.level}
+                    <span className={`inline-flex items-center gap-1.5 rounded-full px-2.5 py-0.5 text-[11px] font-bold ${visualTrack.colorClass}`}>
+                      {visualTrack.icon}
+                      {visualTrack.level}
                     </span>
                     <span className="text-xs font-semibold text-slate-400">
-                      {stats.duration}
+                      {visualTrack.duration}
                     </span>
                   </div>
 
                   {/* Title & Short 1-2 line outcome */}
                   <div className="space-y-1.5">
-                    <h3 className="text-lg sm:text-xl font-bold text-slate-900 group-hover:text-indigo-650 transition-colors">
-                      {track.title}
+                    <h3 className="text-lg sm:text-xl font-extrabold text-slate-900 group-hover:text-indigo-650 transition-colors">
+                      {visualTrack.title}
                     </h3>
-                    <p className="text-xs sm:text-sm text-slate-500 leading-relaxed line-clamp-2">
-                      {details.outcomeShort}
+                    <p className="text-xs sm:text-sm text-slate-500 leading-relaxed font-normal">
+                      {visualTrack.outcomeShort}
                     </p>
                   </div>
 
@@ -348,28 +401,23 @@ export function LearnClient({ tracks }: LearnClientProps) {
                   <div className="grid grid-cols-2 gap-4 py-3 border-y border-slate-50 text-slate-500">
                     <div>
                       <p className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Syllabus</p>
-                      <p className="text-xs sm:text-sm font-bold text-slate-800 mt-0.5">{stats.modules} Modules</p>
+                      <p className="text-xs sm:text-sm font-bold text-slate-800 mt-0.5">{visualTrack.modulesCount} Modules</p>
                     </div>
                     <div>
                       <p className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Guides</p>
-                      <p className="text-xs sm:text-sm font-bold text-slate-800 mt-0.5">{stats.lessons} Lessons</p>
+                      <p className="text-xs sm:text-sm font-bold text-slate-800 mt-0.5">{visualTrack.lessonsCount} Lessons</p>
                     </div>
                   </div>
 
                   {/* Key Skills */}
                   <div className="space-y-2">
                     <p className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Skills covered</p>
-                    <div className="flex flex-wrap gap-1">
-                      {visibleSkills.map((sk) => (
-                        <span key={sk} className="bg-slate-50 border border-slate-200/60 px-2 py-0.5 rounded-md text-[10px] font-semibold text-slate-600">
+                    <div className="flex flex-wrap gap-1.5">
+                      {visualTrack.skills.map((sk) => (
+                        <span key={sk} className="bg-slate-50 border border-slate-200/60 px-2 py-0.5 rounded-md text-[10px] font-bold text-slate-600">
                           {sk}
                         </span>
                       ))}
-                      {extraSkills > 0 && (
-                        <span className="bg-indigo-50 border border-indigo-100 px-2 py-0.5 rounded-md text-[10px] font-bold text-indigo-700">
-                          +{extraSkills} more
-                        </span>
-                      )}
                     </div>
                   </div>
                 </div>
@@ -377,7 +425,7 @@ export function LearnClient({ tracks }: LearnClientProps) {
                 {/* Bottom Toggles & CTA */}
                 <div className="mt-8 pt-4 border-t border-slate-50 flex flex-col gap-2.5">
                   <Link
-                    href={`/learn/${track.slug}`}
+                    href={visualTrack.href}
                     className="w-full h-12 inline-flex items-center justify-center gap-1 bg-indigo-600 hover:bg-indigo-700 text-white rounded-xl text-sm font-semibold transition cursor-pointer shadow-2xs focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 focus-visible:ring-offset-2"
                   >
                     <span>View Track</span>
@@ -385,9 +433,9 @@ export function LearnClient({ tracks }: LearnClientProps) {
                   </Link>
 
                   <button
-                    onClick={() => toggleTrack(track.slug)}
+                    onClick={() => toggleTrack(visualTrack.slug)}
                     aria-expanded={isTrackOpen}
-                    className="w-full h-11 bg-slate-50 border border-slate-200/60 hover:bg-slate-100 text-slate-700 rounded-xl text-xs font-semibold flex items-center justify-center gap-1 transition cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 focus-visible:ring-offset-2"
+                    className="w-full h-11 bg-slate-50 border border-slate-200/60 hover:bg-slate-100 text-slate-700 rounded-xl text-xs font-bold flex items-center justify-center gap-1 transition cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 focus-visible:ring-offset-2"
                   >
                     <span>Preview Syllabus</span>
                     {isTrackOpen ? <ChevronUp className="w-4 h-4" /> : <ChevronDown className="w-4 h-4" />}
@@ -396,54 +444,52 @@ export function LearnClient({ tracks }: LearnClientProps) {
 
                 {/* Collapsible syllabus preview inside the grid card flow */}
                 {isTrackOpen && (
-                  <div className="mt-6 pt-6 border-t border-slate-100 space-y-4 animate-fade-in w-full">
-                    
-                    {/* Collapsed Details Panel */}
-                    <div className="space-y-4 text-left">
+                  <div className="mt-6 pt-6 border-t border-slate-100 space-y-4 animate-fade-in w-full text-left">
+                    <div>
+                      <h4 className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Best For</h4>
+                      <p className="text-xs text-slate-600 font-semibold mt-0.5 leading-normal">{details.bestFor}</p>
+                    </div>
+
+                    <div className="grid grid-cols-2 gap-4 border-t border-slate-100 pt-3">
                       <div>
-                        <h4 className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Best For</h4>
-                        <p className="text-xs text-slate-600 font-semibold mt-0.5 leading-normal">{details.bestFor}</p>
+                        <h4 className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Target Project</h4>
+                        <Link href={`/projects/${details.project.slug}`} className="text-xs font-bold text-indigo-650 hover:underline block mt-0.5 truncate">
+                          {details.project.title}
+                        </Link>
                       </div>
-
-                      <div className="grid grid-cols-2 gap-4 border-t border-slate-100 pt-3">
-                        <div>
-                          <h4 className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Project</h4>
-                          <Link href={`/projects/${details.project.slug}`} className="text-xs font-bold text-purple-700 hover:underline block mt-0.5 truncate">
-                            {details.project.title}
-                          </Link>
-                        </div>
-                        <div>
-                          <h4 className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Goal Outcome</h4>
-                          <p className="text-xs text-slate-500 font-semibold mt-0.5 truncate">{details.outcome}</p>
-                        </div>
+                      <div>
+                        <h4 className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Goal Outcome</h4>
+                        <p className="text-xs text-slate-500 font-semibold mt-0.5 truncate">{details.outcome}</p>
                       </div>
+                    </div>
 
-                      {/* Nested accordions for module syllabus */}
+                    {/* Modules list (using the dynamically loaded track data) */}
+                    {track && track.modules && (
                       <div className="border-t border-slate-100 pt-4 space-y-2">
                         <h4 className="text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-2">Modules Syllabus</h4>
                         
                         {track.modules.map((module) => {
                           const isModuleOpen = !!openModules[module.slug];
                           return (
-                            <div key={module.slug} className="border border-slate-100 rounded-xl overflow-hidden bg-slate-50/20">
+                            <div key={module.slug} className="border border-slate-150 rounded-xl overflow-hidden bg-slate-50/20">
                               <button
                                 onClick={() => toggleModule(module.slug)}
                                 aria-expanded={isModuleOpen}
-                                className="w-full px-3 py-2 flex items-center justify-between text-left transition hover:bg-slate-50 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-indigo-500 text-xs font-bold text-slate-800 cursor-pointer"
+                                className="w-full px-3 py-2 flex items-center justify-between text-left transition hover:bg-slate-50 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-indigo-500 text-xs font-extrabold text-slate-800 cursor-pointer"
                               >
-                                <span>{module.title}</span>
+                                <span className="truncate pr-2">{module.title}</span>
                                 {isModuleOpen ? <ChevronUp className="w-3.5 h-3.5 text-slate-500" /> : <ChevronDown className="w-3.5 h-3.5 text-slate-500" />}
                               </button>
                               
-                              {isModuleOpen && (
-                                <div className="p-2 bg-white border-t border-slate-100/60 space-y-1">
+                              {isModuleOpen && module.lessons && (
+                                <div className="p-2 bg-white border-t border-slate-100 space-y-1">
                                   {module.lessons
                                     .sort((a, b) => a.order - b.order)
                                     .map((lesson) => (
                                       <Link
                                         key={lesson.slug}
                                         href={`/learn/${track.slug}/${lesson.slug}`}
-                                        className="flex items-center justify-between rounded-lg p-2 hover:bg-indigo-50/40 text-[11px] font-semibold text-slate-655 transition"
+                                        className="flex items-center justify-between rounded-lg p-2 hover:bg-indigo-50/40 text-[11px] font-semibold text-slate-600 transition"
                                       >
                                         <span className="truncate pr-2">{lesson.title}</span>
                                         <Play className="w-3 h-3 text-indigo-500 shrink-0" />
@@ -455,8 +501,7 @@ export function LearnClient({ tracks }: LearnClientProps) {
                           );
                         })}
                       </div>
-                    </div>
-
+                    )}
                   </div>
                 )}
               </div>

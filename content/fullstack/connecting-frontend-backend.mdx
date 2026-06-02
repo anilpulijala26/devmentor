@@ -1,0 +1,103 @@
+---
+title: "Connecting React/Next.js and Express"
+description: "Establish cross-origin communication between frontends and backends. Configure CORS rules, query APIs, and set up Next.js proxy rewrites."
+tags: ["fullstack","react","express"]
+---
+
+## What You Will Learn
+
+- Configure cross-origin request permissions.
+- Fetch backend APIs from React applications.
+- Configure Next.js proxy rewrites to bypass CORS check limits.
+
+---
+
+## Why This Matters in Real Projects
+
+Browsers block web applications from querying APIs hosted on other domains due to Same-Origin policies. Configuring CORS rules and Next.js proxy rewrites allows frontend applications to query backends safely.
+
+<SeniorNote>
+Use local next.config rewrites during development to route traffic through the same port. This bypasses browser CORS checks and avoids origin errors.
+</SeniorNote>
+
+---
+
+## Concept Explanation
+
+### Cross-Origin Communication
+
+- **Same-Origin Policy**: Browser security policy blocking scripts from reading data from other domains.
+- **CORS Config**: Backend configuration whitelisting origins to allow cross-origin requests.
+- **Proxy Rewrites**: Routing configurations that proxy api requests from frontend ports to backend ports in local development.
+
+---
+
+## Real-Time Project Example
+
+<RealTimeExample title={"Connecting React/Next.js and Express Scenario"}>
+When building applications, React queries the local URL /api/v1/users, and the Next.js proxy routes it to http://localhost:5000/api/v1/users, bypassing CORS checks.
+</RealTimeExample>
+
+---
+
+## Code Example
+
+Below is a configuration file matching senior standards:
+
+```javascript
+// next.config.js proxy rewrites configuration
+/** @type {import('next').NextConfig} */
+const nextConfig = {
+  async rewrites() {
+    return [
+      {
+        source: '/api/:path*',
+        destination: 'http://localhost:5000/api/:path*' // Proxy target
+      }
+    ];
+  }
+};
+
+export default nextConfig;
+```
+
+---
+
+## Common Mistakes
+
+Here is an example of incorrect setups vs clean, optimized configurations.
+
+<CommonMistake
+  title={"Wildcard CORS configurations in production full-stack systems"}
+  badDesc={"Setting Access-Control-Allow-Origin to '*' in production while passing authentication cookies, causing browser origin errors."}
+  badCode={"// BAD: Fails when credentials options are active\napp.use(cors({ origin: '*' }));"}
+  goodDesc={"Whitelisting specific production domains to allow secure credential sharing."}
+  goodCode={"// GOOD: Restricts access to trusted domains\napp.use(cors({ origin: ['https://codenivra.com'] }));"}
+/>
+
+---
+
+## Practice Task
+
+Solidify your knowledge by implementing this exercise in your codebase.
+
+<TaskBox
+  title={"Configure next.config proxy rewrites"}
+  duration={"20 Minutes"}
+  requirements={[
+    "Create a next.config.js routing rewrite setup.",
+    "Proxy local api calls to backend servers.",
+    "Verify backend responses render in the UI."
+  ]}
+  expectedOutput={"// Frontend API queries resolve correctly\nfetch(\"/api/data\") -> Routes to http://localhost:5000/api/data"}
+>
+Complete this task to verify your configuration operates correctly.
+</TaskBox>
+
+---
+
+## Interview Tip
+
+<InterviewTip question={"Why does proxying route calls resolve CORS issues?"}>
+CORS is a browser security policy. Since proxying routes API calls through the Next.js server first before querying the backend, the request occurs server-to-server, bypassing browser CORS checks.
+</InterviewTip>

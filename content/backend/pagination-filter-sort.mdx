@@ -1,0 +1,117 @@
+---
+title: "Pagination, Filtering, Sorting, and Search"
+description: "Implement performant database queries. Compare offset vs cursor pagination, write dynamic SQL filters, and compile search mappings."
+tags: ["api","database"]
+---
+
+## What You Will Learn
+
+- Understand the difference between offset and cursor pagination.
+- Build dynamic database queries using query parameters.
+- Optimize text searches using indexing guidelines.
+
+---
+
+## Why This Matters in Real Projects
+
+Returning thousands of records in a single query is a common cause of database load spikes. Pagination and filters keep payloads small, reduce memory consumption, and optimize database load times.
+
+<SeniorNote>
+Use offset pagination for small, simple datasets. For large, frequently updating feeds, use cursor-based pagination to prevent skipped or duplicated items.
+</SeniorNote>
+
+---
+
+## Concept Explanation
+
+### Pagination Strategies
+
+1. **Offset Pagination (`LIMIT / OFFSET` in SQL)**:
+   - Client specifies `page` and `limit`.
+   - Simple to implement, but suffers from performance degradation as the offset grows larger because the database must scan all preceding rows.
+2. **Cursor Pagination (`WHERE id > cursor LIMIT limit` in SQL)**:
+   - Client specifies a cursor identifier (typically the last record's ID or creation time).
+   - Extremely performant for large datasets because it uses index-based searches directly, and avoids duplicate items if items are added.
+
+---
+
+## Real-Time Project Example
+
+<RealTimeExample title={"Pagination, Filtering, Sorting, and Search Scenario"}>
+In dynamic user feeds, as users scroll, cursor-based pagination uses the creation timestamp of the last loaded post as a cursor, returning the next set of posts without duplicate entries.
+</RealTimeExample>
+
+---
+
+## Code Example
+
+Below is a configuration file matching senior standards:
+
+```javascript
+// Implementing cursor pagination inside Express queries
+import express from 'express';
+import { PrismaClient } from '@prisma/client';
+const app = express();
+const prisma = new PrismaClient();
+
+app.get('/api/posts', async (req, res) => {
+  const limit = parseInt(req.query.limit, 10) || 10;
+  const cursor = req.query.cursor; // Last post ID loaded by the client
+  
+  const queryOptions = {
+    take: limit,
+    orderBy: { id: 'asc' }
+  };
+  
+  if (cursor) {
+    queryOptions.skip = 1; // Skip the cursor itself
+    queryOptions.cursor = { id: cursor };
+  }
+  
+  const posts = await prisma.post.findMany(queryOptions);
+  const nextCursor = posts.length === limit ? posts[posts.length - 1].id : null;
+  
+  res.json({ posts, nextCursor });
+});
+```
+
+---
+
+## Common Mistakes
+
+Here is an example of incorrect setups vs clean, optimized configurations.
+
+<CommonMistake
+  title={"Extremely Slow Offset Queries on Large Tables"}
+  badDesc={"Using offset pagination on tables with millions of records. This forces the database engine to scan all skipped records before returning results."}
+  badCode={"// SQL: SELECT * FROM items OFFSET 1000000 LIMIT 10;\n// DATABASE ENGINE scans 1,000,010 records! Slow query!"}
+  goodDesc={"Switching to cursor pagination utilizing indexed columns."}
+  goodCode={"// SQL: SELECT * FROM items WHERE id > 1000000 LIMIT 10;\n// DATABASE ENGINE uses primary key index directly. Fast query!"}
+/>
+
+---
+
+## Practice Task
+
+Solidify your knowledge by implementing this exercise in your codebase.
+
+<TaskBox
+  title={"Write an offset-to-cursor refactor"}
+  duration={"25 Minutes"}
+  requirements={[
+    "Review a standard Prisma findMany pagination query.",
+    "Refactor the code to support cursor-based selections.",
+    "Verify nextCursor is computed and returned."
+  ]}
+  expectedOutput={"// Response payload includes data and page markers\n{ \"data\": [...], \"nextCursor\": \"clk821a...\" }"}
+>
+Complete this task to verify your configuration operates correctly.
+</TaskBox>
+
+---
+
+## Interview Tip
+
+<InterviewTip question={"Why does offset pagination cause duplicate items on active feeds?"}>
+If new items are inserted at the beginning of a feed while a user is paginating, the existing items are pushed down. When the client fetches page 2 using offset pagination, items that were on page 1 are pushed onto page 2, resulting in duplicates.
+</InterviewTip>

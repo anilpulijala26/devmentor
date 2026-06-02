@@ -1,0 +1,96 @@
+---
+title: "Build-Time vs Runtime Variables"
+description: "Differentiate between build-time variables and runtime environment variables in full-stack frameworks."
+tags: ["devops","env"]
+---
+
+## What You Will Learn
+
+- Understand build-time variable binding.
+- Access runtime container variables on Node servers.
+- Configure Next.js public variables.
+
+---
+
+## Why This Matters in Real Projects
+
+Confusing build-time and runtime variables is a common cause of configuration errors. Public build-time variables are compiled directly into client code, exposing keys if misconfigured.
+
+<SeniorNote>
+Only use build-time variables (like `NEXT_PUBLIC_` in Next.js) for public parameters. Never use them to store database keys or private API credentials.
+</SeniorNote>
+
+---
+
+## Concept Explanation
+
+### Build-Time vs Runtime
+
+- **Build-Time Variables**: Checked and compiled during application build phases. Values are embedded directly into client bundles (e.g., `NEXT_PUBLIC_API_URL`).
+- **Runtime Variables**: Read during application execution. Stored in server environments and accessed via `process.env`.
+
+---
+
+## Real-Time Project Example
+
+<RealTimeExample title={"Build-Time vs Runtime Variables Scenario"}>
+When building applications, API routes use public build-time variables to query endpoints, while backend servers read private database keys from runtime variables, protecting staging and production systems.
+</RealTimeExample>
+
+---
+
+## Code Example
+
+Below is a configuration file matching senior standards:
+
+```javascript
+// Accessing public vs private variables in Next.js
+// 1. PUBLIC (Compiled and visible on the client side)
+const apiUrl = process.env.NEXT_PUBLIC_API_URL;
+console.log('Queries API at:', apiUrl); // Safe to log
+
+// 2. PRIVATE (Available only to the server, undefined on the client)
+const dbSecret = process.env.DATABASE_SECRET;
+// console.log(dbSecret); // CRITICAL RISK: Exposes secret if ran on client!
+```
+
+---
+
+## Common Mistakes
+
+Here is an example of incorrect setups vs clean, optimized configurations.
+
+<CommonMistake
+  title={"Exposing Private Keys via Public Variables"}
+  badDesc={"Prefixing sensitive database keys with NEXT_PUBLIC_ in Next.js, compiling keys into client bundles."}
+  badCode={"// Next.js config (VULNERABILITY: Key is visible in client JS files!)\nNEXT_PUBLIC_STRIPE_SECRET_KEY=sk_live_51H..."}
+  goodDesc={"Omitting the public prefix to keep variables restricted to server runtime execution scopes."}
+  goodCode={"// Safe: Private key is restricted to server runtimes\nSTRIPE_SECRET_KEY=sk_live_51H..."}
+/>
+
+---
+
+## Practice Task
+
+Solidify your knowledge by implementing this exercise in your codebase.
+
+<TaskBox
+  title={"Write a Variable audit test"}
+  duration={"15 Minutes"}
+  requirements={[
+    "Create variables using different prefix rules.",
+    "Access variables from client and server files.",
+    "Assert that private keys return undefined on the client."
+  ]}
+  expectedOutput={"// Client access yields expected outputs\nNEXT_PUBLIC_VAR -> 'public'\nSECRET_KEY -> undefined (safe)"}
+>
+Complete this task to verify your configuration operates correctly.
+</TaskBox>
+
+---
+
+## Interview Tip
+
+<InterviewTip question={"Why are NEXT_PUBLIC_ variables embedded in frontend code during builds?"}>
+Because client browsers do not run Node.js processes, they cannot access process.env. Next.js solves this by replacing variable references with static string values during build compilation.
+</InterviewTip>

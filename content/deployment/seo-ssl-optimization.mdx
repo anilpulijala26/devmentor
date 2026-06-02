@@ -1,0 +1,108 @@
+---
+title: "SEO Metadata, SSL Certificates, and Performance"
+description: "Manage crawlers indexes, deploy SSL profiles, and minimize bundle footprints."
+tags: ["deployment","seo"]
+---
+
+## What You Will Learn
+
+- Configure metadata and robots.txt files for SEO search engines.
+- Secure traffic channels using SSL certificates.
+- Optimize bundle performance footprints.
+
+---
+
+## Why This Matters in Real Projects
+
+Un-optimized web assets result in slow load times and poor search engine rankings. Correctly configuring SEO tags, robots.txt, and enforcing SSL redirects improves site visibility and security.
+
+<SeniorNote>
+Use Let's Encrypt or Cloudflare to enforce SSL redirects (HTTP to HTTPS) at edge gateways to protect user data transit channels.
+</SeniorNote>
+
+---
+
+## Concept Explanation
+
+### Metadata, SSL & Performance
+
+- **robots.txt**: Directs search engine crawlers on which pages to index or skip.
+- **SSL Certificates**: Encrypts data in transit between clients and servers.
+- **Bundle Optimization**: Minifies bundles, defers non-critical scripts, and optimizes layouts to improve Web Vital metrics.
+
+---
+
+## Real-Time Project Example
+
+<RealTimeExample title={"SEO Metadata, SSL Certificates, and Performance Scenario"}>
+When deploying applications, configuring robots.txt files directs search engine crawlers to skip administrative consoles (/admin) while indexing public listing pathways.
+</RealTimeExample>
+
+---
+
+## Code Example
+
+Below is a configuration file matching senior standards:
+
+```javascript
+// robots.txt and sitemap.xml configuration examples
+# robots.txt
+User-agent: *
+Allow: /
+Disallow: /admin
+Disallow: /api/
+
+Sitemap: https://codenivra.com/sitemap.xml
+
+# sitemap.xml
+<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+  <url>
+    <loc>https://codenivra.com/</loc>
+    <lastmod>2026-06-02</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>1.0</priority>
+  </url>
+</urlset>
+```
+
+---
+
+## Common Mistakes
+
+Here is an example of incorrect setups vs clean, optimized configurations.
+
+<CommonMistake
+  title={"Indexing Administrative and Secure URLs in Crawlers"}
+  badDesc={"Omitting robots.txt directives, allowing search engine crawlers to index private user paths (/dashboard) in search listings."}
+  badCode={"// Missing robots.txt file, allowing index of all paths"}
+  goodDesc={"Always including robots.txt files containing disallow rules for private directories."}
+  goodCode={"// robots.txt disallows crawler access to dashboard directories\nDisallow: /dashboard"}
+/>
+
+---
+
+## Practice Task
+
+Solidify your knowledge by implementing this exercise in your codebase.
+
+<TaskBox
+  title={"Write a Robots.txt and Sitemap.xml generator"}
+  duration={"20 Minutes"}
+  requirements={[
+    "Create a robots.txt configuration file.",
+    "Write a sitemap.xml mapping public routes.",
+    "Verify metadata headers are active on pages."
+  ]}
+  expectedOutput={"// Search engines retrieve robots directives\nRobots.txt file loads successfully"}
+>
+Complete this task to verify your configuration operates correctly.
+</TaskBox>
+
+---
+
+## Interview Tip
+
+<InterviewTip question={"What is the difference between A records and CNAME records in DNS?"}>
+A records map domain names directly to static IP addresses (e.g. 192.0.2.1). CNAME records map domains to other domain names (e.g. app.vercel.sh), allowing endpoints to handle IP drifts automatically.
+</InterviewTip>

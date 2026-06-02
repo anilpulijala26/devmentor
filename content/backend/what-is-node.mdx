@@ -1,0 +1,111 @@
+---
+title: "What is Node.js Runtime"
+description: "Understand the core Node.js architecture, including V8 engine compilation, Libuv asynchronous I/O binding, thread pools, and the single-threaded execution model."
+tags: ["node","backend","runtime"]
+---
+
+## What You Will Learn
+
+- Explain the interaction between V8 and Libuv.
+- Understand why Node.js is single-threaded but handles concurrency.
+- Identify the purpose of the internal C++ thread pool.
+
+---
+
+## Why This Matters in Real Projects
+
+In high-scale enterprise applications, understanding how Node.js schedules code prevents blockages. Because JavaScript runs on a single main thread, long-running CPU-bound tasks (like cryptographic computations) can freeze the entire server. Knowing when to defer tasks or offload them to workers ensures reliable response times.
+
+<SeniorNote>
+Remember: Single-threaded refers strictly to the main JavaScript execution thread. Under the hood, Libuv allocates a thread pool (default 4 threads) to process heavy file operations, DNS queries, and crypto tasks asynchronously.
+</SeniorNote>
+
+---
+
+## Concept Explanation
+
+### The Node.js Architecture Stack
+
+At its core, Node.js is a wrapper around two main technologies:
+1. **Google V8 Engine**: Compiles JavaScript code directly into machine code for speed.
+2. **Libuv**: A multi-platform support library written in C++ that manages asynchronous I/O operations, thread pools, and the event loop.
+
+When JavaScript requests a file read:
+- The main thread delegates the task to Libuv.
+- Libuv assigns the task to one of its background worker threads.
+- Once complete, the worker notifies the main thread via a callback registered in the event loop queue.
+
+---
+
+## Real-Time Project Example
+
+<RealTimeExample title={"What is Node.js Runtime Scenario"}>
+When building user file processors, reading a 100MB file synchronously blockages all concurrent incoming API queries. By using asynchronous streams, Libuv handles file buffers on background worker threads, allowing the server to handle 10,000 HTTP requests in parallel.
+</RealTimeExample>
+
+---
+
+## Code Example
+
+Below is a configuration file matching senior standards:
+
+```javascript
+// Comparing Blocking vs Non-Blocking file reads
+const fs = require('fs');
+
+// BLOCKING (CPU locks up until read finishes)
+try {
+  const data = fs.readFileSync('/var/log/app.log', 'utf8');
+  console.log('File content read successfully.');
+} catch (err) {
+  console.error(err);
+}
+
+// NON-BLOCKING (Main thread is immediately freed)
+fs.readFile('/var/log/app.log', 'utf8', (err, data) => {
+  if (err) return console.error('Error:', err);
+  console.log('Async file read complete.');
+});
+console.log('This executes before the file read finishes!');
+```
+
+---
+
+## Common Mistakes
+
+Here is an example of incorrect setups vs clean, optimized configurations.
+
+<CommonMistake
+  title={"Sync CPU Blockers in Shared API Code"}
+  badDesc={"Using synchronous fs.readFileSync or JSON.parse on massive payloads inside Express handlers. This locks the main thread and halts requests from all other users."}
+  badCode={"app.get('/data', (req, res) => {\n  const file = fs.readFileSync('./heavy.json'); // CPU BLOCKED!\n  res.send(JSON.parse(file));\n});"}
+  goodDesc={"Relying on streams or asynchronous fs.promises to process payloads concurrently without main thread blocks."}
+  goodCode={"const fsPromises = require('fs').promises;\napp.get('/data', async (req, res, next) => {\n  try {\n    const data = await fsPromises.readFile('./heavy.json', 'utf8');\n    res.json(JSON.parse(data));\n  } catch (err) {\n    next(err);\n  }\n});"}
+/>
+
+---
+
+## Practice Task
+
+Solidify your knowledge by implementing this exercise in your codebase.
+
+<TaskBox
+  title={"Convert Blocking Operations to Async Promises"}
+  duration={"20 Minutes"}
+  requirements={[
+    "Create a script that calculates a hash value.",
+    "Refactor synchronous crypto.pbkdf2Sync into async crypto.pbkdf2 calls.",
+    "Verify execution order by printing timestamps."
+  ]}
+  expectedOutput={"// Async pbkdf2 completes on worker thread\ncrypto.pbkdf2('password', 'salt', 100000, 64, 'sha512', (err, key) => {\n  console.log('Hash generated!');\n});"}
+>
+Complete this task to verify your configuration operates correctly.
+</TaskBox>
+
+---
+
+## Interview Tip
+
+<InterviewTip question={"Is Node.js truly single-threaded?"}>
+JavaScript execution in Node.js is single-threaded, meaning there is only one call stack. However, Libuv uses a pool of background C++ threads (the thread pool) to handle tasks like file I/O, cryptography, and compression. Therefore, the runtime environment itself is multi-threaded under the hood.
+</InterviewTip>

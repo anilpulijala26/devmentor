@@ -1,0 +1,113 @@
+---
+title: "File Upload with Multer"
+description: "Parse multipart/form-data payloads in Express. Configure disk and memory storage engines, and validate file metadata."
+tags: ["file-upload","multer"]
+---
+
+## What You Will Learn
+
+- Configure Multer disk and memory storage engines.
+- Parse incoming multipart/form-data payloads.
+- Enforce file size and type validations.
+
+---
+
+## Why This Matters in Real Projects
+
+Accepting user file uploads without validation is a major security risk. If files are not validated, users can upload malicious scripts that execute on the server. Correctly configuring upload limits secures server storage resources.
+
+<SeniorNote>
+Use the memory storage engine rather than disk storage when uploading files to cloud storage like AWS S3. This avoids writing temporary files to local disks, improving performance and security.
+</SeniorNote>
+
+---
+
+## Concept Explanation
+
+### Multer Storage Engines
+
+- **Disk Storage**: Saves files directly to local directories. Best for simple local assets.
+- **Memory Storage**: Keeps files in buffer memory. Best for streaming files directly to cloud storage.
+- **Multipart/Form-Data**: HTTP request format used to upload binary data (files) alongside standard text fields.
+
+---
+
+## Real-Time Project Example
+
+<RealTimeExample title={"File Upload with Multer Scenario"}>
+When users upload profile photos, a Multer middleware validates sizes and formats, keeping files in memory buffers to stream them directly to cloud storage buckets.
+</RealTimeExample>
+
+---
+
+## Code Example
+
+Below is a configuration file matching senior standards:
+
+```javascript
+// Multer configuration and file validations
+import express from 'express';
+import multer from 'multer';
+
+const app = express();
+
+// Configure storage limits and whitelist types
+const upload = multer({
+  storage: multer.memoryStorage(), // Keep file in memory buffer
+  limits: { fileSize: 5 * 1024 * 1024 }, // Limit sizes to 5MB
+  fileFilter: (req, file, cb) => {
+    const allowedMimeTypes = ['image/jpeg', 'image/png'];
+    if (allowedMimeTypes.includes(file.mimetype)) {
+      cb(null, true);
+    } else {
+      cb(new Error('Unsupported file format. Only JPEG and PNG are allowed.'));
+    }
+  }
+});
+
+app.post('/api/avatar', upload.single('avatar'), (req, res) => {
+  const fileBuffer = req.file.buffer; // Access memory buffer
+  res.json({ message: 'File validated and ready for upload.' });
+});
+```
+
+---
+
+## Common Mistakes
+
+Here is an example of incorrect setups vs clean, optimized configurations.
+
+<CommonMistake
+  title={"Missing File Size Limits on Upload Routes"}
+  badDesc={"Accepting file uploads without specifying size limits. This allows users to fill server storage disks with massive files, triggering storage outages."}
+  badCode={"// BAD: Accepts massive files without limits\nconst upload = multer();\napp.post('/upload', upload.single('file'), controller);"}
+  goodDesc={"Always defining file size limits inside Multer configurations."}
+  goodCode={"// GOOD: Restricts uploads to 2MB\nconst upload = multer({ limits: { fileSize: 2 * 1024 * 1024 } });\napp.post('/upload', upload.single('file'), controller);"}
+/>
+
+---
+
+## Practice Task
+
+Solidify your knowledge by implementing this exercise in your codebase.
+
+<TaskBox
+  title={"Write an Avatar Upload Middleware"}
+  duration={"20 Minutes"}
+  requirements={[
+    "Configure Multer with size and format limits.",
+    "Block uploads that exceed 2MB in size.",
+    "Add error handlers to capture validation failures."
+  ]}
+  expectedOutput={"// Middleware rejects invalid file uploads\nPOST /avatar (10MB file) -> Status 400 Bad Request"}
+>
+Complete this task to verify your configuration operates correctly.
+</TaskBox>
+
+---
+
+## Interview Tip
+
+<InterviewTip question={"Why should you use memory storage instead of disk storage when uploading to cloud services?"}>
+Memory storage is faster because it holds files in RAM buffer memory. This allows you to stream files directly to cloud storage (like AWS S3) without writing temporary files to local disks, improving performance and security.
+</InterviewTip>

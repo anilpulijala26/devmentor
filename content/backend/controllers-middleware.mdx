@@ -1,0 +1,113 @@
+---
+title: "Controllers & Middleware Pipeline"
+description: "Master the Express middleware architecture. Chain loggers, parser interceptors, validation filters, and route controller layers."
+tags: ["express","middleware"]
+---
+
+## What You Will Learn
+
+- Explain the middleware execution pipeline (req, res, next).
+- Construct custom middleware checks for logging and security.
+- Separate routing mappings from business logic controllers.
+
+---
+
+## Why This Matters in Real Projects
+
+Express operates entirely as a middleware pipeline. Writing clean middlewares allows developers to run authentication checks, logging, and security validations uniformly across all API routes before processing controllers business logic.
+
+<SeniorNote>
+Always call `next()` or send a response from within your middleware. If you forget to invoke either action, the request will hang permanently, locking browser connections.
+</SeniorNote>
+
+---
+
+## Concept Explanation
+
+### The Middleware Chain
+
+A middleware function has access to the Request object (`req`), Response object (`res`), and the next middleware function in the stack (`next`):
+- **Interception**: Middlewares can execute custom logic, modify request details, and validate authorization.
+- **Next Trigger**: Invoking `next()` yields execution control to the next middleware in the queue.
+- **Early Termination**: If validation fails, middlewares can immediately return a response (e.g. `res.status(403).send()`), short-circuiting the pipeline.
+
+---
+
+## Real-Time Project Example
+
+<RealTimeExample title={"Controllers & Middleware Pipeline Scenario"}>
+When audit tracing requests, writing a logging middleware tracks processing times for all API endpoints, logging telemetry details to monitoring agents on request completion.
+</RealTimeExample>
+
+---
+
+## Code Example
+
+Below is a configuration file matching senior standards:
+
+```javascript
+// Custom execution logger middleware
+import express from 'express';
+const app = express();
+
+const requestTimingLogger = (req, res, next) => {
+  const start = Date.now();
+  
+  // Hook into response finish events to log duration
+  res.on('finish', () => {
+    const duration = Date.now() - start;
+    console.log(`[${req.method}] ${req.originalUrl} - ${res.statusCode} (${duration}ms)`);
+  });
+  
+  next(); // Pass controls to the next middleware
+};
+
+// Route Controller
+const getUserProfile = (req, res) => {
+  res.status(200).json({ user: 'Dev mentor profile' });
+};
+
+app.use(requestTimingLogger);
+app.get('/profile', getUserProfile);
+```
+
+---
+
+## Common Mistakes
+
+Here is an example of incorrect setups vs clean, optimized configurations.
+
+<CommonMistake
+  title={"Modifying headers after they are sent to the client"}
+  badDesc={"Attempting to send a response or call next() to a responding controller after already writing response headers. This throws a 'Cannot set headers after they are sent to the client' exception."}
+  badCode={"app.use((req, res, next) => {\n  if (!req.headers.auth) {\n    res.status(401).send('Unauthorized'); // Response sent!\n  }\n  next(); // BAD: Continues chain and triggers second response\n});"}
+  goodDesc={"Returning early from middlewares once a response has been dispatched to stop downstream executions."}
+  goodCode={"app.use((req, res, next) => {\n  if (!req.headers.auth) {\n    return res.status(401).send('Unauthorized'); // return halts execution\n  }\n  next();"}
+/>
+
+---
+
+## Practice Task
+
+Solidify your knowledge by implementing this exercise in your codebase.
+
+<TaskBox
+  title={"Write an API Token Verification Middleware"}
+  duration={"20 Minutes"}
+  requirements={[
+    "Write a middleware verifying an API-Key header.",
+    "Reject requests with a 403 status if keys mismatch.",
+    "Mount developer credentials onto the request object on success."
+  ]}
+  expectedOutput={"// Authorized API request proceeds successfully\nres.status(200).json({ data: \"secured data\" });"}
+>
+Complete this task to verify your configuration operates correctly.
+</TaskBox>
+
+---
+
+## Interview Tip
+
+<InterviewTip question={"What is the differences between application-level and router-level middleware?"}>
+Application-level middleware is bound to an instance of the app object using app.use(). It executes for every request traversing the application. Router-level middleware is bound to an instance of express.Router() using router.use(), executing only for routes defined under that specific router.
+</InterviewTip>

@@ -1,0 +1,109 @@
+---
+title: "OWASP Basics & Env Variable Safety"
+description: "Secure your backend against the OWASP Top 10 vulnerabilities, protecting databases, API keys, and configurations."
+tags: ["security","owasp"]
+---
+
+## What You Will Learn
+
+- Mitigate the top OWASP vulnerabilities in Node.js.
+- Secure environment variables and configurations.
+- Enforce SQL parameterization.
+
+---
+
+## Why This Matters in Real Projects
+
+Exposed keys and SQL injection vulnerabilities represent major security gaps. Understanding security best practices and securing variables helps prevent credentials leaks and server intrusions.
+
+<SeniorNote>
+Never check in `.env` files into source control repositories. Use vault storage systems in production (like AWS Secrets Manager, Azure Key Vault, or HashiCorp Vault) to inject variables safely.
+</SeniorNote>
+
+---
+
+## Concept Explanation
+
+### OWASP Security Fundamentals
+
+- **Broken Access Control**: Ensure users can only access records they own.
+- **Cryptographic Failures**: Encrypt sensitive data in transit and at rest.
+- **Injection**: Prevent SQL and NoSQL injections by parameterizing queries.
+- **Security Misconfiguration**: Deactivate debug error panels and default configuration options in production.
+
+---
+
+## Real-Time Project Example
+
+<RealTimeExample title={"OWASP Basics & Env Variable Safety Scenario"}>
+When retrieving invoice details, verifying that the user ID in the session token matches the user ID in the invoice record prevents unauthorized access (Broken Object Level Authorization).
+</RealTimeExample>
+
+---
+
+## Code Example
+
+Below is a configuration file matching senior standards:
+
+```javascript
+// Query parameterization to prevent SQL injection vulnerabilities
+import express from 'express';
+import pg from 'pg';
+const pool = new pg.Pool();
+const app = express();
+
+// BAD: String concatenation is vulnerable to SQL injection!
+app.get('/users-bad', async (req, res) => {
+  const query = `SELECT * FROM users WHERE email = '${req.query.email}'`;
+  const result = await pool.query(query); // Vulnerable to SQL injection!
+  res.json(result.rows);
+});
+
+// GOOD: Parameterized queries sanitize inputs natively
+app.get('/users-good', async (req, res) => {
+  const query = 'SELECT * FROM users WHERE email = $1';
+  const result = await pool.query(query, [req.query.email]); // Safe query parameters
+  res.json(result.rows);
+});
+```
+
+---
+
+## Common Mistakes
+
+Here is an example of incorrect setups vs clean, optimized configurations.
+
+<CommonMistake
+  title={"Concatenating User Input inside Database Queries"}
+  badDesc={"Using string interpolation to build SQL queries. This allows users to bypass authorization checks by injecting SQL commands."}
+  badCode={"// String concatenation vulnerability\nconst sql = \"SELECT * FROM users WHERE user = '\" + input + \"'\";"}
+  goodDesc={"Using parameterized query values to sanitize parameters."}
+  goodCode={"// Safe query parameters\nconst sql = \"SELECT * FROM users WHERE user = $1\";"}
+/>
+
+---
+
+## Practice Task
+
+Solidify your knowledge by implementing this exercise in your codebase.
+
+<TaskBox
+  title={"Audit and Secure a Query Handler"}
+  duration={"20 Minutes"}
+  requirements={[
+    "Audit a list of string concatenation SQL queries.",
+    "Refactor queries to use parameterized values.",
+    "Test queries to verify inputs are parsed safely."
+  ]}
+  expectedOutput={"// Database queries are safe from SQL injection\npool.query(\"...\", [...]) -> SQL runs securely"}
+>
+Complete this task to verify your configuration operates correctly.
+</TaskBox>
+
+---
+
+## Interview Tip
+
+<InterviewTip question={"What is SQL Injection and how do you prevent it?"}>
+SQL Injection is a vulnerability where attackers inject malicious SQL statements into inputs, causing databases to execute unauthorized commands. Prevent it by using parameterized queries or ORMs, which sanitize inputs and treat values as data rather than executable code.
+</InterviewTip>

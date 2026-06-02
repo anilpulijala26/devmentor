@@ -1,0 +1,103 @@
+---
+title: "Vercel Deployment & Custom Domain Setup"
+description: "Deploy client frameworks, configure DNS headers, and sync domains."
+tags: ["deployment","vercel"]
+---
+
+## What You Will Learn
+
+- Deploy client-side web applications to Vercel.
+- Configure DNS headers and custom domains.
+- Sync environment variables across Vercel environments.
+
+---
+
+## Why This Matters in Real Projects
+
+Deploying client applications manually is slow. Vercel provides automated deployments on git pushes, instant preview builds, and custom domain configurations with automated SSL management.
+
+<SeniorNote>
+Use Vercel branch previews to test feature changes in staging environments before merging code into main branches.
+</SeniorNote>
+
+---
+
+## Concept Explanation
+
+### Serverless Client Deployments
+
+- **Git-Integration**: Automated preview builds triggered on every commit.
+- **Custom Domains**: Registering domains and configuring DNS records (CNAME, A records) to point traffic to Vercel CDN endpoints.
+- **Environment Management**: Injecting environment variables through Vercel dashboards.
+
+---
+
+## Real-Time Project Example
+
+<RealTimeExample title={"Vercel Deployment & Custom Domain Setup Scenario"}>
+When developers push changes to feature branches, Vercel creates preview URLs, allowing teams to test layouts before merging code.
+</RealTimeExample>
+
+---
+
+## Code Example
+
+Below is a configuration file matching senior standards:
+
+```javascript
+// vercel.json client configuration example
+{
+  "rewrites": [
+    { "source": "/api/(.*)", "destination": "https://api.codenivra.com/api/$1" }
+  ],
+  "headers": [
+    {
+      "source": "/(.*)",
+      "headers": [
+        { "key": "X-Frame-Options", "value": "DENY" }
+      ]
+    }
+  ]
+}
+```
+
+---
+
+## Common Mistakes
+
+Here is an example of incorrect setups vs clean, optimized configurations.
+
+<CommonMistake
+  title={"Leaving Build-Time Variables Out of Deployment Configs"}
+  badDesc={"Deploying applications without configuring environment variables in dashboard settings, causing build compilation failures."}
+  badCode={"// Missing env keys in dashboard panels"}
+  goodDesc={"Configuring all required environment keys in Vercel project settings prior to builds."}
+  goodCode={"// Environment variables configured in dashboard"}
+/>
+
+---
+
+## Practice Task
+
+Solidify your knowledge by implementing this exercise in your codebase.
+
+<TaskBox
+  title={"Write a vercel.json rewrite configuration"}
+  duration={"20 Minutes"}
+  requirements={[
+    "Create a vercel.json file in client apps.",
+    "Add path rewrite rules for API routes.",
+    "Deploy client apps to Vercel using CLI tools."
+  ]}
+  expectedOutput={"// Vercel routes query endpoints successfully\nAPI requests rewrite to backend production servers"}
+>
+Complete this task to verify your configuration operates correctly.
+</TaskBox>
+
+---
+
+## Interview Tip
+
+<InterviewTip question={"How does Vercel manage SSL certificates?"}>
+Vercel automatically provisions and rotates Let's Encrypt SSL certificates for all custom domains connected to projects, ensuring secure HTTPS traffic.
+</InterviewTip>

@@ -1,0 +1,114 @@
+---
+title: "HTTP Methods & Status Code Mappings"
+description: "Map database CRUD operations to standard HTTP methods, and issue status codes representing request outcomes."
+tags: ["api","http"]
+---
+
+## What You Will Learn
+
+- Map CRUD actions to GET, POST, PUT, DELETE, and PATCH methods.
+- Differentiate between idempotent and non-idempotent operations.
+- Assign status codes to client and server states.
+
+---
+
+## Why This Matters in Real Projects
+
+Browsers and caching proxies rely on HTTP standards to process responses. Returning incorrect status codes (such as 200 OK for updates that fail) prevents clients from handling errors cleanly.
+
+<SeniorNote>
+GET, PUT, and DELETE must operate as idempotent actions, meaning executing the request multiple times yields the same state. POST is not idempotent, as it creates new resources on every call.
+</SeniorNote>
+
+---
+
+## Concept Explanation
+
+### HTTP Method Mappings
+
+- **GET**: Reads resources. Must not modify database states (safe method).
+- **POST**: Creates resources. Non-idempotent.
+- **PUT**: Replaces resources. Idempotent.
+- **PATCH**: Partially updates resources.
+- **DELETE**: Removes resources. Idempotent.
+
+### Core Status Categories
+- **2xx (Success)**: 200 OK, 201 Created, 204 No Content.
+- **3xx (Redirects)**: 301 Permanent, 302 Temporary.
+- **4xx (Client Errors)**: 400 Bad Request, 401 Unauthenticated, 403 Forbidden, 404 Not Found.
+- **5xx (Server Errors)**: 500 Internal Error, 503 Service Unavailable.
+
+---
+
+## Real-Time Project Example
+
+<RealTimeExample title={"HTTP Methods & Status Code Mappings Scenario"}>
+When validating checkout details, if credit cards are declined, returning a 400 Bad Request status code flags validation errors. If authorization checks fail, returning 401 Unauthorized prevents execution.
+</RealTimeExample>
+
+---
+
+## Code Example
+
+Below is a configuration file matching senior standards:
+
+```javascript
+// Mappings handlers to HTTP Methods and Status Codes
+import express from 'express';
+const app = express();
+
+app.post('/api/users', (req, res) => {
+  const { email } = req.body;
+  if (!email) {
+    return res.status(400).json({ error: 'Email parameter is required.' }); // 400 Client error
+  }
+  // Create user database record
+  res.status(201).json({ id: 'user_123', email }); // 201 Created
+});
+
+app.delete('/api/users/:id', (req, res) => {
+  // Delete user record
+  res.status(204).send(); // 204 No Content (Successful removal)
+});
+```
+
+---
+
+## Common Mistakes
+
+Here is an example of incorrect setups vs clean, optimized configurations.
+
+<CommonMistake
+  title={"Returning 200 OK for Server Failures"}
+  badDesc={"Returning 200 OK status codes containing error payload messages. This prevents client tools and proxies from recognizing failures programmatically."}
+  badCode={"app.get('/api/users/:id', (req, res) => {\n  if (!userExists) {\n    res.status(200).json({ success: false, error: 'Not found' }); // BAD: 200 OK!\n  }\n});"}
+  goodDesc={"Always returning appropriate HTTP status codes (e.g., 404 Not Found) for errors."}
+  goodCode={"app.get('/api/users/:id', (req, res) => {\n  if (!userExists) {\n    res.status(404).json({ error: 'User not found.' }); // GOOD: 404 Not Found\n  }\n});"}
+/>
+
+---
+
+## Practice Task
+
+Solidify your knowledge by implementing this exercise in your codebase.
+
+<TaskBox
+  title={"Assign Status Codes to API Scenarios"}
+  duration={"15 Minutes"}
+  requirements={[
+    "Audit a list of express route handlers.",
+    "Replace generic 200 codes with specific status codes.",
+    "Ensure DELETE routes return 204 status on completion."
+  ]}
+  expectedOutput={"// API returns correct status codes\nPOST -> 201 Created\nDELETE -> 204 No Content"}
+>
+Complete this task to verify your configuration operates correctly.
+</TaskBox>
+
+---
+
+## Interview Tip
+
+<InterviewTip question={"What is the difference between PUT and PATCH methods?"}>
+PUT replaces the entire resource with the updated payload. If fields are omitted, they are deleted or set to default. PATCH performs a partial update, modifying only the fields specified in the request body.
+</InterviewTip>

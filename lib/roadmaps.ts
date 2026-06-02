@@ -215,9 +215,140 @@ export const roadmaps: Roadmap[] = [
       "I understand database performance analysis (EXPLAIN statements)",
       "I can answer conceptual questions on event-loops, fibers, and network lifecycles"
     ]
+  },
+  {
+    slug: "backend-developer",
+    title: "Backend Developer Roadmap",
+    level: "Advanced",
+    description: "Architect core server logic, handle data validations, design relational schemas, secure APIs, and run tests.",
+    skillsCovered: [
+      "Node.js & Event Loop Mechanics",
+      "Express Middleware & Routing Pipelines",
+      "Request Validation (Zod Schema)",
+      "Relational Databases (PostgreSQL/Prisma)",
+      "File Uploads & Cloud Storage (S3)",
+      "Centralized Exception Handling"
+    ],
+    recommendedLessons: [
+      { track: "backend", slug: "what-is-node", title: "What is Node.js Runtime" },
+      { track: "backend", slug: "express-setup", title: "Express Routing Mechanics" },
+      { track: "backend", slug: "zod-validation", title: "Request Validation with Zod" },
+      { track: "backend", slug: "jwt-tokens", title: "JWT Access Tokens & Cookies" },
+      { track: "backend", slug: "prisma-drizzle-orm", title: "ORM Integration" },
+      { track: "backend", slug: "multer-uploads", title: "File Upload with Multer" }
+    ],
+    projectTasks: [
+      {
+        title: "REST API with Express and PostgreSQL",
+        description: "Deploy an Express server querying PostgreSQL database records securely using parameterized requests.",
+        projectSlug: "express-postgres-api"
+      },
+      {
+        title: "Authentication System with JWT",
+        description: "Develop a secure auth portal storing credentials using bcrypt and issuing JWT session tokens.",
+        projectSlug: "auth-system"
+      },
+      {
+        title: "Blog CMS Backend with Prisma",
+        description: "Model relational database schemas and manage content using Prisma ORM selects.",
+        projectSlug: "blog-cms-backend"
+      }
+    ],
+    duration: "12 - 16 Weeks",
+    checklist: [
+      "I can configure Express route pipelines with custom middlewear handlers",
+      "I can run schema validations using Zod",
+      "I can write parameterized SQL and run migrations using ORM schemas",
+      "I can write REST CRUD handlers returning structured JSON error payloads"
+    ]
+  },
+  {
+    slug: "full-stack-developer",
+    title: "Full-Stack Developer Roadmap",
+    level: "Professional",
+    description: "Combine frontend interfaces with backend servers, managing states, auth cookies, role-based controls, and monorepo files.",
+    skillsCovered: [
+      "Next.js App Router (RSC vs Client)",
+      "API Service Layers (Axios/Fetch)",
+      "Form Validations Sync",
+      "HTTP-Only Cookie Authentication",
+      "Role-Based UI Rendering States",
+      "Monorepo Workspace Structures"
+    ],
+    recommendedLessons: [
+      { track: "frontend-frameworks", slug: "nextjs-app-router", title: "App Router Fundamentals" },
+      { track: "fullstack", slug: "connecting-frontend-backend", title: "Connecting Client & Server" },
+      { track: "fullstack", slug: "api-service-layer", title: "API Service Layer & Auth" },
+      { track: "fullstack", slug: "form-validation-errors", title: "Form Validation Sync" },
+      { track: "fullstack", slug: "role-based-ui", title: "Role-Based UI Control" }
+    ],
+    projectTasks: [
+      {
+        title: "Task Management Full-Stack App",
+        description: "Connect a React frontend workspace with Express database routes, managing task boards.",
+        projectSlug: "task-manager"
+      },
+      {
+        title: "Role-Based Access Control Dashboard",
+        description: "Create an admin panel routing permissions and hiding options based on roles.",
+        projectSlug: "rbac-dashboard"
+      }
+    ],
+    duration: "16 - 20 Weeks",
+    checklist: [
+      "I can sync client validation checks with backend Zod rules",
+      "I can handle cookies and manage secure token sessions",
+      "I understand how to structure folders inside a monorepo workspace",
+      "I can handle loading and error fallbacks on client fetches"
+    ]
+  },
+  {
+    slug: "devops-ready-full-stack",
+    title: "DevOps-Ready Full-Stack Developer",
+    level: "Professional",
+    description: "Package full-stack applications in Docker containers, orchestrate with compose, automate pipelines with CI/CD, and host on AWS & Azure.",
+    skillsCovered: [
+      "Multi-stage Dockerfile Compilations",
+      "Docker Compose Orchestration",
+      "GitHub Actions CI/CD workflows",
+      "AWS Cloud Compute & DB (EC2/RDS)",
+      "Azure Static Apps & Storage vaults",
+      "Production Telemetry, Monitoring & Logs"
+    ],
+    recommendedLessons: [
+      { track: "deployment", slug: "env-variables-secrets", title: "Environment Secrets Management" },
+      { track: "deployment", slug: "cicd-intro", title: "GitHub Actions Pipelines" },
+      { track: "deployment", slug: "docker-basics", title: "Dockerfile & Compose basics" },
+      { track: "deployment", slug: "aws-iam-s3", title: "AWS Cloud Operations" },
+      { track: "deployment", slug: "azure-appservice-static-blob", title: "Azure Cloud Operations" },
+      { track: "deployment", slug: "production-monitoring-logging", title: "Telemetry & Logs" }
+    ],
+    projectTasks: [
+      {
+        title: "Dockerized Full-Stack App",
+        description: "Orchestrate Next.js, Express, and PostgreSQL services inside multi-container networks.",
+        projectSlug: "dockerized-fullstack"
+      },
+      {
+        title: "AWS/Azure Cloud Deployment",
+        description: "Host backend containers on virtual servers, provisioning managed databases, CDNs, and domains.",
+        projectSlug: "cloud-deployment"
+      }
+    ],
+    duration: "20 - 24 Weeks",
+    checklist: [
+      "I can write Dockerfiles optimizing cache layers",
+      "I can construct compose scripts connecting services and named volumes",
+      "I can write Action pipeline rules linting and deploying assets",
+      "I can monitor cloud virtual machines and analyze RDS database logs"
+    ]
   }
 ];
 
 export function getRoadmapBySlug(slug: string): Roadmap | undefined {
   return roadmaps.find((r) => r.slug === slug);
 }
+export function getAllRoadmaps(): Roadmap[] {
+  return roadmaps;
+}
+

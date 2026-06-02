@@ -1,0 +1,110 @@
+---
+title: "Unit and Integration Testing Models"
+description: "Write automated tests for backends. Compare unit tests and integration tests, and configure Jest test runners."
+tags: ["testing","jest"]
+---
+
+## What You Will Learn
+
+- Understand the testing pyramid (unit, integration, end-to-end).
+- Configure Jest test runner configurations.
+- Write unit tests for utility functions and isolated logic.
+
+---
+
+## Why This Matters in Real Projects
+
+Deploying code without automated tests is a major risk. Unit tests verify isolated business functions quickly, while integration tests check database queries and routing modules.
+
+<SeniorNote>
+Write independent unit tests that do not share states. Use lifecycle hooks (`beforeEach`, `afterEach`) to clean up test fixtures between runs.
+</SeniorNote>
+
+---
+
+## Concept Explanation
+
+### Automated Testing Categories
+
+- **Unit Testing**: Tests individual functions or modules in isolation. Dependencies (like database clients) are mocked out for speed.
+- **Integration Testing**: Tests how multiple modules interact, verifying database queries and API route integrations.
+- **Test Runners**: Libraries (like Jest or Vitest) that execute tests, assert outcomes, and collect code coverage reports.
+
+---
+
+## Real-Time Project Example
+
+<RealTimeExample title={"Unit and Integration Testing Models Scenario"}>
+When calculating cart prices, unit tests verify discount logic, while integration tests run database queries to ensure checkout balances match.
+</RealTimeExample>
+
+---
+
+## Code Example
+
+Below is a configuration file matching senior standards:
+
+```javascript
+// Unit testing utility functions with Jest
+// math.js
+export const applyDiscount = (price, discountPercent) => {
+  if (discountPercent < 0 || discountPercent > 100) {
+    throw new Error('Invalid discount percentage.');
+  }
+  return price - (price * (discountPercent / 100));
+};
+
+// math.test.js
+import { applyDiscount } from './math';
+
+describe('applyDiscount unit tests', () => {
+  it('correctly calculates discount values', () => {
+    expect(applyDiscount(100, 20)).toBe(80);
+  });
+  
+  it('throws an error on invalid percentage thresholds', () => {
+    expect(() => applyDiscount(100, -5)).toThrow('Invalid discount percentage.');
+  });
+});
+```
+
+---
+
+## Common Mistakes
+
+Here is an example of incorrect setups vs clean, optimized configurations.
+
+<CommonMistake
+  title={"Shared state between test suites"}
+  badDesc={"Modifying global variables or database records in one test without cleanup, causing subsequent tests to fail unpredictably."}
+  badCode={"let user;\nit('creates user', () => {\n  user = { id: 1 }; // Sets shared state\n});\nit('reads user', () => {\n  expect(user.id).toBe(1); // Fails if executed out of order!\n});"}
+  goodDesc={"Using lifecycle hooks to reset configurations between test runs."}
+  goodCode={"beforeEach(() => {\n  user = null; // Clean state before each test run\n});"}
+/>
+
+---
+
+## Practice Task
+
+Solidify your knowledge by implementing this exercise in your codebase.
+
+<TaskBox
+  title={"Write a set of Jest unit tests"}
+  duration={"20 Minutes"}
+  requirements={[
+    "Initialize Jest and define testing scripts.",
+    "Write unit tests for a payload parser function.",
+    "Test edge cases and error exceptions."
+  ]}
+  expectedOutput={"// Jest test suites pass successfully\nPASS  ./parser.test.js\nTest Suites: 1 passed, 1 total"}
+>
+Complete this task to verify your configuration operates correctly.
+</TaskBox>
+
+---
+
+## Interview Tip
+
+<InterviewTip question={"What is Code Coverage?"}>
+Code Coverage is a metric that measures the percentage of your codebase executed by automated tests, checking lines, branches, functions, and statements.
+</InterviewTip>

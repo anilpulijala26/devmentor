@@ -1,0 +1,112 @@
+---
+title: "Asynchronous Core & Error Basics"
+description: "Write resilient asynchronous operations. Master callback parameters, Promise chain behaviors, async/await error wrappers, and global process crash catchers."
+tags: ["node","async","errors"]
+---
+
+## What You Will Learn
+
+- Catch errors correctly across callbacks, Promises, and async/await scopes.
+- Implement unhandled exception hooks to log crash data before shutdown.
+- Understand the error-first callback pattern.
+
+---
+
+## Why This Matters in Real Projects
+
+Uncaught exceptions instantly crash Node.js servers, dropping active requests from other users. Managing promise rejections and handling errors gracefully keeps your services running under failure scenarios (e.g. database disconnects).
+
+<SeniorNote>
+When catching unhandled exceptions or rejected promises globally, always schedule a clean process shutdown (`process.exit(1)`) after logging the error. The application state is corrupted and cannot be trusted to run.
+</SeniorNote>
+
+---
+
+## Concept Explanation
+
+### Asynchronous Error Vectors
+
+In Node.js, asynchronous code runs outside the call stack of the initiating function. As a result:
+- **Try/Catch Blocks** cannot capture exceptions thrown inside asynchronous callbacks.
+- **Error-First Callbacks** return error parameters as the first argument: `(err, data) => {}`.
+- **Promises** trigger rejections that must be caught via `.catch()` or within async/await try/catch blocks.
+
+Global fallbacks like `process.on('uncaughtException')` provide a final net to log diagnostics before the program terminates.
+
+---
+
+## Real-Time Project Example
+
+<RealTimeExample title={"Asynchronous Core & Error Basics Scenario"}>
+When query pipelines disconnect during high load, wrapping ORM transactions in async catch handlers allows your backend to return standard error status envelopes (like 503 Service Unavailable) instead of crashing the server container.
+</RealTimeExample>
+
+---
+
+## Code Example
+
+Below is a configuration file matching senior standards:
+
+```javascript
+// Handling async errors and global process hooks
+const fs = require('fs').promises;
+
+async function loadData() {
+  try {
+    const data = await fs.readFile('config.json', 'utf8');
+    return JSON.parse(data);
+  } catch (err) {
+    // Graceful fallback + error telemetry log
+    console.error('Failed to parse database configuration:', err.message);
+    throw new Error('Database config unreadable.');
+  }
+}
+
+// Global hook to catch unhandled Promise rejections
+process.on('unhandledRejection', (reason, promise) => {
+  console.error('Unhandled Promise Rejection detected:', reason);
+  // Gracefully close server links, flush logs, then terminate
+  process.exit(1);
+});
+```
+
+---
+
+## Common Mistakes
+
+Here is an example of incorrect setups vs clean, optimized configurations.
+
+<CommonMistake
+  title={"Swallowing Errors without Throwing or Logging"}
+  badDesc={"Using empty catch blocks. This hides bugs, making troubleshooting impossible when features fail silently."}
+  badCode={"try {\n  await db.save(user);\n} catch (err) {\n  // Swallowed error! No logs, no response.\n}"}
+  goodDesc={"Logging the stack trace and returning an error code or forwarding it to error middlewares."}
+  goodCode={"try {\n  await db.save(user);\n} catch (err) {\n  logger.error('Failed user registration:', err);\n  throw new DatabaseConnectionError(err.message);\n}"}
+/>
+
+---
+
+## Practice Task
+
+Solidify your knowledge by implementing this exercise in your codebase.
+
+<TaskBox
+  title={"Write an Async Error Catcher Wrapper"}
+  duration={"20 Minutes"}
+  requirements={[
+    "Create an asynchronous function that throws a mock error.",
+    "Implement a higher-order function wrapping error catches.",
+    "Verify execution logs capture trace details."
+  ]}
+  expectedOutput={"// Async catch wrapper forwards exceptions automatically\nconst safeFetch = catchAsync(async (req) => { ... });"}
+>
+Complete this task to verify your configuration operates correctly.
+</TaskBox>
+
+---
+
+## Interview Tip
+
+<InterviewTip question={"What happens if a Promise rejection is not handled?"}>
+In modern versions of Node.js, an unhandled Promise rejection logs a warning and triggers a process shutdown, emitting the 'unhandledRejection' event. If left unhandled, it will terminate the application with a non-zero exit code.
+</InterviewTip>

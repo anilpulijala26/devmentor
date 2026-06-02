@@ -19,10 +19,12 @@ export default function RoadmapsPage() {
   };
 
   const timelineSteps = [
-    { title: "Intern", desc: "Foundations", label: "Beginner" },
+    { title: "Intern Web Dev", desc: "Foundations", label: "Beginner" },
     { title: "Junior Frontend", desc: "React & TS", label: "Intermediate" },
-    { title: "Mid Full-Stack", desc: "APIs & Databases", label: "Advanced" },
-    { title: "Senior UI", desc: "Architecture & Docker", label: "Professional" },
+    { title: "Backend Dev", desc: "Express & SQL", label: "Advanced" },
+    { title: "Full-Stack Dev", desc: "Next.js & API Sync", label: "Professional" },
+    { title: "Senior UI Dev", desc: "Fibers & Caching", label: "Professional" },
+    { title: "DevOps Full-Stack", desc: "Docker & AWS/Azure", label: "Professional" },
     { title: "Interview Prep", desc: "Pitches & Audits", label: "Interview Prep" }
   ];
 

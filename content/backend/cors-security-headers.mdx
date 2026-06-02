@@ -1,0 +1,116 @@
+---
+title: "CORS & Helmet Security Headers"
+description: "Secure Express APIs against cross-origin scripting attacks. Configure origin whitelists, CORS headers, and Helmet security parameters."
+tags: ["security","cors"]
+---
+
+## What You Will Learn
+
+- Configure Cross-Origin Resource Sharing (CORS) rules.
+- Secure HTTP headers using the Helmet middleware.
+- Understand preflight requests.
+
+---
+
+## Why This Matters in Real Projects
+
+By default, browsers block web applications from querying APIs hosted on other domains. Configuring CORS whitelists grants access to trusted frontends, and Helmet sets secure HTTP headers to mitigate cross-site scripting (XSS) and clickjacking attacks.
+
+<SeniorNote>
+Do not set `Access-Control-Allow-Origin` to wildcard '*' in production if your API handles authentication cookies or credentials. This is a critical security vulnerability.
+</SeniorNote>
+
+---
+
+## Concept Explanation
+
+### CORS & Security Headers
+
+- **CORS**: Enforces origin checks on incoming requests. Browser preflight requests (`OPTIONS`) verify authorization before sending actual requests.
+- **Helmet**: Sets secure HTTP response headers, including:
+  - `X-Content-Type-Options`: Mitigates MIME sniffing.
+  - `X-Frame-Options`: Mitigates clickjacking attacks.
+  - `Content-Security-Policy (CSP)`: Restricts script execution origins.
+
+---
+
+## Real-Time Project Example
+
+<RealTimeExample title={"CORS & Helmet Security Headers Scenario"}>
+When deploying backends onto production domains, configuring CORS whitelists restricts API access to your frontend domain, blocking unauthorized domains from querying endpoints.
+</RealTimeExample>
+
+---
+
+## Code Example
+
+Below is a configuration file matching senior standards:
+
+```javascript
+// Securing Express apps using CORS and Helmet middlewares
+import express from 'express';
+import cors from 'cors';
+import helmet from 'helmet';
+
+const app = express();
+
+// 1. Configure Helmet security headers
+app.use(helmet());
+
+// 2. Configure CORS whitelisting options
+const allowedOrigins = ['https://codenivra.com', 'https://admin.codenivra.com'];
+app.use(cors({
+  origin: (origin, callback) => {
+    // Allow requests with no origin (e.g. mobile apps or curl)
+    if (!origin) return callback(null, true);
+    
+    if (allowedOrigins.includes(origin)) {
+      callback(null, true);
+    } else {
+      callback(new Error('Blocked by CORS policy.'));
+    }
+  },
+  credentials: true // Allow cookies
+}));
+```
+
+---
+
+## Common Mistakes
+
+Here is an example of incorrect setups vs clean, optimized configurations.
+
+<CommonMistake
+  title={"Wildcard CORS configurations in production APIs"}
+  badDesc={"Setting origin permissions to '*' when endpoints handle cookies. This allows malicious third-party websites to make authorized requests on behalf of users."}
+  badCode={"// BAD: Allows any origin to read credentialed responses\napp.use(cors({ origin: '*', credentials: true }));"}
+  goodDesc={"Always whitelisting specific origins when credentials options are active."}
+  goodCode={"// GOOD: Restricts credentialed access to specific origins\napp.use(cors({ origin: ['https://trusted.com'], credentials: true }));"}
+/>
+
+---
+
+## Practice Task
+
+Solidify your knowledge by implementing this exercise in your codebase.
+
+<TaskBox
+  title={"Configure CORS and Helmet on an Express server"}
+  duration={"15 Minutes"}
+  requirements={[
+    "Install and import cors and helmet packages.",
+    "Whitelist specific local and staging domains.",
+    "Test endpoints to verify matching CORS headers."
+  ]}
+  expectedOutput={"// Response headers include security mappings\nx-frame-options: SAMEORIGIN\naccess-control-allow-origin: https://..."}
+>
+Complete this task to verify your configuration operates correctly.
+</TaskBox>
+
+---
+
+## Interview Tip
+
+<InterviewTip question={"What is an HTTP Preflight request?"}>
+An HTTP Preflight request is a CORS request sent by browsers using the OPTIONS method to verify that servers authorize cross-origin requests before sending actual requests (like POST or PUT).
+</InterviewTip>

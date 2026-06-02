@@ -1,0 +1,113 @@
+---
+title: "Modular Folder Structure"
+description: "Organize Node.js/Express applications into a clean, maintainable, production-ready structure separating routes, controllers, and services."
+tags: ["express","architecture"]
+---
+
+## What You Will Learn
+
+- Understand standard layered architecture patterns in backends.
+- Organize route mappings, business controllers, and data services.
+- Implement configurations loader models.
+
+---
+
+## Why This Matters in Real Projects
+
+Monolithic file layouts become unmaintainable as projects scale. Separating routing, database processing, input validation, and business logic into modular folders allows multiple developers to work concurrently and simplify testing.
+
+<SeniorNote>
+Never put raw database queries directly inside route handlers. Separate routing (mapping URLs to functions) from business logic (processing inputs) and database queries (services).
+</SeniorNote>
+
+---
+
+## Concept Explanation
+
+### Layered Directory Architecture
+
+Production backends segment code into distinct layers:
+- **Routes**: Define API routes and map endpoints to validations and controllers.
+- **Controllers**: Handle HTTP mechanics (req/res) and parse payloads.
+- **Services**: Contain business logic and write queries to database engines.
+- **Middlewares**: Process authentication, security, and exception capturing.
+- **Config**: Manage environment variable load operations and pool client clients.
+
+---
+
+## Real-Time Project Example
+
+<RealTimeExample title={"Modular Folder Structure Scenario"}>
+When building e-commerce systems, routes handle URL mappings, controllers validate payload bindings, services write database queries, and database configurations manage connection pools.
+</RealTimeExample>
+
+---
+
+## Code Example
+
+Below is a configuration file matching senior standards:
+
+```javascript
+// Project Directory Layout Example:
+//
+// src/
+// ├── config/
+// │   └── database.js
+// ├── routes/
+// │   └── user.routes.js
+// ├── controllers/
+// │   └── user.controller.js
+// ├── services/
+// │   └── user.service.js
+// ├── middlewares/
+// │   └── auth.middleware.js
+// └── app.js
+
+// user.routes.js
+import express from 'express';
+import { register } from '../controllers/user.controller.js';
+const router = express.Router();
+router.post('/register', register);
+export default router;
+```
+
+---
+
+## Common Mistakes
+
+Here is an example of incorrect setups vs clean, optimized configurations.
+
+<CommonMistake
+  title={"Putting Business Logic Inside Routes"}
+  badDesc={"Writing database calls, email logic, and format sanitizations directly inside route files, leading to massive, un-testable files."}
+  badCode={"// routes.js (MONOLITHIC MESS)\napp.post('/register', async (req, res) => {\n  const user = await db.query('INSERT INTO...');\n  await email.send(user.email);\n  res.send(user);\n});"}
+  goodDesc={"Routing requests to controllers and delegating business steps to specialized service modules."}
+  goodCode={"// routes.js\nrouter.post('/register', userController.register);\n\n// controller.js\nexport async function register(req, res, next) {\n  const user = await userService.createUser(req.body);\n  res.status(201).json(user);\n}"}
+/>
+
+---
+
+## Practice Task
+
+Solidify your knowledge by implementing this exercise in your codebase.
+
+<TaskBox
+  title={"Refactor a Route Handler into Controller layers"}
+  duration={"20 Minutes"}
+  requirements={[
+    "Examine a monolithic API route.",
+    "Isolate business queries into a user.service file.",
+    "Map controller routes in route files."
+  ]}
+  expectedOutput={"// Clean modular import mappings\nimport userRoutes from './routes/user.routes.js';"}
+>
+Complete this task to verify your configuration operates correctly.
+</TaskBox>
+
+---
+
+## Interview Tip
+
+<InterviewTip question={"Why should we decouple controllers from service layers?"}>
+Decoupling controllers from service layers separates HTTP mechanics (headers, params, status codes) from core business logic (calculations, database transactions). This allows you to test business logic independently of HTTP environments, and reuse services in CLI commands or background workers.
+</InterviewTip>

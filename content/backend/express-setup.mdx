@@ -1,0 +1,114 @@
+---
+title: "Express Setup & Routing Mechanics"
+description: "Initialize Express applications, configure server port binders, register routing channels, and read URL parameters."
+tags: ["express","routing"]
+---
+
+## What You Will Learn
+
+- Configure and instantiate an Express server.
+- Parse request paths, query structures, and route parameters.
+- Understand the HTTP routing tables compilation in Express.
+
+---
+
+## Why This Matters in Real Projects
+
+Express is the enterprise standard routing framework for Node.js. Establishing modular router tables ensures clean codebase scaling, and correct route variables configurations prevent parameter overrides.
+
+<SeniorNote>
+Always group routes logically using `express.Router()` sub-routers. Do not attach all routes directly to the main server instance. Use process environment variables to configure port mappings dynamically.
+</SeniorNote>
+
+---
+
+## Concept Explanation
+
+### Express Routing Mechanics
+
+Express maps incoming HTTP requests (HTTP Method + URL Path) to specific controller handler functions:
+- **Port Binding**: Binds server processes to network interfaces (e.g. `PORT=5000`).
+- **Route Parameters**: Placeholders inside URL routes to match dynamic inputs, compiled into `req.params` (e.g. `/users/:id`).
+- **Query Parameters**: Key-value query parameters appended to URLs, compiled into `req.query` (e.g. `/search?q=node`).
+
+---
+
+## Real-Time Project Example
+
+<RealTimeExample title={"Express Setup & Routing Mechanics Scenario"}>
+When building e-commerce backends, route parameters map requests to specific products (`/products/t-shirt`), while query parameters handle category filtering and offset limits (`/products?category=apparel&limit=10`).
+</RealTimeExample>
+
+---
+
+## Code Example
+
+Below is a configuration file matching senior standards:
+
+```javascript
+import express from 'express';
+const app = express();
+const router = express.Router();
+
+app.use(express.json()); // Middleware to parse incoming JSON bodies
+
+// Router definitions
+router.get('/products/:id', (req, res) => {
+  const productId = req.params.id; // Reading route parameter
+  const searchLimit = req.query.limit; // Reading query parameter
+  
+  res.status(200).json({
+    id: productId,
+    limit: searchLimit || 'default',
+    timestamp: new Date().toISOString()
+  });
+});
+
+app.use('/api/v1', router);
+
+const PORT = process.env.PORT || 5000;
+app.listen(PORT, () => {
+  console.log(`Server is operating on port ${PORT}`);
+});
+```
+
+---
+
+## Common Mistakes
+
+Here is an example of incorrect setups vs clean, optimized configurations.
+
+<CommonMistake
+  title={"Incorrect Route Ordering and Overlaps"}
+  badDesc={"Placing dynamic route parameters before static sub-routes. The dynamic parameter greedily matches first, short-circuiting static routes."}
+  badCode={"// BAD: Dynamic ID matches first\napp.get('/users/:id', (req, res) => { ... });\napp.get('/users/active', (req, res) => { ... }); // NEVER REACHED!"}
+  goodDesc={"Placing specific static routes before dynamic parameters."}
+  goodCode={"// GOOD: Static route evaluated first\napp.get('/users/active', (req, res) => { ... });\napp.get('/users/:id', (req, res) => { ... });"}
+/>
+
+---
+
+## Practice Task
+
+Solidify your knowledge by implementing this exercise in your codebase.
+
+<TaskBox
+  title={"Initialize Express and Map API Route Parameters"}
+  duration={"15 Minutes"}
+  requirements={[
+    "Initialize an Express app and set a dynamically resolved port.",
+    "Register a sub-router mapping dynamic operations.",
+    "Test routes using route parameters and query checks."
+  ]}
+  expectedOutput={"// Endpoint returns correct variables mapping\n{ \"slug\": \"javascript\", \"category\": \"tutorials\" }"}
+>
+Complete this task to verify your configuration operates correctly.
+</TaskBox>
+
+---
+
+## Interview Tip
+
+<InterviewTip question={"What does express.json() middleware do?"}>
+express.json() is a built-in middleware in Express that parses incoming HTTP requests with JSON payloads. It reads the raw request stream, parses it as JSON, and mounts the parsed object directly onto the Request object as 'req.body' for subsequent route handlers to read.
+</InterviewTip>

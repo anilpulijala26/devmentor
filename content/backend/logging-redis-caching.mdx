@@ -1,0 +1,122 @@
+---
+title: "Logging, Tracing & Redis Caching"
+description: "Write structured logs and trace request IDs. Configure Redis caching pools to reduce database query loads."
+tags: ["redis","logging"]
+---
+
+## What You Will Learn
+
+- Configure structured logging using Morgan and Winston.
+- Trace request IDs across log records.
+- Configure Redis query caching.
+
+---
+
+## Why This Matters in Real Projects
+
+Plain console logs are difficult to search in production. Structured loggers (like Winston) format logs as JSON for parsing, and Redis caching reduces database loads by caching slow query results.
+
+<SeniorNote>
+Define cache expiration times (TTL) on all Redis cache keys to prevent stale data from being returned when database records are updated.
+</SeniorNote>
+
+---
+
+## Concept Explanation
+
+### Structured Logging & Redis Caching
+
+- **Structured Logging**: Writes logs in standardized formats (like JSON) containing metadata (timestamps, request IDs, log levels) for indexing by log management tools.
+- **Request Tracing**: Appends unique trace IDs to requests, linking log statements across database queries and service layers.
+- **Query Caching**: Stores slow query results in high-performance memory stores (like Redis) for instant retrieval.
+
+---
+
+## Real-Time Project Example
+
+<RealTimeExample title={"Logging, Tracing & Redis Caching Scenario"}>
+On high-traffic product listings, caching page queries in Redis for 5 minutes reduces database query loads, serving pages in milliseconds.
+</RealTimeExample>
+
+---
+
+## Code Example
+
+Below is a configuration file matching senior standards:
+
+```javascript
+// Winston JSON logger and Redis caching implementation
+import winston from 'winston';
+import { createClient } from 'redis';
+
+// 1. Configure Winston structured JSON logger
+export const logger = winston.createLogger({
+  level: 'info',
+  format: winston.format.combine(
+    winston.format.timestamp(),
+    winston.format.json()
+  ),
+  transports: [
+    new winston.transports.Console()
+  ]
+});
+
+// 2. Configure Redis connection client
+const redis = createClient({ url: process.env.REDIS_URL });
+redis.on('error', err => logger.error('Redis client connection error:', err));
+await redis.connect();
+
+export async function getCachedData(key, fetchFunc, ttl = 300) {
+  const cached = await redis.get(key);
+  if (cached) {
+    logger.info('Cache hit', { key });
+    return JSON.parse(cached);
+  }
+  
+  logger.info('Cache miss, fetching fresh data', { key });
+  const data = await fetchFunc();
+  await redis.set(key, JSON.stringify(data), { EX: ttl });
+  return data;
+}
+```
+
+---
+
+## Common Mistakes
+
+Here is an example of incorrect setups vs clean, optimized configurations.
+
+<CommonMistake
+  title={"Not invalidating cache keys when data updates"}
+  badDesc={"Caching data without configuring expiration or invalidation rules. When data is updated in databases, the server continues to return stale data from the cache."}
+  badCode={"// Cache key is stored permanently without TTL\nawait redis.set('products', JSON.stringify(data));"}
+  goodDesc={"Always configuring TTL parameters or deleting cache keys when updates execute."}
+  goodCode={"// Sets cache expiration to 5 minutes\nawait redis.set('products', JSON.stringify(data), { EX: 300 });"}
+/>
+
+---
+
+## Practice Task
+
+Solidify your knowledge by implementing this exercise in your codebase.
+
+<TaskBox
+  title={"Write a Winston logger and Redis cache handler"}
+  duration={"30 Minutes"}
+  requirements={[
+    "Configure a Winston JSON logger.",
+    "Implement a Redis cache middleware mapping requests.",
+    "Invalidate cache keys when updates are sent."
+  ]}
+  expectedOutput={"// Logs record cache hits and misses\n{\"level\":\"info\",\"message\":\"Cache hit\",\"key\":\"products\",\"timestamp\":\"...\"}"}
+>
+Complete this task to verify your configuration operates correctly.
+</TaskBox>
+
+---
+
+## Interview Tip
+
+<InterviewTip question={"What is a Cache Avalanche and how do you prevent it?"}>
+A Cache Avalanche occurs when many cached keys expire at the same time, causing a traffic spike to hit the database. Prevent this by adding random variance (jitter) to TTL expiration settings, spreading out expiration times.
+</InterviewTip>

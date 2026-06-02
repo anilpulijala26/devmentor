@@ -134,7 +134,7 @@ In basic docker-compose files, developers use `depends_on: [db]`. This tells Doc
 However, PostgreSQL takes 5–15 seconds to spin up, allocate memory, and start accepting incoming connections. If the `api` container attempts to connect immediately, it will throw a connection exception and crash.
 
 ### The Solution:
-Using **Docker Healthchecks** (`pg_isready`) alongside `depends_on: { db: { condition: service_healthy } }` ensures the API only starts once PostgreSQL is fully prepared to execute database queries.
+Using **Docker Healthchecks** (`pg_isready`) alongside `depends_on: `{"{"} db: {"{"} condition: service_healthy {"}"}` {"}"}` ensures the API only starts once PostgreSQL is fully prepared to execute database queries.
 
 ---
 

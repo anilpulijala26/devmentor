@@ -1,0 +1,118 @@
+---
+title: "Cloud Storage: AWS S3 & Supabase"
+description: "Stream binary files directly to cloud storage, configure AWS S3 SDK clients, and manage bucket privacy policies."
+tags: ["file-upload","s3"]
+---
+
+## What You Will Learn
+
+- Configure AWS S3 SDK client connections.
+- Stream binary file buffers from memory to S3 buckets.
+- Configure public and private bucket access policies.
+
+---
+
+## Why This Matters in Real Projects
+
+Storing user uploads on local server disks is not scalable, as instances are frequently replaced. Storing files in specialized cloud storage (like AWS S3 or Supabase Storage) ensures persistent and scalable asset management.
+
+<SeniorNote>
+Never write AWS credentials directly inside code repositories. Use IAM roles or load credentials from environment variables dynamically.
+</SeniorNote>
+
+---
+
+## Concept Explanation
+
+### Cloud Storage Integrations
+
+- **Cloud Buckets**: Persistent, scalable cloud storage containers (like AWS S3 or Supabase Storage).
+- **Streaming Uploads**: Transfers file buffers from memory directly to cloud storage endpoints, avoiding local disk writes.
+- **Bucket Policies**: Configures security permissions, restricting access to public or private storage resources.
+
+---
+
+## Real-Time Project Example
+
+<RealTimeExample title={"Cloud Storage: AWS S3 & Supabase Scenario"}>
+When users upload documents, the server receives the file in memory, uploads it to a private AWS S3 bucket, and stores the object path in the database.
+</RealTimeExample>
+
+---
+
+## Code Example
+
+Below is a configuration file matching senior standards:
+
+```javascript
+// Streaming files to AWS S3 using S3 SDK client
+import { S3Client, PutObjectCommand } from '@aws-sdk/client-s3';
+import express from 'express';
+import multer from 'multer';
+
+const app = express();
+const upload = multer({ storage: multer.memoryStorage() });
+
+const s3 = new S3Client({
+  region: process.env.AWS_REGION
+});
+
+app.post('/api/upload', upload.single('doc'), async (req, res, next) => {
+  try {
+    const file = req.file;
+    
+    const uploadParams = {
+      Bucket: process.env.AWS_S3_BUCKET,
+      Key: `documents/${Date.now()}-${file.originalname}`,
+      Body: file.buffer, // Stream binary buffer
+      ContentType: file.mimetype
+    };
+    
+    await s3.send(new PutObjectCommand(uploadParams));
+    res.json({ success: true, path: uploadParams.Key });
+  } catch (err) {
+    next(err);
+  }
+});
+```
+
+---
+
+## Common Mistakes
+
+Here is an example of incorrect setups vs clean, optimized configurations.
+
+<CommonMistake
+  title={"Checking Secrets inside SDK Constructors"}
+  badDesc={"Initializing S3 client connections by hardcoding AWS secrets directly inside code repositories."}
+  badCode={"const s3 = new S3Client({\n  credentials: {\n    accessKeyId: 'AKIAIOSFODNN7EXAMPLE', // Hardcoded keys!\n    secretAccessKey: 'wJalrXUtnFEMI/K7MDENG/bPxRfiCYEXAMPLEKEY'\n  }\n});"}
+  goodDesc={"Relying on default SDK environment loaders to load credentials dynamically."}
+  goodCode={"// Automatically loads keys from AWS_ACCESS_KEY_ID env variables\nconst s3 = new S3Client({ region: 'us-east-1' });"}
+/>
+
+---
+
+## Practice Task
+
+Solidify your knowledge by implementing this exercise in your codebase.
+
+<TaskBox
+  title={"Write an S3 Upload Handler"}
+  duration={"25 Minutes"}
+  requirements={[
+    "Initialize an S3 SDK client instance.",
+    "Implement a file upload endpoint processing file buffers.",
+    "Verify files upload correctly to test buckets."
+  ]}
+  expectedOutput={"// Files upload to S3 buckets successfully\nPutObjectCommand -> Returns ETag metadata signatures"}
+>
+Complete this task to verify your configuration operates correctly.
+</TaskBox>
+
+---
+
+## Interview Tip
+
+<InterviewTip question={"Why should production backends use IAM roles instead of API credentials?"}>
+API credentials must be stored and rotated, creating security risks. IAM roles grant temporary credentials dynamically to cloud resources, eliminating the need to store static keys.
+</InterviewTip>

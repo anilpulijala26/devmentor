@@ -1,0 +1,112 @@
+---
+title: "ORM Integration: Prisma & Drizzle"
+description: "Configure database ORM client pools. Master migrations, write schema declarations, and write type-safe queries using Prisma and Drizzle."
+tags: ["database","orm"]
+---
+
+## What You Will Learn
+
+- Configure and run database migrations using ORMs.
+- Write type-safe query builders using Prisma and Drizzle.
+- Optimize connection pooling configurations.
+
+---
+
+## Why This Matters in Real Projects
+
+Writing raw SQL strings inside code repositories can lead to SQL injection vulnerabilities and is difficult to maintain. Using ORMs like Prisma or Drizzle provides type-safe database queries and automated schema migrations.
+
+<SeniorNote>
+Always configure database connection pooling on application boot. If connection pools are misconfigured, application instances can exhaust database connection limits during traffic spikes.
+</SeniorNote>
+
+---
+
+## Concept Explanation
+
+### ORM Schemas and Migrations
+
+- **Schema Definition**: Model tables and relationships in a single configuration file (e.g. `schema.prisma` or Drizzle schemas).
+- **Type-Safety**: ORMs generate TypeScript interfaces matching schema definitions, preventing property query errors.
+- **Migrations**: Automated migrations track changes to database schemas over time, allowing schemas to be updated across environments.
+
+---
+
+## Real-Time Project Example
+
+<RealTimeExample title={"ORM Integration: Prisma & Drizzle Scenario"}>
+When modifying user schemas to add phone numbers, writing a schema migration ensures that the column is added to databases in development, staging, and production environments.
+</RealTimeExample>
+
+---
+
+## Code Example
+
+Below is a configuration file matching senior standards:
+
+```javascript
+// prisma/schema.prisma schema definition example
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+model User {
+  id        Int      @id @default(autoincrement())
+  email     String   @unique
+  posts     Post[]
+  createdAt DateTime @default(now())
+}
+
+model Post {
+  id       Int    @id @default(autoincrement())
+  title    String
+  authorId Int
+  author   User   @relation(fields: [authorId], references: [id])
+}
+```
+
+---
+
+## Common Mistakes
+
+Here is an example of incorrect setups vs clean, optimized configurations.
+
+<CommonMistake
+  title={"Querying un-indexed columns on large tables"}
+  badDesc={"Fetching database records filtering on un-indexed columns on large tables, causing slow database table scans."}
+  badCode={"// schema.prisma (Missing index markers)\nmodel User {\n  id    Int    @id\n  email String // Missing @unique or @@index markers!\n}"}
+  goodDesc={"Adding index markers to fields used frequently in filter queries."}
+  goodCode={"// schema.prisma\nmodel User {\n  id    Int    @id\n  email String @unique // Implies primary unique index"}
+/>
+
+---
+
+## Practice Task
+
+Solidify your knowledge by implementing this exercise in your codebase.
+
+<TaskBox
+  title={"Write a Database Schema and Migration"}
+  duration={"25 Minutes"}
+  requirements={[
+    "Create a schema.prisma file defining User and Post models.",
+    "Run prisma migrate dev to generate SQL migration scripts.",
+    "Write a script using Prisma Client to seed database tables."
+  ]}
+  expectedOutput={"// SQL migrations created successfully\nprisma/migrations/..._init/migration.sql"}
+>
+Complete this task to verify your configuration operates correctly.
+</TaskBox>
+
+---
+
+## Interview Tip
+
+<InterviewTip question={"What is the difference between Prisma and Drizzle?"}>
+Prisma uses a custom schema language and runs a query engine binary to generate queries, offering rich features. Drizzle uses standard TypeScript schemas and returns raw SQL queries directly, offering faster performance and a smaller footprint.
+</InterviewTip>

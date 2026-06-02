@@ -1,0 +1,114 @@
+---
+title: "Event Loop & Non-Blocking I/O"
+description: "Deep dive into the phases of the Node.js Event Loop, understanding execution priorities between timers, I/O callbacks, setImmediate, and process.nextTick."
+tags: ["node","event-loop","perf"]
+---
+
+## What You Will Learn
+
+- Trace the order of execution through the event loop phases.
+- Distinguish between microtasks (Promises) and macrotasks (timers).
+- Correctly implement nextTick and setImmediate scheduling.
+
+---
+
+## Why This Matters in Real Projects
+
+Unpredictable execution orders and async bugs are common when developers mix timeouts, promises, and direct callbacks. Understanding event loop mechanics lets you write reliable asynchronous schedulers, resolve race conditions on file updates, and optimize high-throughput telemetry parsers.
+
+<SeniorNote>
+Microtask queues (Promises) and process.nextTick queues are executed immediately after the current operation finishes, in between phases of the event loop. Always prefer Promises or setImmediate over process.nextTick to avoid starvation of the event loop.
+</SeniorNote>
+
+---
+
+## Concept Explanation
+
+### Event Loop Phases
+
+The Libuv event loop rotates through distinct phases:
+1. **Timers**: Executes callbacks scheduled by `setTimeout` and `setInterval`.
+2. **Pending Callbacks**: Executes I/O callbacks deferred from the previous loop iteration.
+3. **Poll**: Retrieves new I/O events and executes related callbacks.
+4. **Check**: Executes `setImmediate` callbacks.
+5. **Close Callbacks**: Executes close handlers (e.g. `socket.on('close')`).
+
+Between each phase, Node.js processes the **Microtask Queue** (including `process.nextTick` first, followed by resolved Promise handlers).
+
+---
+
+## Real-Time Project Example
+
+<RealTimeExample title={"Event Loop & Non-Blocking I/O Scenario"}>
+When scheduling audit log flushes, deferring work using setImmediate ensures that the current HTTP response is sent immediately to the user, while the disk write completes shortly after in the Check phase.
+</RealTimeExample>
+
+---
+
+## Code Example
+
+Below is a configuration file matching senior standards:
+
+```javascript
+// Tracing the async queue execution priorities
+console.log('1. Synchronous Main Thread Starts');
+
+setTimeout(() => {
+  console.log('5. Timer Phase Callback (setTimeout)');
+}, 0);
+
+setImmediate(() => {
+  console.log('6. Check Phase Callback (setImmediate)');
+});
+
+Promise.resolve().then(() => {
+  console.log('3. Promise Microtask Queue');
+});
+
+process.nextTick(() => {
+  console.log('2. NextTick Microtask Queue');
+});
+
+console.log('4. Synchronous Main Thread Ends');
+```
+
+---
+
+## Common Mistakes
+
+Here is an example of incorrect setups vs clean, optimized configurations.
+
+<CommonMistake
+  title={"Event Loop Starvation via nextTick Recursion"}
+  badDesc={"Calling process.nextTick recursively. Because nextTick executes before the loop advances, it blocks the event loop from ever reaching timers or I/O phases."}
+  badCode={"function starve() {\n  process.nextTick(starve); // Recursive microtasks loop\n}\nstarve(); // Timers and network sockets are permanently frozen!"}
+  goodDesc={"Using setImmediate for recursive scheduling, which lets the event loop advance phases and process other pending operations."}
+  goodCode={"function runSafe() {\n  setImmediate(runSafe); // Loop advances between calls\n}\nrunSafe(); // System remains fully interactive"}
+/>
+
+---
+
+## Practice Task
+
+Solidify your knowledge by implementing this exercise in your codebase.
+
+<TaskBox
+  title={"Trace and Match Asynchronous Outputs"}
+  duration={"15 Minutes"}
+  requirements={[
+    "Arrange setTimeout, setImmediate, and Promise triggers in a script.",
+    "Predict output logs based on event loop stages.",
+    "Verify order by executing the code in Node.js."
+  ]}
+  expectedOutput={"// Expected trace outputs matching phases\n1. Sync Start\n2. Promise microtask\n3. setImmediate check\n4. setTimeout timer"}
+>
+Complete this task to verify your configuration operates correctly.
+</TaskBox>
+
+---
+
+## Interview Tip
+
+<InterviewTip question={"What is the difference between setImmediate and setTimeout(fn, 0)?"}>
+setImmediate is designed to execute a script once the current poll phase completes, running in the Check phase. setTimeout(fn, 0) schedules a script in the Timers phase after a minimum threshold of 0-1ms has passed. Inside an I/O cycle, setImmediate is guaranteed to run before any timer callbacks.
+</InterviewTip>

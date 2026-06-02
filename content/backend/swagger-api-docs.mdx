@@ -1,0 +1,110 @@
+---
+title: "API Documentation with Swagger/OpenAPI"
+description: "Write self-documenting REST APIs in Express. Create OpenAPI JSON specifications and configure Swagger UI routes."
+tags: ["api","documentation"]
+---
+
+## What You Will Learn
+
+- Understand Swagger and OpenAPI documentation standards.
+- Integrate self-documenting JSDoc comments into Express.
+- Configure interactive Swagger UI routes.
+
+---
+
+## Why This Matters in Real Projects
+
+Outdated API docs create integration challenges for frontend teams. Implementing interactive, self-documenting Swagger UI routes ensures that documentation stays updated automatically alongside your API code.
+
+<SeniorNote>
+Use Swagger endpoints to test API routes during development. This provides an interactive documentation portal where teams can verify headers and payloads.
+</SeniorNote>
+
+---
+
+## Concept Explanation
+
+### Swagger & OpenAPI Documentation
+
+- **OpenAPI**: A standardized specification language used to describe REST APIs, including endpoints, parameters, request bodies, and authentication schemes.
+- **Swagger UI**: Generates interactive HTML documentation portals from OpenAPI specifications.
+
+---
+
+## Real-Time Project Example
+
+<RealTimeExample title={"API Documentation with Swagger/OpenAPI Scenario"}>
+Frontend developers can use the Swagger UI portal (/api-docs) to test API parameters and inspect JSON responses without using external testing tools.
+</RealTimeExample>
+
+---
+
+## Code Example
+
+Below is a configuration file matching senior standards:
+
+```javascript
+// Integrating Swagger UI document routes in Express
+import express from 'express';
+import swaggerJsDoc from 'swagger-jsdoc';
+import swaggerUi from 'swagger-ui-express';
+
+const app = express();
+
+const swaggerOptions = {
+  swaggerDefinition: {
+    openapi: '3.0.0',
+    info: {
+      title: 'CodeNivra Learning API',
+      version: '1.0.0',
+      description: 'Interactive API documentation console'
+    },
+    servers: [{ url: 'http://localhost:5000/api/v1' }]
+  },
+  apis: ['./src/routes/*.js'] // Path to route files containing documentation JSDoc
+};
+
+const swaggerDocs = swaggerJsDoc(swaggerOptions);
+app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocs));
+```
+
+---
+
+## Common Mistakes
+
+Here is an example of incorrect setups vs clean, optimized configurations.
+
+<CommonMistake
+  title={"Hardcoding API Docs in JSON Files"}
+  badDesc={"Writing API documentation in a static JSON file that must be updated manually, causing documentation to drift as API endpoints change."}
+  badCode={"// Static swagger.json is rarely updated, leading to broken docs"}
+  goodDesc={"Using JSDoc comments directly inside routing code to generate documentation automatically."}
+  goodCode={"/**\n * @openapi\n * /users:\n *   get:\n *     description: Retrieve all users\n *     responses:\n *       200:\n *         description: Success\n */"}
+/>
+
+---
+
+## Practice Task
+
+Solidify your knowledge by implementing this exercise in your codebase.
+
+<TaskBox
+  title={"Write JSDoc annotations and configure Swagger UI"}
+  duration={"25 Minutes"}
+  requirements={[
+    "Configure swagger-jsdoc and swagger-ui-express.",
+    "Add OpenAPI annotations to user routes.",
+    "Verify the interactive documentation portal (/api-docs)."
+  ]}
+  expectedOutput={"// Swagger documentation renders successfully\nSwagger UI HTML page loads at /api-docs"}
+>
+Complete this task to verify your configuration operates correctly.
+</TaskBox>
+
+---
+
+## Interview Tip
+
+<InterviewTip question={"What is the difference between Swagger and OpenAPI?"}>
+OpenAPI is the official specification standard for describing REST APIs. Swagger refers to the suite of open-source tools (like Swagger Editor, Swagger UI) developed by SmartBear to build and consume OpenAPI specifications.
+</InterviewTip>

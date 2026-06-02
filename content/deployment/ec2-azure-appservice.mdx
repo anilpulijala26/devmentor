@@ -1,0 +1,98 @@
+---
+title: "AWS EC2 & Azure App Service Basics"
+description: "Configure AWS EC2 virtual machines and Azure App Services. Bind ports, configure security groups, and monitor logs."
+tags: ["aws","azure","hosting"]
+---
+
+## What You Will Learn
+
+- Configure virtual machines (AWS EC2) for server hosting.
+- Bind routing ports and manage cloud security groups.
+- Deploy code to Azure App Services.
+
+---
+
+## Why This Matters in Real Projects
+
+PaaS providers can be expensive at scale. Deploying servers to cloud virtual instances (like AWS EC2) or App Services provides more control over resources and reduces hosting costs at scale.
+
+<SeniorNote>
+Restrict security group ingress access. Do not expose database ports (e.g. 5432) to wildcard IP addresses '0.0.0.0/0'. Whitelist only trusted application server IPs.
+</SeniorNote>
+
+---
+
+## Concept Explanation
+
+### Cloud VM & App Service Hosting
+
+- **AWS EC2**: Cloud virtual instances that provide full OS controls over server instances.
+- **Security Groups**: Virtual firewalls that control traffic routing permissions (e.g. whitelisting ports 80 and 443).
+- **Azure App Service**: Managed PaaS hosting for web applications, managing scaling and OS updates automatically.
+
+---
+
+## Real-Time Project Example
+
+<RealTimeExample title={"AWS EC2 & Azure App Service Basics Scenario"}>
+When deploying backends onto AWS EC2, configuring security groups whitelists port 80/443 traffic from public clients while restricting port 22/2222 SSH access to trusted developer IPs.
+</RealTimeExample>
+
+---
+
+## Code Example
+
+Below is a configuration file matching senior standards:
+
+```javascript
+// AWS EC2 instance launch script using AWS CLI
+# Launch an EC2 instance using Amazon Linux AMI
+aws ec2 run-instances \
+  --image-id ami-0c55b159cbfafe1f0 \
+  --count 1 \
+  --instance-type t2.micro \
+  --key-name DevPrivateKey \
+  --security-group-ids sg-123456 \
+  --tag-specifications 'ResourceType=instance,Tags=[{Key=Name,Value=CodeNivraAPI}]'
+```
+
+---
+
+## Common Mistakes
+
+Here is an example of incorrect setups vs clean, optimized configurations.
+
+<CommonMistake
+  title={"Exposing SSH Port 22 to Wildcard IPs"}
+  badDesc={"Setting security group ingress parameters to allow SSH access on port 22 from '0.0.0.0/0', exposing servers to brute-force attacks."}
+  badCode={"// Ingress rule: Port 22 -> Source: 0.0.0.0/0 (VULNERABILITY)"}
+  goodDesc={"Restricting port 22 access to specific trusted developer IP addresses."}
+  goodCode={"// Ingress rule: Port 22 -> Source: 198.51.100.4/32 (Developer IP)"}
+/>
+
+---
+
+## Practice Task
+
+Solidify your knowledge by implementing this exercise in your codebase.
+
+<TaskBox
+  title={"Write an EC2 server setup script"}
+  duration={"25 Minutes"}
+  requirements={[
+    "Write a bash script to update server OS packages.",
+    "Install Node.js and PM2 process managers.",
+    "Configure systemd to start application services automatically."
+  ]}
+  expectedOutput={"// Services boot on EC2 starts automatically\nPM2 daemon active, hosting Express servers"}
+>
+Complete this task to verify your configuration operates correctly.
+</TaskBox>
+
+---
+
+## Interview Tip
+
+<InterviewTip question={"What is the difference between AWS EC2 and AWS Lambda?"}>
+AWS EC2 is a virtual server instance that runs continuously, giving you full OS control and charging per hour. AWS Lambda is a serverless function that runs code only in response to events, charging per execution.
+</InterviewTip>

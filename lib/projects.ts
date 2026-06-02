@@ -780,9 +780,462 @@ Response (200 OK):
       "Add custom drag-and-drop widget layouts.",
       "Integrate WebSockets for live data feeds."
     ]
+  },
+  {
+    slug: "express-postgres-api",
+    title: "REST API with Express and PostgreSQL",
+    level: "Intermediate",
+    duration: "2 Weeks",
+    description: "Develop a secure, high-performance REST API with Express, Node.js, and PostgreSQL database queries.",
+    skillsCovered: ["Express Routing", "PostgreSQL Queries", "REST Principles", "Connection Pooling"],
+    techStack: ["Node.js", "Express", "pg", "PostgreSQL"],
+    whoShouldBuild: "Developers seeking to master direct database access, connection pools, and backend routing architectures.",
+    businessRequirement: "Create a stable and scalable API endpoint that connects directly to a PostgreSQL database cluster and manages records safely.",
+    features: [
+      "Modular database connection pool configurations.",
+      "RESTful CRUD controllers routing requests.",
+      "Parameterized database queries protecting against SQL injections.",
+      "Global error catching middlewares returning clean JSON error bodies."
+    ],
+    folderStructure: `express-postgres-api/
+├── db/
+│   └── pool.js           # DB connection configs
+├── controllers/
+│   └── trackController.js# CRUD logic
+├── routes/
+│   └── trackRoutes.js    # Routes endpoints
+└── app.js                # Core app entry`,
+    componentBreakdown: [
+      { name: "Database Pool", desc: "Manages multiple client database connection requests securely." },
+      { name: "CRUD Controller", desc: "Directly runs SQL query strings matching dynamic parameters." }
+    ],
+    apiContract: `GET /api/tracks
+Response (200 OK):
+[
+  { "id": 1, "name": "Web Foundations" }
+]`,
+    implementationPhases: [
+      { phase: "Phase 1: DB setup", desc: "Install pg, establish connections, and create tables." },
+      { phase: "Phase 2: Routes config", desc: "Design Express routes and controllers." }
+    ],
+    testingChecklist: [
+      "Verify connection pool closes properly.",
+      "Confirm SQL query inputs are sanitized."
+    ],
+    deploymentChecklist: [
+      "Load database URL strings from secure environment configurations."
+    ],
+    commonMistakes: [
+      "Hardcoding database connection secrets.",
+      "Opening fresh connections on each query, crashing the server."
+    ],
+    seniorNotes: [
+      "Use pg-pool to reuse connection threads and minimize overhead."
+    ],
+    interviewExplanation: {
+      projectName: "REST API with Express and PostgreSQL",
+      buildDesc: "I built a REST API using Express and PostgreSQL to manage tracks.",
+      approachDesc: "I chose direct SQL mapping via pg pools to maintain high database speed and keep dependencies light.",
+      challengesDesc: "Connection drops was the main challenge. I resolved it by configuring reconnection retries on pools.",
+      performanceDesc: "Optimized response times by indexing lookup columns.",
+      errorsDesc: "Handled SQL errors with custom exceptions.",
+      structureDesc: "Separated routes, controllers, and pool services.",
+      productionImprovements: [
+        "Migrate to Prisma ORM."
+      ]
+    },
+    futureEnhancements: [
+      "Add schema migrations workflows."
+    ]
+  },
+  {
+    slug: "rbac-dashboard",
+    title: "Role-Based Access Control Dashboard",
+    level: "Advanced",
+    duration: "3 Weeks",
+    description: "Build an administration panel showing users telemetry, allowing role changes (admin, editor, user) and enforcing route validations.",
+    skillsCovered: ["RBAC Middleware", "React Context Auth", "API Guard Rails", "Secure Sessions"],
+    techStack: ["Next.js", "Express", "JWT", "PostgreSQL"],
+    whoShouldBuild: "Developers wanting to master permission boundaries and administrative interfaces.",
+    businessRequirement: "Administrative panels require role guards. The application must enforce boundaries on both front and backends.",
+    features: [
+      "Login gates mapping users to specific roles.",
+      "Dynamic sidebars showing options matching roles.",
+      "Express middlewares validating role credentials on APIs.",
+      "Audit log tracker recording dashboard actions."
+    ],
+    folderStructure: `rbac-dashboard/
+├── middlewares/
+│   └── checkRole.ts       # RBAC filter checks
+├── components/
+│   └── Sidebar.tsx        # Dynamic role menu
+└── pages/
+    └── admin.tsx          # Protected admin UI`,
+    componentBreakdown: [
+      { name: "RBAC Guard", desc: "Middleware checking user role scopes." },
+      { name: "Sidebar Menu", desc: "React component filtering menu links by user role." }
+    ],
+    apiContract: `POST /api/users/role
+Request: { "userId": "u1", "role": "admin" }
+Response (200 OK): { "success": true }`,
+    implementationPhases: [
+      { phase: "Phase 1: Session guards", desc: "Configure JWT role decoders." },
+      { phase: "Phase 2: UI filters", desc: "Filter React menu views." }
+    ],
+    testingChecklist: [
+      "Rejects unauthorised users from accessing admin routes.",
+      "Allows admins to modify user permissions."
+    ],
+    deploymentChecklist: [
+      "Map permission variables in secure cookies."
+    ],
+    commonMistakes: [
+      "Relying only on frontend UI hiding, leaving backend APIs open."
+    ],
+    seniorNotes: [
+      "Always validate roles on every backend request, regardless of client UI state."
+    ],
+    interviewExplanation: {
+      projectName: "Role-Based Access Control Dashboard",
+      buildDesc: "I created an RBAC panel checking permissions dynamically.",
+      approachDesc: "I wrote Express auth middlewares inspecting JWT payloads, and mapped roles on React Context providers.",
+      challengesDesc: "Preventing token tampering. I solved this by signing roles inside encrypted JWT claims.",
+      performanceDesc: "Used memory-cached token checks to reduce DB calls.",
+      errorsDesc: "Returned 403 Forbidden for insufficient permissions.",
+      structureDesc: "Divided components by auth layers and view cards.",
+      productionImprovements: [
+        "Support multi-factor auth (MFA)."
+      ]
+    },
+    futureEnhancements: [
+      "Integrate OAuth providers."
+    ]
+  },
+  {
+    slug: "blog-cms-backend",
+    title: "Blog CMS Backend with Prisma",
+    level: "Intermediate",
+    duration: "2 Weeks",
+    description: "Configure a content management API for blogs, handling posts, categories, and tags using Prisma ORM.",
+    skillsCovered: ["Prisma Schema", "Relational Mapping", "Query Filtering", "Seeding Data"],
+    techStack: ["Node.js", "Prisma", "PostgreSQL", "Express"],
+    whoShouldBuild: "Developers wanting to master relational database design, ORMs, and query optimizations.",
+    businessRequirement: "Create a blog API matching standard schemas: Category has many Posts, Posts have many Tags.",
+    features: [
+      "Prisma schema modeling models and relations.",
+      "Prisma seed files to populate the database.",
+      "Filtered query fetches loading posts by category or tag.",
+      "Rich API endpoints managing posts, draft status, and categories."
+    ],
+    folderStructure: `blog-cms-backend/
+├── prisma/
+│   ├── schema.prisma      # Model boundaries
+│   └── seed.ts            # Seeding scripts
+├── controllers/
+│   └── postController.ts  # Prisma queries
+└── app.ts`,
+    componentBreakdown: [
+      { name: "Prisma client", desc: "Handles relational mapping queries and query builders." },
+      { name: "Blog Controller", desc: "Routes client parameters to Prisma select queries." }
+    ],
+    apiContract: `GET /api/posts?category=tech
+Response (200 OK):
+[
+  { "id": 1, "title": "Prisma Basics", "category": "tech" }
+]`,
+    implementationPhases: [
+      { phase: "Phase 1: Prisma setup", desc: "Write schema models and run migrations." },
+      { phase: "Phase 2: CRUD routes", desc: "Build Express routes using Prisma client queries." }
+    ],
+    testingChecklist: [
+      "Confirm prisma seed commands load mock data.",
+      "Verify query includes fetch relational models."
+    ],
+    deploymentChecklist: [
+      "Run prisma migration deployments in build pipelines."
+    ],
+    commonMistakes: [
+      "Fetching all records without includes, generating N+1 query patterns."
+    ],
+    seniorNotes: [
+      "Always query selectively using select blocks instead of returning entire database rows."
+    ],
+    interviewExplanation: {
+      projectName: "Blog CMS Backend with Prisma",
+      buildDesc: "I built a blog API managing relational assets using Prisma ORM.",
+      approachDesc: "I chose Prisma for its strong TypeScript safety and auto-generated migration client tools.",
+      challengesDesc: "Mitigating N+1 queries. I resolved this by specifying select blocks and include options on prisma calls.",
+      performanceDesc: "Added index rules on category lookups.",
+      errorsDesc: "Caught Prisma exceptions returning clean validation messages.",
+      structureDesc: "Separated schema definitions, seeds, and routing controllers.",
+      productionImprovements: [
+        "Integrate Redis caching."
+      ]
+    },
+    futureEnhancements: [
+      "Add post views analytics."
+    ]
+  },
+  {
+    slug: "ecommerce-backend-api",
+    title: "E-Commerce Backend API",
+    level: "Advanced",
+    duration: "4 Weeks",
+    description: "Build an e-commerce API managing products, shopping carts, and order checkout transactional pipelines.",
+    skillsCovered: ["Transaction blocks", "Concurrency Management", "Payment Webhooks", "Schema Modelling"],
+    techStack: ["Node.js", "Express", "Prisma", "PostgreSQL", "Stripe"],
+    whoShouldBuild: "Developers seeking experience with payment workflows and database transactions.",
+    businessRequirement: "E-commerce orders require transaction safeguards. Order processing must deduct inventory safely and log invoice actions.",
+    features: [
+      "Prisma transaction blocks processing orders.",
+      "Stripe payment session initialization endpoints.",
+      "Webhook route handling payment status callbacks.",
+      "Inventory deduction check routines preventing oversells."
+    ],
+    folderStructure: `ecommerce-api/
+├── services/
+│   └── stripe.ts          # Payment service
+├── routes/
+│   └── checkout.ts        # Transaction path
+└── prisma/
+    └── schema.prisma      # Models`,
+    componentBreakdown: [
+      { name: "Transaction Service", desc: "Wraps DB commands in transactional rollbacks." },
+      { name: "Stripe Webhook", desc: "Receives payment event notifications." }
+    ],
+    apiContract: `POST /api/checkout
+Request: { "cartId": 12, "token": "stripe_tok" }
+Response (201 Created): { "orderId": 142, "paid": true }`,
+    implementationPhases: [
+      { phase: "Phase 1: Stripe logic", desc: "Create Stripe accounts and connect APIs." },
+      { phase: "Phase 2: Transactions", desc: "Write database routines locking inventory." }
+    ],
+    testingChecklist: [
+      "Verify failed database queries trigger rollbacks.",
+      "Ensure webhooks process events securely."
+    ],
+    deploymentChecklist: [
+      "Set Stripe API keys and webhook signing secrets."
+    ],
+    commonMistakes: [
+      "Running database checks sequentially instead of inside transaction scopes, leading to oversells."
+    ],
+    seniorNotes: [
+      "Use transaction locking or check constraints to block negative balances and inventory levels."
+    ],
+    interviewExplanation: {
+      projectName: "E-Commerce Backend API",
+      buildDesc: "I created an e-commerce checkout API integrating Stripe payments.",
+      approachDesc: "I used Prisma transactional blocks to guarantee database consistency on inventory deducts.",
+      challengesDesc: "Avoiding payment double-charges. I resolved this by enforcing idempotency keys on payment operations.",
+      performanceDesc: "Indexed product SKU codes.",
+      errorsDesc: "Handled Stripe failures returning transaction alerts.",
+      structureDesc: "Separated checkout routes, database seeds, and payment wrappers.",
+      productionImprovements: [
+        "Add cache rules on product grids."
+      ]
+    },
+    futureEnhancements: [
+      "Support multiple currency listings."
+    ]
+  },
+  {
+    slug: "notification-email-service",
+    title: "Notification and Email Service",
+    level: "Intermediate",
+    duration: "2 Weeks",
+    description: "Build an email and notification service that queues notification alerts and dispatches emails using nodemailer and Redis queues.",
+    skillsCovered: ["Redis Queues", "SMTP Transports", "Background Workers", "Rate Limiting"],
+    techStack: ["Node.js", "Redis", "BullMQ", "Nodemailer"],
+    whoShouldBuild: "Developers wanting to master async task queues, background workers, and Redis integration.",
+    businessRequirement: "Heavy email dispatches block server resources. Asynchronously queue messages to keep web servers fast.",
+    features: [
+      "Redis task queue managing notification requests.",
+      "Nodemailer workers processing and sending SMTP messages.",
+      "Rate-limiter filters on email dispatches.",
+      "Dynamic email templates parsing variables."
+    ],
+    folderStructure: `notification-service/
+├── queues/
+│   └── emailQueue.js     # Queue setup
+├── workers/
+│   └── emailWorker.js    # Worker code
+└── templates/
+    └── welcome.html      # HTML Mail template`,
+    componentBreakdown: [
+      { name: "Mail Queue", desc: "Pushes message parameters to Redis." },
+      { name: "Email Worker", desc: "Pulls and dispatches emails via Nodemailer." }
+    ],
+    apiContract: `POST /api/notify
+Request: { "email": "user@example.com", "type": "welcome" }
+Response (202 Accepted): { "queued": true }`,
+    implementationPhases: [
+      { phase: "Phase 1: Redis setup", desc: "Connect Redis and initialize BullMQ." },
+      { phase: "Phase 2: Workers config", desc: "Write Nodemailer SMTP dispatch handlers." }
+    ],
+    testingChecklist: [
+      "Ensure workers process queued emails asynchronously.",
+      "Verify failed emails retry automatically."
+    ],
+    deploymentChecklist: [
+      "Configure Redis connection credentials."
+    ],
+    commonMistakes: [
+      "Sending emails synchronously inside route handlers, slowing HTTP request speeds."
+    ],
+    seniorNotes: [
+      "Use background worker queues to offload heavy tasks from server event loops."
+    ],
+    interviewExplanation: {
+      projectName: "Notification and Email Service",
+      buildDesc: "I built an async email notifier using Redis and BullMQ.",
+      approachDesc: "I offloaded email dispatches to a Redis queue processed by isolated background workers, protecting HTTP thread pools.",
+      challengesDesc: "Handling SMTP timeouts. I resolved this by setting up automated retries with exponential backoffs.",
+      performanceDesc: "Workers scale dynamically to process spikes in queue sizes.",
+      errorsDesc: "Caught worker errors, placing failed tasks in retry bins.",
+      structureDesc: "Separated task queues from Nodemailer worker implementations.",
+      productionImprovements: [
+        "Integrate SendGrid or AWS SES."
+      ]
+    },
+    futureEnhancements: [
+      "Add push notification bindings."
+    ]
+  },
+  {
+    slug: "dockerized-fullstack",
+    title: "Dockerized Full-Stack App",
+    level: "Advanced",
+    duration: "3 Weeks",
+    description: "Containerize a React client application and Node.js backend server, linking them with a PostgreSQL database container using Docker Compose.",
+    skillsCovered: ["Multi-stage Dockerfiles", "Docker Compose Orchestration", "Networking & Volumes", "Secrets Mapping"],
+    techStack: ["Docker", "Docker Compose", "Next.js", "Express", "PostgreSQL"],
+    whoShouldBuild: "Full-stack developers and DevOps engineers aiming to master containerized packaging, local development configurations, and deployment strategies.",
+    businessRequirement: "Local environment differences cause deployment bugs. Containerize applications to run the exact same setup in development and staging/production.",
+    features: [
+      "Multi-stage Dockerfiles compiling build steps and outputting tiny packages.",
+      "Docker Compose files launching React, Node, and PostgreSQL instances.",
+      "Named data volumes maintaining persistent database records across container restarts.",
+      "Container networks linking frontend and backend hosts securely."
+    ],
+    folderStructure: `dockerized-app/
+├── client/
+│   └── Dockerfile         # Multi-stage client
+├── server/
+│   └── Dockerfile         # Multi-stage backend
+├── docker-compose.yml     # Container link orchestrator
+└── .env                   # Environment variables`,
+    componentBreakdown: [
+      { name: "Client container", desc: "Serves static bundles using lightweight servers." },
+      { name: "Server container", desc: "Runs production-ready Node.js Express APIs." },
+      { name: "Database container", desc: "Launches persistent PostgreSQL databases." }
+    ],
+    apiContract: `N/A (Deployment Orchestration Project)`,
+    implementationPhases: [
+      { phase: "Phase 1: Write Dockerfiles", desc: "Write multi-stage Dockerfiles for client and server services." },
+      { phase: "Phase 2: Docker Compose", desc: "Configure compose files with networks, ports, and databases." }
+    ],
+    testingChecklist: [
+      "Ensure docker-compose up launches all containers cleanly.",
+      "Verify data volumes persist database records after shutdowns."
+    ],
+    deploymentChecklist: [
+      "Run container builds in staging pipelines."
+    ],
+    commonMistakes: [
+      "Copying raw node_modules into Docker images, bloating size.",
+      "Failing to use non-root user credentials in runtime containers."
+    ],
+    seniorNotes: [
+      "Use alpine images and multi-stage builds to keep final container images under 100MB."
+    ],
+    interviewExplanation: {
+      projectName: "Dockerized Full-Stack App",
+      buildDesc: "I containerized a full-stack Next.js and Express app using Docker Compose.",
+      approachDesc: "I chose multi-stage builds to compile static files in builder layers, copying only release code to final runner environments.",
+      challengesDesc: "Establishing database startup order. I solved this by configuring health checks and wait scripts.",
+      performanceDesc: "Reduced image sizes by over 75% using alpine bases.",
+      errorsDesc: "Logged errors directly to stdout for container logs tracking.",
+      structureDesc: "Separated workspace files, frontends, and compose configurations.",
+      productionImprovements: [
+        "Deploy to Kubernetes clusters."
+      ]
+    },
+    futureEnhancements: [
+      "Integrate local Redis caching."
+    ]
+  },
+  {
+    slug: "cloud-deployment",
+    title: "AWS/Azure Deployment Project",
+    level: "Advanced",
+    duration: "3 Weeks",
+    description: "Deploy a full-stack containerized application to AWS EC2/RDS or Azure App Services, utilizing environment vaults, domain mapping, and SSL checks.",
+    skillsCovered: ["AWS RDS & EC2 Setup", "Azure Static Web Apps", "Build Pipelines", "Secret Vault Management"],
+    techStack: ["AWS S3/EC2/RDS", "Azure Key Vault", "Git", "GitHub Actions"],
+    whoShouldBuild: "Engineers wanting to master professional hosting environments, DevOps, and secrets management.",
+    businessRequirement: "SaaS projects require scalable cloud architectures. Set up secure, monitored hosting instances with SSL mappings.",
+    features: [
+      "AWS RDS PostgreSQL instance setups.",
+      "AWS EC2 virtual machines hosting backend services.",
+      "Azure Static Web Apps hosting frontend clients.",
+      "GitHub Actions workflows automating code transfers."
+    ],
+    folderStructure: `deployment-project/
+├── .github/
+│   └── workflows/
+│       └── deploy.yml     # Actions pipeline
+├── scripts/
+│   └── provision-db.sh    # RDS Provisioning
+└── readme.md              # Architectural outlines`,
+    componentBreakdown: [
+      { name: "Staging Pipeline", desc: "Automates linting, building, and deploying." },
+      { name: "Cloud Server", desc: "Hosts backend and handles database pools." }
+    ],
+    apiContract: `N/A (Cloud Architecture Project)`,
+    implementationPhases: [
+      { phase: "Phase 1: Database hosting", desc: "Configure managed RDS PostgreSQL instances." },
+      { phase: "Phase 2: Compute setup", desc: "Initialize EC2 containers and deploy Express services." }
+    ],
+    testingChecklist: [
+      "Verify SSL certs map correctly to domains.",
+      "Ensure EC2 cannot connect to RDS without authorization."
+    ],
+    deploymentChecklist: [
+      "Add secrets to GitHub Action secrets configuration."
+    ],
+    commonMistakes: [
+      "Opening RDS database ports to 0.0.0.0, exposing databases to the public internet.",
+      "Placing secrets and keys in git repositories."
+    ],
+    seniorNotes: [
+      "Always host databases in private VPC subnets, allowing connections only from EC2 security groups."
+    ],
+    interviewExplanation: {
+      projectName: "AWS/Azure Deployment Project",
+      buildDesc: "I deployed a full-stack app on AWS and Azure cloud architectures.",
+      approachDesc: "I used AWS RDS for database hosting and EC2 for API hosting, configuring network security groups to protect database connections.",
+      challengesDesc: "Syncing deployment secrets securely. I resolved this by mapping variables inside GitHub Secrets.",
+      performanceDesc: "Utilized CloudFront CDN to serve static client files.",
+      errorsDesc: "Mapped server diagnostics logs into CloudWatch.",
+      structureDesc: "Separated deployment workflows, shells scripts, and documentation.",
+      productionImprovements: [
+        "Implement Infrastructure as Code (IaC) with Terraform."
+      ]
+    },
+    futureEnhancements: [
+      "Configure auto-scaling groups."
+    ]
   }
 ];
 
 export function getProjectBySlug(slug: string): Project | undefined {
   return projects.find((p) => p.slug === slug);
 }
+export function getAllProjects(): Project[] {
+  return projects;
+}
+export function getProjectsByLevel(level: "Beginner" | "Intermediate" | "Advanced"): Project[] {
+  return projects.filter((p) => p.level === level);
+}
+

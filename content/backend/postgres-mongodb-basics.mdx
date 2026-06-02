@@ -1,0 +1,113 @@
+---
+title: "PostgreSQL & MongoDB Core Basics"
+description: "Compare relational and non-relational database architectures, evaluating SQL schemas against NoSQL document structures and ACID vs CAP tradeoffs."
+tags: ["database","sql","nosql"]
+---
+
+## What You Will Learn
+
+- Compare SQL schemas with NoSQL document models.
+- Understand ACID database transactions and CAP properties.
+- Choose the appropriate database engine for specific project requirements.
+
+---
+
+## Why This Matters in Real Projects
+
+Choosing the incorrect database engine early in development is a costly mistake. PostgreSQL provides strict validation schemas and relationships, while MongoDB offers flexible document structures for rapidly changing datasets.
+
+<SeniorNote>
+Do not choose MongoDB simply because it uses JSON objects. If your data features complex relationships (like users, orders, and products), use PostgreSQL to enforce relationships and data consistency.
+</SeniorNote>
+
+---
+
+## Concept Explanation
+
+### SQL vs NoSQL Tradeoffs
+
+- **PostgreSQL (SQL)**:
+  - Relational database utilizing strict tabular schemas.
+  - Supports ACID transactions (Atomicity, Consistency, Isolation, Durability).
+  - Best for complex data relationships and transactional integrity.
+- **MongoDB (NoSQL)**:
+  - Document-based database utilizing dynamic BSON schemas.
+  - Prioritizes write performance and horizontal scaling (sharding).
+  - Best for flexible document structures and rapid scaling.
+
+---
+
+## Real-Time Project Example
+
+<RealTimeExample title={"PostgreSQL & MongoDB Core Basics Scenario"}>
+Financial transaction systems use PostgreSQL to ensure ledger balance updates are consistent. Logging systems use MongoDB to quickly write massive volumes of unstructured log data.
+</RealTimeExample>
+
+---
+
+## Code Example
+
+Below is a configuration file matching senior standards:
+
+```javascript
+// Comparing SQL schemas with NoSQL document structures
+// PostgreSQL (SQL schema definition)
+```sql
+CREATE TABLE users (
+  id SERIAL PRIMARY KEY,
+  email VARCHAR(255) UNIQUE NOT NULL,
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+```
+
+// MongoDB (Mongoose NoSQL document schema)
+```javascript
+const mongoose = require('mongoose');
+const UserSchema = new mongoose.Schema({
+  email: { type: String, unique: true, required: true },
+  metadata: mongoose.Schema.Types.Mixed, // Flexible fields
+  createdAt: { type: Date, default: Date.now }
+});
+```
+```
+
+---
+
+## Common Mistakes
+
+Here is an example of incorrect setups vs clean, optimized configurations.
+
+<CommonMistake
+  title={"Using NoSQL databases for relational structures"}
+  badDesc={"Using MongoDB to model highly relational data and manually simulating foreign key joins in application code, resulting in slow and complex queries."}
+  badCode={"// MongoDB: Simulating manual joins\nconst order = await Order.findById(id);\nconst user = await User.findById(order.userId); // Slow, sequential queries!"}
+  goodDesc={"Using PostgreSQL to query relational data with SQL JOINs."}
+  goodCode={"// SQL: SELECT * FROM orders JOIN users ON orders.user_id = users.id;\n// DATABASE ENGINE executes join natively in a single optimized query."}
+/>
+
+---
+
+## Practice Task
+
+Solidify your knowledge by implementing this exercise in your codebase.
+
+<TaskBox
+  title={"Model SQL Tables and Document Schemas"}
+  duration={"20 Minutes"}
+  requirements={[
+    "Model a post and comments relationship in PostgreSQL.",
+    "Model the same post and comments relationship in MongoDB.",
+    "Compare query syntax and schema validation structures."
+  ]}
+  expectedOutput={"// Models define keys and relations correctly\nSQL -> Foreign keys constraints\nNoSQL -> Nested arrays or references"}
+>
+Complete this task to verify your configuration operates correctly.
+</TaskBox>
+
+---
+
+## Interview Tip
+
+<InterviewTip question={"What is the CAP Theorem?"}>
+The CAP Theorem states that a distributed data store can guarantee at most two of three properties: Consistency (all nodes see the same data at the same time), Availability (every request receives a response), and Partition Tolerance (the system continues to operate despite network partition drops).
+</InterviewTip>

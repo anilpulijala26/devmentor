@@ -1,0 +1,115 @@
+---
+title: "Mocking Database Calls & Auth APIs"
+description: "Isolate test scopes by mocking database clients and external services. Mock Prisma and ORM clients using Jest."
+tags: ["testing","db"]
+---
+
+## What You Will Learn
+
+- Isolate tests by mocking database clients.
+- Mock Prisma ORM query calls using Jest.
+- Verify functions call dependencies with expected variables.
+
+---
+
+## Why This Matters in Real Projects
+
+Connecting to actual databases in unit tests slows execution and requires database seeding. Mocking ORM queries isolates tests, allowing logic to run quickly and reliably without external dependencies.
+
+<SeniorNote>
+Mock database clients when testing controllers or business logic. When testing database-specific code (like transactions or raw SQL), use a dedicated test database.
+</SeniorNote>
+
+---
+
+## Concept Explanation
+
+### Database Client Mocking
+
+- **Mocking**: Replaces database clients or external APIs with mock implementations that return expected values.
+- **Jest Mocks**: Jest provides utilities (`jest.mock()`) to mock modules, spy on function calls, and verify arguments.
+
+---
+
+## Real-Time Project Example
+
+<RealTimeExample title={"Mocking Database Calls & Auth APIs Scenario"}>
+When testing a payment service, mock the external Stripe SDK client to simulate successful payments without making actual credit card charges.
+</RealTimeExample>
+
+---
+
+## Code Example
+
+Below is a configuration file matching senior standards:
+
+```javascript
+// Mocking Prisma DB query calls with Jest
+import { PrismaClient } from '@prisma/client';
+import { fetchActiveUser } from './user.service';
+
+// Mock the Prisma module
+jest.mock('@prisma/client', () => {
+  const mockPrisma = {
+    user: {
+      findUnique: jest.fn()
+    }
+  };
+  return { PrismaClient: jest.fn(() => mockPrisma) };
+});
+
+const prisma = new PrismaClient();
+
+describe('fetchActiveUser tests', () => {
+  it('returns user records on successful queries', async () => {
+    const mockUser = { id: 100, email: 'mentor@codenivra.com', active: true };
+    // Configure mock query response
+    prisma.user.findUnique.mockResolvedValue(mockUser);
+    
+    const result = await fetchActiveUser(100);
+    expect(result).toEqual(mockUser);
+    expect(prisma.user.findUnique).toHaveBeenCalledWith({ where: { id: 100 } });
+  });
+});
+```
+
+---
+
+## Common Mistakes
+
+Here is an example of incorrect setups vs clean, optimized configurations.
+
+<CommonMistake
+  title={"Querying production databases in test suites"}
+  badDesc={"Running tests without mocking, which executes queries against staging or production databases, polluting live data."}
+  badCode={"// BAD: Modifies live database records\nawait prisma.user.delete({ where: { id: 1 } });"}
+  goodDesc={"Mocking the database client or using an isolated local test database."}
+  goodCode={"// GOOD: Database client is mocked\nprisma.user.delete.mockResolvedValue({ id: 1 });"}
+/>
+
+---
+
+## Practice Task
+
+Solidify your knowledge by implementing this exercise in your codebase.
+
+<TaskBox
+  title={"Mock a Prisma DB query in Jest"}
+  duration={"25 Minutes"}
+  requirements={[
+    "Create a user service file querying database records.",
+    "Mock the PrismaClient client instance using Jest.",
+    "Assert that query results match mock configurations."
+  ]}
+  expectedOutput={"// Jest tests run and pass using mocked client\n✓ UserService.find -> Resolves with mock payload"}
+>
+Complete this task to verify your configuration operates correctly.
+</TaskBox>
+
+---
+
+## Interview Tip
+
+<InterviewTip question={"What is the difference between a Mock, a Stub, and a Spy?"}>
+A Mock replaces a module with custom logic and assets. A Stub returns predefined values to keep tests running. A Spy records execution details (like call counts and arguments) on actual functions.
+</InterviewTip>

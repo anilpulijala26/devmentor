@@ -1,0 +1,111 @@
+---
+title: "API testing with Jest & Supertest"
+description: "Write integration tests for API routes. Assert status codes, headers, and database states using Supertest and Jest."
+tags: ["testing","supertest"]
+---
+
+## What You Will Learn
+
+- Verify Express API routes using Supertest.
+- Assert HTTP status codes and JSON response bodies.
+- Manage test database states across test runs.
+
+---
+
+## Why This Matters in Real Projects
+
+Testing API routes manually using client tools is slow. Writing automated integration tests using Supertest sends mock HTTP requests to routes, asserting response values and database updates on every build.
+
+<SeniorNote>
+Expose your Express `app` instance from your entrypoint without calling `app.listen()`. This allows Supertest to query the server in memory without binding network ports, speeding up tests.
+</SeniorNote>
+
+---
+
+## Concept Explanation
+
+### Route Integration Testing
+
+- **Supertest**: A testing library used to query Express HTTP routes in memory, asserting responses.
+- **In-Memory Assertions**: Supertest routes requests through the Express application stack, verifying authentication, validation, controllers, and error middlewares.
+
+---
+
+## Real-Time Project Example
+
+<RealTimeExample title={"API testing with Jest & Supertest Scenario"}>
+When users checkout, integration tests query POST /api/checkout using Supertest, verifying that a 201 status is returned and the database records orders.
+</RealTimeExample>
+
+---
+
+## Code Example
+
+Below is a configuration file matching senior standards:
+
+```javascript
+// Integration testing Express routes using Supertest
+import request from 'supertest';
+import express from 'express';
+
+const app = express();
+app.use(express.json());
+
+app.post('/api/v1/echo', (req, res) => {
+  res.status(200).json({ message: req.body.message });
+});
+
+// Jest integration test suite
+describe('POST /api/v1/echo integration tests', () => {
+  it('returns a 200 status and echoes the request message', async () => {
+    const response = await request(app)
+      .post('/api/v1/echo')
+      .send({ message: 'Hello World' })
+      .set('Accept', 'application/json');
+      
+    expect(response.status).toBe(200);
+    expect(response.body.message).toBe('Hello World');
+  });
+});
+```
+
+---
+
+## Common Mistakes
+
+Here is an example of incorrect setups vs clean, optimized configurations.
+
+<CommonMistake
+  title={"Hardcoding API hosts in integration tests"}
+  badDesc={"Making actual network requests to live servers in integration tests, which makes tests dependent on network connectivity and server availability."}
+  badCode={"// BAD: Queries live staging URL\nconst res = await request('https://staging.api.com').get('/users');"}
+  goodDesc={"Querying the Express app instance in memory using Supertest."}
+  goodCode={"// GOOD: Queries local Express instance in memory\nconst res = await request(app).get('/users');"}
+/>
+
+---
+
+## Practice Task
+
+Solidify your knowledge by implementing this exercise in your codebase.
+
+<TaskBox
+  title={"Write an Express API Integration Test"}
+  duration={"25 Minutes"}
+  requirements={[
+    "Create an integration test file for validation routes.",
+    "Assert that invalid requests return a 400 Bad Request.",
+    "Assert that valid requests return a 201 Created."
+  ]}
+  expectedOutput={"// Supertest integration tests pass successfully\nPASS  ./routes.test.js\n✓ POST /api/register - returns 400 on empty email"}
+>
+Complete this task to verify your configuration operates correctly.
+</TaskBox>
+
+---
+
+## Interview Tip
+
+<InterviewTip question={"How do you handle authentication in integration tests?"}>
+Generate a mock JWT token using your signing key during setup, and attach it to the request header in Supertest using '.set("Authorization", `Bearer ${"{"{"}"}token{"}"}`)'.
+</InterviewTip>

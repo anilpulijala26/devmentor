@@ -1,0 +1,119 @@
+---
+title: "Rate Limiting & Input Sanitization"
+description: "Protect Express applications from brute-force attacks and security vulnerabilities using rate limiters and input sanitizers."
+tags: ["security","perf"]
+---
+
+## What You Will Learn
+
+- Configure route throttling limits using rate limiters.
+- Sanitize input strings to prevent XSS attacks.
+- Implement payload limit checks.
+
+---
+
+## Why This Matters in Real Projects
+
+Exposed API endpoints are vulnerable to request spamming and brute-force attacks. Implementing rate limiters and input sanitizers blocks malicious requests, protecting server resources and database records.
+
+<SeniorNote>
+Use rate limiters globally to throttle traffic, but define stricter rate limits on sensitive endpoints like login and registration forms.
+</SeniorNote>
+
+---
+
+## Concept Explanation
+
+### Input Throttling & Sanitization
+
+- **Rate Limiting**: resticts the number of requests an IP can send within a timeframe.
+- **Input Sanitization**: Parses request bodies and query parameters to strip out executable script tags, preventing XSS and SQL injection attacks.
+
+---
+
+## Real-Time Project Example
+
+<RealTimeExample title={"Rate Limiting & Input Sanitization Scenario"}>
+On login screens, applying rate limiting blocks automated scripts from sending thousands of login attempts, mitigating brute-force password guessing.
+</RealTimeExample>
+
+---
+
+## Code Example
+
+Below is a configuration file matching senior standards:
+
+```javascript
+// Throttling traffic using Express Rate Limit middlewares
+import express from 'express';
+import rateLimit from 'express-rate-limit';
+import DOMPurify from 'isomorphic-dompurify';
+
+const app = express();
+app.use(express.json());
+
+// 1. Configure global rate limiting middleware
+const globalLimiter = rateLimit({
+  windowMs: 15 * 60 * 1000, // 15 Minutes
+  max: 100, // Limit each IP to 100 requests per window
+  message: { error: 'Too many requests. Please try again later.' }
+});
+app.use(globalLimiter);
+
+// 2. Input Sanitization middleware
+const sanitizeInput = (req, res, next) => {
+  if (req.body) {
+    for (const key in req.body) {
+      if (typeof req.body[key] === 'string') {
+        req.body[key] = DOMPurify.sanitize(req.body[key]); // Strip XSS scripts
+      }
+    }
+  }
+  next();
+};
+
+app.post('/api/comments', sanitizeInput, (req, res) => {
+  res.json({ comment: req.body.comment });
+});
+```
+
+---
+
+## Common Mistakes
+
+Here is an example of incorrect setups vs clean, optimized configurations.
+
+<CommonMistake
+  title={"Saving Unsanitized Input to Databases"}
+  badDesc={"Storing raw HTML input strings sent by clients directly in databases without sanitization. If rendered on the frontend, malicious scripts can execute."}
+  badCode={"// BAD: Saves script tags directly\nconst comment = req.body.text; // '<script>stealCookies()</script>'\nawait db.saveComment(comment);"}
+  goodDesc={"Sanitizing input strings using DOMPurify before storing them in databases."}
+  goodCode={"// GOOD: Stored text is safe to render\nconst comment = DOMPurify.sanitize(req.body.text); // 'stealCookies()'\nawait db.saveComment(comment);"}
+/>
+
+---
+
+## Practice Task
+
+Solidify your knowledge by implementing this exercise in your codebase.
+
+<TaskBox
+  title={"Implement a Login Rate Limiter"}
+  duration={"20 Minutes"}
+  requirements={[
+    "Create a rate limiter targeting login routes.",
+    "Restrict requests to 5 attempts per minute.",
+    "Test rate limiting behavior using scripts."
+  ]}
+  expectedOutput={"// API returns rate limit errors on excessive requests\nStatus 429 Too Many Requests -> { \"error\": \"Too many requests...\" }"}
+>
+Complete this task to verify your configuration operates correctly.
+</TaskBox>
+
+---
+
+## Interview Tip
+
+<InterviewTip question={"How do you handle rate limiting in multi-instance load-balanced environments?"}>
+In multi-instance environments, local memory rate limiters will not track requests across instances. You should use a centralized data store (like Redis) to share request counters across backend server instances.
+</InterviewTip>

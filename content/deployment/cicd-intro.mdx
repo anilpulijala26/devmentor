@@ -1,0 +1,114 @@
+---
+title: "What is CI/CD & GitHub Actions Basics"
+description: "Introduction to continuous integration and continuous deployment pipelines using GitHub Actions."
+tags: ["cicd","actions"]
+---
+
+## What You Will Learn
+
+- Understand continuous integration and deployment concepts.
+- Configure basic GitHub Actions YAML workflows.
+- Verify trigger workflows run on pull request submissions.
+
+---
+
+## Why This Matters in Real Projects
+
+Deploying applications manually is slow and error-prone. Setting up automated CI/CD pipelines ensures that tests and validation checks run automatically on every pull request, preventing regression bugs.
+
+<SeniorNote>
+Add status checks in GitHub Actions to block merging pull requests unless workflow tests pass successfully.
+</SeniorNote>
+
+---
+
+## Concept Explanation
+
+### CI/CD Pipeline Stages
+
+- **Continuous Integration (CI)**: Automates linting, formatting, and unit-integration test suites on code commits.
+- **Continuous Deployment (CD)**: Automatically deploys code to staging or production environments after tests pass.
+- **Actions Workflows**: YAML files defined in `.github/workflows/` that schedule tasks on events like pushes or pulls.
+
+---
+
+## Real-Time Project Example
+
+<RealTimeExample title={"What is CI/CD & GitHub Actions Basics Scenario"}>
+When features are pushed, GitHub Actions runs test suites automatically, notifying developers if tests fail and blocking merges to protect staging.
+</RealTimeExample>
+
+---
+
+## Code Example
+
+Below is a configuration file matching senior standards:
+
+```javascript
+// Basic GitHub Actions workflow config (.github/workflows/test.yml)
+name: Continuous Integration
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          
+      - name: Install dependencies
+        run: npm ci
+        
+      - name: Run tests
+        run: npm test
+```
+
+---
+
+## Common Mistakes
+
+Here is an example of incorrect setups vs clean, optimized configurations.
+
+<CommonMistake
+  title={"Merging code without running automated tests"}
+  badDesc={"Merging pull requests manually without automated testing, which can introduce syntax errors and database crashes into main branches."}
+  badCode={"// Manual merges without pipeline validations"}
+  goodDesc={"Enforcing status checks in GitHub Actions to run tests automatically before merges are allowed."}
+  goodCode={"// Branch protection rules require CI workflows to pass"}
+/>
+
+---
+
+## Practice Task
+
+Solidify your knowledge by implementing this exercise in your codebase.
+
+<TaskBox
+  title={"Create a GitHub Actions Workflow config"}
+  duration={"20 Minutes"}
+  requirements={[
+    "Create a .github/workflows directory.",
+    "Write a continuous-integration.yml file.",
+    "Test pipeline triggers using local test branches."
+  ]}
+  expectedOutput={"// GitHub Actions workflow registers and runs on pushes\n.github/workflows/continuous-integration.yml"}
+>
+Complete this task to verify your configuration operates correctly.
+</TaskBox>
+
+---
+
+## Interview Tip
+
+<InterviewTip question={"What is the difference between Continuous Delivery and Continuous Deployment?"}>
+Continuous Delivery compiles builds automatically but requires manual approval before deploying to production. Continuous Deployment automatically deploys builds to production without manual intervention after tests pass.
+</InterviewTip>

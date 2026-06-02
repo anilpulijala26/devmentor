@@ -9,124 +9,43 @@
           "slug": "html",
           "title": "HTML Fundamentals",
           "lessons": [
-            {
-              "slug": "web-works",
-              "title": "How the Web Works & Browser Rendering",
-              "order": 1
-            },
-            {
-              "slug": "html-intro",
-              "title": "Introduction to HTML",
-              "order": 2
-            },
-            {
-              "slug": "html-semantic",
-              "title": "Semantic HTML",
-              "order": 3
-            },
-            {
-              "slug": "html-forms-a11y",
-              "title": "Form Validation & Accessibility",
-              "order": 4
-            },
-            {
-              "slug": "html-seo-performance",
-              "title": "SEO, Meta Tags & Performance",
-              "order": 5
-            },
-            {
-              "slug": "html-interview-cracking",
-              "title": "HTML Interview Cracking Guide",
-              "order": 6
-            }
+            { "slug": "web-works", "title": "How the Web Works & Browser Rendering", "order": 1 },
+            { "slug": "html-intro", "title": "Introduction to HTML", "order": 2 },
+            { "slug": "html-semantic", "title": "Semantic HTML", "order": 3 },
+            { "slug": "html-forms-a11y", "title": "Form Validation & Accessibility", "order": 4 },
+            { "slug": "html-seo-performance", "title": "SEO, Meta Tags & Performance", "order": 5 },
+            { "slug": "html-interview-cracking", "title": "HTML Interview Cracking Guide", "order": 6 }
           ]
         },
         {
           "slug": "css",
           "title": "CSS Mastery",
           "lessons": [
-            {
-              "slug": "css-intro",
-              "title": "CSS Fundamentals",
-              "order": 1
-            },
-            {
-              "slug": "css-flexbox",
-              "title": "Flexbox Layout",
-              "order": 2
-            },
-            {
-              "slug": "css-grid",
-              "title": "CSS Grid Layout",
-              "order": 3
-            },
-            {
-              "slug": "css-variables-nesting",
-              "title": "CSS Custom Properties & Nesting",
-              "order": 4
-            },
-            {
-              "slug": "css-interview-cracking",
-              "title": "CSS Interview Cracking Guide",
-              "order": 5
-            }
+            { "slug": "css-intro", "title": "CSS Fundamentals", "order": 1 },
+            { "slug": "css-flexbox", "title": "Flexbox Layout", "order": 2 },
+            { "slug": "css-grid", "title": "CSS Grid Layout", "order": 3 },
+            { "slug": "css-variables-nesting", "title": "CSS Custom Properties & Nesting", "order": 4 },
+            { "slug": "css-interview-cracking", "title": "CSS Interview Cracking Guide", "order": 5 }
           ]
         },
         {
           "slug": "javascript",
           "title": "JavaScript Essentials",
           "lessons": [
-            {
-              "slug": "js-intro",
-              "title": "JavaScript Fundamentals",
-              "order": 1
-            },
-            {
-              "slug": "js-async",
-              "title": "Async Programming",
-              "order": 2
-            },
-            {
-              "slug": "js-event-loop-dom",
-              "title": "Event Loop & Event Delegation",
-              "order": 3
-            },
-            {
-              "slug": "js-advanced-es6-memory",
-              "title": "Advanced JS & Memory Management",
-              "order": 4
-            },
-            {
-              "slug": "js-interview-cracking",
-              "title": "JavaScript Interview Cracking Guide",
-              "order": 5
-            }
+            { "slug": "js-intro", "title": "JavaScript Fundamentals", "order": 1 },
+            { "slug": "js-async", "title": "Async Programming", "order": 2 },
+            { "slug": "js-event-loop-dom", "title": "Event Loop & Event Delegation", "order": 3 },
+            { "slug": "js-advanced-es6-memory", "title": "Advanced JS & Memory Management", "order": 4 },
+            { "slug": "js-interview-cracking", "title": "JavaScript Interview Cracking Guide", "order": 5 }
           ]
         },
         {
           "slug": "typescript",
           "title": "TypeScript Basics",
           "lessons": [
-            {
-              "slug": "ts-intro",
-              "title": "TypeScript Fundamentals",
-              "order": 1,
-              "objectives": [],
-              "sections": [],
-              "examples": [],
-              "exercises": [],
-              "resources": []
-            },
-            {
-              "slug": "ts-advanced-generics",
-              "title": "Advanced Types & Generics",
-              "order": 2
-            },
-            {
-              "slug": "ts-interview-cracking",
-              "title": "TypeScript Interview Cracking Guide",
-              "order": 3
-            }
+            { "slug": "ts-intro", "title": "TypeScript Fundamentals", "order": 1 },
+            { "slug": "ts-advanced-generics", "title": "Advanced Types & Generics", "order": 2 },
+            { "slug": "ts-interview-cracking", "title": "TypeScript Interview Cracking Guide", "order": 3 }
           ]
         }
       ]
@@ -140,97 +59,129 @@
           "slug": "react",
           "title": "React Mastery",
           "lessons": [
-            {
-              "slug": "react-intro",
-              "title": "Introduction to React",
-              "order": 1
-            },
-            {
-              "slug": "react-components",
-              "title": "Building Components",
-              "order": 2
-            },
-            {
-              "slug": "react-hooks",
-              "title": "React Hooks",
-              "order": 3
-            },
-            {
-              "slug": "react-state-management",
-              "title": "Advanced State Management",
-              "order": 4
-            },
-            {
-              "slug": "react-performance-profiling",
-              "title": "Performance & Profiling",
-              "order": 5
-            },
-            {
-              "slug": "react-fiber-architecture",
-              "title": "Fiber & Under the Hood",
-              "order": 6
-            },
-            {
-              "slug": "react-server-components",
-              "title": "Server Components (RSC)",
-              "order": 7
-            },
-            {
-              "slug": "react-security-testing",
-              "title": "Testing & Security",
-              "order": 8
-            },
-            {
-              "slug": "react-interview-cracking",
-              "title": "React Interview Cracking Guide",
-              "order": 9
-            }
+            { "slug": "react-intro", "title": "Introduction to React", "order": 1 },
+            { "slug": "react-components", "title": "Building Components", "order": 2 },
+            { "slug": "react-hooks", "title": "React Hooks", "order": 3 },
+            { "slug": "react-state-management", "title": "Advanced State Management", "order": 4 },
+            { "slug": "react-performance-profiling", "title": "Performance & Profiling", "order": 5 },
+            { "slug": "react-fiber-architecture", "title": "Fiber & Under the Hood", "order": 6 },
+            { "slug": "react-server-components", "title": "Server Components (RSC)", "order": 7 },
+            { "slug": "react-security-testing", "title": "Testing & Security", "order": 8 },
+            { "slug": "react-interview-cracking", "title": "React Interview Cracking Guide", "order": 9 }
           ]
         },
         {
           "slug": "nextjs",
           "title": "Next.js Mastery",
           "lessons": [
-            {
-              "slug": "nextjs-intro",
-              "title": "Introduction to Next.js",
-              "order": 1
-            },
-            {
-              "slug": "nextjs-app-router",
-              "title": "App Router Fundamentals",
-              "order": 2
-            },
-            {
-              "slug": "nextjs-fullstack",
-              "title": "Building Full-Stack Applications",
-              "order": 3
-            },
-            {
-              "slug": "nextjs-caching-rendering",
-              "title": "Next.js Caching & Revalidation",
-              "order": 4
-            },
-            {
-              "slug": "nextjs-advanced-actions",
-              "title": "Advanced Server Actions & Forms",
-              "order": 5
-            },
-            {
-              "slug": "nextjs-routing-middleware",
-              "title": "Parallel & Intercepting Routes",
-              "order": 6
-            },
-            {
-              "slug": "nextjs-optimization-monitoring",
-              "title": "Performance Optimization & Scale",
-              "order": 7
-            },
-            {
-              "slug": "nextjs-interview-cracking",
-              "title": "Next.js Interview Cracking Guide",
-              "order": 8
-            }
+            { "slug": "nextjs-intro", "title": "Introduction to Next.js", "order": 1 },
+            { "slug": "nextjs-app-router", "title": "App Router Fundamentals", "order": 2 },
+            { "slug": "nextjs-fullstack", "title": "Building Full-Stack Applications", "order": 3 },
+            { "slug": "nextjs-caching-rendering", "title": "Next.js Caching & Revalidation", "order": 4 },
+            { "slug": "nextjs-advanced-actions", "title": "Advanced Server Actions & Forms", "order": 5 },
+            { "slug": "nextjs-routing-middleware", "title": "Parallel & Intercepting Routes", "order": 6 },
+            { "slug": "nextjs-optimization-monitoring", "title": "Performance Optimization & Scale", "order": 7 },
+            { "slug": "nextjs-interview-cracking", "title": "Next.js Interview Cracking Guide", "order": 8 }
+          ]
+        }
+      ]
+    },
+    {
+      "slug": "backend",
+      "title": "Backend Engineering",
+      "description": "Master server-side architectures, REST APIs, validation, databases, and security systems",
+      "modules": [
+        {
+          "slug": "node-fundamentals",
+          "title": "Node.js Fundamentals",
+          "lessons": [
+            { "slug": "what-is-node", "title": "What is Node.js Runtime", "order": 1 },
+            { "slug": "runtime-event-loop", "title": "Event Loop & Non-Blocking I/O", "order": 2 },
+            { "slug": "node-modules", "title": "Modules, NPM & Environment Variables", "order": 3 },
+            { "slug": "node-async-errors", "title": "Asynchronous Core & Error Basics", "order": 4 }
+          ]
+        },
+        {
+          "slug": "express-fundamentals",
+          "title": "Express.js Fundamentals",
+          "lessons": [
+            { "slug": "express-setup", "title": "Express Setup & Routing Mechanics", "order": 1 },
+            { "slug": "controllers-middleware", "title": "Controllers & Middleware Pipeline", "order": 2 },
+            { "slug": "req-res-handling", "title": "Request and Response Handling", "order": 3 },
+            { "slug": "modular-folder-structure", "title": "Modular Project Folder Structure", "order": 4 }
+          ]
+        },
+        {
+          "slug": "rest-api",
+          "title": "REST API Development",
+          "lessons": [
+            { "slug": "rest-principles", "title": "REST Architectural Principles", "order": 1 },
+            { "slug": "http-methods-status", "title": "HTTP Methods & Status Code Mappings", "order": 2 },
+            { "slug": "pagination-filter-sort", "title": "Pagination, Filtering, Sorting, and Search", "order": 3 },
+            { "slug": "api-response-structure", "title": "API Response Structure & Versioning", "order": 4 }
+          ]
+        },
+        {
+          "slug": "validation-errors",
+          "title": "Validation and Error Handling",
+          "lessons": [
+            { "slug": "zod-validation", "title": "Request Validation with Zod", "order": 1 },
+            { "slug": "centralized-error-handling", "title": "Centralized Error Handling", "order": 2 },
+            { "slug": "custom-error-classes", "title": "Custom Error Classes & Async Catchers", "order": 3 }
+          ]
+        },
+        {
+          "slug": "authentication",
+          "title": "Authentication and Authorization",
+          "lessons": [
+            { "slug": "signup-login-bcrypt", "title": "Signup/Login APIs & Bcrypt Hashing", "order": 1 },
+            { "slug": "jwt-tokens", "title": "JWT Access Tokens, Expiry, and Cookies", "order": 2 },
+            { "slug": "rbac-permissions", "title": "Role-Based & Permission-Based Control", "order": 3 }
+          ]
+        },
+        {
+          "slug": "database-integration",
+          "title": "Database Integration",
+          "lessons": [
+            { "slug": "postgres-mongodb-basics", "title": "PostgreSQL & MongoDB Core Basics", "order": 1 },
+            { "slug": "prisma-drizzle-orm", "title": "ORM Integration: Prisma & Drizzle", "order": 2 },
+            { "slug": "db-index-transactions", "title": "Relationships, Indexing, and Transactions", "order": 3 }
+          ]
+        },
+        {
+          "slug": "backend-security",
+          "title": "Backend Security",
+          "lessons": [
+            { "slug": "cors-security-headers", "title": "CORS & Helmet Security Headers", "order": 1 },
+            { "slug": "rate-limiting-sanitization", "title": "Rate Limiting & Input Sanitization", "order": 2 },
+            { "slug": "owasp-basics", "title": "OWASP Basics & Env Variable Safety", "order": 3 }
+          ]
+        },
+        {
+          "slug": "file-upload",
+          "title": "File Upload and Storage",
+          "lessons": [
+            { "slug": "multer-uploads", "title": "File Upload with Multer", "order": 1 },
+            { "slug": "s3-supabase-storage", "title": "Cloud Storage: AWS S3 & Supabase", "order": 2 },
+            { "slug": "file-validation-limits", "title": "File Validations & Signed URLs", "order": 3 }
+          ]
+        },
+        {
+          "slug": "advanced-backend",
+          "title": "Advanced Backend Concepts",
+          "lessons": [
+            { "slug": "logging-redis-caching", "title": "Logging, Tracing & Redis Caching", "order": 1 },
+            { "slug": "cron-jobs-queues", "title": "Queues, Cron Jobs, and Webhooks", "order": 2 },
+            { "slug": "swagger-api-docs", "title": "API Documentation with Swagger/OpenAPI", "order": 3 }
+          ]
+        },
+        {
+          "slug": "backend-testing",
+          "title": "Backend Testing",
+          "lessons": [
+            { "slug": "unit-integration-testing", "title": "Unit and Integration Testing Models", "order": 1 },
+            { "slug": "supertest-api-testing", "title": "API testing with Jest & Supertest", "order": 2 },
+            { "slug": "jest-db-mocking", "title": "Mocking Database Calls & Auth APIs", "order": 3 }
           ]
         }
       ]
@@ -244,58 +195,144 @@
           "slug": "react-node-postgres",
           "title": "React + Node + PostgreSQL",
           "lessons": [
-            {
-              "slug": "rn-p-intro",
-              "title": "Full-Stack Architecture",
-              "order": 1
-            },
-            {
-              "slug": "express-postgres-production",
-              "title": "Express + PostgreSQL in Production",
-              "order": 2
-            }
+            { "slug": "rn-p-intro", "title": "Full-Stack Architecture", "order": 1 },
+            { "slug": "express-postgres-production", "title": "Express + PostgreSQL in Production", "order": 2 }
           ]
         },
         {
           "slug": "nextjs-postgres",
           "title": "Next.js + PostgreSQL",
           "lessons": [
-            {
-              "slug": "nn-p-intro",
-              "title": "Full-Stack with Next.js",
-              "order": 1
-            },
-            {
-              "slug": "prisma-drizzle-postgres",
-              "title": "Postgres ORMs & Query Performance",
-              "order": 2
-            }
+            { "slug": "nn-p-intro", "title": "Full-Stack with Next.js", "order": 1 },
+            { "slug": "prisma-drizzle-postgres", "title": "Postgres ORMs & Query Performance", "order": 2 }
+          ]
+        },
+        {
+          "slug": "client-server-integration",
+          "title": "Client-Server Integration",
+          "lessons": [
+            { "slug": "connecting-frontend-backend", "title": "Connecting React/Next.js and Express", "order": 1 },
+            { "slug": "api-service-layer", "title": "API Service Layer & Client Auth Routing", "order": 2 },
+            { "slug": "form-validation-errors", "title": "Client Form Validation & Backend Sync", "order": 3 },
+            { "slug": "role-based-ui", "title": "Role-Based UI Control states", "order": 4 },
+            { "slug": "monorepo-basics", "title": "Full-Stack Monorepo Folder Structure", "order": 5 }
           ]
         },
         {
           "slug": "production-readiness",
           "title": "Production Readiness",
           "lessons": [
-            {
-              "slug": "env-vars",
-              "title": "Environment Variables (.env)",
-              "order": 1
-            },
-            {
-              "slug": "docker-basics",
-              "title": "Docker Basics",
-              "order": 2
-            },
-            {
-              "slug": "docker-compose-production",
-              "title": "Production Docker & Compose",
-              "order": 3
-            },
-            {
-              "slug": "fullstack-interview-cracking",
-              "title": "Full-Stack Interview Cracking Guide",
-              "order": 4
-            }
+            { "slug": "env-vars", "title": "Environment Variables (.env)", "order": 1 },
+            { "slug": "docker-basics", "title": "Docker Basics", "order": 2 },
+            { "slug": "docker-compose-production", "title": "Production Docker & Compose", "order": 3 },
+            { "slug": "fullstack-interview-cracking", "title": "Full-Stack Interview Cracking Guide", "order": 4 }
+          ]
+        }
+      ]
+    },
+    {
+      "slug": "deployment",
+      "title": "CI/CD & Deployment",
+      "description": "Master Git collaborative workflows, Docker, CI/CD, deployment on Azure, Render, AWS, and production scaling checklist reviews",
+      "modules": [
+        {
+          "slug": "git-workflow",
+          "title": "Git & GitHub Workflow",
+          "lessons": [
+            { "slug": "git-branching-prs", "title": "Branching, Pull Requests & Code Reviews", "order": 1 },
+            { "slug": "git-commit-standards", "title": "Commit Standards & Repository Structure", "order": 2 }
+          ]
+        },
+        {
+          "slug": "env-management",
+          "title": "Environment Management",
+          "lessons": [
+            { "slug": "env-variables-secrets", "title": "Environment Management & Secret Storage", "order": 1 },
+            { "slug": "build-time-runtime", "title": "Build-Time vs Runtime Variables", "order": 2 }
+          ]
+        },
+        {
+          "slug": "cicd-basics",
+          "title": "CI/CD Basics",
+          "lessons": [
+            { "slug": "cicd-intro", "title": "What is CI/CD & GitHub Actions Basics", "order": 1 },
+            { "slug": "install-lint-test-build", "title": "Test, Lint, Build & Deployment Pipelines", "order": 2 }
+          ]
+        },
+        {
+          "slug": "docker-basics",
+          "title": "Docker Basics",
+          "lessons": [
+            { "slug": "docker-basics", "title": "Dockerfile & Multi-Stage Builds", "order": 1 },
+            { "slug": "docker-compose-env", "title": "Docker Compose & Local Database Clusters", "order": 2 }
+          ]
+        },
+        {
+          "slug": "frontend-deployment",
+          "title": "Frontend Deployment",
+          "lessons": [
+            { "slug": "vercel-deployment", "title": "Vercel Deployment & Custom Domain Setup", "order": 1 },
+            { "slug": "seo-ssl-optimization", "title": "SEO Metadata, SSL Certificates, and Performance", "order": 2 }
+          ]
+        },
+        {
+          "slug": "backend-deployment",
+          "title": "Backend Deployment",
+          "lessons": [
+            { "slug": "cloud-backend-deploy", "title": "Deploying Backend to Render & Railway", "order": 1 },
+            { "slug": "ec2-azure-appservice", "title": "AWS EC2 & Azure App Service Basics", "order": 2 }
+          ]
+        },
+        {
+          "slug": "database-deployment",
+          "title": "Database Deployment",
+          "lessons": [
+            { "slug": "postgres-supabase-neon", "title": "PostgreSQL Hosting with Neon & Supabase", "order": 1 },
+            { "slug": "db-backup-migrations", "title": "Database Backups & Migrations Strategy", "order": 2 }
+          ]
+        },
+        {
+          "slug": "aws-basics",
+          "title": "AWS Basics",
+          "lessons": [
+            { "slug": "aws-iam-s3", "title": "IAM, S3 Storage, and CloudFront Basics", "order": 1 },
+            { "slug": "aws-ec2-rds-cloudfront", "title": "RDS Databases, Route 53, and Lambda Functions", "order": 2 }
+          ]
+        },
+        {
+          "slug": "azure-basics",
+          "title": "Azure Basics",
+          "lessons": [
+            { "slug": "azure-appservice-static-blob", "title": "Azure App Service, Blob Storage & Static Web Apps", "order": 1 },
+            { "slug": "azure-sql-functions-keyvault", "title": "Azure SQL, Functions, and Key Vault Secrets", "order": 2 }
+          ]
+        },
+        {
+          "slug": "prod-readiness",
+          "title": "Production Readiness",
+          "lessons": [
+            { "slug": "production-monitoring-logging", "title": "Logging, Uptime, Error, & Performance Monitoring", "order": 1 },
+            { "slug": "deployment-checklists", "title": "Comprehensive Launch & Security Checklists", "order": 2 }
+          ]
+        }
+      ]
+    },
+    {
+      "slug": "interview",
+      "title": "Interview Preparation",
+      "description": "Comprehensive visual cracking guides for frontend, backend, fullstack, and systems architectures",
+      "modules": [
+        {
+          "slug": "cracking-guides",
+          "title": "Technical Cracking Guides",
+          "lessons": [
+            { "slug": "html-interview-cracking", "title": "HTML Interview Cracking Guide", "order": 1 },
+            { "slug": "css-interview-cracking", "title": "CSS Interview Cracking Guide", "order": 2 },
+            { "slug": "js-interview-cracking", "title": "JavaScript Interview Cracking Guide", "order": 3 },
+            { "slug": "ts-interview-cracking", "title": "TypeScript Interview Cracking Guide", "order": 4 },
+            { "slug": "react-interview-cracking", "title": "React Interview Cracking Guide", "order": 5 },
+            { "slug": "nextjs-interview-cracking", "title": "Next.js Interview Cracking Guide", "order": 6 },
+            { "slug": "fullstack-interview-cracking", "title": "Full-Stack Interview Cracking Guide", "order": 7 }
           ]
         }
       ]

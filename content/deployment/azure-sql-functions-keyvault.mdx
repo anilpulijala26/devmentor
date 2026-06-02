@@ -1,0 +1,104 @@
+---
+title: "Azure SQL, Functions, and Key Vault Secrets"
+description: "Manage SQL databases in Azure. Deploy serverless functions and encrypt environment keys in Key Vault."
+tags: ["azure","security"]
+---
+
+## What You Will Learn
+
+- Manage database tables in Azure SQL.
+- Deploy serverless APIs using Azure Functions.
+- Secure application credentials in Azure Key Vault.
+
+---
+
+## Why This Matters in Real Projects
+
+Exposing secrets or leaving databases open is a major security risk. Encrypting keys in Key Vault and running serverless APIs manages security and controls resources.
+
+<SeniorNote>
+Use Key Vault references in App Services to load secrets dynamically from the vault on server boot, keeping configurations out of code.
+</SeniorNote>
+
+---
+
+## Concept Explanation
+
+### Azure SQL, Functions & Security
+
+- **Azure SQL Database**: Managed relational database engine based on Microsoft SQL Server.
+- **Azure Functions**: Serverless compute service that runs code on demand in response to events.
+- **Azure Key Vault**: Secure storage for encrypting keys, secrets, and certificates.
+
+---
+
+## Real-Time Project Example
+
+<RealTimeExample title={"Azure SQL, Functions, and Key Vault Secrets Scenario"}>
+When server instances boot, they authenticate with Key Vault, loading database connection strings dynamically to query Azure SQL.
+</RealTimeExample>
+
+---
+
+## Code Example
+
+Below is a configuration file matching senior standards:
+
+```javascript
+// Azure Functions HTTP trigger route handler example
+import { app } from '@azure/functions';
+
+app.http('userProfile', {
+  methods: ['GET'],
+  authLevel: 'anonymous',
+  handler: async (request, context) => {
+    context.log('Processing userProfile query request...');
+    
+    return {
+      status: 200,
+      jsonBody: { user: 'Azure Serverless Profile' }
+    };
+  }
+});
+```
+
+---
+
+## Common Mistakes
+
+Here is an example of incorrect setups vs clean, optimized configurations.
+
+<CommonMistake
+  title={"Leaving Azure SQL Ports Open to Wildcard IPs"}
+  badDesc={"Setting firewall rules to allow access on port 1433 from wildcard IPs, exposing databases to brute-force attacks."}
+  badCode={"// Firewall: Allowed IPs -> 0.0.0.0 to 255.255.255.255"}
+  goodDesc={"Restricting firewall rules to allow access only from trusted App Service IPs."}
+  goodCode={"// Firewall: Allow Azure Services access only"}
+/>
+
+---
+
+## Practice Task
+
+Solidify your knowledge by implementing this exercise in your codebase.
+
+<TaskBox
+  title={"Configure Azure Key Vault configurations"}
+  duration={"25 Minutes"}
+  requirements={[
+    "Create an Azure Key Vault configuration.",
+    "Store connection strings inside secret keys.",
+    "Configure App Services to load secret keys from Key Vault."
+  ]}
+  expectedOutput={"// Server loads secret connections from Key Vault\nApp configuration shows key references: @Microsoft.KeyVault(...)"}
+>
+Complete this task to verify your configuration operates correctly.
+</TaskBox>
+
+---
+
+## Interview Tip
+
+<InterviewTip question={"Why should you store environment secrets in Key Vault?"}>
+Key Vault encrypts secrets at rest, manages access permissions using policy rules, and provides audit logs of secret access, keeping credentials secure.
+</InterviewTip>

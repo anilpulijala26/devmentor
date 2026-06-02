@@ -1,0 +1,104 @@
+---
+title: "IAM, S3 Storage, and CloudFront Basics"
+description: "Create AWS IAM credentials, manage S3 storage buckets, and configure CDN caches."
+tags: ["aws","s3"]
+---
+
+## What You Will Learn
+
+- Manage AWS security permissions using IAM policies.
+- Configure private S3 buckets for asset storage.
+- Distribute static assets globally using CloudFront CDN.
+
+---
+
+## Why This Matters in Real Projects
+
+Exposing access keys or leaving storage buckets public is a major security risk. Using IAM policies to restrict access and serving assets through CDNs secures storage and improves load times globally.
+
+<SeniorNote>
+Always keep S3 buckets private. Restrict access to bucket resources, and serve assets to users using CloudFront CDN with Origin Access Identity (OAI) policies.
+</SeniorNote>
+
+---
+
+## Concept Explanation
+
+### IAM, S3 & CDN Architectures
+
+- **IAM (Identity and Access Management)**: Controls resource access permissions using policies.
+- **S3 Bucket**: Scalable cloud storage containers.
+- **CloudFront CDN**: Global content delivery network that caches assets at edge locations to reduce latency.
+
+---
+
+## Real-Time Project Example
+
+<RealTimeExample title={"IAM, S3 Storage, and CloudFront Basics Scenario"}>
+When users query avatars, requests route through CloudFront edge nodes, which return cached images to minimize loading times.
+</RealTimeExample>
+
+---
+
+## Code Example
+
+Below is a configuration file matching senior standards:
+
+```javascript
+// AWS S3 bucket configuration policy example
+{
+  "Version": "2012-10-17",
+  "Statement": [
+    {
+      "Sid": "AllowCloudFrontOAI",
+      "Effect": "Allow",
+      "Principal": {
+        "AWS": "arn:aws:iam::cloudfront:user/CloudFront-Origin-Access-Identity-OAI"
+      },
+      "Action": "s3:GetObject",
+      "Resource": "arn:aws:s3:::codenivra-assets/*"
+    }
+  ]
+}
+```
+
+---
+
+## Common Mistakes
+
+Here is an example of incorrect setups vs clean, optimized configurations.
+
+<CommonMistake
+  title={"Using IAM root user credentials in application servers"}
+  badDesc={"Using AWS root account credentials in configuration environments, exposing all AWS cloud assets if keys are leaked."}
+  badCode={"// Root keys with access to all AWS resources committed to .env"}
+  goodDesc={"Creating restricted IAM user roles with permissions limited to specific S3 buckets."}
+  goodCode={"// IAM user credentials limited to S3 read/write actions"}
+/>
+
+---
+
+## Practice Task
+
+Solidify your knowledge by implementing this exercise in your codebase.
+
+<TaskBox
+  title={"Write an S3 bucket access policy"}
+  duration={"25 Minutes"}
+  requirements={[
+    "Create an IAM user policy document.",
+    "Restrict access to a single target S3 bucket.",
+    "Test connection credentials using CLI tools."
+  ]}
+  expectedOutput={"// AWS credentials grant access to specific buckets only\nAWS CLI put-object -> Success (authorized)"}
+>
+Complete this task to verify your configuration operates correctly.
+</TaskBox>
+
+---
+
+## Interview Tip
+
+<InterviewTip question={"What is an Origin Access Control (OAC) in AWS?"}>
+OAC is an AWS security configuration that restricts S3 bucket access to CloudFront CDN instances only, preventing users from bypassing CDNs to access bucket resources directly.
+</InterviewTip>

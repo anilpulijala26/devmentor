@@ -1,0 +1,102 @@
+---
+title: "RDS Databases, Route 53, and Lambda Functions"
+description: "Deploy managed database instances, register domains, and write serverless APIs."
+tags: ["aws","rds"]
+---
+
+## What You Will Learn
+
+- Provision managed relational databases (AWS RDS).
+- Configure DNS records and routing profiles in Route 53.
+- Deploy serverless functions (AWS Lambda) for scalable APIs.
+
+---
+
+## Why This Matters in Real Projects
+
+Managing databases and server scaling manually is difficult. Using managed cloud services (RDS, Lambda) automate backups, scaling, and domain routing.
+
+<SeniorNote>
+Place RDS databases inside private subnets without public IP addresses. Allow access to database ports only from application server security groups.
+</SeniorNote>
+
+---
+
+## Concept Explanation
+
+### Cloud Database & DNS Architectures
+
+- **AWS RDS**: Managed relational database service that automates patching, backups, and scaling.
+- **Route 53**: Scalable cloud DNS web service that routes user requests to cloud resources.
+- **AWS Lambda**: Serverless compute service that runs code on demand in response to events.
+
+---
+
+## Real-Time Project Example
+
+<RealTimeExample title={"RDS Databases, Route 53, and Lambda Functions Scenario"}>
+When users checkout, Route 53 routes requests to application servers, which query private RDS databases to update inventories.
+</RealTimeExample>
+
+---
+
+## Code Example
+
+Below is a configuration file matching senior standards:
+
+```javascript
+// AWS Lambda handler function example in Node.js
+export const handler = async (event) => {
+  const body = JSON.parse(event.body || '{}');
+  
+  return {
+    statusCode: 201,
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({
+      message: 'Serverless execution successful.',
+      data: body
+    })
+  };
+};
+```
+
+---
+
+## Common Mistakes
+
+Here is an example of incorrect setups vs clean, optimized configurations.
+
+<CommonMistake
+  title={"Hosting RDS Databases in Public Subnets"}
+  badDesc={"Configuring RDS database instances with public access enabled, exposing database ports to brute-force attacks."}
+  badCode={"// RDS config: Publicly Accessible -> Yes (SECURITY GAP)"}
+  goodDesc={"Placing RDS instances inside private subnets with access restricted to app servers."}
+  goodCode={"// RDS config: Publicly Accessible -> No (Private Subnets)"}
+/>
+
+---
+
+## Practice Task
+
+Solidify your knowledge by implementing this exercise in your codebase.
+
+<TaskBox
+  title={"Configure Route 53 DNS mappings"}
+  duration={"25 Minutes"}
+  requirements={[
+    "Create a Route 53 hosted zone configuration.",
+    "Add CNAME record mappings pointing to load balancers.",
+    "Verify DNS resolution from local terminals."
+  ]}
+  expectedOutput={"// Domains resolve correctly in terminals\nnslookup API.domain.com -> Returns target CDN aliases"}
+>
+Complete this task to verify your configuration operates correctly.
+</TaskBox>
+
+---
+
+## Interview Tip
+
+<InterviewTip question={"Why should database instances be placed in private subnets?"}>
+Private subnets lack public IP addresses, preventing direct internet access. Placing databases in private subnets blocks external network attacks, allowing queries only from application servers.
+</InterviewTip>

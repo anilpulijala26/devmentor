@@ -1,0 +1,127 @@
+---
+title: "Signup/Login APIs & Bcrypt Hashing"
+description: "Implement secure user registration and login pathways, securely hashing password keys using Bcrypt salt iterations."
+tags: ["auth","security"]
+---
+
+## What You Will Learn
+
+- Understand why plain text passwords must never be stored.
+- Implement secure password hashing using Bcrypt salt cycles.
+- Verify passwords safely during logins using comparison utilities.
+
+---
+
+## Why This Matters in Real Projects
+
+Storing passwords in plain text is a massive security failure. If database access is compromised, all user accounts are exposed. Secure hashing with Bcrypt prevents decryption even if database tables are leaked.
+
+<SeniorNote>
+Use a salt rounds work factor of 10-12 in Bcrypt. Higher values increase hashing complexity and protect against brute-force attacks, but values above 12 can block CPU loops on single-threaded event loops.
+</SeniorNote>
+
+---
+
+## Concept Explanation
+
+### Secure Password Hashing
+
+- **One-Way Hash**: Cryptographic hashing translates a password string into a fixed-length signature. It is computationally impossible to reverse hash values back to plain text.
+- **Salt Iterations**: Appends random character strings to inputs before hashing. This blocks rainbow table attacks.
+- **Timing Attacks**: Bcrypt comparison utilities run in constant time, preventing attackers from analyzing processing duration to guess matching characters.
+
+---
+
+## Real-Time Project Example
+
+<RealTimeExample title={"Signup/Login APIs & Bcrypt Hashing Scenario"}>
+When users register, their password is encrypted using Bcrypt with 10 salt rounds and stored in the database. During login, Bcrypt compares the input password hash with the stored hash.
+</RealTimeExample>
+
+---
+
+## Code Example
+
+Below is a configuration file matching senior standards:
+
+```javascript
+// User registration and comparison scripts
+import bcrypt from 'bcrypt';
+import express from 'express';
+const app = express();
+app.use(express.json());
+
+const SALT_ROUNDS = 10;
+
+// 1. Hash password on Registration
+app.post('/api/signup', async (req, res, next) => {
+  try {
+    const { email, password } = req.body;
+    const hashedPassword = await bcrypt.hash(password, SALT_ROUNDS);
+    
+    // Save email and hashedPassword to Database...
+    res.status(201).json({ success: true, message: 'User created.' });
+  } catch (err) {
+    next(err);
+  }
+});
+
+// 2. Verify password on Login
+app.post('/api/login', async (req, res, next) => {
+  try {
+    const { email, password } = req.body;
+    // Fetch user from Database...
+    const user = { email, passwordHash: '...' }; // Mock database user record
+    
+    const isMatch = await bcrypt.compare(password, user.passwordHash);
+    if (!isMatch) {
+      return res.status(401).json({ error: 'Invalid login credentials.' });
+    }
+    
+    res.status(200).json({ success: true, message: 'Login successful.' });
+  } catch (err) {
+    next(err);
+  }
+});
+```
+
+---
+
+## Common Mistakes
+
+Here is an example of incorrect setups vs clean, optimized configurations.
+
+<CommonMistake
+  title={"Using custom crypto hashing functions"}
+  badDesc={"Writing custom encryption rules or using weak md5 algorithms to hash passwords, which are easily cracked using standard GPU tools."}
+  badCode={"const crypto = require('crypto');\nconst hash = crypto.createHash('md5').update(password).digest('hex'); // WEAK ALGORITHM!"}
+  goodDesc={"Always using specialized password hashing algorithms like Bcrypt, Argon2, or Scrypt."}
+  goodCode={"const bcrypt = require('bcrypt');\nconst hash = await bcrypt.hash(password, 10); // SECURE HASHING"}
+/>
+
+---
+
+## Practice Task
+
+Solidify your knowledge by implementing this exercise in your codebase.
+
+<TaskBox
+  title={"Write Registration and Login routes with Bcrypt"}
+  duration={"25 Minutes"}
+  requirements={[
+    "Create express routes for signup and login processes.",
+    "Implement Bcrypt encryption during registration.",
+    "Add comparison checks to validate login attempts."
+  ]}
+  expectedOutput={"// Login verification processes succeed\nbcrypt.compare(\"pass\", hash) -> true"}
+>
+Complete this task to verify your configuration operates correctly.
+</TaskBox>
+
+---
+
+## Interview Tip
+
+<InterviewTip question={"Why does Bcrypt hash verification not require storing the salt key separately?"}>
+Bcrypt embeds the algorithm version, salt details, and work factor configuration directly inside the final output hash string (e.g. '$2b$10$xyz...'). The comparison utility parses these parameters from the hash string to run validation checks.
+</InterviewTip>

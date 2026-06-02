@@ -1,0 +1,118 @@
+---
+title: "Request and Response Handling"
+description: "Read incoming request details (body payloads, headers, cookies, params) and write standardized, clean JSON API responses."
+tags: ["express","api"]
+---
+
+## What You Will Learn
+
+- Access client request details from headers and cookies.
+- Write status-compliant responses with appropriate HTTP codes.
+- Implement structured JSON API envelopes.
+
+---
+
+## Why This Matters in Real Projects
+
+Client and server communication relies on structured request/response cycles. Formatting responses correctly ensures that clients can parse errors, handle caching, and manage sessions cleanly.
+
+<SeniorNote>
+Always set correct HTTP status codes in responses. Do not return 200 OK for updates that fail validation, or 500 for missing records. Use standard status codes to represent client and server states.
+</SeniorNote>
+
+---
+
+## Concept Explanation
+
+### Express Request & Response Mappings
+
+Route handlers process data sent from clients via:
+- **req.body**: Contains key-value inputs parsed from the POST/PUT request body.
+- **req.headers**: Contains HTTP request headers (like `Content-Type`, `Authorization`).
+- **req.cookies**: Contains cookie key-value mappings parsed from the browser headers.
+
+Responses write:
+- **res.status(code)**: Sets the HTTP response code (e.g. 201 Created).
+- **res.json(payload)**: Sets Content-Type to application/json and sends data.
+
+---
+
+## Real-Time Project Example
+
+<RealTimeExample title={"Request and Response Handling Scenario"}>
+When a client updates their profile avatar, the handler reads user ID parameters from cookies, pulls updated names from bodies, and returns updated structures with a 200 OK code.
+</RealTimeExample>
+
+---
+
+## Code Example
+
+Below is a configuration file matching senior standards:
+
+```javascript
+import express from 'express';
+import cookieParser from 'cookie-parser';
+const app = express();
+
+app.use(express.json());
+app.use(cookieParser()); // Enables req.cookies parser
+
+app.put('/api/users/profile', (req, res) => {
+  const sessionToken = req.cookies.sessionId;
+  const { displayName } = req.body;
+  
+  if (!sessionToken) {
+    return res.status(401).json({ error: 'Authentication cookie is missing.' });
+  }
+  
+  if (!displayName || displayName.trim() === '') {
+    return res.status(400).json({ error: 'Display name is required.' });
+  }
+  
+  res.status(200).json({
+    success: true,
+    user: { displayName, role: 'developer' }
+  });
+});
+```
+
+---
+
+## Common Mistakes
+
+Here is an example of incorrect setups vs clean, optimized configurations.
+
+<CommonMistake
+  title={"Using res.send instead of res.json for API responses"}
+  badDesc={"Returning objects via res.send. This does not guarantee proper JSON headers and can be parsed incorrectly by older clients."}
+  badCode={"app.get('/api', (req, res) => {\n  res.send({ user: 'anonymous' }); // Missing explicit Content-Type headers\n});"}
+  goodDesc={"Always using res.json to format payload responses and force standard application/json headers."}
+  goodCode={"app.get('/api', (req, res) => {\n  res.json({ user: 'anonymous' }); // Formats headers correctly\n});"}
+/>
+
+---
+
+## Practice Task
+
+Solidify your knowledge by implementing this exercise in your codebase.
+
+<TaskBox
+  title={"Read Headers and Construct structured responses"}
+  duration={"15 Minutes"}
+  requirements={[
+    "Build an API route returning incoming headers details.",
+    "Check content-type parameters on requests.",
+    "Return status codes matching payload status."
+  ]}
+  expectedOutput={"// Response yields header trace data\n{ \"headers\": { \"user-agent\": \"...\", \"content-type\": \"application/json\" } }"}
+>
+Complete this task to verify your configuration operates correctly.
+</TaskBox>
+
+---
+
+## Interview Tip
+
+<InterviewTip question={"What is the difference between req.params and req.query?"}>
+req.params parses dynamic route parameters defined inside URL routes (e.g. /users/:id). req.query parses key-value query parameters appended to URLs after the question mark (e.g. /users?search=alex).
+</InterviewTip>

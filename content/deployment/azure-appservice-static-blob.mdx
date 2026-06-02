@@ -1,0 +1,106 @@
+---
+title: "Azure App Service, Blob Storage & Static Web Apps"
+description: "Deploy backends on Azure. Configure App Service plans, store binaries in Blob Storage, and deploy static web apps."
+tags: ["azure","hosting"]
+---
+
+## What You Will Learn
+
+- Deploy Express API servers to Azure App Services.
+- Store binary files in Azure Blob Storage containers.
+- Configure Azure Static Web Apps.
+
+---
+
+## Why This Matters in Real Projects
+
+Azure is standard in enterprise environments. Deploying applications onto App Services and storing uploads in Blob Storage provides security, scalability, and integration with active directory tools.
+
+<SeniorNote>
+Use Azure Managed Identities to authorize App Services to query Blob Storage, avoiding storing connection keys in environment configs.
+</SeniorNote>
+
+---
+
+## Concept Explanation
+
+### Azure Cloud Architectures
+
+- **Azure App Service**: Managed PaaS hosting for backend APIs and web applications.
+- **Azure Blob Storage**: Object storage service for storing unstructured binary data (files).
+- **Managed Identity**: Secure credentials management that allows cloud resources to authenticate without credentials files.
+
+---
+
+## Real-Time Project Example
+
+<RealTimeExample title={"Azure App Service, Blob Storage & Static Web Apps Scenario"}>
+When users upload documents, App Services authenticate using Managed Identities, uploading files to private Blob Storage containers.
+</RealTimeExample>
+
+---
+
+## Code Example
+
+Below is a configuration file matching senior standards:
+
+```javascript
+// Uploading streams to Azure Blob Storage
+import { BlobServiceClient } from '@azure/storage-blob';
+import { DefaultAzureCredential } from '@azure/identity';
+
+// Use Managed Identity credentials
+const blobServiceClient = new BlobServiceClient(
+  'https://codenivrastorage.blob.core.windows.net',
+  new DefaultAzureCredential()
+);
+
+export async function uploadBlob(containerName, blobName, buffer) {
+  const containerClient = blobServiceClient.getContainerClient(containerName);
+  const blockBlobClient = containerClient.getBlockBlobClient(blobName);
+  
+  await blockBlobClient.upload(buffer, buffer.length);
+  return blockBlobClient.url;
+}
+```
+
+---
+
+## Common Mistakes
+
+Here is an example of incorrect setups vs clean, optimized configurations.
+
+<CommonMistake
+  title={"Hardcoding Storage Connection Strings in Code"}
+  badDesc={"Initializing Azure Blob client connections by pasting connection string keys directly inside code files."}
+  badCode={"const blobServiceClient = BlobServiceClient.fromConnectionString('DefaultEndpointsProtocol=https;...');"}
+  goodDesc={"Using Azure DefaultAzureCredential and Managed Identities to handle credentials."}
+  goodCode={"// Automatically manages credentials using Managed Identities\nconst blobServiceClient = new BlobServiceClient(url, new DefaultAzureCredential());"}
+/>
+
+---
+
+## Practice Task
+
+Solidify your knowledge by implementing this exercise in your codebase.
+
+<TaskBox
+  title={"Write an Azure Blob Upload handler"}
+  duration={"25 Minutes"}
+  requirements={[
+    "Initialize an Azure Blob SDK client connection.",
+    "Implement a file upload endpoint using memory buffers.",
+    "Verify file uploads to blob storage containers."
+  ]}
+  expectedOutput={"// File uploads to Azure Blob Storage successfully\nBlobClient upload -> Returns metadata response payloads"}
+>
+Complete this task to verify your configuration operates correctly.
+</TaskBox>
+
+---
+
+## Interview Tip
+
+<InterviewTip question={"What is an Azure Managed Identity?"}>
+Azure Managed Identity is an identity configuration created in Microsoft Entra ID. It allows cloud resources (like App Services) to authenticate with other secure resources (like Blob Storage) without storing credentials.
+</InterviewTip>

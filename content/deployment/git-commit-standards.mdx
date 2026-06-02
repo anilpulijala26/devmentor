@@ -1,0 +1,108 @@
+---
+title: "Commit Standards & Repository Structure"
+description: "Enforce Conventional Commits standards and run branch check validation hooks."
+tags: ["git","devops"]
+---
+
+## What You Will Learn
+
+- Write commit messages matching Conventional Commits standards.
+- Configure pre-commit hooks using Husky.
+- Enforce code style standards before commits.
+
+---
+
+## Why This Matters in Real Projects
+
+Inconsistent commit messages make analyzing project histories difficult. Enforcing Conventional Commits standards and running pre-commit hooks prevents malformed commits, keeping histories clean.
+
+<SeniorNote>
+Use Husky to configure git hooks that run linters and test suites before code commits are allowed. This blocks syntax errors early.
+</SeniorNote>
+
+---
+
+## Concept Explanation
+
+### Conventional Commits & Hooks
+
+- **Conventional Commits**: Format standard for commit messages (e.g. `feat: add auth`, `fix: resolve memory leak`).
+- **Husky**: Library that manages git hooks, running scripts on events like commits or pushes.
+- **Lint-Staged**: Runs linters only on files modified in current commits, speeding up hook checks.
+
+---
+
+## Real-Time Project Example
+
+<RealTimeExample title={"Commit Standards & Repository Structure Scenario"}>
+When developers commit database updates, Husky pre-commit hooks run linters to check syntax before code commits are allowed.
+</RealTimeExample>
+
+---
+
+## Code Example
+
+Below is a configuration file matching senior standards:
+
+```javascript
+// package.json pre-commit hook configuration example
+{
+  "name": "production-app",
+  "devDependencies": {
+    "husky": "^9.0.0",
+    "lint-staged": "^15.0.0"
+  },
+  "husky": {
+    "hooks": {
+      "pre-commit": "lint-staged"
+    }
+  },
+  "lint-staged": {
+    "*.js": [
+      "eslint --fix",
+      "prettier --write"
+    ]
+  }
+}
+```
+
+---
+
+## Common Mistakes
+
+Here is an example of incorrect setups vs clean, optimized configurations.
+
+<CommonMistake
+  title={"Writing Cryptic Commit Messages"}
+  badDesc={"Using vague commit messages like 'fix bug' or 'updates', making tracking historical changes difficult."}
+  badCode={"git commit -m \"fixed stuff\" // Cryptic and unhelpful!"}
+  goodDesc={"Writing commit messages conforming to Conventional Commits standards."}
+  goodCode={"git commit -m \"fix(api): resolve CORS preflight rejection\" // Descriptive and standard!"}
+/>
+
+---
+
+## Practice Task
+
+Solidify your knowledge by implementing this exercise in your codebase.
+
+<TaskBox
+  title={"Configure pre-commit check hooks using Husky"}
+  duration={"20 Minutes"}
+  requirements={[
+    "Install husky and lint-staged.",
+    "Configure pre-commit scripts to run eslint.",
+    "Test commit hooks using malformed code."
+  ]}
+  expectedOutput={"// Hooks reject malformed files automatically\nhusky -> pre-commit hook failed (lint errors)"}
+>
+Complete this task to verify your configuration operates correctly.
+</TaskBox>
+
+---
+
+## Interview Tip
+
+<InterviewTip question={"What is a Git Hook?"}>
+A Git Hook is a script that runs automatically on specific Git lifecycle events (like pre-commit, post-merge, or pre-push), allowing you to automate validations and checks.
+</InterviewTip>

@@ -1,0 +1,118 @@
+---
+title: "Docker Compose & Local Database Clusters"
+description: "Write multi-container configurations. Connect React web applications, Express API servers, and local PostgreSQL database networks."
+tags: ["docker","compose"]
+---
+
+## What You Will Learn
+
+- Configure multi-container services using Docker Compose.
+- Link application networks and volume mounts.
+- Configure persistent database directories.
+
+---
+
+## Why This Matters in Real Projects
+
+Setting up local services (like database engines) manually is tedious. Using Docker Compose allows you to launch the entire full-stack ecosystem (frontend, backend, database) with a single command.
+
+<SeniorNote>
+Use named Docker volumes to persist database records. If volumes are not mapped, database records are deleted when containers are restarted.
+</SeniorNote>
+
+---
+
+## Concept Explanation
+
+### Multi-Container Composition
+
+- **Docker Compose**: Orchestrates multi-container applications using YAML configurations.
+- **Compose Networks**: Creates isolated virtual networks that link container services.
+- **Compose Volumes**: Maps local directories to container directories to persist data across runs.
+
+---
+
+## Real-Time Project Example
+
+<RealTimeExample title={"Docker Compose & Local Database Clusters Scenario"}>
+Launch a local development environment containing a Node server, React frontend, and PostgreSQL database linked on a local network using a single docker-compose.yml file.
+</RealTimeExample>
+
+---
+
+## Code Example
+
+Below is a configuration file matching senior standards:
+
+```javascript
+// Local full-stack docker-compose.yml configuration
+version: '3.8'
+
+services:
+  database:
+    image: postgres:15-alpine
+    container_name: local_postgres_db
+    environment:
+      POSTGRES_DB: codenivra
+      POSTGRES_USER: dev
+      POSTGRES_PASSWORD: secret_password
+    ports:
+      - "5432:5432"
+    volumes:
+      - db_data:/var/lib/postgresql/data # Persist data
+
+  api:
+    build:
+      context: ./api
+      dockerfile: Dockerfile
+    ports:
+      - "5000:5000"
+    environment:
+      DATABASE_URL: postgresql://dev:secret_password@database:5432/codenivra
+    depends_on:
+      - database
+
+volumes:
+  db_data:
+```
+
+---
+
+## Common Mistakes
+
+Here is an example of incorrect setups vs clean, optimized configurations.
+
+<CommonMistake
+  title={"Missing DB Data Volume mappings"}
+  badDesc={"Configuring database services without mapping persistent volumes. All database records are deleted when container instances are restarted."}
+  badCode={"database:\n  image: postgres:15-alpine\n  # Missing volumes section!"}
+  goodDesc={"Always mapping database storage paths to named volumes."}
+  goodCode={"database:\n  image: postgres:15-alpine\n  volumes:\n    - postgres_data:/var/lib/postgresql/data"}
+/>
+
+---
+
+## Practice Task
+
+Solidify your knowledge by implementing this exercise in your codebase.
+
+<TaskBox
+  title={"Write a Multi-Container Docker Compose configuration"}
+  duration={"30 Minutes"}
+  requirements={[
+    "Create a docker-compose.yml file.",
+    "Link database, backend API, and Redis services.",
+    "Launch services to verify network connectivity."
+  ]}
+  expectedOutput={"// Services boot and link successfully\ndocker-compose up -> databases and server active"}
+>
+Complete this task to verify your configuration operates correctly.
+</TaskBox>
+
+---
+
+## Interview Tip
+
+<InterviewTip question={"What is the purpose of depends_on in docker-compose?"}>
+depends_on defines the startup order of containers. For example, setting depends_on: [database] on the API container ensures the database container starts before the API server boots.
+</InterviewTip>

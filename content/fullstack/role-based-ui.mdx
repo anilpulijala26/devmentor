@@ -1,0 +1,113 @@
+---
+title: "Role-Based UI Control states"
+description: "Render buttons, sidebar options, and route boundaries based on user roles and permissions."
+tags: ["fullstack","rbac"]
+---
+
+## What You Will Learn
+
+- Manage user role state in the frontend.
+- Conditionally render buttons and interface options.
+- Secure client route boundaries based on user roles.
+
+---
+
+## Why This Matters in Real Projects
+
+Displaying administrative buttons or options to standard users is confusing and security-exposed. Hiding restricted elements and securing routes protects layouts and simplifies the user interface.
+
+<SeniorNote>
+Design client-side checks using specific permissions (like `read:reports`) instead of generic roles (like `admin`). This allows you to update role permissions without refactoring UI code.
+</SeniorNote>
+
+---
+
+## Concept Explanation
+
+### Client-Side Access Control
+
+- **Auth Context**: Manages user state and active session details.
+- **Conditional Rendering**: Renders buttons or options only if users possess matching roles or permissions.
+- **Route Protectors**: Wraps routes in auth check components, redirecting unauthorized users.
+
+---
+
+## Real-Time Project Example
+
+<RealTimeExample title={"Role-Based UI Control states Scenario"}>
+In HR management systems, standard employees see leave request buttons, while managers see approval controls and administrative dashboard links.
+</RealTimeExample>
+
+---
+
+## Code Example
+
+Below is a configuration file matching senior standards:
+
+```javascript
+// Protecting routes based on user role permissions
+import React from 'react';
+import { Navigate } from 'react-router-dom';
+import { useAuth } from '../context/AuthContext';
+
+export function ProtectedRoute({ children, requiredPermission }) {
+  const { user } = useAuth();
+  
+  if (!user) {
+    return <Navigate to="/login" replace />;
+  }
+  
+  const permissions = user.permissions || [];
+  if (requiredPermission && !permissions.includes(requiredPermission)) {
+    return <Navigate to="/unauthorized" replace />;
+  }
+  
+  return children;
+}
+
+// Usage:
+// <ProtectedRoute requiredPermission="delete:users">
+//   <UserAdminConsole />
+// </ProtectedRoute>
+```
+
+---
+
+## Common Mistakes
+
+Here is an example of incorrect setups vs clean, optimized configurations.
+
+<CommonMistake
+  title={"Omitting Backend checks on hidden features"}
+  badDesc={"Hiding buttons in the frontend UI but leaving backend API routes unprotected, assuming users cannot call them."}
+  badCode={"// UI restricts access:\n{user.role === 'admin' && <DeleteButton />}\n// API remains open:\napp.delete('/api/users/:id', controller); // VULNERABILITY!"}
+  goodDesc={"Always protecting API routes on the backend, regardless of client UI visibility."}
+  goodCode={"// API validates permissions on every request\napp.delete('/api/users/:id', requirePermission('delete:users'), controller);"}
+/>
+
+---
+
+## Practice Task
+
+Solidify your knowledge by implementing this exercise in your codebase.
+
+<TaskBox
+  title={"Write a Route protector component"}
+  duration={"20 Minutes"}
+  requirements={[
+    "Create a React component checking user roles.",
+    "Redirect unauthorized users to fallback screens.",
+    "Wrap admin consoles in route protector tags."
+  ]}
+  expectedOutput={"// Standard users are redirected when accessing admin URLs\n/admin -> Redirects to /unauthorized"}
+>
+Complete this task to verify your configuration operates correctly.
+</TaskBox>
+
+---
+
+## Interview Tip
+
+<InterviewTip question={"How do you protect routes in Single Page Applications?"}>
+Wrap routes in wrapper components that check user state. If unauthenticated, redirect to login routes. Note that client-side routing is for user experience; API routes must always be protected on the backend.
+</InterviewTip>

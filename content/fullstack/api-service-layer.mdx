@@ -1,0 +1,114 @@
+---
+title: "API Service Layer & Client Auth Routing"
+description: "Build frontend client modules, intercept tokens, and configure route protection boundaries."
+tags: ["fullstack","axios","auth"]
+---
+
+## What You Will Learn
+
+- Structure client service modules to manage API calls.
+- Intercept request headers to append auth tokens.
+- Configure client route protection boundaries.
+
+---
+
+## Why This Matters in Real Projects
+
+Scattering raw fetch calls throughout UI components makes modifications difficult. Designing a structured API service layer keeps API paths organized and handles authorization token injections automatically.
+
+<SeniorNote>
+Use Axios interceptors to automatically append authorization headers to requests, and intercept response errors to trigger automatic token refresh flows.
+</SeniorNote>
+
+---
+
+## Concept Explanation
+
+### Service Layers & Auth Routing
+
+- **Service Module**: Centralizes API query definitions.
+- **Interceptors**: Middleware functions that intercept request and response pipelines.
+- **Auth Routing**: Client-side routing checks that redirect unauthenticated users to login screens.
+
+---
+
+## Real-Time Project Example
+
+<RealTimeExample title={"API Service Layer & Client Auth Routing Scenario"}>
+When users access dashboards, client route checkers verify active sessions, redirecting unauthenticated users to login routes.
+</RealTimeExample>
+
+---
+
+## Code Example
+
+Below is a configuration file matching senior standards:
+
+```javascript
+// Axios client API service layer with auth interceptors
+import axios from 'axios';
+
+const apiClient = axios.create({
+  baseURL: '/api/v1',
+  headers: { 'Content-Type': 'application/json' }
+});
+
+// Intercept request to add auth token headers
+apiClient.interceptors.request.use((config) => {
+  const token = localStorage.getItem('accessToken');
+  if (token) {
+    config.headers.Authorization = `Bearer ${token}`;
+  }
+  return config;
+}, (error) => {
+  return Promise.reject(error);
+});
+
+export const userService = {
+  getProfile: async () => {
+    const res = await apiClient.get('/users/profile');
+    return res.data;
+  }
+};
+```
+
+---
+
+## Common Mistakes
+
+Here is an example of incorrect setups vs clean, optimized configurations.
+
+<CommonMistake
+  title={"Raw fetch calls inside UI components"}
+  badDesc={"Writing raw fetch requests directly inside useEffect hooks, which duplicates endpoints and clutters component code."}
+  badCode={"useEffect(() => {\n  fetch('http://localhost:5000/api/users') // Scattered URL dependencies!\n    .then(r => r.json());\n}, []);"}
+  goodDesc={"Extracting queries to central service modules and importing them into UI components."}
+  goodCode={"useEffect(() => {\n  userService.getUsers().then(data => setUsers(data)); // Clean service abstraction\n}, []);"}
+/>
+
+---
+
+## Practice Task
+
+Solidify your knowledge by implementing this exercise in your codebase.
+
+<TaskBox
+  title={"Build an API client module"}
+  duration={"25 Minutes"}
+  requirements={[
+    "Create an Axios client instance with base configurations.",
+    "Add interceptor routines to append credentials.",
+    "Test client requests to verify header values."
+  ]}
+  expectedOutput={"// API calls append token headers automatically\nAuthorization: Bearer eyJhbGci..."}
+>
+Complete this task to verify your configuration operates correctly.
+</TaskBox>
+
+---
+
+## Interview Tip
+
+<InterviewTip question={"How do you handle token expiration in the client?"}>
+Use an Axios response interceptor that catches 401 Unauthorized errors, requests a new access token using a refresh token, updates authorization headers, and retries the original request.
+</InterviewTip>

@@ -197,6 +197,78 @@ export const learningMap: TopicMapping[] = [
       "Delineate trunk-based development pipelines, branching scopes, and PR checklists",
       "Write multi-stage Docker builds reducing production footprint sizes",
       "Design enterprise monitoring, Winston logging setups, and error hooks"
+    ],
+    nextRecommendedTopic: "backend-core"
+  },
+  {
+    slug: "backend-core",
+    title: "Backend Core Engineering",
+    order: 9,
+    difficulty: "Intermediate",
+    estimatedTime: "20 Hours",
+    prerequisites: ["javascript-mastery"],
+    relatedLessons: [
+      { track: "backend", slug: "what-is-node", title: "What is Node.js Runtime" },
+      { track: "backend", slug: "runtime-event-loop", title: "Event Loop & Non-Blocking I/O" },
+      { track: "backend", slug: "node-modules", title: "Modules & NPM" },
+      { track: "backend", slug: "node-async-errors", title: "Asynchronous Core & Error Basics" },
+      { track: "backend", slug: "express-setup", title: "Express Routing Mechanics" },
+      { track: "backend", slug: "controllers-middleware", title: "Controllers & Middleware Pipeline" }
+    ],
+    relatedTasks: ["create-express-server"],
+    relatedProjects: ["express-postgres-api"],
+    interviewOutcomes: [
+      "Explain Node.js event loop phases and thread pools.",
+      "Implement Express request pipelines with custom middlewares."
+    ],
+    nextRecommendedTopic: "backend-databases-security"
+  },
+  {
+    slug: "backend-databases-security",
+    title: "Databases & API Security",
+    order: 10,
+    difficulty: "Advanced",
+    estimatedTime: "24 Hours",
+    prerequisites: ["backend-core"],
+    relatedLessons: [
+      { track: "backend", slug: "rest-principles", title: "REST Architectural Principles" },
+      { track: "backend", slug: "zod-validation", title: "Request Validation with Zod" },
+      { track: "backend", slug: "jwt-tokens", title: "JWT Access Tokens, Expiry, and Cookies" },
+      { track: "backend", slug: "prisma-drizzle-orm", title: "ORM Integration: Prisma & Drizzle" },
+      { track: "backend", slug: "cors-security-headers", title: "CORS & Helmet Security Headers" },
+      { track: "backend", slug: "multer-uploads", title: "File Upload with Multer" }
+    ],
+    relatedTasks: ["build-crud-api", "zod-validation", "auth-middleware", "bcrypt-hashing", "generate-jwt", "refresh-token-flow", "postgres-prisma", "multer-upload"],
+    relatedProjects: ["auth-system", "rbac-dashboard", "blog-cms-backend", "ecommerce-backend-api", "file-uploader"],
+    interviewOutcomes: [
+      "Model relational database schemas, compound indexing, and key constraints.",
+      "Design secure stateless session architectures using HttpOnly cookies.",
+      "Explain Multer file parsing configurations and pre-signed S3 upload URLs."
+    ],
+    nextRecommendedTopic: "deployment-ops"
+  },
+  {
+    slug: "deployment-ops",
+    title: "CI/CD & Cloud Deployment",
+    order: 11,
+    difficulty: "Professional",
+    estimatedTime: "30 Hours",
+    prerequisites: ["backend-databases-security"],
+    relatedLessons: [
+      { track: "deployment", slug: "git-branching-prs", title: "Branching, Pull Requests & Code Reviews" },
+      { track: "deployment", slug: "cicd-intro", title: "What is CI/CD & GitHub Actions Basics" },
+      { track: "deployment", slug: "docker-basics", title: "Dockerfile & Multi-Stage Builds" },
+      { track: "deployment", slug: "cloud-backend-deploy", title: "Deploying Backend to Render & Railway" },
+      { track: "deployment", slug: "aws-iam-s3", title: "IAM, S3 Storage, and CloudFront Basics" },
+      { track: "deployment", slug: "azure-appservice-static-blob", title: "Azure App Service, Blob Storage & Static Web Apps" },
+      { track: "deployment", slug: "production-monitoring-logging", title: "Logging, Uptime, Error, & Performance Monitoring" }
+    ],
+    relatedTasks: ["dockerize-node-api", "deploy-backend-cloud"],
+    relatedProjects: ["dockerized-fullstack", "cloud-deployment"],
+    interviewOutcomes: [
+      "Optimize multi-stage Docker builds reducing production footprint sizes.",
+      "Orchestrate multi-container applications using compose volumes and networks.",
+      "Configure cloud databases, VPC security groups, and key vault secrets."
     ]
   }
 ];

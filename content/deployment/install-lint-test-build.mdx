@@ -1,0 +1,111 @@
+---
+title: "Test, Lint, Build & Deployment Pipelines"
+description: "Write automated CI/CD steps to enforce code formatting rules, run integration test suites, and compile bundles before deployments."
+tags: ["cicd","quality"]
+---
+
+## What You Will Learn
+
+- Enforce code style checks using Prettier and ESLint in pipelines.
+- Execute automated integration tests in CI/CD workflows.
+- Compile production build bundles before deployment.
+
+---
+
+## Why This Matters in Real Projects
+
+Deploying code with syntax errors or linting violations results in server crashes. Automating linting, testing, and building in pipelines blocks broken builds before they deploy.
+
+<SeniorNote>
+Use the `npm ci` command instead of `npm install` in CI/CD pipelines. This ensures dependency versions match lockfiles exactly and is faster.
+</SeniorNote>
+
+---
+
+## Concept Explanation
+
+### Build Pipeline Operations
+
+- **Dependency Install**: Runs `npm ci` to install exact package versions from lockfiles.
+- **Lint Validation**: Checks code style and syntax rules.
+- **Bundle Compilation**: Compiles application builds, verifying there are no TypeScript compiler errors before deployment.
+
+---
+
+## Real-Time Project Example
+
+<RealTimeExample title={"Test, Lint, Build & Deployment Pipelines Scenario"}>
+When developers push changes, build pipelines run linters, execute Jest tests, and compile Next.js bundles, rejecting the build if compilation fails.
+</RealTimeExample>
+
+---
+
+## Code Example
+
+Below is a configuration file matching senior standards:
+
+```javascript
+// Complete CI pipeline config (.github/workflows/quality.yml)
+name: Code Quality Check
+on: [push]
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          
+      - name: Clean Install
+        run: npm ci
+        
+      - name: Validate Lint Rules
+        run: npm run lint
+        
+      - name: Compile Production Build
+        run: npm run build
+```
+
+---
+
+## Common Mistakes
+
+Here is an example of incorrect setups vs clean, optimized configurations.
+
+<CommonMistake
+  title={"Running npm install inside CI/CD scripts"}
+  badDesc={"Using npm install in pipeline scripts, which can modify lockfiles and install package updates that introduce breaking changes."}
+  badCode={"run: npm install # BAD: Can modify dependency versions!"}
+  goodDesc={"Always using npm ci in pipelines to install exact lockfile versions."}
+  goodCode={"run: npm ci # GOOD: Installs locked dependencies"}
+/>
+
+---
+
+## Practice Task
+
+Solidify your knowledge by implementing this exercise in your codebase.
+
+<TaskBox
+  title={"Write a Code Validation Pipeline"}
+  duration={"25 Minutes"}
+  requirements={[
+    "Create a quality check workflow config.",
+    "Add lint, test, and build scripts.",
+    "Verify pipeline fails on syntax errors."
+  ]}
+  expectedOutput={"// Pipelines reject broken builds automatically\nnpm run build -> Fails compilation, halts deployment"}
+>
+Complete this task to verify your configuration operates correctly.
+</TaskBox>
+
+---
+
+## Interview Tip
+
+<InterviewTip question={"Why should you build application bundles before deployment?"}>
+Building bundles during CI/CD checks ensures that syntax errors, type violations, and compilation issues are caught before code is sent to hosting services, avoiding production crashes.
+</InterviewTip>

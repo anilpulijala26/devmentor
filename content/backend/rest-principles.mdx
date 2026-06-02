@@ -1,0 +1,108 @@
+---
+title: "REST Architectural Principles"
+description: "Design clean, scalable APIs matching REST architectural constraints. Learn resource naming, state transfer, and statelessness."
+tags: ["api","rest"]
+---
+
+## What You Will Learn
+
+- Identify the 6 core REST architectural constraints.
+- Design clean, resource-based URL endpoints.
+- Apply state transfer rules uniformly.
+
+---
+
+## Why This Matters in Real Projects
+
+Ad-hoc, inconsistent API design creates integration issues for frontends. REST defines standard constraints that ensure backend systems are predictable, scalable, and easy to consume.
+
+<SeniorNote>
+REST routes should focus on resources (nouns) rather than actions (verbs). Avoid routes like `/getUser` or `/deleteItem`. Use standard HTTP methods to represent actions.
+</SeniorNote>
+
+---
+
+## Concept Explanation
+
+### The 6 REST Constraints
+
+1. **Client-Server Separation**: Decouples user interfaces from backend systems.
+2. **Statelessness**: Every request contains all parameters needed to complete the execution. The server stores no session states.
+3. **Cacheability**: Responses define cache parameters to reduce database loads.
+4. **Uniform Interface**: Uses uniform resource names and method signatures.
+5. **Layered System**: Clients connect to endpoints without knowing whether intermediate proxy servers handle requests.
+6. **Code on Demand (Optional)**: Servers can pass executable scripts (e.g. JavaScript) to clients.
+
+---
+
+## Real-Time Project Example
+
+<RealTimeExample title={"REST Architectural Principles Scenario"}>
+When modeling customer records, rather than creating routes like /getCustomers, /createCustomer, and /updateCustomer, REST maps routes around nouns: GET /customers (list), POST /customers (create), and PUT /customers/:id (update).
+</RealTimeExample>
+
+---
+
+## Code Example
+
+Below is a configuration file matching senior standards:
+
+```javascript
+// RESTful API Endpoint Mappings in Express
+import express from 'express';
+const app = express();
+
+// GOOD: Resource-based URI mapping
+app.get('/api/v1/orders', (req, res) => {
+  res.json({ orders: [] }); // List resource
+});
+
+app.post('/api/v1/orders', (req, res) => {
+  res.status(201).json({ success: true }); // Create resource
+});
+
+app.delete('/api/v1/orders/:id', (req, res) => {
+  res.status(204).end(); // Delete resource
+});
+```
+
+---
+
+## Common Mistakes
+
+Here is an example of incorrect setups vs clean, optimized configurations.
+
+<CommonMistake
+  title={"Using Verbs in API Route Names"}
+  badDesc={"Creating endpoints that state actions in the path, leading to bloated and redundant route lists."}
+  badCode={"// BAD PRACTICE (Verb-based paths)\napp.post('/api/createOrder', (req, res) => { ... });\napp.get('/api/getOrders', (req, res) => { ... });"}
+  goodDesc={"Mapping URLs to resource nouns and defining actions via HTTP methods."}
+  goodCode={"// GOOD PRACTICE (Resource nouns + HTTP methods)\napp.post('/api/orders', (req, res) => { ... });\napp.get('/api/orders', (req, res) => { ... });"}
+/>
+
+---
+
+## Practice Task
+
+Solidify your knowledge by implementing this exercise in your codebase.
+
+<TaskBox
+  title={"Redesign an API Endpoint spec"}
+  duration={"15 Minutes"}
+  requirements={[
+    "Audit a list of verb-based API routes.",
+    "Refactor the route paths into clean RESTful resource structures.",
+    "Write Express handlers matching the new endpoints."
+  ]}
+  expectedOutput={"// REST spec conforms to standard methods\nGET /api/v1/users\nPOST /api/v1/users"}
+>
+Complete this task to verify your configuration operates correctly.
+</TaskBox>
+
+---
+
+## Interview Tip
+
+<InterviewTip question={"What does it mean for an API to be stateless?"}>
+A stateless API means that the server does not store any client context or session state on the server. Each request sent by the client must contain all credentials, variables, and identifiers needed to complete the request (e.g., in a authorization token header).
+</InterviewTip>

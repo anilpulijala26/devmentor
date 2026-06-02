@@ -162,6 +162,92 @@ export default async function TrackPage({ params }: Props) {
         "I can write a multi-stage Docker configuration."
       ],
       nextStep: { label: "Review All Daily Developer Tasks", url: "/tasks" }
+    },
+    backend: {
+      badge: "Backend Engineering",
+      colorClass: "from-emerald-600 to-teal-600",
+      bgClass: "bg-emerald-50",
+      textClass: "text-emerald-700",
+      borderClass: "border-emerald-100",
+      hours: "30 Hours",
+      level: "Advanced",
+      whoIsFor: "Frontend or full-stack developers seeking deep mastery of server-side logic, database query design, REST API specifications, secure authentication mechanisms, and unit-integration testing pipelines.",
+      prerequisites: ["Comfortable with asynchronous JavaScript or TypeScript syntax", "Understanding of HTTP request/response concepts", "Basic terminal and database concepts"],
+      skillsGained: [
+        "Design robust REST APIs with modular router controller structures in Express.js.",
+        "Secure endpoints using JWT access/refresh token rotation patterns and HttpOnly cookies.",
+        "Implement relational database tables, indexing, and transactional operations using Prisma and PostgreSQL.",
+        "Construct comprehensive unit and integration tests with Jest, Supertest, and ORM mock engines."
+      ],
+      interviewReadiness: [
+        "How to configure CORS permissions and secure HTTP headers via Helmet.",
+        "How to handle race conditions and index query plans with EXPLAIN ANALYZE.",
+        "How to structure custom error handling middlewares with async handler patterns."
+      ],
+      completionOutcomes: [
+        "I can build and scale an Express server featuring custom error class captures.",
+        "I can design normalized relational database tables and transaction blocks.",
+        "I can write integration tests covering database mock and token authentication behaviors.",
+        "I understand rate limiting, environment variable encryption, and payload sanitization."
+      ],
+      nextStep: { label: "Proceed to Full-Stack Applications Track", url: "/learn/fullstack" }
+    },
+    deployment: {
+      badge: "Cloud & Deployment",
+      colorClass: "from-indigo-600 to-cyan-600",
+      bgClass: "bg-indigo-50",
+      textClass: "text-indigo-700",
+      borderClass: "border-indigo-100",
+      hours: "20 Hours",
+      level: "Professional",
+      whoIsFor: "Advanced developers and DevOps enthusiasts seeking to automate pipelines, package applications using container networks, manage environment configs, and deploy scale platforms onto AWS and Azure infrastructure.",
+      prerequisites: ["Familiarity with full-stack application code architectures", "Working knowledge of git commands and GitHub interface", "Basic comfort with the command line"],
+      skillsGained: [
+        "Establish GitHub Actions automated test, lint, and build staging-to-production workflows.",
+        "Write slim, secure multi-stage Dockerfiles for node/web applications.",
+        "Deploy scale services to PaaS (Render, Railway) and cloud servers (AWS EC2, Azure App Service).",
+        "Configure cloud storage resources (AWS S3, Azure Blob Storage) with secure signed URL access."
+      ],
+      interviewReadiness: [
+        "How to configure build-time variables versus runtime environment variables.",
+        "How to manage zero-downtime deployment pipelines and rolling updates.",
+        "How to structure secure network access policies inside IAM roles."
+      ],
+      completionOutcomes: [
+        "I can dockerize any node/web application using secure multi-stage builds.",
+        "I can write standard CI/CD workflow YAML specifications for GitHub Actions.",
+        "I understand AWS IAM permissions, Route 53 domain mappings, and CDN caching.",
+        "I can setup persistent database configurations with automated database migration runs."
+      ],
+      nextStep: { label: "Proceed to Interview Preparation Track", url: "/learn/interview" }
+    },
+    interview: {
+      badge: "Interview Preparation",
+      colorClass: "from-amber-600 to-orange-600",
+      bgClass: "bg-amber-50",
+      textClass: "text-amber-700",
+      borderClass: "border-amber-100",
+      hours: "10 Hours",
+      level: "Prep",
+      whoIsFor: "Developers seeking to review key system designs, practice visual architectural responses, and master code reviews to excel in technical assessments for tech organizations.",
+      prerequisites: ["Completion of Frontend, Backend, or Full-Stack curriculum tracks", "Familiarity with standard software engineering practices"],
+      skillsGained: [
+        "Deconstruct complex structural questions into structured, phased architectural answers.",
+        "Perform code reviews quickly on live repositories using dynamic console checklists.",
+        "Explain rendering, event loop priorities, and caching strategies eloquently to senior interviewers."
+      ],
+      interviewReadiness: [
+        "How to explain the React Fiber architecture and render loop updates.",
+        "How to describe the event loop priorities (microtasks vs macrotasks).",
+        "How to pitch full-stack database architectures and API contracts under pressure."
+      ],
+      completionOutcomes: [
+        "I feel confident explaining React reconciliation, server components, and routing patterns.",
+        "I can audit complex codebase security and accessibility gaps systematically.",
+        "I can clearly map out API interfaces and relational schemas for mock interview boards.",
+        "I am ready to successfully clear technical developer interview loops."
+      ],
+      nextStep: { label: "Review All Career Pathways", url: "/roadmaps" }
     }
   };
 

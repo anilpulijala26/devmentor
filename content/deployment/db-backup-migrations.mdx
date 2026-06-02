@@ -1,0 +1,95 @@
+---
+title: "Database Backups & Migrations Strategy"
+description: "Design automated backup routines, write migration schemas, and run rollbacks safely in production."
+tags: ["deployment","database"]
+---
+
+## What You Will Learn
+
+- Schedule automated database backup snapshots.
+- Write safe migration schemas that avoid locking tables.
+- Run rollback migrations to revert updates safely.
+
+---
+
+## Why This Matters in Real Projects
+
+Bugs in database migrations can corrupt data or lock tables, causing outages. Establishing automated backups and writing backward-compatible migrations prevents data loss and minimizes downtime.
+
+<SeniorNote>
+Never execute database migrations that drop tables or columns directly in production. Write additive migrations first, migrate data, and drop columns only in subsequent updates.
+</SeniorNote>
+
+---
+
+## Concept Explanation
+
+### Database Backups & Migrations
+
+- **Migration Scripts**: SQL files containing schema modifications (tables, indexes) tracked in version control.
+- **Rollbacks**: Scripts that revert migration updates safely during deployment failures.
+- **Table Locks**: Database locks that block write queries while schemas update, causing API timeouts.
+
+---
+
+## Real-Time Project Example
+
+<RealTimeExample title={"Database Backups & Migrations Strategy Scenario"}>
+When adding phone columns to user tables, additive migrations deploy first with NULL values, avoiding table lockouts.
+</RealTimeExample>
+
+---
+
+## Code Example
+
+Below is a configuration file matching senior standards:
+
+```javascript
+// Additive SQL migration script (20260602_add_phone.sql)
+-- Add column as nullable first to avoid locking tables
+ALTER TABLE users ADD COLUMN phone VARCHAR(20) DEFAULT NULL;
+
+-- In next phase (after code updates), populate values and add constraints
+-- ALTER TABLE users ALTER COLUMN phone SET NOT NULL;
+```
+
+---
+
+## Common Mistakes
+
+Here is an example of incorrect setups vs clean, optimized configurations.
+
+<CommonMistake
+  title={"Dropping Columns directly in production migrations"}
+  badDesc={"Dropping active columns in migrations. Running server instances running older code will crash when querying missing columns."}
+  badCode={"// Migration drops column immediately\nALTER TABLE users DROP COLUMN phone; -- Old code throws errors!"}
+  goodDesc={"Updating code to stop reading columns first, then dropping columns in subsequent migrations."}
+  goodCode={"// Phase 1: Update code to ignore column.\n// Phase 2: Deploy migration dropping column."}
+/>
+
+---
+
+## Practice Task
+
+Solidify your knowledge by implementing this exercise in your codebase.
+
+<TaskBox
+  title={"Write a rollback migration script"}
+  duration={"25 Minutes"}
+  requirements={[
+    "Write an SQL migration script creating tables.",
+    "Write a matching rollback script dropping tables.",
+    "Verify migrations apply and roll back safely."
+  ]}
+  expectedOutput={"// Migrations apply and revert successfully\nPrisma migrate resolve -> Rollback completed"}
+>
+Complete this task to verify your configuration operates correctly.
+</TaskBox>
+
+---
+
+## Interview Tip
+
+<InterviewTip question={"How do you add a NOT NULL column to a populated table in production without downtime?"}>
+First, add the column as nullable. Second, update code to write to the column and populate existing rows with default values. Finally, deploy a migration that adds the NOT NULL constraint.
+</InterviewTip>

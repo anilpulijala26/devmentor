@@ -1,0 +1,124 @@
+---
+title: "Request Validation with Zod"
+description: "Write schema-driven inputs validations using Zod. Check body variables, parameter fields, and return precise error formats."
+tags: ["zod","validation"]
+---
+
+## What You Will Learn
+
+- Build request validation schemas with Zod.
+- Implement Express schema validation middleware.
+- Return structured field-level validation errors.
+
+---
+
+## Why This Matters in Real Projects
+
+Unvalidated user input is a major cause of database errors and security vulnerabilities. Validating request bodies and parameters using Zod schemas blocks malformed inputs before they reach business service layers.
+
+<SeniorNote>
+Use Zod's `.strict()` parser option to reject requests containing unexpected parameters. This prevents malicious payload injections.
+</SeniorNote>
+
+---
+
+## Concept Explanation
+
+### Input Schema Validations
+
+Zod is a TypeScript-first schema declaration and validation library:
+- **Declarative Schema**: Define validation structures (e.g. string lengths, email formats).
+- **Type Inference**: Extract TypeScript types directly from schemas.
+- **Middleware Validation**: Intercept requests, validate payloads against schemas, and automatically return 400 status codes containing error logs if validation fails.
+
+---
+
+## Real-Time Project Example
+
+<RealTimeExample title={"Request Validation with Zod Scenario"}>
+When registering users, a schema validates that email formats are correct, passwords meet minimum requirements, and user ages are valid, blocking malformed requests before processing database updates.
+</RealTimeExample>
+
+---
+
+## Code Example
+
+Below is a configuration file matching senior standards:
+
+```javascript
+// Express middleware utilizing Zod schema validations
+import express from 'express';
+import { z } from 'zod';
+const app = express();
+app.use(express.json());
+
+// 1. Declare payload validation schema
+const registrationSchema = z.object({
+  email: z.string().email('Invalid email address format.'),
+  password: z.string().min(8, 'Password must be at least 8 characters long.'),
+  age: z.number().min(18, 'Users must be 18 years or older.')
+}).strict();
+
+// 2. Validate request middleware
+const validateRequest = (schema) => (req, res, next) => {
+  const result = schema.safeParse(req.body);
+  if (!result.success) {
+    return res.status(400).json({
+      error: {
+        message: 'Validation failed.',
+        details: result.error.errors.map(err => ({
+          field: err.path.join('.'),
+          message: err.message
+        }))
+      }
+    });
+  }
+  req.body = result.data; // Save validated data
+  next();
+};
+
+app.post('/register', validateRequest(registrationSchema), (req, res) => {
+  res.status(201).json({ success: true });
+});
+```
+
+---
+
+## Common Mistakes
+
+Here is an example of incorrect setups vs clean, optimized configurations.
+
+<CommonMistake
+  title={"Validating data inside controllers instead of middleware"}
+  badDesc={"Writing multiple custom if/else validation checks directly inside controller handlers, leading to bloated, repetitive logic."}
+  badCode={"app.post('/register', (req, res) => {\n  if (!req.body.email || !req.body.email.includes('@')) {\n    return res.status(400).send('Invalid email');\n  }\n  // Bloated controller code!\n});"}
+  goodDesc={"Extracting validations to schemas and running them as modular middlewares before controllers execute."}
+  goodCode={"// Run validation schema check in route pipeline\napp.post('/register', validate(registerSchema), registerController);"}
+/>
+
+---
+
+## Practice Task
+
+Solidify your knowledge by implementing this exercise in your codebase.
+
+<TaskBox
+  title={"Write a Zod Payload Validation schema"}
+  duration={"20 Minutes"}
+  requirements={[
+    "Create a schema validation middleware for a checkout API.",
+    "Require card numbers, security codes, and email targets.",
+    "Test validations using invalid request inputs."
+  ]}
+  expectedOutput={"// API rejects request and returns structured validation errors\n{ \"field\": \"card\", \"message\": \"Required\" }"}
+>
+Complete this task to verify your configuration operates correctly.
+</TaskBox>
+
+---
+
+## Interview Tip
+
+<InterviewTip question={"What is the difference between parse() and safeParse() in Zod?"}>
+parse() throws a ZodError exception if validation fails, requiring try-catch blocks. safeParse() does not throw exceptions; it returns an object containing success flags: `{ success: true, data: T }` or `{ success: false, error: ZodError }`.
+</InterviewTip>

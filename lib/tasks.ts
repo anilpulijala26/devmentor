@@ -794,6 +794,612 @@ export function LazyImage({ src, alt, placeholderSrc }: { src: string; alt: stri
 }`,
     solutionLanguage: "tsx",
     solutionExplanation: "The component loads images using IntersectionObserver, falling back to lazy sources. It detaches observers on mounts and displays blurred low-res placeholders to avoid layout shifts."
+  },
+  {
+    slug: "create-express-server",
+    title: "Create Express Server",
+    level: "Beginner",
+    requirement: "Write a Node.js script using Express that initializes a server on port 3000, parses incoming JSON payloads, and exposes a GET '/health' route returning { status: 'OK' }.",
+    expectedOutput: "A running Express server responding with a JSON health check and logging requests.",
+    hints: [
+      "Use `express()` to initialize the app.",
+      "Add `app.use(express.json())` to parse request bodies.",
+      "Listen on port 3000 using `app.listen(3000)`."
+    ],
+    checklist: [
+      "Express server initializes and runs without throwing errors.",
+      "GET '/health' returns a JSON payload with a 200 OK status.",
+      "JSON parser middleware is configured correctly."
+    ],
+    commonMistakes: [
+      "Forgetting to call app.use(express.json()) before route declarations, making req.body undefined.",
+      "Hardcoding ports without fallbacks to process.env.PORT."
+    ],
+    interviewExplanation: "I initialize Express servers by configuring JSON parser middlewares, listening on environment-defined ports, and setting up lightweight health routes for uptime checks.",
+    solutionCode: `const express = require('express');
+const app = express();
+const PORT = process.env.PORT || 3000;
+
+app.use(express.json());
+
+app.get('/health', (req, res) => {
+  res.status(200).json({ status: 'OK', timestamp: new Date() });
+});
+
+app.listen(PORT, () => {
+  console.log(\`Server is running on port \${PORT}\`);
+});`,
+    solutionLanguage: "javascript",
+    solutionExplanation: "The solution configures Express, registers JSON body parsers, exposes a GET health endpoint, and binds to process.env.PORT."
+  },
+  {
+    slug: "build-crud-api",
+    title: "Build CRUD API",
+    level: "Beginner",
+    requirement: "Build an in-memory CRUD API for managing a list of developer tracks. Implement GET (all), GET (by id), POST (add), and DELETE (remove) endpoints.",
+    expectedOutput: "A set of Express route handlers that correctly manage, validate, and alter the items in an in-memory list.",
+    hints: [
+      "Use standard HTTP methods: GET, POST, DELETE.",
+      "Validate the request body in POST queries to ensure the fields exist.",
+      "Return appropriate status codes (200, 201, 404)."
+    ],
+    checklist: [
+      "GET requests return arrays of tracks.",
+      "POST requests successfully append tracks and return 201.",
+      "DELETE requests filter out tracks by ID and return 200/204."
+    ],
+    commonMistakes: [
+      "Using wrong HTTP codes (e.g. returning 200 instead of 201 for creations).",
+      "Not handling missing records, resulting in server crashes."
+    ],
+    interviewExplanation: "I build RESTful controllers using HTTP verbs. POST creates resources (returning 201), GET fetches lists/elements, and DELETE removes elements, with clear error handling for missing IDs.",
+    solutionCode: `const express = require('express');
+const app = express();
+app.use(express.json());
+
+let tracks = [{ id: 1, name: 'Frontend' }];
+
+app.get('/tracks', (req, res) => res.json(tracks));
+
+app.post('/tracks', (req, res) => {
+  const { name } = req.body;
+  if (!name) return res.status(400).json({ error: 'Name is required' });
+  const newTrack = { id: tracks.length + 1, name };
+  tracks.push(newTrack);
+  res.status(201).json(newTrack);
+});
+
+app.delete('/tracks/:id', (req, res) => {
+  const id = parseInt(req.params.id);
+  const exists = tracks.some(t => t.id === id);
+  if (!exists) return res.status(404).json({ error: 'Track not found' });
+  tracks = tracks.filter(t => t.id !== id);
+  res.json({ success: true });
+});`,
+    solutionLanguage: "javascript",
+    solutionExplanation: "The code exposes REST endpoints, parses route parameters, maintains an in-memory database array, and returns structured JSON responses."
+  },
+  {
+    slug: "zod-validation",
+    title: "Validation with Zod",
+    level: "Beginner",
+    requirement: "Write a Zod validation schema for a user registration request. Validate that: email is a valid format, username is alphanumeric (3-20 chars), and age is an integer >= 18.",
+    expectedOutput: "A validation schema object that parses input payloads and throws formatted error logs on invalid fields.",
+    hints: [
+      "Import `z` from `zod`.",
+      "Use `z.string().email()` for email validation.",
+      "Use `z.number().int().min(18)` for age checks."
+    ],
+    checklist: [
+      "Validates email formats correctly.",
+      "Enforces alphanumeric rules on usernames.",
+      "Rejects ages below 18 and non-integer inputs."
+    ],
+    commonMistakes: [
+      "Allowing empty string values or omitting strict type rules.",
+      "Not catching parsing errors, causing unhandled server crashes."
+    ],
+    interviewExplanation: "I schema-validate incoming payloads using Zod. Defining strong schemas ensures bad data is caught at the network boundary, returning clean, structured error responses.",
+    solutionCode: `import { z } from 'zod';
+
+export const registerSchema = z.object({
+  email: z.string().email('Invalid email structure'),
+  username: z.string().min(3).max(20).regex(/^[a-zA-Z0-9]+$/, 'Must be alphanumeric'),
+  age: z.number().int().min(18, 'Must be at least 18')
+});
+
+export function validateRegister(payload: unknown) {
+  return registerSchema.safeParse(payload);
+}`,
+    solutionLanguage: "typescript",
+    solutionExplanation: "This schema uses Zod validation parameters to enforce type rules, string bounds, and regex validation, exposing safe parsing utilities."
+  },
+  {
+    slug: "auth-middleware",
+    title: "Create Auth Middleware",
+    level: "Intermediate",
+    requirement: "Implement an Express middleware function that extracts a JWT bearer token from the Authorization header, validates its signature, and appends the decoded payload to req.user.",
+    expectedOutput: "An Express middleware rejecting requests with missing or invalid tokens (401) and calling next() on success.",
+    hints: [
+      "Access headers using `req.headers.authorization`.",
+      "Split the header by space to extract the token: `Bearer <token>`.",
+      "Use `jwt.verify(token, secret)` to validate signatures."
+    ],
+    checklist: [
+      "Extracts Bearer token from the Authorization header.",
+      "Returns 401 status for missing or invalid tokens.",
+      "Appends decoded payload to req.user and calls next() on success."
+    ],
+    commonMistakes: [
+      "Forgetting to check if the authorization header starts with Bearer.",
+      "Using synchronous JWT verification in an async middleware pipeline, blocking the event loop."
+    ],
+    interviewExplanation: "I protect private endpoints by using an authentication middleware that validates JWT Bearer signatures, appending decoded payloads to request context objects, and blocking unauthenticated requests.",
+    solutionCode: `import { Request, Response, NextFunction } from 'express';
+import jwt from 'jsonwebtoken';
+
+export interface AuthRequest extends Request {
+  user?: any;
+}
+
+export function authMiddleware(req: AuthRequest, res: Response, next: NextFunction) {
+  const authHeader = req.headers.authorization;
+  if (!authHeader || !authHeader.startsWith('Bearer ')) {
+    return res.status(401).json({ error: 'Access token is required' });
+  }
+
+  const token = authHeader.split(' ')[1];
+  try {
+    const decoded = jwt.verify(token, process.env.JWT_SECRET || 'secret');
+    req.user = decoded;
+    next();
+  } catch (err) {
+    res.status(401).json({ error: 'Token is invalid or expired' });
+  }
+}`,
+    solutionLanguage: "typescript",
+    solutionExplanation: "The middleware inspects authorization headers, splits string components, verifies JWT signatures, and catches verification errors."
+  },
+  {
+    slug: "bcrypt-hashing",
+    title: "Password Hashing with Bcrypt",
+    level: "Beginner",
+    requirement: "Write helper functions to hash a password using bcrypt and compare a plain password with a stored hash.",
+    expectedOutput: "A pair of functions: `hashPassword(password)` and `comparePassword(password, hash)`.",
+    hints: [
+      "Use `bcrypt.hash(password, saltRounds)` to generate hashes.",
+      "Use `bcrypt.compare(password, hash)` to verify credentials.",
+      "Use a salt rounds factor of 10 or 12 for strong security."
+    ],
+    checklist: [
+      "hashPassword returns a hashed string that is different from the input.",
+      "comparePassword returns true for matching credentials.",
+      "comparePassword returns false for invalid passwords."
+    ],
+    commonMistakes: [
+      "Using synchronous bcrypt functions which block the Node.js event loop.",
+      "Using weak salt rounds below 10, compromising security."
+    ],
+    interviewExplanation: "I hash user passwords asynchronously using bcrypt with a salt factor of 10-12, preventing brute-force database attacks.",
+    solutionCode: `import bcrypt from 'bcrypt';
+
+export async function hashPassword(password: string): Promise<string> {
+  const saltRounds = 12;
+  return bcrypt.hash(password, saltRounds);
+}
+
+export async function comparePassword(password: string, hash: string): Promise<boolean> {
+  return bcrypt.compare(password, hash);
+}`,
+    solutionLanguage: "typescript",
+    solutionExplanation: "The functions leverage async bcrypt wrappers to hash passwords securely and run comparisons safely without blocking Node's execution thread."
+  },
+  {
+    slug: "generate-jwt",
+    title: "Generate JWT Token",
+    level: "Beginner",
+    requirement: "Write a function that accepts user details (id, email, role) and generates a JWT access token signed with a secret, expiring in 15 minutes.",
+    expectedOutput: "A signed token string containing user metadata in the payload.",
+    hints: [
+      "Use `jwt.sign(payload, secret, options)`.",
+      "Set expiration bounds to '15m'.",
+      "Do not store passwords or secrets inside the token payload."
+    ],
+    checklist: [
+      "Creates a valid JWT token string.",
+      "Token contains user id, email, and role inside the decoded payload.",
+      "Token expires in 15 minutes."
+    ],
+    commonMistakes: [
+      "Including sensitive data (like password hashes) in token payloads.",
+      "Omitting expiration parameters, making tokens valid indefinitely."
+    ],
+    interviewExplanation: "I issue signed JWT access tokens containing public identifiers. I restrict token lifetimes to 15 minutes, mitigating token theft risks.",
+    solutionCode: `import jwt from 'jsonwebtoken';
+
+interface UserPayload {
+  id: string;
+  email: string;
+  role: string;
+}
+
+export function generateAccessToken(user: UserPayload): string {
+  const secret = process.env.JWT_SECRET || 'access-secret';
+  return jwt.sign(
+    { id: user.id, email: user.email, role: user.role },
+    secret,
+    { expiresIn: '15m' }
+  );
+}`,
+    solutionLanguage: "typescript",
+    solutionExplanation: "The utility signs user payloads with key secrets, configuring short lifetimes to ensure secure stateless sessions."
+  },
+  {
+    slug: "refresh-token-flow",
+    title: "Refresh Token Flow",
+    level: "Intermediate",
+    requirement: "Create a refresh token flow. Expose a '/refresh' route that validates a refresh token stored in HttpOnly cookies, checks it, and issues a new access token.",
+    expectedOutput: "An endpoint rotating credentials and blocking expired tokens.",
+    hints: [
+      "Access cookies via `req.cookies.refreshToken`.",
+      "Verify refresh tokens using separate refresh secret keys.",
+      "Return the new access token in the JSON body."
+    ],
+    checklist: [
+      "Validates refresh tokens stored inside HttpOnly cookies.",
+      "Rejects expired or tampered refresh tokens with 401/403.",
+      "Issues new access tokens successfully."
+    ],
+    commonMistakes: [
+      "Storing refresh tokens in localStorage, leaving them vulnerable to XSS.",
+      "Using the same secret key for both access and refresh tokens."
+    ],
+    interviewExplanation: "I design token rotation architectures by separating short-lived access tokens from long-lived refresh tokens. Refresh tokens are secured in HttpOnly cookies to defend against XSS hijacks.",
+    solutionCode: `import { Request, Response } from 'express';
+import jwt from 'jsonwebtoken';
+
+export function handleRefresh(req: Request, res: Response) {
+  const refreshToken = req.cookies?.refreshToken;
+  if (!refreshToken) {
+    return res.status(401).json({ error: 'Refresh token is required' });
+  }
+
+  try {
+    const decoded = jwt.verify(refreshToken, process.env.JWT_REFRESH_SECRET || 'refresh-secret') as any;
+    const newAccessToken = jwt.sign(
+      { id: decoded.id, email: decoded.email, role: decoded.role },
+      process.env.JWT_SECRET || 'access-secret',
+      { expiresIn: '15m' }
+    );
+    res.json({ accessToken: newAccessToken });
+  } catch (err) {
+    res.status(403).json({ error: 'Invalid refresh token' });
+  }
+}`,
+    solutionLanguage: "typescript",
+    solutionExplanation: "This controller reads HttpOnly cookies, verifies refresh tokens, and generates new access tokens dynamically."
+  },
+  {
+    slug: "add-pagination",
+    title: "API Pagination",
+    level: "Intermediate",
+    requirement: "Build pagination middleware for a database search endpoint. Extract 'page' and 'limit' parameters from the query string, calculate offsets, and format response metadata.",
+    expectedOutput: "A response containing: { data: [], pagination: { page: 1, limit: 10, total: 100, pages: 10 } }.",
+    hints: [
+      "Parse query parameters: `const page = parseInt(req.query.page) || 1`.",
+      "Calculate database offsets: `offset = (page - 1) * limit`.",
+      "Return count metrics to let client frontends render pagination controls."
+    ],
+    checklist: [
+      "Correctly parses page and limit parameters from request query strings.",
+      "Offsets match calculations.",
+      "API responses return standardized paginated metadata structures."
+    ],
+    commonMistakes: [
+      "Allowing negative page numbers or limit parameters, causing SQL errors.",
+      "Omitting count queries, preventing UI clients from rendering total page limits."
+    ],
+    interviewExplanation: "I configure paginated endpoints by parsing limits and pages, querying DB sizes, offset-binding queries, and returning structural metadata.",
+    solutionCode: `import { Request, Response } from 'express';
+
+export async function getPaginatedData(req: Request, res: Response) {
+  const page = Math.max(1, parseInt(req.query.page as string) || 1);
+  const limit = Math.max(1, Math.min(100, parseInt(req.query.limit as string) || 10));
+  const offset = (page - 1) * limit;
+
+  // Mock DB query count and select
+  const total = 45; 
+  const data = Array.from({ length: limit }, (_, i) => ({ id: offset + i + 1, name: \`Item \${offset + i + 1}\` })).filter(item => item.id <= total);
+  
+  res.json({
+    data,
+    pagination: {
+      page,
+      limit,
+      total,
+      pages: Math.ceil(total / limit)
+    }
+  });
+}`,
+    solutionLanguage: "typescript",
+    solutionExplanation: "The module parses pagination parameters, sanitizes input boundaries, calculates offsets, and packages payloads with pagination metadata."
+  },
+  {
+    slug: "search-filtering",
+    title: "Search and Filtering",
+    level: "Intermediate",
+    requirement: "Expose an Express route to filter database records. Support search strings, category fields, and difficulty filters, mapping request parameters into SQL inputs.",
+    expectedOutput: "Express controllers parsing query parameters and returning filtered results arrays.",
+    hints: [
+      "Use query parameters: `req.query.q` and `req.query.difficulty`.",
+      "Build dynamic database where filters matching conditions.",
+      "Escape keyword strings to block SQL Injection vectors."
+    ],
+    checklist: [
+      "Parses search parameters correctly.",
+      "Applies exact matching on category/difficulty filters.",
+      "Fuzzy matches keywords on search text queries."
+    ],
+    commonMistakes: [
+      "Directly inserting parameters in SQL strings, causing SQL Injection vulnerabilities.",
+      "Using case-sensitive searches which limit results."
+    ],
+    interviewExplanation: "I construct API filters by parsing query values, validating inputs against schemas, and binding filters dynamically to SQL parameters.",
+    solutionCode: `import { Request, Response } from 'express';
+
+const items = [
+  { id: 1, title: 'Form validation', level: 'Beginner' },
+  { id: 2, title: 'Docker container', level: 'Advanced' }
+];
+
+export function handleSearch(req: Request, res: Response) {
+  const q = (req.query.q as string || '').toLowerCase();
+  const level = req.query.level as string;
+
+  let results = items;
+  if (q) {
+    results = results.filter(item => item.title.toLowerCase().includes(q));
+  }
+  if (level) {
+    results = results.filter(item => item.level === level);
+  }
+
+  res.json(results);
+}`,
+    solutionLanguage: "typescript",
+    solutionExplanation: "The controller validates filters, matches query constraints, and returns matching arrays."
+  },
+  {
+    slug: "multer-upload",
+    title: "Upload File with Multer",
+    level: "Intermediate",
+    requirement: "Configure Multer middleware to handle multipart form uploads. Restrict uploads to PNG and PDF formats, with a maximum file size of 5MB.",
+    expectedOutput: "A configured upload middleware rejecting invalid files with a 400 Bad Request status code.",
+    hints: [
+      "Import `multer`.",
+      "Configure `limits: { fileSize: 5 * 1024 * 1024 }`.",
+      "Implement `fileFilter` to validate MIME types."
+    ],
+    checklist: [
+      "Allows PDF and PNG uploads.",
+      "Rejects files larger than 5MB.",
+      "Rejects unsupported file formats (like JPEG or ZIP) with clear errors."
+    ],
+    commonMistakes: [
+      "Failing to capture Multer error callbacks, resulting in 500 error page dumps.",
+      "Not cleaning up temporary disk files on validation drops."
+    ],
+    interviewExplanation: "I set up file uploads by configuring Multer middleware, limiting sizes to 5MB, and white-listing MIME targets to block malicious uploads.",
+    solutionCode: `import multer from 'multer';
+
+const upload = multer({
+  limits: { fileSize: 5 * 1024 * 1024 },
+  fileFilter: (req, file, cb) => {
+    const allowed = ['image/png', 'application/pdf'];
+    if (allowed.includes(file.mimetype)) {
+      cb(null, true);
+    } else {
+      cb(new Error('Invalid file format. Only PNG and PDF are allowed.'));
+    }
+  }
+});
+
+export const uploadMiddleware = upload.single('file');`,
+    solutionLanguage: "typescript",
+    solutionExplanation: "The code initializes Multer configurations, limiting uploads to 5MB and allowing only PNG and PDF formats, exporting it as middleware."
+  },
+  {
+    slug: "postgres-prisma",
+    title: "PostgreSQL & Prisma Connection",
+    level: "Intermediate",
+    requirement: "Configure Prisma ORM to connect to a PostgreSQL database, define a User model with relations to a Post model, and write a query fetching users with their posts.",
+    expectedOutput: "Prisma schema configurations and query routines loading relational database schemas.",
+    hints: [
+      "Set datasource providers to 'postgresql'.",
+      "Define schemas: User has many Posts.",
+      "Query using `prisma.user.findMany({ include: { posts: true } })`."
+    ],
+    checklist: [
+      "Prisma schema defines models and relation fields correctly.",
+      "Database connections load using environment strings.",
+      "Queries load relational tables using Prisma includes."
+    ],
+    commonMistakes: [
+      "Failing to close Prisma connection pools, causing connection leaks.",
+      "Not writing migrations for model relation modifications."
+    ],
+    interviewExplanation: "I query PostgreSQL using Prisma ORM. I map model schemas with explicit foreign key mappings and run relational queries using transactional query wrappers.",
+    solutionCode: `// schema.prisma
+// datasource db {
+//   provider = "postgresql"
+//   url      = env("DATABASE_URL")
+// }
+// model User {
+//   id    Int    @id @default(autoincrement())
+//   email String @unique
+//   posts Post[]
+// }
+// model Post {
+//   id       Int    @id @default(autoincrement())
+//   title    String
+//   authorId Int
+//   author   User   @relation(fields: [authorId], references: [id])
+// }
+
+import { PrismaClient } from '@prisma/client';
+const prisma = new PrismaClient();
+
+export async function getUsersWithPosts() {
+  try {
+    return await prisma.user.findMany({
+      include: { posts: true }
+    });
+  } finally {
+    await prisma.$disconnect();
+  }
+}`,
+    solutionLanguage: "typescript",
+    solutionExplanation: "This module defines the Prisma schemas, connects to the database via environment credentials, runs query calls, and closes clients safely."
+  },
+  {
+    slug: "api-tests-supertest",
+    title: "API Testing with Supertest",
+    level: "Intermediate",
+    requirement: "Write an integration test suite for an Express app using Jest and Supertest. Verify that GET '/health' returns 200 OK and POST '/tracks' returns 400 when body fields are missing.",
+    expectedOutput: "A test script checking response codes, headers, and body structures.",
+    hints: [
+      "Import `request` from `supertest`.",
+      "Call `request(app).get('/health')`.",
+      "Assert responses using Jest: `expect(res.status).toBe(200)`."
+    ],
+    checklist: [
+      "Tests health route returns 200 OK.",
+      "Tests invalid POST payloads fail with 400 Bad Request.",
+      "Asserts JSON header content-types match."
+    ],
+    commonMistakes: [
+      "Importing listening servers instead of the raw Express app instance, leaving test ports open.",
+      "Not closing database pools inside test lifecycles, hanging test threads."
+    ],
+    interviewExplanation: "I write integration tests using Jest and Supertest. I target the raw Express application to run in-memory API tests, checking status codes and response bodies.",
+    solutionCode: `import request from 'supertest';
+import express from 'express';
+
+const app = express();
+app.use(express.json());
+app.get('/health', (req, res) => res.status(200).json({ status: 'OK' }));
+app.post('/tracks', (req, res) => {
+  if (!req.body.name) return res.status(400).json({ error: 'Missing name' });
+  res.status(201).json({ id: 1, name: req.body.name });
+});
+
+describe('Express API Tests', () => {
+  it('GET /health - Success', async () => {
+    const res = await request(app).get('/health');
+    expect(res.status).toBe(200);
+    expect(res.body.status).toBe('OK');
+  });
+
+  it('POST /tracks - Failure on missing body fields', async () => {
+    const res = await request(app).post('/tracks').send({});
+    expect(res.status).toBe(400);
+  });
+});`,
+    solutionLanguage: "typescript",
+    solutionExplanation: "The test file configures mock route responses, targets the Express application, runs tests using Supertest hooks, and checks response payloads."
+  },
+  {
+    slug: "dockerize-node-api",
+    title: "Dockerize Node API",
+    level: "Advanced",
+    requirement: "Create a multi-stage Dockerfile to containerize a Node.js Express application. Minimize image size by separating build dependency stages from production runtime layers.",
+    expectedOutput: "A Dockerfile producing an optimized, lightweight container running the application.",
+    hints: [
+      "Use `node:20-alpine` as the base image.",
+      "Stage 1 (Build): Install devDependencies and compile TypeScript.",
+      "Stage 2 (Production): Copy only built code and production node_modules."
+    ],
+    checklist: [
+      "Dockerfile utilizes multi-stage build scripts (AS build).",
+      "Production container excludes devDependencies, minimizing size.",
+      "Configures non-root user permissions (USER node) for security."
+    ],
+    commonMistakes: [
+      "Copying raw source code files and devDependencies inside production images, inflating container sizes.",
+      "Running containers as the default root user, creating security vulnerabilities."
+    ],
+    interviewExplanation: "I containerize services using multi-stage Docker builds. I compile TypeScript in the build layer, and copy only the built files and production dependencies into the final Alpine image to minimize package footprints.",
+    solutionCode: `# Stage 1: Build source
+FROM node:20-alpine AS builder
+WORKDIR /usr/src/app
+COPY package*.json ./
+RUN npm ci
+COPY . .
+RUN npm run build
+
+# Stage 2: Production runtime
+FROM node:20-alpine AS runner
+WORKDIR /usr/src/app
+ENV NODE_ENV=production
+COPY package*.json ./
+RUN npm ci --only=production
+COPY --from=builder /usr/src/app/dist ./dist
+USER node
+EXPOSE 3000
+CMD ["node", "dist/app.js"]`,
+    solutionLanguage: "dockerfile",
+    solutionExplanation: "The Dockerfile splits builds into builder and runner stages. It runs npm clean installs, copies build artifacts, drops root privileges, and registers default commands."
+  },
+  {
+    slug: "deploy-backend-cloud",
+    title: "Deploy Backend to Cloud",
+    level: "Advanced",
+    requirement: "Write a GitHub Actions CI/CD configuration to build and deploy a Node.js app to Render or Railway upon pushing to the main branch, including health checks.",
+    expectedOutput: "A YAML workflow file automates tests and triggers deployments on successful builds.",
+    hints: [
+      "Create the script at `.github/workflows/deploy.yml`.",
+      "Define steps: check out code, setup node, install, test, and build.",
+      "Use deploy webhooks or cloud CLI tools to trigger deployments."
+    ],
+    checklist: [
+      "GitHub Actions workflow runs on pushing to the main branch.",
+      "Deployment triggers only when test suites pass successfully.",
+      "Secures credentials using GitHub secrets variables."
+    ],
+    commonMistakes: [
+      "Hardcoding secrets in repository scripts instead of loading GitHub secrets.",
+      "Deploying broken code by omitting test verification tasks in the pipeline."
+    ],
+    interviewExplanation: "I configure CI/CD pipelines using GitHub Actions. The workflow runs linters and test suites. If they pass, the pipeline executes build steps and triggers deployments to cloud containers using webhooks.",
+    solutionCode: `name: Build & Deploy
+
+on:
+  push:
+    branches: [ main ]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: 'npm'
+      - run: npm ci
+      - run: npm run lint
+      - run: npm test
+
+  deploy:
+    needs: test
+    runs-on: ubuntu-latest
+    steps:
+      - name: Trigger Render Deploy Webhook
+        run: |
+          curl -f -X POST "\${{ secrets.RENDER_DEPLOY_WEBHOOK_URL }}"`,
+    solutionLanguage: "yaml",
+    solutionExplanation: "The workflow file defines trigger hooks, tests configurations, validates builds, and executes curl commands to trigger webhooks on successful builds."
   }
 ];
 

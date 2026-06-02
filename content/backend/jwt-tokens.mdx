@@ -1,0 +1,122 @@
+---
+title: "JWT Access Tokens, Expiry, and Cookies"
+description: "Issue JWT session signatures, configure access/refresh token rotation patterns, and transfer token credentials in secure HttpOnly cookies."
+tags: ["auth","jwt"]
+---
+
+## What You Will Learn
+
+- Sign and verify JWT tokens securely.
+- Configure token rotation models using access and refresh scopes.
+- Store session tokens inside secure, HttpOnly browser cookies.
+
+---
+
+## Why This Matters in Real Projects
+
+Storing JWT access tokens in browser LocalStorage exposes them to cross-site scripting (XSS) attacks. Transferring tokens inside secure HttpOnly cookies prevents browser scripts from reading token values, protecting user sessions.
+
+<SeniorNote>
+Access tokens should have a short lifespan (e.g. 15 minutes) to limit exposure if stolen. Use refresh tokens with a longer lifespan (e.g. 7 days) to request new access tokens.
+</SeniorNote>
+
+---
+
+## Concept Explanation
+
+### JWT Verification & Cookie Security
+
+- **JWT Claims**: Decoded token payloads containing user identity properties (like user ID) and validation limits (expiration times).
+- **HttpOnly Cookies**: Prevents client-side JavaScript from accessing cookies, neutralizing XSS attacks.
+- **Secure Cookie Flag**: Enforces cookie transmission only over encrypted HTTPS connections.
+- **SameSite Config**: Prevents browsers from sending cookies with cross-site requests, mitigating Cross-Site Request Forgery (CSRF) attacks.
+
+---
+
+## Real-Time Project Example
+
+<RealTimeExample title={"JWT Access Tokens, Expiry, and Cookies Scenario"}>
+When users log in, the server generates a short-lived access token and a long-lived refresh token, sending both to the client inside secure HttpOnly cookies to protect the session.
+</RealTimeExample>
+
+---
+
+## Code Example
+
+Below is a configuration file matching senior standards:
+
+```javascript
+// Issuing JWT and configuring secure HttpOnly cookies
+import jwt from 'jsonwebtoken';
+import express from 'express';
+const app = express();
+
+const ACCESS_SECRET = process.env.JWT_ACCESS_SECRET || 'secret1';
+const REFRESH_SECRET = process.env.JWT_REFRESH_SECRET || 'secret2';
+
+app.post('/api/login', (req, res) => {
+  const userId = 'user_100'; // Mock authenticated user ID
+  
+  const accessToken = jwt.sign({ userId }, ACCESS_SECRET, { expiresIn: '15m' });
+  const refreshToken = jwt.sign({ userId }, REFRESH_SECRET, { expiresIn: '7d' });
+  
+  // Send tokens inside secure cookies
+  res.cookie('accessToken', accessToken, {
+    httpOnly: true,
+    secure: process.env.NODE_ENV === 'production',
+    sameSite: 'strict',
+    maxAge: 15 * 60 * 1000 // 15 Minutes
+  });
+  
+  res.cookie('refreshToken', refreshToken, {
+    httpOnly: true,
+    secure: process.env.NODE_ENV === 'production',
+    sameSite: 'strict',
+    path: '/api/v1/auth/refresh', // Restrict cookie paths
+    maxAge: 7 * 24 * 60 * 60 * 1000 // 7 Days
+  });
+  
+  res.json({ success: true });
+});
+```
+
+---
+
+## Common Mistakes
+
+Here is an example of incorrect setups vs clean, optimized configurations.
+
+<CommonMistake
+  title={"Storing JWT Access Tokens in LocalStorage"}
+  badDesc={"Storing sensitive authentication tokens in browser LocalStorage, where malicious scripts can read them during XSS attacks."}
+  badCode={"// Client-side script:\nlocalStorage.setItem('token', token); // Vulnerable to XSS script injection!"}
+  goodDesc={"Storing session tokens inside secure, HttpOnly, SameSite cookies."}
+  goodCode={"// Server-side response configurations:\nres.cookie('token', token, { httpOnly: true, sameSite: 'strict' }); // Secure!"}
+/>
+
+---
+
+## Practice Task
+
+Solidify your knowledge by implementing this exercise in your codebase.
+
+<TaskBox
+  title={"Write an Access/Refresh Token Rotator"}
+  duration={"30 Minutes"}
+  requirements={[
+    "Create an endpoint to verify refresh tokens.",
+    "Issue new access tokens if signatures match.",
+    "Handle session terminations by clearing cookies."
+  ]}
+  expectedOutput={"// Client receives renewed cookie sessions\nres.cookie(\"accessToken\", newAccessToken) -> Status 200"}
+>
+Complete this task to verify your configuration operates correctly.
+</TaskBox>
+
+---
+
+## Interview Tip
+
+<InterviewTip question={"How do you invalidate a JWT token before it expires?"}>
+Because JWTs are stateless, you cannot revoke them directly without database checks. To invalidate tokens early, store active refresh tokens in a whitelist database (like Redis) and verify them on rotation, or log blacklisted IDs to reject requests.
+</InterviewTip>

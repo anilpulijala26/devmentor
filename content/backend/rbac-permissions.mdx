@@ -1,0 +1,118 @@
+---
+title: "Role-Based & Permission-Based Control"
+description: "Configure role-based access control (RBAC) middlewares to restrict API endpoints based on user roles and permissions."
+tags: ["auth","rbac"]
+---
+
+## What You Will Learn
+
+- Understand the difference between roles and granular permissions.
+- Build Express authorization middlewares.
+- Configure secure route protection hierarchies.
+
+---
+
+## Why This Matters in Real Projects
+
+Incorrect permission checks are a common cause of data exposure (Broken Object Level Authorization). Constructing modular, type-safe authorization middlewares ensures that users can only access endpoints matching their assigned role permissions.
+
+<SeniorNote>
+Design authorization checks using granular permissions (e.g. `write:posts`) instead of generic roles (e.g. `editor`). This allows you to update role permissions later without modifying route middleware code.
+</SeniorNote>
+
+---
+
+## Concept Explanation
+
+### RBAC vs PBAC
+
+- **Role-Based Access Control (RBAC)**: Groups permissions into user roles (e.g., admin, editor, subscriber) and assigns roles to users.
+- **Permission-Based Access Control (PBAC)**: Checks for specific permissions (e.g., `edit:users`) rather than user roles, providing more granular access control.
+- **Authorization Middleware**: Intercepts requests, decodes user credentials, checks role permissions, and returns a 403 Forbidden status if validation fails.
+
+---
+
+## Real-Time Project Example
+
+<RealTimeExample title={"Role-Based & Permission-Based Control Scenario"}>
+In content manager systems, subscribers can read posts, editors can write and edit posts, and administrators can write, edit, and delete posts and manage users.
+</RealTimeExample>
+
+---
+
+## Code Example
+
+Below is a configuration file matching senior standards:
+
+```javascript
+// Modular RBAC permissions middleware in Express
+import express from 'express';
+const app = express();
+
+// Mock user profiles data object
+const userPermissions = {
+  admin: ['read:users', 'write:users', 'delete:users'],
+  editor: ['read:users', 'write:users'],
+  user: ['read:users']
+};
+
+// Authorization Middleware
+const requirePermission = (permission) => (req, res, next) => {
+  const user = req.user; // Set by authentication middleware
+  if (!user || !user.role) {
+    return res.status(401).json({ error: 'Unauthenticated.' });
+  }
+  
+  const permissions = userPermissions[user.role] || [];
+  if (!permissions.includes(permission)) {
+    return res.status(403).json({ error: 'Forbidden: Insufficient privileges.' });
+  }
+  
+  next();
+};
+
+app.delete('/api/users/:id', requirePermission('delete:users'), (req, res) => {
+  res.json({ message: 'User deleted.' });
+});
+```
+
+---
+
+## Common Mistakes
+
+Here is an example of incorrect setups vs clean, optimized configurations.
+
+<CommonMistake
+  title={"Relying on Client-Side Role Controls to Secure APIs"}
+  badDesc={"Hiding buttons in the frontend UI but leaving backend API endpoints unprotected, allowing users to send raw requests directly to restricted routes."}
+  badCode={"// UI: {user.role === 'admin' && <DeleteButton />}\n// API: app.delete('/api/user/:id', controller); // MISSING API CHECKS!"}
+  goodDesc={"Always validating user role permissions on the backend for every request."}
+  goodCode={"// API validates permissions on every request\napp.delete('/api/user/:id', requirePermission('delete:users'), controller);"}
+/>
+
+---
+
+## Practice Task
+
+Solidify your knowledge by implementing this exercise in your codebase.
+
+<TaskBox
+  title={"Build a Permission checking route filter"}
+  duration={"20 Minutes"}
+  requirements={[
+    "Create an authorization middleware mapping permissions.",
+    "Block unauthorized requests with a 403 status code.",
+    "Add test endpoints requiring admin permissions."
+  ]}
+  expectedOutput={"// Forbidden requests are blocked correctly\nGET /api/admin -> Status 403 Forbidden"}
+>
+Complete this task to verify your configuration operates correctly.
+</TaskBox>
+
+---
+
+## Interview Tip
+
+<InterviewTip question={"What is the difference between Authentication and Authorization?"}>
+Authentication (AuthN) verifies the identity of a user (e.g., checking usernames and passwords during login). Authorization (AuthZ) verifies the permissions of an authenticated user (e.g., checking if a user has permission to delete a resource).
+</InterviewTip>

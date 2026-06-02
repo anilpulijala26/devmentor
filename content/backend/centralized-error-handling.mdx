@@ -1,0 +1,116 @@
+---
+title: "Centralized Error Handling"
+description: "Establish a robust, centralized exception catching pipeline in Express. Capture runtime crashes, log diagnostic telemetry, and return client responses."
+tags: ["express","errors"]
+---
+
+## What You Will Learn
+
+- Implement centralized Express error handler middleware.
+- Prevent stack trace leaks in production environments.
+- Understand the error signature (err, req, res, next).
+
+---
+
+## Why This Matters in Real Projects
+
+Uncaught exceptions instantly crash Node.js servers, dropping active requests. Centralized error middlewares catch exceptions globally, log diagnostics, and return structured error messages without exposing private server details.
+
+<SeniorNote>
+Express error-handling middleware must accept exactly 4 parameters: `(err, req, res, next)`. If you omit any parameter (even next), Express will treat it as a standard middleware and ignore it during error cycles.
+</SeniorNote>
+
+---
+
+## Concept Explanation
+
+### The Global Error Middleware
+
+Express routes error triggers to error-handling middlewares when handlers call `next(error)`:
+- **Centralized Capture**: Centralizes error logging and formatting logic.
+- **Environment Isolation**: Logs complete error details (such as stack traces) to server terminals, but strips them from client responses in production to avoid security leaks.
+- **Standard Formatting**: Returns clean, consistent JSON error envelopes.
+
+---
+
+## Real-Time Project Example
+
+<RealTimeExample title={"Centralized Error Handling Scenario"}>
+When database connection failures occur during user actions, the service layer throws an exception. The router forwards it using next(err), and the error middleware catches it, returning a 500 error status to the client while logging diagnostics.
+</RealTimeExample>
+
+---
+
+## Code Example
+
+Below is a configuration file matching senior standards:
+
+```javascript
+// Global error handler middleware implementation
+import express from 'express';
+const app = express();
+
+// Custom route throwing a mock error
+app.get('/crash', (req, res, next) => {
+  const err = new Error('Database connection failed.');
+  next(err); // Forward the error to the global handler
+});
+
+// Centralized Error Middleware (Must have 4 parameters)
+app.use((err, req, res, next) => {
+  const statusCode = err.status || 500;
+  const isProduction = process.env.NODE_ENV === 'production';
+  
+  // Log error diagnostics
+  console.error(`[ERROR] ${err.message}\n`, err.stack);
+  
+  res.status(statusCode).json({
+    error: {
+      message: err.message || 'Internal Server Error.',
+      status: statusCode,
+      ...(isProduction ? {} : { stack: err.stack }) // Prevent stack trace leaks
+    }
+  });
+});
+```
+
+---
+
+## Common Mistakes
+
+Here is an example of incorrect setups vs clean, optimized configurations.
+
+<CommonMistake
+  title={"Forgetting to Pass Errors via next() in Async Handlers"}
+  badDesc={"Not wrapping async/await operations in try-catch scopes inside Express handlers. Unhandled exceptions crash the process instead of routing to the error middleware."}
+  badCode={"app.get('/user', async (req, res) => {\n  const user = await db.fetch(); // If database drops, server crashes!\n  res.json(user);\n});"}
+  goodDesc={"Catching exceptions inside try-catch blocks and forwarding errors to next()."}
+  goodCode={"app.get('/user', async (req, res, next) => {\n  try {\n    const user = await db.fetch();\n    res.json(user);\n  } catch (err) {\n    next(err); // Safe routing to global error middleware\n  }\n});"}
+/>
+
+---
+
+## Practice Task
+
+Solidify your knowledge by implementing this exercise in your codebase.
+
+<TaskBox
+  title={"Write a Centralized API Error Middleware"}
+  duration={"20 Minutes"}
+  requirements={[
+    "Create a global error-catching middleware module.",
+    "Filter and format error payloads based on environment configurations.",
+    "Add endpoints throwing errors to test the integration."
+  ]}
+  expectedOutput={"// Response payload matches global format\n{ \"error\": { \"message\": \"Failed database connectivity\", \"status\": 500 } }"}
+>
+Complete this task to verify your configuration operates correctly.
+</TaskBox>
+
+---
+
+## Interview Tip
+
+<InterviewTip question={"How do you handle unhandled errors in async Express handlers in modern versions?"}>
+In Express 5+, unhandled errors in async handlers are automatically forwarded to the error-handling middleware. In Express 4, you must wrap async code in try-catch blocks and call next(err), or use helper wrappers like express-async-errors.
+</InterviewTip>

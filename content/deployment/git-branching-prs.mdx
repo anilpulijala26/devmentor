@@ -1,0 +1,102 @@
+---
+title: "Branching, Pull Requests & Code Reviews"
+description: "Collaborate using Git branching workflows, write PR templates, and establish merge rules."
+tags: ["git","devops"]
+---
+
+## What You Will Learn
+
+- Configure branching workflows (Git Flow, GitHub Flow).
+- Write descriptive pull request description templates.
+- Establish branch protection check rules.
+
+---
+
+## Why This Matters in Real Projects
+
+Ad-hoc, un-reviewed changes pushed directly to main branches are a common cause of production outages. Enforcing code reviews and PR checks ensures quality standards before code is merged.
+
+<SeniorNote>
+Configure branch protection rules to block merges unless code reviews are approved and automated CI pipelines pass successfully.
+</SeniorNote>
+
+---
+
+## Concept Explanation
+
+### Collaborative Git Workflows
+
+- **GitHub Flow**: Simple workflow where developers create feature branches off main, submit PRs, run checks, and merge back to main.
+- **Branch Protection**: Repository settings that restrict direct pushes to main branches, requiring code reviews and status checks.
+- **PR Templates**: Markdown templates that guide developers to write detailed descriptions of changes and testing steps.
+
+---
+
+## Real-Time Project Example
+
+<RealTimeExample title={"Branching, Pull Requests & Code Reviews Scenario"}>
+When adding payment features, developers create feature/stripe-checkout branches, submit PRs to main, verify automated test results, and merge after review approvals.
+</RealTimeExample>
+
+---
+
+## Code Example
+
+Below is a configuration file matching senior standards:
+
+```javascript
+// GitHub pull request template example (.github/pull_request_template.md)
+## Goal Description
+[Summarize changes and background details]
+
+## Proposed Changes
+- [List files modified or features added]
+
+## Verification & Testing
+- [Explain how changes were verified]
+
+## Security & Performance Checklist
+- [ ] No hardcoded credentials committed
+- [ ] Automated tests pass successfully
+```
+
+---
+
+## Common Mistakes
+
+Here is an example of incorrect setups vs clean, optimized configurations.
+
+<CommonMistake
+  title={"Pushing code changes directly to main branches"}
+  badDesc={"Pushing untested code changes directly to main branches, bypassing review checks and risk verification pipelines."}
+  badCode={"git add . && git commit -m \"fix: database check\" && git push origin main // BAD!"}
+  goodDesc={"Creating feature branches, committing changes, and submitting pull requests."}
+  goodCode={"git checkout -b feature/db-fix\ngit commit -m \"fix: database check\"\ngit push origin feature/db-fix // GOOD: Triggers pull request reviews"}
+/>
+
+---
+
+## Practice Task
+
+Solidify your knowledge by implementing this exercise in your codebase.
+
+<TaskBox
+  title={"Write a Pull Request template"}
+  duration={"15 Minutes"}
+  requirements={[
+    "Create a .github directory in your project.",
+    "Write a pull_request_template.md file.",
+    "Include section checklists for testing and security."
+  ]}
+  expectedOutput={"// Markdown templates render on PR creations\n.github/pull_request_template.md"}
+>
+Complete this task to verify your configuration operates correctly.
+</TaskBox>
+
+---
+
+## Interview Tip
+
+<InterviewTip question={"What is the difference between Git merge and git rebase?"}>
+git merge combines histories by creating a new merge commit, preserving source branch histories. git rebase reapplies commits on top of another base, creating a linear history without merge commits.
+</InterviewTip>

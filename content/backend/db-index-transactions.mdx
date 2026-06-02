@@ -1,0 +1,117 @@
+---
+title: "Relationships, Indexing, and Transactions"
+description: "Optimize database query performance. Set up foreign keys, compound indexes, and ACID-compliant transaction blocks."
+tags: ["database","performance"]
+---
+
+## What You Will Learn
+
+- Configure foreign key constraints and table relations.
+- Add indexes to database columns to speed up queries.
+- Write multi-query database transactions.
+
+---
+
+## Why This Matters in Real Projects
+
+As tables grow, queries filtering on un-indexed columns become slow. Indexes speed up query lookups, and database transactions group operations together to prevent data inconsistencies.
+
+<SeniorNote>
+Indexes speed up read queries, but slow down write operations because indexes must be updated on every insert. Do not add indexes to columns that are rarely queried.
+</SeniorNote>
+
+---
+
+## Concept Explanation
+
+### Database Indexing & Transactions
+
+- **Indexes**: Data structures (typically B-Trees) that allow the database engine to find records quickly without scanning the entire table.
+- **Transactions**: Group multiple queries into a single execution block. If any query fails, the transaction rolls back all changes, preserving data consistency.
+
+---
+
+## Real-Time Project Example
+
+<RealTimeExample title={"Relationships, Indexing, and Transactions Scenario"}>
+When checking out, creating an order record, deducting inventory, and updating account balances must occur inside a database transaction to prevent inconsistencies if the script fails midway.
+</RealTimeExample>
+
+---
+
+## Code Example
+
+Below is a configuration file matching senior standards:
+
+```javascript
+// Writing ACID-compliant database transactions in Prisma
+import { PrismaClient } from '@prisma/client';
+const prisma = new PrismaClient();
+
+export async function processOrder(userId, productId, amount) {
+  try {
+    return await prisma.$transaction(async (tx) => {
+      // 1. Deduct product inventory
+      const product = await tx.product.update({
+        where: { id: productId },
+        data: { stock: { decrement: 1 } }
+      });
+      
+      if (product.stock < 0) {
+        throw new Error('Product out of stock.'); // Transaction automatically rolls back
+      }
+      
+      // 2. Create order record
+      const order = await tx.order.create({
+        data: { userId, productId, amount }
+      });
+      
+      return order;
+    });
+  } catch (err) {
+    console.error('Transaction rolled back:', err.message);
+    throw err;
+  }
+}
+```
+
+---
+
+## Common Mistakes
+
+Here is an example of incorrect setups vs clean, optimized configurations.
+
+<CommonMistake
+  title={"Executing Multiple Dependent Writes Outside Transactions"}
+  badDesc={"Running related database writes sequentially without transactions. If a query fails midway, previous writes persist, leading to corrupted data."}
+  badCode={"// BAD: If order save fails, user balance remains deducted!\nawait db.deductBalance(userId, amount);\nawait db.saveOrder(userId, product);"}
+  goodDesc={"Wrapping all dependent write operations inside a single database transaction block."}
+  goodCode={"// GOOD: Ensures both operations succeed or both roll back\nawait prisma.$transaction(async (tx) => {\n  await tx.user.update({ ... });\n  await tx.order.create({ ... });\n});"}
+/>
+
+---
+
+## Practice Task
+
+Solidify your knowledge by implementing this exercise in your codebase.
+
+<TaskBox
+  title={"Implement a Database Transaction in Prisma"}
+  duration={"25 Minutes"}
+  requirements={[
+    "Create a schema.prisma file defining User and Invoice tables.",
+    "Write a transaction script that creates an invoice and updates user balances.",
+    "Simulate failure states to verify transaction rollbacks."
+  ]}
+  expectedOutput={"// Transaction rolls back changes successfully on errors\nprisma.$transaction() -> Throws error, no DB writes persist"}
+>
+Complete this task to verify your configuration operates correctly.
+</TaskBox>
+
+---
+
+## Interview Tip
+
+<InterviewTip question={"What are the ACID properties of a database transaction?"}>
+ACID properties ensure transactional integrity: Atomicity (all queries succeed or fail together), Consistency (data conforms to schema rules), Isolation (concurrent transactions do not interfere), and Durability (committed changes persist despite server crashes).
+</InterviewTip>

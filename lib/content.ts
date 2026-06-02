@@ -33,7 +33,19 @@ export interface LessonWithPath extends LessonMeta {
 }
 
 export function getLessonPath(track: string, slug: string): string {
-  return path.join(CONTENT_DIR, track, `${slug}.mdx`);
+  const directPath = path.join(CONTENT_DIR, track, `${slug}.mdx`);
+  if (fs.existsSync(directPath)) {
+    return directPath;
+  }
+  // Fallback search across all known tracks to find shared files
+  const tracks = ["foundations", "frontend-frameworks", "backend", "fullstack", "deployment", "interview"];
+  for (const t of tracks) {
+    const fallbackPath = path.join(CONTENT_DIR, t, `${slug}.mdx`);
+    if (fs.existsSync(fallbackPath)) {
+      return fallbackPath;
+    }
+  }
+  return directPath;
 }
 
 export function getLessonContent(track: string, slug: string): LessonWithPath {
