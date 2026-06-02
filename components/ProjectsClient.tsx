@@ -3,8 +3,7 @@
 import React, { useState } from "react";
 import Link from "next/link";
 import { Project } from "@/lib/projects";
-import { Sparkles, Clock, ArrowRight } from "lucide-react";
-
+import { Clock, ArrowRight } from "lucide-react";
 
 interface ProjectsClientProps {
   initialProjects: Project[];
@@ -13,9 +12,8 @@ interface ProjectsClientProps {
 export function ProjectsClient({ initialProjects }: ProjectsClientProps) {
   const [activeFilter, setActiveFilter] = useState<"All" | "Beginner" | "Intermediate" | "Advanced">("All");
 
-  const filtered = activeFilter === "All"
-    ? initialProjects
-    : initialProjects.filter((p) => p.level === activeFilter);
+  const filtered =
+    activeFilter === "All" ? initialProjects : initialProjects.filter((project) => project.level === activeFilter);
 
   const getLevelColor = (level: string) => {
     return {
@@ -26,34 +24,31 @@ export function ProjectsClient({ initialProjects }: ProjectsClientProps) {
   };
 
   return (
-    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 md:py-14 lg:py-20 relative animate-fade-in space-y-12">
-      
-      {/* Header */}
-      <div className="flex flex-col lg:flex-row lg:items-end justify-between gap-6">
-        <div className="max-w-2xl space-y-4">
-          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-emerald-50 border border-emerald-100 text-emerald-700 text-xs font-semibold">
-            <Sparkles className="w-3.5 h-3.5" />
-            Real-World Applications
+    <div className="max-w-7xl mx-auto px-4 py-10 sm:px-6 md:py-14 lg:px-8 lg:py-16 space-y-10 animate-fade-in">
+      <div className="flex flex-col gap-6 lg:flex-row lg:items-end lg:justify-between">
+        <div className="max-w-3xl space-y-4">
+          <div className="inline-flex items-center gap-2 rounded-lg border border-slate-200 bg-slate-50 px-3 py-1.5 text-sm font-medium text-slate-700">
+            <span className="h-2 w-2 rounded-full bg-indigo-600" aria-hidden="true" />
+            Build workspace
           </div>
-          <h1 className="text-3xl sm:text-4xl lg:text-[48px] lg:leading-[56px] font-extrabold tracking-tight text-slate-900">
+          <h1 className="text-3xl font-semibold tracking-tight text-slate-950 sm:text-4xl lg:text-[3rem] lg:leading-[1.08]">
             Project Labs
           </h1>
-          <p className="text-base sm:text-lg text-slate-600 leading-relaxed font-normal">
-            Ditch sandbox code. Build production-style software. Select a project below, audit the requirement templates, and compile clean architectures.
+          <p className="max-w-[680px] text-base leading-7 text-slate-600 sm:text-lg">
+            Build production-style software with clear requirements, scoped deliverables, and implementation patterns that mirror real engineering work.
           </p>
         </div>
 
-        {/* Filter Tabs */}
-        <div className="flex gap-2 bg-white border border-slate-200/60 p-1.5 rounded-2xl shrink-0 self-start lg:self-end shadow-sm">
+        <div className="flex flex-wrap gap-2 rounded-2xl border border-slate-200 bg-white p-1.5 shadow-sm">
           {(["All", "Beginner", "Intermediate", "Advanced"] as const).map((filter) => (
             <button
               key={filter}
               onClick={() => setActiveFilter(filter)}
               aria-pressed={activeFilter === filter}
-              className={`px-4 py-2 rounded-xl text-xs font-bold transition duration-200 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 focus-visible:ring-offset-2 ${
+              className={`rounded-xl px-4 py-2 text-sm font-medium transition cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 focus-visible:ring-offset-2 ${
                 activeFilter === filter
-                  ? "bg-indigo-600 text-white shadow-sm"
-                  : "text-slate-600 hover:bg-slate-50"
+                  ? "bg-slate-900 text-white"
+                  : "text-slate-600 hover:bg-slate-50 hover:text-slate-950"
               }`}
             >
               {filter}
@@ -62,68 +57,54 @@ export function ProjectsClient({ initialProjects }: ProjectsClientProps) {
         </div>
       </div>
 
-
-
-      {/* Project cards grid */}
-      <div className="grid gap-8 md:grid-cols-2">
-        {filtered.map((proj) => {
-          const visibleTech = proj.techStack.slice(0, 4);
-          const extraTechCount = proj.techStack.length - 4;
+      <div className="grid gap-6 md:grid-cols-2">
+        {filtered.map((project) => {
+          const visibleTech = project.techStack.slice(0, 4);
+          const extraTechCount = project.techStack.length - 4;
 
           return (
-            <div
-              key={proj.slug}
-              className="group bg-white border border-slate-100/80 rounded-3xl p-6 lg:p-8 shadow-[0_8px_30px_rgba(0,0,0,0.02)] hover:shadow-[0_15px_40px_rgba(0,0,0,0.04)] hover:-translate-y-[3px] transition-all duration-300 flex flex-col justify-between h-full"
+            <article
+              key={project.slug}
+              className="group flex h-full flex-col justify-between rounded-[22px] border border-slate-200 bg-white p-6 shadow-[0_8px_24px_rgba(15,23,42,0.04)] transition hover:border-slate-300 hover:shadow-[0_14px_30px_rgba(15,23,42,0.06)]"
             >
               <div className="space-y-5">
-                {/* Level & Duration Badge Row */}
-                <div className="flex items-center justify-between">
-                  <span className={`inline-block px-2.5 py-0.5 rounded-full text-xs font-bold border ${getLevelColor(proj.level)}`}>
-                    {proj.level}
+                <div className="flex items-center justify-between gap-3">
+                  <span className={`inline-block rounded-full border px-2.5 py-1 text-xs font-semibold ${getLevelColor(project.level)}`}>
+                    {project.level}
                   </span>
-                  <div className="flex items-center gap-1.5 text-slate-500 text-xs font-semibold">
+                  <div className="inline-flex items-center gap-1 text-xs font-medium text-slate-500">
                     <Clock className="w-3.5 h-3.5" />
-                    <span>{proj.duration}</span>
+                    <span>{project.duration}</span>
                   </div>
                 </div>
 
-                {/* Title & Description */}
                 <div className="space-y-2">
-                  <h3 className="text-lg sm:text-xl font-bold text-slate-900 group-hover:text-indigo-650 transition-colors">
-                    {proj.title}
-                  </h3>
-                  <p className="text-sm text-slate-600 leading-relaxed line-clamp-2">
-                    {proj.description}
-                  </p>
+                  <h3 className="text-xl font-semibold text-slate-950">{project.title}</h3>
+                  <p className="line-clamp-3 text-sm leading-6 text-slate-600">{project.description}</p>
                 </div>
 
-                {/* Scope / Deliverables */}
-                <div className="py-3 border-t border-slate-100 space-y-2.5">
-                  <p className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Scope & Deliverables</p>
-                  <ul className="space-y-1.5 pl-1.5">
-                    {proj.features.slice(0, 2).map((item, idx) => (
-                      <li key={idx} className="flex gap-2 items-start text-xs font-semibold text-slate-600 leading-relaxed">
-                        <span className="h-1.5 w-1.5 rounded-full bg-emerald-500 shrink-0 mt-2" />
+                <div className="rounded-2xl border border-slate-200 bg-slate-50/70 p-4">
+                  <p className="text-[11px] font-medium uppercase tracking-[0.16em] text-slate-500">Scope</p>
+                  <ul className="mt-3 space-y-2">
+                    {project.features.slice(0, 2).map((item, index) => (
+                      <li key={index} className="flex items-start gap-2 text-sm leading-6 text-slate-600">
+                        <span className="mt-2 h-1.5 w-1.5 rounded-full bg-emerald-500 shrink-0" />
                         <span>{item}</span>
                       </li>
                     ))}
                   </ul>
                 </div>
 
-                {/* Tech Stack */}
                 <div className="space-y-2">
-                  <p className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Tech Stack</p>
-                  <div className="flex flex-wrap gap-1.5">
+                  <p className="text-[11px] font-medium uppercase tracking-[0.16em] text-slate-500">Tech stack</p>
+                  <div className="flex flex-wrap gap-2">
                     {visibleTech.map((tech) => (
-                      <span
-                        key={tech}
-                        className="bg-slate-50 border border-slate-200/80 px-2.5 py-0.5 rounded-lg text-2xs font-semibold text-slate-700"
-                      >
+                      <span key={tech} className="rounded-md border border-slate-200 bg-slate-50 px-2.5 py-1 text-xs font-medium text-slate-600">
                         {tech}
                       </span>
                     ))}
                     {extraTechCount > 0 && (
-                      <span className="bg-indigo-50 border border-indigo-100 px-2.5 py-0.5 rounded-lg text-2xs font-semibold text-indigo-700">
+                      <span className="rounded-md border border-indigo-100 bg-indigo-50 px-2.5 py-1 text-xs font-medium text-indigo-700">
                         +{extraTechCount} more
                       </span>
                     )}
@@ -131,17 +112,16 @@ export function ProjectsClient({ initialProjects }: ProjectsClientProps) {
                 </div>
               </div>
 
-              {/* Start Project CTA Button */}
-              <div className="mt-8 pt-4 border-t border-slate-100">
+              <div className="mt-6 border-t border-slate-200 pt-4">
                 <Link
-                  href={`/projects/${proj.slug}`}
-                  className="w-full h-12 inline-flex items-center justify-center gap-2 bg-indigo-600 hover:bg-indigo-700 text-white rounded-xl text-sm font-semibold transition shadow-xs cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 focus-visible:ring-offset-2"
+                  href={`/projects/${project.slug}`}
+                  className="inline-flex min-h-11 w-full items-center justify-center gap-2 rounded-xl bg-slate-900 text-sm font-semibold text-white transition hover:bg-slate-800 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-slate-900 focus-visible:ring-offset-2"
                 >
                   Start Project
                   <ArrowRight className="w-4 h-4 transition-transform duration-200 group-hover:translate-x-0.5" />
                 </Link>
               </div>
-            </div>
+            </article>
           );
         })}
       </div>

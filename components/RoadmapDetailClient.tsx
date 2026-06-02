@@ -6,7 +6,6 @@ import { ArrowRight, Check, BookOpen, Compass, Terminal, ClipboardCheck, Sparkle
 import { Roadmap } from "@/lib/roadmaps";
 import { DeveloperTask } from "@/lib/tasks";
 
-
 interface RoadmapDetailClientProps {
   roadmap: Roadmap;
   tasksForThisPath: DeveloperTask[];
@@ -16,12 +15,11 @@ interface RoadmapDetailClientProps {
 export function RoadmapDetailClient({
   roadmap,
   tasksForThisPath,
-  plan,
+  plan
 }: RoadmapDetailClientProps) {
   const [completedWeeks, setCompletedWeeks] = useState<number[]>([]);
   const [isMounted, setIsMounted] = useState(false);
 
-  // Load completed weeks on client mount
   useEffect(() => {
     const saved = localStorage.getItem(`codenivra-roadmap-${roadmap.slug}-completed`);
     let parsed: number[] = [];
@@ -29,7 +27,7 @@ export function RoadmapDetailClient({
       try {
         parsed = JSON.parse(saved);
       } catch {
-        // ignore
+        parsed = [];
       }
     }
     setTimeout(() => {
@@ -39,12 +37,10 @@ export function RoadmapDetailClient({
   }, [roadmap.slug]);
 
   const toggleWeekCompleted = (idx: number) => {
-    let updated: number[];
-    if (completedWeeks.includes(idx)) {
-      updated = completedWeeks.filter((w) => w !== idx);
-    } else {
-      updated = [...completedWeeks, idx];
-    }
+    const updated = completedWeeks.includes(idx)
+      ? completedWeeks.filter((week) => week !== idx)
+      : [...completedWeeks, idx];
+
     setCompletedWeeks(updated);
     localStorage.setItem(`codenivra-roadmap-${roadmap.slug}-completed`, JSON.stringify(updated));
   };
@@ -55,97 +51,90 @@ export function RoadmapDetailClient({
 
   return (
     <div className="space-y-8">
-      {/* 1. Roadmap Progress Summary Tracker */}
       {isMounted && totalModules > 0 && (
-        <section className="bg-white border border-slate-200/80 rounded-3xl p-6 shadow-[0_8px_30px_rgba(0,0,0,0.015)] space-y-4 animate-fade-in">
-          <div className="flex flex-col sm:flex-row justify-between sm:items-center gap-2">
-            <div className="space-y-1">
-              <span className="text-[10px] font-extrabold uppercase tracking-widest text-indigo-650 bg-indigo-50 px-3 py-1 rounded-full">
-                Progress Telemetry
-              </span>
-              <h2 className="text-base font-extrabold text-slate-900 mt-2">Roadmap Completion</h2>
-              <p className="text-xs text-slate-400 font-semibold leading-relaxed">
-                Track your structured modules progress. Mark each week complete as you finish concept studies and daily challenges.
+        <section className="rounded-[24px] border border-slate-200 bg-white p-6 shadow-[0_8px_24px_rgba(15,23,42,0.04)] animate-fade-in">
+          <div className="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
+            <div className="space-y-2">
+              <div className="inline-flex rounded-lg border border-slate-200 bg-slate-50 px-3 py-1 text-xs font-medium uppercase tracking-[0.16em] text-slate-600">
+                Progress
+              </div>
+              <h2 className="text-xl font-semibold text-slate-950">Roadmap Completion</h2>
+              <p className="max-w-2xl text-sm leading-6 text-slate-600">
+                Track progress week by week as you move through lessons, tasks, and applied project work.
               </p>
             </div>
-            <div className="flex items-baseline gap-1 text-slate-800 shrink-0">
-              <span className="text-2xl font-black">{progressPercent}%</span>
-              <span className="text-xs font-bold text-slate-400">({completedCount} of {totalModules} Weeks)</span>
+
+            <div className="text-left sm:text-right">
+              <p className="text-3xl font-semibold text-slate-950">{progressPercent}%</p>
+              <p className="text-sm text-slate-500">{completedCount} of {totalModules} weeks complete</p>
             </div>
           </div>
 
-          <div className="w-full h-3 bg-slate-100 rounded-full overflow-hidden border border-slate-200/50">
+          <div className="mt-5 h-3 overflow-hidden rounded-full bg-slate-200">
             <div
-              className="h-full bg-gradient-to-r from-indigo-600 to-violet-600 transition-all duration-500 ease-out"
+              className="h-full rounded-full bg-gradient-to-r from-indigo-600 to-violet-500 transition-all duration-500 ease-out"
               style={{ width: `${progressPercent}%` }}
             />
           </div>
         </section>
       )}
 
-
-
-      {/* 2. Weekly Learning Plan Section */}
       {plan && (
-        <section className="bg-white border border-slate-200/80 rounded-3xl p-6 shadow-[0_4px_20px_rgba(0,0,0,0.01)] space-y-4">
-          <div>
-            <span className="text-[10px] font-extrabold uppercase tracking-widest text-indigo-650 bg-indigo-50 px-3 py-1 rounded-full">
-              6-Week Curriculum
-            </span>
-            <h2 className="text-xl font-extrabold text-slate-900 mt-2">Weekly Learning Plan</h2>
-            <p className="text-xs text-slate-500 leading-relaxed font-normal mt-1">
-              Follow this structured 6-week roadmap to systematically build and validate your technical capabilities. Click each week to expand study targets.
+        <section className="rounded-[24px] border border-slate-200 bg-white p-6 shadow-[0_8px_24px_rgba(15,23,42,0.04)]">
+          <div className="max-w-2xl space-y-2">
+            <div className="inline-flex rounded-lg border border-slate-200 bg-slate-50 px-3 py-1 text-xs font-medium uppercase tracking-[0.16em] text-slate-600">
+              Weekly plan
+            </div>
+            <h2 className="text-xl font-semibold text-slate-950">Structured Learning Plan</h2>
+            <p className="text-sm leading-6 text-slate-600">
+              Use this sequence to move through the roadmap with a consistent weekly operating rhythm.
             </p>
           </div>
 
-          <div className="space-y-2 pt-2">
+          <div className="mt-5 space-y-3">
             {plan.map((weekItem, idx) => {
               const isWeekDone = completedWeeks.includes(idx);
               return (
                 <details
                   key={idx}
-                  className={`group border rounded-2xl overflow-hidden focus-within:ring-2 focus-within:ring-indigo-500/30 transition-all ${
-                    isWeekDone ? "border-emerald-200 bg-emerald-50/5" : "border-slate-150 bg-slate-50/30"
+                  className={`overflow-hidden rounded-2xl border transition ${
+                    isWeekDone ? "border-emerald-200 bg-emerald-50/30" : "border-slate-200 bg-slate-50/50"
                   }`}
                 >
-                  <summary className="w-full px-5 py-4 flex items-center justify-between text-left transition hover:bg-slate-50 cursor-pointer list-none select-none outline-none">
-                    <div className="flex items-center gap-3">
-                      <span className={`w-8 h-8 rounded-xl border flex items-center justify-center text-xs font-bold transition duration-200 shrink-0 ${
-                        isWeekDone
-                          ? "bg-emerald-600 text-white border-emerald-600"
-                          : "bg-indigo-50 border-indigo-100 text-indigo-650 group-open:bg-indigo-600 group-open:text-white"
-                      }`}>
-                        {isWeekDone ? <Check className="w-3.5 h-3.5 stroke-[3]" /> : `W${idx + 1}`}
+                  <summary className="flex cursor-pointer list-none items-center justify-between gap-4 px-5 py-4 transition hover:bg-white/60">
+                    <div className="flex items-start gap-3">
+                      <span
+                        className={`flex h-8 w-8 shrink-0 items-center justify-center rounded-xl border text-xs font-semibold ${
+                          isWeekDone
+                            ? "border-emerald-600 bg-emerald-600 text-white"
+                            : "border-slate-200 bg-white text-slate-700"
+                        }`}
+                      >
+                        {isWeekDone ? <Check className="w-4 h-4" /> : idx + 1}
                       </span>
                       <div>
-                        <h4 className="text-[9px] font-bold text-slate-400 leading-none uppercase tracking-wider">{weekItem.week}</h4>
-                        <h3 className={`text-sm font-extrabold mt-1 leading-tight transition ${isWeekDone ? "text-emerald-800" : "text-slate-800"}`}>{weekItem.topic}</h3>
+                        <p className="text-[11px] font-medium uppercase tracking-[0.16em] text-slate-500">{weekItem.week}</p>
+                        <h3 className="mt-1 text-base font-semibold text-slate-950">{weekItem.topic}</h3>
                       </div>
                     </div>
-                    <span className="text-slate-400 group-open:rotate-180 transition-transform duration-200 shrink-0">
+                    <span className="text-slate-400">
                       <svg className="w-4 h-4 fill-none stroke-current stroke-2" viewBox="0 0 24 24">
                         <polyline points="6 9 12 15 18 9" />
                       </svg>
                     </span>
                   </summary>
-                  <div className="px-5 pb-4 pt-1 bg-white border-t border-slate-100 text-xs text-slate-650 leading-relaxed font-normal flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-                    <div>{weekItem.details}</div>
-                    <button
-                      type="button"
-                      onClick={() => toggleWeekCompleted(idx)}
-                      className={`h-9 px-4 rounded-xl text-xs font-bold transition flex items-center gap-1.5 shrink-0 select-none cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500`}
-                    >
-                      {isWeekDone ? (
-                        <span className="inline-flex items-center gap-1 bg-emerald-50 text-emerald-700 border border-emerald-250 px-3 py-1.5 rounded-lg font-bold">
-                          <Check className="w-3 h-3 stroke-[3]" />
-                          Completed
-                        </span>
-                      ) : (
-                        <span className="inline-flex items-center gap-1 bg-white border border-slate-200 text-slate-700 hover:bg-slate-50 px-3 py-1.5 rounded-lg font-semibold">
-                          Mark Week Complete
-                        </span>
-                      )}
-                    </button>
+
+                  <div className="border-t border-slate-200 bg-white px-5 py-4">
+                    <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+                      <p className="text-sm leading-6 text-slate-600">{weekItem.details}</p>
+                      <button
+                        type="button"
+                        onClick={() => toggleWeekCompleted(idx)}
+                        className="inline-flex min-h-10 items-center justify-center rounded-xl border border-slate-200 bg-slate-50 px-4 text-sm font-semibold text-slate-700 transition hover:bg-slate-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 cursor-pointer"
+                      >
+                        {isWeekDone ? "Completed" : "Mark Complete"}
+                      </button>
+                    </div>
                   </div>
                 </details>
               );
@@ -154,152 +143,125 @@ export function RoadmapDetailClient({
         </section>
       )}
 
-      {/* Timeline Content Layout */}
-      <div className="grid md:grid-cols-12 gap-8 items-start">
-        {/* Main timeline module lists */}
-        <div className="md:col-span-8 space-y-12">
-          {/* Step 1: LEARN */}
-          <div className="border border-slate-200/80 bg-white rounded-3xl p-6 shadow-xs relative">
-            <div className="absolute -top-3.5 left-6 px-3 py-1 rounded-full text-[10px] font-black tracking-widest uppercase bg-indigo-600 text-white shadow-xs">
-              Step 1 // Learn
+      <div className="grid items-start gap-8 md:grid-cols-12">
+        <div className="space-y-8 md:col-span-8">
+          <section className="rounded-[24px] border border-slate-200 bg-white p-6 shadow-[0_8px_24px_rgba(15,23,42,0.04)]">
+            <div className="flex items-center gap-2 border-b border-slate-200 pb-4">
+              <BookOpen className="w-5 h-5 text-indigo-600" />
+              <h2 className="text-lg font-semibold text-slate-950">Step 1: Learn</h2>
             </div>
-            <h2 className="text-lg font-extrabold text-slate-900 mt-2 mb-6 flex items-center gap-2 pb-3 border-b border-slate-100">
-              <BookOpen className="w-5 h-5 text-indigo-500" />
-              Concept Lessons
-            </h2>
 
-            <div className="space-y-4">
+            <div className="mt-5 space-y-3">
               {roadmap.recommendedLessons.map((lesson, idx) => (
                 <Link
                   key={lesson.slug}
                   href={`/learn/${lesson.track}/${lesson.slug}`}
-                  className="group flex items-center justify-between p-4 border border-slate-200 rounded-2xl bg-white hover:border-indigo-300 hover:shadow-xs transition duration-200"
+                  className="group flex items-center justify-between rounded-2xl border border-slate-200 bg-slate-50/40 p-4 transition hover:border-slate-300 hover:bg-white"
                 >
                   <div className="flex items-center gap-3">
-                    <span className="h-6 w-6 rounded-full bg-indigo-50 text-indigo-750 font-bold text-xs flex items-center justify-center shrink-0 group-hover:bg-indigo-600 group-hover:text-white transition">
+                    <span className="flex h-7 w-7 items-center justify-center rounded-full bg-white text-xs font-semibold text-indigo-700 ring-1 ring-slate-200">
                       {idx + 1}
                     </span>
                     <div>
-                      <h4 className="text-sm font-bold text-slate-800 group-hover:text-indigo-700 transition-colors">
-                        {lesson.title}
-                      </h4>
-                      <span className="text-[10px] font-extrabold uppercase text-slate-400 tracking-wider">
-                        Module: {lesson.track}
-                      </span>
+                      <h4 className="text-sm font-semibold text-slate-900">{lesson.title}</h4>
+                      <span className="text-xs text-slate-500">Module: {lesson.track}</span>
                     </div>
                   </div>
-                  <ArrowRight className="w-4 h-4 text-slate-400 group-hover:translate-x-0.5 group-hover:text-indigo-600 transition" />
+                  <ArrowRight className="w-4 h-4 text-slate-400 transition group-hover:translate-x-0.5 group-hover:text-indigo-600" />
                 </Link>
               ))}
             </div>
-          </div>
+          </section>
 
-          {/* Step 2: PRACTICE */}
           {tasksForThisPath.length > 0 && (
-            <div className="border border-slate-200/80 bg-white rounded-3xl p-6 shadow-xs relative">
-              <div className="absolute -top-3.5 left-6 px-3 py-1 rounded-full text-[10px] font-black tracking-widest uppercase bg-emerald-600 text-white shadow-xs">
-                Step 2 // Practice
+            <section className="rounded-[24px] border border-slate-200 bg-white p-6 shadow-[0_8px_24px_rgba(15,23,42,0.04)]">
+              <div className="flex items-center gap-2 border-b border-slate-200 pb-4">
+                <Terminal className="w-5 h-5 text-emerald-600" />
+                <h2 className="text-lg font-semibold text-slate-950">Step 2: Practice</h2>
               </div>
-              <h2 className="text-lg font-extrabold text-slate-900 mt-2 mb-6 flex items-center gap-2 pb-3 border-b border-slate-100">
-                <Terminal className="w-5 h-5 text-emerald-500" />
-                Daily Developer Tasks
-              </h2>
 
-              <div className="space-y-4">
+              <div className="mt-5 space-y-3">
                 {tasksForThisPath.map((task) => (
                   <Link
                     key={task.slug}
                     href={`/tasks/${task.slug}`}
-                    className="group flex items-center justify-between p-4 border border-slate-200 rounded-2xl bg-white hover:border-emerald-300 hover:shadow-xs transition duration-200"
+                    className="group flex items-center justify-between rounded-2xl border border-slate-200 bg-slate-50/40 p-4 transition hover:border-slate-300 hover:bg-white"
                   >
                     <div className="flex items-center gap-3">
-                      <span className="h-6 w-6 rounded-full bg-emerald-50 text-emerald-700 font-bold text-xs flex items-center justify-center shrink-0 group-hover:bg-emerald-600 group-hover:text-white transition">
+                      <span className="flex h-7 w-7 items-center justify-center rounded-full bg-white text-xs font-semibold text-emerald-700 ring-1 ring-slate-200">
                         P
                       </span>
                       <div>
-                        <h4 className="text-sm font-bold text-slate-800 group-hover:text-emerald-700 transition-colors">
-                          {task.title}
-                        </h4>
-                        <span className="inline-block px-1.5 py-0.2 rounded-md bg-slate-100 text-[9px] font-bold text-slate-500 uppercase tracking-wider mt-1">
-                          {task.level} Challenge
-                        </span>
+                        <h4 className="text-sm font-semibold text-slate-900">{task.title}</h4>
+                        <span className="text-xs text-slate-500">{task.level} challenge</span>
                       </div>
                     </div>
-                    <ArrowRight className="w-4 h-4 text-slate-400 group-hover:translate-x-0.5 group-hover:text-emerald-600 transition" />
+                    <ArrowRight className="w-4 h-4 text-slate-400 transition group-hover:translate-x-0.5 group-hover:text-emerald-600" />
                   </Link>
                 ))}
               </div>
-            </div>
+            </section>
           )}
 
-          {/* Step 3: BUILD */}
-          <div className="border border-slate-200/80 bg-white rounded-3xl p-6 shadow-xs relative">
-            <div className="absolute -top-3.5 left-6 px-3 py-1 rounded-full text-[10px] font-black tracking-widest uppercase bg-violet-600 text-white shadow-xs">
-              Step 3 // Build
+          <section className="rounded-[24px] border border-slate-200 bg-white p-6 shadow-[0_8px_24px_rgba(15,23,42,0.04)]">
+            <div className="flex items-center gap-2 border-b border-slate-200 pb-4">
+              <Compass className="w-5 h-5 text-violet-600" />
+              <h2 className="text-lg font-semibold text-slate-950">Step 3: Build</h2>
             </div>
-            <h2 className="text-lg font-extrabold text-slate-900 mt-2 mb-6 flex items-center gap-2 pb-3 border-b border-slate-100">
-              <Compass className="w-5 h-5 text-violet-500" />
-              Project Labs Blueprint
-            </h2>
 
-            <div className="space-y-4">
+            <div className="mt-5 space-y-4">
               {roadmap.projectTasks.map((project) => (
-                <div key={project.projectSlug} className="p-5 border border-slate-200 hover:border-violet-300 bg-slate-50/20 rounded-2xl transition duration-200">
-                  <h3 className="text-sm font-extrabold text-slate-900">{project.title}</h3>
-                  <p className="text-xs text-slate-600 leading-relaxed mt-2">{project.description}</p>
-                  <div className="mt-4 flex items-center justify-between border-t border-slate-100 pt-3.5">
-                    <span className="text-[9px] font-mono text-slate-400 uppercase tracking-wider">LAB // {project.projectSlug.replace("-", "_").toUpperCase()}</span>
+                <div key={project.projectSlug} className="rounded-2xl border border-slate-200 bg-slate-50/40 p-5">
+                  <h3 className="text-base font-semibold text-slate-950">{project.title}</h3>
+                  <p className="mt-2 text-sm leading-6 text-slate-600">{project.description}</p>
+                  <div className="mt-4 flex items-center justify-between border-t border-slate-200 pt-3.5">
+                    <span className="text-xs font-medium uppercase tracking-[0.16em] text-slate-500">
+                      Lab: {project.projectSlug.replace("-", " ")}
+                    </span>
                     <Link
                       href={`/projects/${project.projectSlug}`}
-                      className="inline-flex items-center gap-1.5 text-xs font-bold text-indigo-600 hover:text-indigo-700 hover:underline"
+                      className="inline-flex items-center gap-1.5 text-sm font-semibold text-indigo-700 hover:text-indigo-800"
                     >
-                      Start Project Lab <ArrowRight className="w-3.5 h-3.5" />
+                      Start lab <ArrowRight className="w-4 h-4" />
                     </Link>
                   </div>
                 </div>
               ))}
             </div>
-          </div>
+          </section>
         </div>
 
-        {/* Right Sidebar: Self-Assessment Checklist */}
-        <div className="md:col-span-4 space-y-6">
-          <div className="border border-slate-200/80 bg-white rounded-3xl p-6 shadow-xs">
-            <h3 className="text-sm font-extrabold uppercase tracking-wider text-slate-500 mb-4 flex items-center gap-1.5">
+        <div className="space-y-6 md:col-span-4">
+          <section className="rounded-[24px] border border-slate-200 bg-white p-6 shadow-[0_8px_24px_rgba(15,23,42,0.04)]">
+            <h3 className="flex items-center gap-2 text-sm font-semibold uppercase tracking-[0.16em] text-slate-500">
               <ClipboardCheck className="w-4 h-4 text-indigo-600" />
-              Senior Checklist
+              Review checklist
             </h3>
-
-            <p className="text-2xs text-slate-550 leading-relaxed mb-4">
-              Verify your progression. Can you confidently check off these expectations?
+            <p className="mt-3 text-sm leading-6 text-slate-600">
+              Use this checklist to confirm you can demonstrate the capabilities expected at the end of the roadmap.
             </p>
 
-            <div className="space-y-3.5">
+            <div className="mt-5 space-y-3">
               {roadmap.checklist.map((item, idx) => (
-                <div key={idx} className="flex gap-2.5 items-start">
-                  <span className="h-5 w-5 bg-indigo-50 border border-indigo-200 rounded-md flex items-center justify-center shrink-0 mt-0.5 text-indigo-600">
+                <div key={idx} className="flex items-start gap-3">
+                  <span className="mt-0.5 flex h-5 w-5 items-center justify-center rounded-md bg-indigo-50 text-indigo-600 ring-1 ring-indigo-100">
                     <Check className="w-3 h-3" />
                   </span>
-                  <p className="text-xs font-semibold text-slate-700 leading-relaxed">
-                    {item}
-                  </p>
+                  <p className="text-sm leading-6 text-slate-700">{item}</p>
                 </div>
               ))}
             </div>
-          </div>
+          </section>
 
-          {/* Quick stats box */}
-          <div className="bg-gradient-to-r from-slate-900 via-indigo-950 to-indigo-900 rounded-3xl p-6 text-white space-y-4">
-            <div className="inline-flex p-2.5 rounded-2xl bg-white/10 border border-white/20">
-              <Sparkles className="w-5 h-5 text-indigo-400" />
+          <section className="rounded-[24px] border border-slate-200 bg-slate-950 p-6 text-white shadow-[0_12px_30px_rgba(15,23,42,0.12)]">
+            <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-white/10">
+              <Sparkles className="w-5 h-5 text-indigo-300" />
             </div>
-            <div>
-              <h4 className="text-sm font-bold">Graduation Goal</h4>
-              <p className="text-xs text-slate-300 leading-relaxed mt-1">
-                Complete the exercises, build the requested projects, run senior audit checks, and review interview QA blocks.
-              </p>
-            </div>
-          </div>
+            <h4 className="mt-4 text-lg font-semibold">Graduation Goal</h4>
+            <p className="mt-2 text-sm leading-6 text-slate-300">
+              Complete the learning sequence, finish the applied work, and validate the output against professional review standards.
+            </p>
+          </section>
         </div>
       </div>
     </div>

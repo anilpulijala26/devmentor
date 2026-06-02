@@ -359,19 +359,19 @@ export function CodeReviewClient() {
     <div className="max-w-4xl mx-auto px-4 sm:px-6 py-8 md:py-14 lg:py-20 relative animate-fade-in space-y-8">
       
       {/* Header */}
-      <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 pb-6 border-b border-slate-100">
+      <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 pb-6 border-b border-slate-200">
         <div className="space-y-4">
-          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-pink-50 border border-pink-100 text-pink-700 text-xs font-semibold">
-            <Sparkles className="w-3.5 h-3.5" />
-            Senior Code Review Console
+          <div className="inline-flex items-center gap-2 rounded-lg border border-slate-200 bg-slate-50 px-3 py-1.5 text-sm font-medium text-slate-700">
+            <Sparkles className="w-3.5 h-3.5 text-indigo-600" />
+            Review workspace
           </div>
-          <h1 className="text-3xl sm:text-4xl lg:text-[48px] lg:leading-[56px] font-extrabold tracking-tight text-slate-900">
+          <h1 className="text-3xl sm:text-4xl lg:text-[3rem] lg:leading-[1.08] font-semibold tracking-tight text-slate-950">
             Senior Code Review Console
           </h1>
           <p className="text-base text-slate-600 max-w-2xl leading-relaxed">
             Audit your codebase against production-ready frontend, accessibility, performance, security, and deployment standards.
           </p>
-          <div className="inline-block text-xs font-bold text-slate-400 bg-slate-50 border border-slate-200 px-2.5 py-0.5 rounded-md">
+          <div className="inline-block rounded-md border border-slate-200 bg-slate-50 px-2.5 py-1 text-xs font-medium text-slate-500">
             33 Guidelines &bull; 11 Categories
           </div>
         </div>
@@ -380,14 +380,14 @@ export function CodeReviewClient() {
         <div className="flex gap-2.5 shrink-0 self-start md:self-center">
           <button
             onClick={exportSummary}
-            className="h-12 inline-flex items-center justify-center gap-2 bg-indigo-600 hover:bg-indigo-755 text-white font-semibold px-4 rounded-xl text-sm transition cursor-pointer shadow-2xs focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 focus-visible:ring-offset-2"
+            className="inline-flex h-12 items-center justify-center gap-2 rounded-xl bg-slate-900 px-4 text-sm font-semibold text-white transition hover:bg-slate-800 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-slate-900 focus-visible:ring-offset-2"
           >
             <Share2 className="w-4 h-4" />
             Export Summary
           </button>
           <button
             onClick={resetAll}
-            className="h-12 inline-flex items-center justify-center gap-2 bg-white border border-slate-200 text-slate-700 hover:bg-slate-50 font-semibold px-4 rounded-xl text-sm transition cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 focus-visible:ring-offset-2"
+            className="inline-flex h-12 items-center justify-center gap-2 rounded-xl border border-slate-200 bg-white px-4 text-sm font-semibold text-slate-700 transition hover:bg-slate-50 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 focus-visible:ring-offset-2"
           >
             <RefreshCw className="w-4 h-4" />
             Reset Console

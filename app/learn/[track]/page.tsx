@@ -271,15 +271,15 @@ export default async function TrackPage({ params }: Props) {
   };
 
   return (
-    <div className="min-h-screen bg-slate-50/50 pb-24 relative overflow-hidden">
+    <div className="min-h-screen bg-slate-50/40 pb-20 relative overflow-hidden">
       {/* Background gradients */}
       <div className="absolute top-0 right-1/4 w-80 h-80 bg-indigo-200/20 rounded-full blur-3xl pointer-events-none" />
       <div className="absolute bottom-20 left-1/4 w-[400px] h-[400px] bg-violet-200/10 rounded-full blur-3xl pointer-events-none" />
 
-      <div className="max-w-4xl mx-auto px-6 py-10 relative animate-fade-in">
+      <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-10 md:py-14 lg:py-16 relative animate-fade-in">
 
         {/* Navigation header bar */}
-        <div className="sticky top-16 z-40 -mx-4 px-4 py-3 bg-slate-50/90 backdrop-blur-md border-b border-slate-100 mb-8 flex items-center justify-between rounded-b-xl shadow-xs">
+        <div className="sticky top-16 z-40 mb-8 flex items-center justify-between gap-4 rounded-2xl border border-slate-200 bg-white/95 px-4 py-3 shadow-sm backdrop-blur-md">
           <Link
             href="/learn"
             className="inline-flex items-center gap-2 text-xs sm:text-sm font-semibold text-slate-600 hover:text-indigo-700 transition-colors"
@@ -302,7 +302,7 @@ export default async function TrackPage({ params }: Props) {
               {theme.level} Path
             </span>
           </div>
-          <h1 className="text-3xl sm:text-4xl md:text-5xl font-black tracking-tight mb-4 text-transparent bg-clip-text bg-gradient-to-r from-slate-900 via-indigo-950 to-indigo-900">
+          <h1 className="text-3xl sm:text-4xl lg:text-[3rem] lg:leading-[1.08] font-semibold tracking-tight mb-4 text-slate-950">
             {track.title}
           </h1>
           <p className="text-sm sm:text-base text-slate-600 leading-relaxed max-w-3xl">
@@ -314,7 +314,7 @@ export default async function TrackPage({ params }: Props) {
 
         {/* 1. Track Overview & 2. Who is this for */}
         <div className="grid sm:grid-cols-2 gap-6 my-8">
-          <section className="p-6 bg-white border border-slate-200/80 rounded-3xl shadow-xs space-y-3">
+          <section className="p-6 bg-white border border-slate-200 rounded-[24px] shadow-[0_8px_24px_rgba(15,23,42,0.04)] space-y-3">
             <h2 className="text-sm font-extrabold text-slate-900 flex items-center gap-2 pb-2 border-b border-slate-100">
               <Compass className="w-4.5 h-4.5 text-indigo-500" />
               Track Overview
@@ -324,7 +324,7 @@ export default async function TrackPage({ params }: Props) {
             </p>
           </section>
 
-          <section className="p-6 bg-white border border-slate-200/80 rounded-3xl shadow-xs space-y-3">
+          <section className="p-6 bg-white border border-slate-200 rounded-[24px] shadow-[0_8px_24px_rgba(15,23,42,0.04)] space-y-3">
             <h2 className="text-sm font-extrabold text-slate-900 flex items-center gap-2 pb-2 border-b border-slate-100">
               <Compass className="w-4.5 h-4.5 text-indigo-500" />
               Who This Is For
@@ -336,7 +336,7 @@ export default async function TrackPage({ params }: Props) {
         </div>
 
         {/* 3. Prerequisites & 4. Skills Learner Will Gain */}
-        <section className="my-8 p-6 bg-white border border-slate-200/80 rounded-3xl shadow-xs space-y-6">
+        <section className="my-8 p-6 bg-white border border-slate-200 rounded-[24px] shadow-[0_8px_24px_rgba(15,23,42,0.04)] space-y-6">
           <div>
             <h2 className="text-sm font-extrabold text-slate-900 mb-3 uppercase tracking-wider">Prerequisites</h2>
             <ul className="list-disc list-inside space-y-1.5 pl-1 text-xs text-slate-600 font-semibold">
@@ -391,7 +391,7 @@ export default async function TrackPage({ params }: Props) {
 
                       <Link
                         href={`/learn/${track.slug}/${lesson.slug}`}
-                        className="block p-4 border border-slate-200 rounded-xl bg-white hover:border-indigo-200 hover:shadow-xs transition"
+                        className="block p-4 border border-slate-200 rounded-2xl bg-white hover:border-slate-300 transition"
                       >
                         <div className="flex items-center justify-between">
                           <div className="flex items-center gap-3">
@@ -416,7 +416,7 @@ export default async function TrackPage({ params }: Props) {
 
         {/* Recommended Daily Tasks Section */}
         {recommendedTasks.length > 0 && (
-          <section className="my-10 p-6 bg-white border border-slate-200/80 rounded-3xl shadow-xs space-y-4">
+          <section className="my-10 p-6 bg-white border border-slate-200 rounded-[24px] shadow-[0_8px_24px_rgba(15,23,42,0.04)] space-y-4">
             <h2 className="text-lg font-extrabold text-slate-900 flex items-center gap-2 pb-3 border-b border-slate-100">
               <Terminal className="w-5 h-5 text-indigo-500" />
               Recommended Practice Tasks
@@ -426,7 +426,7 @@ export default async function TrackPage({ params }: Props) {
                 <Link
                   key={task.slug}
                   href={`/tasks/${task.slug}`}
-                  className="p-4 border border-slate-200 rounded-2xl hover:border-indigo-300 hover:shadow-xs transition"
+                  className="p-4 border border-slate-200 rounded-2xl hover:border-slate-300 transition"
                 >
                   <span className="text-[10px] font-bold uppercase tracking-wider text-slate-400">{task.level} Task</span>
                   <h3 className="text-xs font-black text-slate-800 mt-1">{task.title}</h3>
@@ -439,7 +439,7 @@ export default async function TrackPage({ params }: Props) {
 
         {/* Recommended Project Labs Section */}
         {recommendedProjects.length > 0 && (
-          <section className="my-10 p-6 bg-white border border-slate-200/80 rounded-3xl shadow-xs space-y-4">
+          <section className="my-10 p-6 bg-white border border-slate-200 rounded-[24px] shadow-[0_8px_24px_rgba(15,23,42,0.04)] space-y-4">
             <h2 className="text-lg font-extrabold text-slate-900 flex items-center gap-2 pb-3 border-b border-slate-100">
               <Compass className="w-5 h-5 text-indigo-500" />
               Recommended Project Labs
@@ -449,7 +449,7 @@ export default async function TrackPage({ params }: Props) {
                 <Link
                   key={project.slug}
                   href={`/projects/${project.slug}`}
-                  className="p-4 border border-slate-200 rounded-2xl hover:border-indigo-300 hover:shadow-xs transition"
+                  className="p-4 border border-slate-200 rounded-2xl hover:border-slate-300 transition"
                 >
                   <span className="text-[10px] font-bold uppercase tracking-wider text-slate-400">{project.level} Lab</span>
                   <h3 className="text-xs font-black text-slate-800 mt-1">{project.title}</h3>
@@ -461,7 +461,7 @@ export default async function TrackPage({ params }: Props) {
         )}
 
         {/* Code Review Checklist CTA */}
-        <section className="my-8 p-6 bg-indigo-600 rounded-3xl text-white flex flex-col sm:flex-row items-center justify-between gap-4 shadow-sm">
+        <section className="my-8 p-6 bg-slate-950 rounded-[24px] text-white flex flex-col sm:flex-row items-center justify-between gap-4 shadow-[0_12px_30px_rgba(15,23,42,0.12)]">
           <div className="space-y-1 text-center sm:text-left">
             <h3 className="text-base font-extrabold">Ready to Audit Your Code?</h3>
             <p className="text-xs text-indigo-200 leading-relaxed font-medium">
@@ -470,14 +470,14 @@ export default async function TrackPage({ params }: Props) {
           </div>
           <Link
             href="/code-review"
-            className="bg-white text-indigo-700 px-6 py-2.5 rounded-2xl text-xs font-bold shadow-xs hover:bg-slate-50 transition whitespace-nowrap"
+            className="bg-white text-slate-950 px-6 py-2.5 rounded-xl text-sm font-semibold hover:bg-slate-100 transition whitespace-nowrap"
           >
             Open Code Review Console
           </Link>
         </section>
 
         {/* Interview Readiness Section */}
-        <section className="my-8 p-6 bg-white border border-slate-200/80 rounded-3xl shadow-xs space-y-4">
+        <section className="my-8 p-6 bg-white border border-slate-200 rounded-[24px] shadow-[0_8px_24px_rgba(15,23,42,0.04)] space-y-4">
           <h2 className="text-lg font-extrabold text-slate-900 flex items-center gap-2 pb-3 border-b border-slate-100">
             <Award className="w-5 h-5 text-indigo-500" />
             Interview Readiness Topics
@@ -495,15 +495,15 @@ export default async function TrackPage({ params }: Props) {
         </section>
 
         {/* Completion Outcome Checklist */}
-        <section className="my-8 p-6 bg-slate-900 border border-slate-950 rounded-3xl text-slate-100 space-y-4">
-          <h2 className="text-base font-extrabold flex items-center gap-2 border-b border-slate-800 pb-2">
-            <Sparkles className="w-4.5 h-4.5 text-indigo-400" />
+        <section className="my-8 p-6 bg-white border border-slate-200 rounded-[24px] text-slate-900 space-y-4 shadow-[0_8px_24px_rgba(15,23,42,0.04)]">
+          <h2 className="text-base font-extrabold flex items-center gap-2 border-b border-slate-200 pb-2">
+            <Sparkles className="w-4.5 h-4.5 text-indigo-600" />
             Milestone Completion Outcomes
           </h2>
           <div className="space-y-3">
             {theme.completionOutcomes.map((outcome, idx) => (
-              <div key={idx} className="flex gap-2.5 items-start text-xs font-semibold text-slate-300 leading-relaxed">
-                <span className="h-4.5 w-4.5 bg-indigo-950 border border-indigo-500/20 rounded-md flex items-center justify-center shrink-0 mt-0.5 text-indigo-400">
+              <div key={idx} className="flex gap-2.5 items-start text-xs font-semibold text-slate-600 leading-relaxed">
+                <span className="h-4.5 w-4.5 bg-indigo-50 border border-indigo-100 rounded-md flex items-center justify-center shrink-0 mt-0.5 text-indigo-600">
                   ✓
                 </span>
                 <span>{outcome}</span>
@@ -513,14 +513,14 @@ export default async function TrackPage({ params }: Props) {
         </section>
 
         {/* Next Step Recommendation */}
-        <section className="my-8 p-6 border border-dashed border-indigo-200 bg-indigo-50/20 rounded-3xl text-center space-y-3">
+        <section className="my-8 p-6 border border-slate-200 bg-slate-50/80 rounded-[24px] text-center space-y-3 shadow-sm">
           <h3 className="text-sm font-bold text-slate-800">Your Next Learning Step</h3>
           <p className="text-xs text-slate-600 leading-relaxed max-w-xl mx-auto font-medium">
             Once you have completed the module lessons and practice tasks in this path, click below to proceed.
           </p>
           <Link
             href={theme.nextStep.url}
-            className="inline-flex items-center gap-1.5 bg-indigo-600 hover:bg-indigo-700 text-white px-5 py-2.5 rounded-2xl text-xs font-bold transition"
+            className="inline-flex items-center gap-1.5 bg-slate-900 hover:bg-slate-800 text-white px-5 py-2.5 rounded-xl text-sm font-semibold transition"
           >
             {theme.nextStep.label} <ArrowRight className="w-4 h-4" />
           </Link>

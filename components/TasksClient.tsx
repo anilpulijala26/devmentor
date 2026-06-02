@@ -3,16 +3,17 @@
 import React, { useState } from "react";
 import Link from "next/link";
 import { DeveloperTask } from "@/lib/tasks";
-import { Sparkles, ArrowRight, CheckCircle2, Clock } from "lucide-react";
+import { ArrowRight, CheckCircle2, Clock } from "lucide-react";
 import { useProgress } from "@/context/ProgressContext";
-
 
 interface TasksClientProps {
   initialTasks: DeveloperTask[];
 }
 
 export function TasksClient({ initialTasks }: TasksClientProps) {
-  const [activeFilter, setActiveFilter] = useState<"All" | "Beginner" | "Mid-Level" | "Senior" | "Frontend" | "Backend" | "Full-Stack" | "Deployment">("All");
+  const [activeFilter, setActiveFilter] = useState<
+    "All" | "Beginner" | "Mid-Level" | "Senior" | "Frontend" | "Backend" | "Full-Stack" | "Deployment"
+  >("All");
   const { completedTasks } = useProgress();
 
   const getTaskCategory = (slug: string): "Frontend" | "Backend" | "Full-Stack" | "Deployment" => {
@@ -28,17 +29,9 @@ export function TasksClient({ initialTasks }: TasksClientProps) {
       "accessibility-audit",
       "performance-audit"
     ];
-    const fullstackSlugs = [
-      "api-route-handler",
-      "postgres-crud-query",
-      "postgres-prisma",
-      "api-tests-supertest"
-    ];
-    const deploymentSlugs = [
-      "dockerize-node-api",
-      "deploy-backend-cloud"
-    ];
-    
+    const fullstackSlugs = ["api-route-handler", "postgres-crud-query", "postgres-prisma", "api-tests-supertest"];
+    const deploymentSlugs = ["dockerize-node-api", "deploy-backend-cloud"];
+
     if (frontendSlugs.includes(slug)) return "Frontend";
     if (fullstackSlugs.includes(slug)) return "Full-Stack";
     if (deploymentSlugs.includes(slug)) return "Deployment";
@@ -50,9 +43,7 @@ export function TasksClient({ initialTasks }: TasksClientProps) {
     if (activeFilter === "Beginner") return task.level === "Beginner";
     if (activeFilter === "Mid-Level") return task.level === "Intermediate";
     if (activeFilter === "Senior") return task.level === "Advanced";
-    
-    const category = getTaskCategory(task.slug);
-    return category === activeFilter;
+    return getTaskCategory(task.slug) === activeFilter;
   });
 
   const getLevelColor = (level: string) => {
@@ -91,34 +82,31 @@ export function TasksClient({ initialTasks }: TasksClientProps) {
   };
 
   return (
-    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 md:py-14 lg:py-20 relative animate-fade-in space-y-12">
-      
-      {/* Header / Page Hero */}
-      <div className="flex flex-col lg:flex-row lg:items-end justify-between gap-6">
-        <div className="max-w-2xl space-y-4">
-          <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-indigo-50 border border-indigo-100 text-indigo-700 text-xs font-semibold">
-            <Sparkles className="w-3.5 h-3.5" />
-            <span>Granular Code Challenges</span>
+    <div className="max-w-7xl mx-auto px-4 py-10 sm:px-6 md:py-14 lg:px-8 lg:py-16 space-y-10 animate-fade-in">
+      <div className="flex flex-col gap-6 lg:flex-row lg:items-end lg:justify-between">
+        <div className="max-w-3xl space-y-4">
+          <div className="inline-flex items-center gap-2 rounded-lg border border-slate-200 bg-slate-50 px-3 py-1.5 text-sm font-medium text-slate-700">
+            <span className="h-2 w-2 rounded-full bg-indigo-600" aria-hidden="true" />
+            Daily practice workspace
           </div>
-          <h1 className="text-3xl sm:text-4xl lg:text-[48px] lg:leading-[56px] font-extrabold tracking-tight text-slate-900">
+          <h1 className="text-3xl font-semibold tracking-tight text-slate-950 sm:text-4xl lg:text-[3rem] lg:leading-[1.08]">
             Daily Developer Tasks
           </h1>
-          <p className="text-base sm:text-lg text-slate-600 leading-relaxed font-normal">
-            Practice makes permanent. Code minor UI blocks, state patterns, routing middleware, and error boundaries daily to solidify production concepts.
+          <p className="max-w-[680px] text-base leading-7 text-slate-600 sm:text-lg">
+            Practice implementation details, UI patterns, API handling, and production engineering habits through focused hands-on tasks.
           </p>
         </div>
 
-        {/* Filter Tabs */}
-        <div className="flex flex-wrap gap-2 bg-white border border-slate-200/60 p-1.5 rounded-2xl shrink-0 self-start lg:self-end shadow-sm max-w-full">
+        <div className="flex max-w-full flex-wrap gap-2 rounded-2xl border border-slate-200 bg-white p-1.5 shadow-sm">
           {(["All", "Beginner", "Mid-Level", "Senior", "Frontend", "Backend", "Full-Stack", "Deployment"] as const).map((filter) => (
             <button
               key={filter}
               onClick={() => setActiveFilter(filter)}
               aria-pressed={activeFilter === filter}
-              className={`px-3.5 py-2 rounded-xl text-xs font-bold transition duration-200 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 focus-visible:ring-offset-2 ${
+              className={`rounded-xl px-3.5 py-2 text-sm font-medium transition cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 focus-visible:ring-offset-2 ${
                 activeFilter === filter
-                  ? "bg-indigo-600 text-white shadow-sm"
-                  : "text-slate-600 hover:bg-slate-50"
+                  ? "bg-slate-900 text-white"
+                  : "text-slate-600 hover:bg-slate-50 hover:text-slate-950"
               }`}
             >
               {filter}
@@ -127,77 +115,60 @@ export function TasksClient({ initialTasks }: TasksClientProps) {
         </div>
       </div>
 
-
-
-      {/* Tasks List */}
-      <div className="grid gap-8 md:grid-cols-2 lg:grid-cols-3">
+      <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
         {filtered.map((task) => {
           const isCompleted = completedTasks.includes(task.slug);
           return (
-            <div
+            <article
               key={task.slug}
-              className="group bg-white border border-slate-100/80 rounded-3xl p-6 lg:p-8 shadow-[0_8px_30px_rgba(0,0,0,0.02)] hover:shadow-[0_15px_40px_rgba(0,0,0,0.04)] hover:-translate-y-[3px] transition-all duration-300 flex flex-col justify-between h-full"
+              className="group flex h-full flex-col justify-between rounded-[22px] border border-slate-200 bg-white p-6 shadow-[0_8px_24px_rgba(15,23,42,0.04)] transition hover:border-slate-300 hover:shadow-[0_14px_30px_rgba(15,23,42,0.06)]"
             >
               <div className="space-y-4">
-                {/* Top Row */}
-                <div className="flex items-center justify-between">
-                  <span className={`inline-block px-2.5 py-0.5 rounded-full text-xs font-bold border ${getLevelColor(task.level)}`}>
+                <div className="flex items-center justify-between gap-3">
+                  <span className={`inline-block rounded-full border px-2.5 py-1 text-xs font-semibold ${getLevelColor(task.level)}`}>
                     {task.level}
                   </span>
                   {isCompleted ? (
-                    <span className="text-[10px] font-bold text-emerald-600 bg-emerald-50 border border-emerald-100 px-2 py-0.5 rounded-lg flex items-center gap-1">
+                    <span className="inline-flex items-center gap-1 rounded-full border border-emerald-100 bg-emerald-50 px-2.5 py-1 text-xs font-medium text-emerald-700">
                       <CheckCircle2 className="w-3.5 h-3.5" /> Completed
                     </span>
                   ) : (
-                    <span className="text-[10px] font-semibold text-slate-400 uppercase tracking-wider">
-                      Daily Challenge
-                    </span>
+                    <span className="text-[11px] font-medium uppercase tracking-[0.16em] text-slate-400">Daily challenge</span>
                   )}
                 </div>
 
-                {/* Middle */}
                 <div className="space-y-2">
-                  <h3 className="text-lg font-bold text-slate-900 group-hover:text-indigo-650 transition-colors line-clamp-1">
-                    {task.title}
-                  </h3>
-                  <p className="text-sm text-slate-600 leading-relaxed line-clamp-2">
-                    {task.requirement}
-                  </p>
-                  
-                  {/* Skills/Tags */}
-                  <div className="flex flex-wrap gap-1.5 pt-2">
-                    {getTaskTags(task.slug).map((tag, idx) => (
-                      <span
-                        key={idx}
-                        className="bg-slate-50 border border-slate-200/80 px-2 py-0.5 rounded-lg text-2xs font-semibold text-slate-700"
-                      >
-                        {tag}
-                      </span>
-                    ))}
-                  </div>
+                  <h3 className="text-lg font-semibold text-slate-950">{task.title}</h3>
+                  <p className="line-clamp-3 text-sm leading-6 text-slate-600">{task.requirement}</p>
+                </div>
+
+                <div className="flex flex-wrap gap-2">
+                  {getTaskTags(task.slug).map((tag) => (
+                    <span key={tag} className="rounded-md border border-slate-200 bg-slate-50 px-2.5 py-1 text-xs font-medium text-slate-600">
+                      {tag}
+                    </span>
+                  ))}
                 </div>
               </div>
 
-              {/* Bottom */}
-              <div className="mt-6 pt-4 border-t border-slate-100 flex flex-col gap-3">
-                <div className="flex items-center justify-between text-xs text-slate-500 font-semibold">
-                  <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">EST. TIME</span>
-                  <span className="bg-slate-50 border border-slate-200 px-2.5 py-0.5 rounded-lg text-[11px] font-bold text-slate-600 flex items-center gap-1">
-                    <Clock className="w-3 h-3 text-slate-400" />
+              <div className="mt-6 space-y-4 border-t border-slate-200 pt-4">
+                <div className="flex items-center justify-between text-sm text-slate-600">
+                  <span className="font-medium">Estimated time</span>
+                  <span className="inline-flex items-center gap-1 rounded-full border border-slate-200 bg-slate-50 px-2.5 py-1 text-xs font-medium text-slate-600">
+                    <Clock className="w-3.5 h-3.5 text-slate-400" />
                     {getEstimatedTime(task.level)}
                   </span>
                 </div>
 
                 <Link
                   href={`/tasks/${task.slug}`}
-                  className="w-full h-12 inline-flex items-center justify-center gap-2 bg-indigo-600 hover:bg-indigo-700 text-white rounded-xl text-sm font-semibold transition shadow-xs cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 focus-visible:ring-offset-2"
+                  className="inline-flex min-h-11 w-full items-center justify-center gap-2 rounded-xl bg-slate-900 text-sm font-semibold text-white transition hover:bg-slate-800 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-slate-900 focus-visible:ring-offset-2"
                 >
                   <span>Start Task</span>
                   <ArrowRight className="w-4 h-4 transition-transform duration-200 group-hover:translate-x-0.5" />
                 </Link>
               </div>
-
-            </div>
+            </article>
           );
         })}
       </div>

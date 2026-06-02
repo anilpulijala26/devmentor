@@ -10,7 +10,8 @@ import {
   Settings,
   Type,
   AlignJustify,
-  Sidebar,
+  PanelLeftClose,
+  PanelLeftOpen,
   Undo2,
   X,
   Clock,
@@ -130,16 +131,32 @@ export function LessonReader({
         >
           <div className="p-6">
             <div className="flex items-center justify-between mb-6 pb-4 border-b border-slate-100 dark:border-slate-800">
-              <div>
-                <span className="text-[10px] font-bold text-indigo-500 tracking-widest uppercase">TRACK COURSE</span>
-                <h2 className="text-base font-bold truncate max-w-[200px] mt-0.5">{track.title}</h2>
+              <div className="flex items-start gap-3">
+                <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-slate-100 text-indigo-700 dark:bg-slate-800 dark:text-indigo-300">
+                  <PanelLeftOpen className="w-4.5 h-4.5" />
+                </div>
+                <div>
+                  <span className="text-[10px] font-bold text-indigo-500 tracking-widest uppercase">TRACK COURSE</span>
+                  <h2 className="text-base font-bold truncate max-w-[180px] mt-0.5">{track.title}</h2>
+                </div>
               </div>
-              <button
-                onClick={() => setSidebarOpen(false)}
-                className="lg:hidden p-1.5 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800"
-              >
-                <X className="w-4 h-4" />
-              </button>
+              <div className="flex items-center gap-1.5">
+                <button
+                  onClick={() => setSidebarOpen(false)}
+                  className="hidden lg:inline-flex p-2 rounded-lg border border-slate-200 hover:bg-slate-50 dark:border-slate-800 dark:hover:bg-slate-800"
+                  title="Collapse track index"
+                  aria-label="Collapse track index"
+                >
+                  <PanelLeftClose className="w-4 h-4" />
+                </button>
+                <button
+                  onClick={() => setSidebarOpen(false)}
+                  className="lg:hidden p-1.5 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800"
+                  aria-label="Close track index"
+                >
+                  <X className="w-4 h-4" />
+                </button>
+              </div>
             </div>
 
             {/* Modules & Lessons tree list */}
@@ -184,6 +201,17 @@ export function LessonReader({
           />
         )}
 
+        {!sidebarOpen && (
+          <button
+            onClick={() => setSidebarOpen(true)}
+            className="fixed left-4 top-24 z-20 inline-flex h-11 w-11 items-center justify-center rounded-xl border border-slate-200 bg-white text-slate-700 shadow-[0_10px_24px_rgba(15,23,42,0.08)] transition hover:bg-slate-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 focus-visible:ring-offset-2"
+            title="Open track index"
+            aria-label="Open track index"
+          >
+            <PanelLeftOpen className="w-4.5 h-4.5" />
+          </button>
+        )}
+
         {/* Right Content Space */}
         <main
           className={`flex-1 transition-all duration-300 px-4 md:px-8 py-8 ${sidebarOpen ? "lg:pl-[340px]" : "pl-4 md:pl-8"
@@ -193,16 +221,6 @@ export function LessonReader({
             {/* Top Toolbar */}
             <div className="flex flex-wrap items-center justify-between gap-4 mb-8 pb-4 border-b border-slate-200/60 dark:border-slate-800">
               <div className="flex items-center gap-2">
-                <button
-                  onClick={() => setSidebarOpen(!sidebarOpen)}
-                  className={`p-2 rounded-xl border border-slate-200 dark:border-slate-800 transition hover:bg-slate-100 dark:hover:bg-slate-800 flex items-center gap-1.5 text-xs font-bold ${sidebarOpen ? "bg-indigo-500 border-indigo-500 text-white hover:bg-indigo-600" : ""
-                    }`}
-                  title="Toggle course directory sidebar"
-                >
-                  <Sidebar className="w-4 h-4" />
-                  <span className="hidden sm:inline">Index Sidebar</span>
-                </button>
-
                 <Link
                   href={`/learn/${track.slug}`}
                   className="p-2 rounded-xl border border-slate-200 dark:border-slate-800 transition hover:bg-slate-100 dark:hover:bg-slate-800 text-xs font-bold inline-flex items-center gap-1.5"

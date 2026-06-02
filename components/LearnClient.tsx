@@ -6,7 +6,6 @@ import {
   ArrowRight,
   Award,
   Layers,
-  Sparkles,
   Cpu,
   Database,
   Play,
@@ -23,65 +22,52 @@ interface LearnClientProps {
 }
 
 export function LearnClient({ tracks }: LearnClientProps) {
-  // Local state to toggle track preview details
   const [openTracks, setOpenTracks] = useState<Record<string, boolean>>({});
-  // Local state to toggle module accordions inside track preview
   const [openModules, setOpenModules] = useState<Record<string, boolean>>({});
 
   const toggleTrack = (slug: string) => {
-    setOpenTracks((prev) => ({
-      ...prev,
-      [slug]: !prev[slug]
-    }));
+    setOpenTracks((prev) => ({ ...prev, [slug]: !prev[slug] }));
   };
 
   const toggleModule = (moduleSlug: string) => {
-    setOpenModules((prev) => ({
-      ...prev,
-      [moduleSlug]: !prev[moduleSlug]
-    }));
+    setOpenModules((prev) => ({ ...prev, [moduleSlug]: !prev[moduleSlug] }));
   };
 
   const roles = [
     {
       title: "Intern Developer",
       slug: "intern-developer",
-      outcome: "Master core HTML, CSS, and Git.",
+      outcome: "Start with HTML, CSS, JavaScript, and version control.",
       duration: "4-6 Wks",
-      level: "Beginner",
-      color: "border-blue-100 bg-blue-50/20 text-blue-800 hover:border-blue-300"
+      level: "Beginner"
     },
     {
       title: "Junior Frontend",
       slug: "junior-frontend",
-      outcome: "Master component states & React.",
+      outcome: "Move into components, state, and product UI systems.",
       duration: "8-10 Wks",
-      level: "Intermediate",
-      color: "border-violet-100 bg-violet-50/20 text-violet-800 hover:border-violet-300"
+      level: "Intermediate"
     },
     {
       title: "Backend Developer",
       slug: "backend-developer",
-      outcome: "Architect Node APIs & SQL.",
+      outcome: "Build APIs, data models, and service flows.",
       duration: "12-16 Wks",
-      level: "Advanced",
-      color: "border-emerald-100 bg-emerald-50/20 text-emerald-800 hover:border-emerald-300"
+      level: "Advanced"
     },
     {
       title: "Full-Stack Developer",
       slug: "full-stack-developer",
-      outcome: "Sync clients, servers & JWT.",
+      outcome: "Connect frontend, backend, auth, and data layers.",
       duration: "16-20 Wks",
-      level: "Professional",
-      color: "border-pink-100 bg-pink-50/20 text-pink-800 hover:border-pink-300"
+      level: "Professional"
     },
     {
       title: "DevOps Full-Stack",
       slug: "devops-ready-full-stack",
-      outcome: "Run Docker, Actions & AWS.",
+      outcome: "Ship through CI/CD, containers, and cloud deployment.",
       duration: "20-24 Wks",
-      level: "Professional",
-      color: "border-purple-100 bg-purple-50/20 text-purple-800 hover:border-purple-300"
+      level: "Professional"
     }
   ];
 
@@ -89,211 +75,217 @@ export function LearnClient({ tracks }: LearnClientProps) {
     {
       slug: "frontend-frameworks",
       title: "Frontend Track",
-      outcomeShort: "Master component-driven interfaces, React rendering lifecycles, and Next.js scale frameworks.",
+      outcomeShort: "Master component architecture, rendering flow, and scalable Next.js UI patterns.",
       level: "Intermediate",
       duration: "10 Weeks",
       modulesCount: 3,
       lessonsCount: 22,
-      projectsCount: 3,
-      skills: ["React Rendering", "Next.js App Router", "TypeScript Generics"],
-      cta: "View Track",
+      skills: ["React Rendering", "Next.js App Router", "TypeScript"],
       href: "/learn/frontend-frameworks",
-      colorClass: "bg-blue-50 text-blue-700 border-blue-100",
-      icon: <Cpu className="w-5 h-5" />
+      badgeClass: "bg-blue-50 text-blue-700 border-blue-100",
+      icon: <Cpu className="w-4.5 h-4.5" />
     },
     {
       slug: "backend",
       title: "Backend Track",
-      outcomeShort: "Architect secure Node.js APIs, database transactional pipelines, and cloud file storage systems.",
+      outcomeShort: "Design secure Node.js APIs, database flows, and reliable server-side patterns.",
       level: "Advanced",
       duration: "12 Weeks",
       modulesCount: 10,
       lessonsCount: 33,
-      projectsCount: 5,
-      skills: ["Express REST APIs", "PostgreSQL & Prisma", "JWT Auth & Security"],
-      cta: "View Track",
+      skills: ["Express APIs", "PostgreSQL", "JWT Auth"],
       href: "/learn/backend",
-      colorClass: "bg-emerald-50 text-emerald-700 border-emerald-100",
-      icon: <Database className="w-5 h-5" />
+      badgeClass: "bg-emerald-50 text-emerald-700 border-emerald-100",
+      icon: <Database className="w-4.5 h-4.5" />
     },
     {
       slug: "fullstack",
       title: "Full-Stack Track",
-      outcomeShort: "Link React frontends with Express server databases, managing cookies and monorepo files.",
+      outcomeShort: "Connect client, server, authentication, and data in one production workflow.",
       level: "Professional",
       duration: "8 Weeks",
       modulesCount: 4,
       lessonsCount: 16,
-      projectsCount: 3,
-      skills: ["Client-Server Sync", "HttpOnly Auth Cookies", "Monorepo Workspaces"],
-      cta: "View Track",
+      skills: ["Client-Server Sync", "Auth Cookies", "Monorepos"],
       href: "/learn/fullstack",
-      colorClass: "bg-purple-50 text-purple-700 border-purple-100",
-      icon: <Layers className="w-5 h-5" />
+      badgeClass: "bg-violet-50 text-violet-700 border-violet-100",
+      icon: <Layers className="w-4.5 h-4.5" />
     },
     {
       slug: "deployment",
       title: "Cloud & Deployment Track",
-      outcomeShort: "Containerize applications in Docker, write CI/CD Actions, and deploy to AWS & Azure.",
+      outcomeShort: "Package, automate, and release applications with CI/CD and cloud infrastructure.",
       level: "Professional",
       duration: "8 Weeks",
       modulesCount: 10,
       lessonsCount: 20,
-      projectsCount: 2,
-      skills: ["Docker Containers", "CI/CD Actions", "AWS S3 / Azure SQL"],
-      cta: "View Track",
+      skills: ["Docker", "GitHub Actions", "AWS / Azure"],
       href: "/learn/deployment",
-      colorClass: "bg-indigo-50 text-indigo-700 border-indigo-100",
-      icon: <Cloud className="w-5 h-5" />
+      badgeClass: "bg-indigo-50 text-indigo-700 border-indigo-100",
+      icon: <Cloud className="w-4.5 h-4.5" />
     },
     {
       slug: "interview",
       title: "Interview Prep Track",
-      outcomeShort: "Practice conceptual templates, system designs, and code reviews to crack top-tier interviews.",
+      outcomeShort: "Practice explanations, system design thinking, and code review readiness.",
       level: "Prep",
       duration: "4 Weeks",
       modulesCount: 1,
       lessonsCount: 7,
-      projectsCount: 1,
-      skills: ["Interview Templates", "System Design Scale", "Code Review Checklist"],
-      cta: "View Track",
+      skills: ["Interview Templates", "System Design", "Code Review"],
       href: "/learn/interview",
-      colorClass: "bg-amber-50 text-amber-700 border-amber-100",
-      icon: <Award className="w-5 h-5" />
+      badgeClass: "bg-amber-50 text-amber-700 border-amber-100",
+      icon: <Award className="w-4.5 h-4.5" />
     }
   ];
 
-  const trackDetails: Record<string, {
-    outcome: string;
-    bestFor: string;
-    project: { title: string; slug: string };
-  }> = {
+  const trackDetails: Record<
+    string,
+    {
+      outcome: string;
+      bestFor: string;
+      project: { title: string; slug: string };
+    }
+  > = {
     "frontend-frameworks": {
-      outcome: "Configure components, load route parameters, and optimize layout paint times.",
-      bestFor: "Frontend developers transitioning to component state architectures and Next.js scale frameworks.",
+      outcome: "Configure components, route states, and scalable layout systems.",
+      bestFor: "Frontend developers moving into component-driven product engineering.",
       project: { title: "Resume Builder App", slug: "resume-builder" }
     },
     backend: {
-      outcome: "Configure secure Express APIs, manage PostgreSQL ORMs, and run unit integrations tests.",
-      bestFor: "Developers wanting to build robust, secure, and well-tested server-side architectures.",
+      outcome: "Build secure APIs, robust data access layers, and reliable validation.",
+      bestFor: "Developers who want stronger service architecture and backend fundamentals.",
       project: { title: "E-Commerce Backend API", slug: "ecommerce-backend-api" }
     },
     fullstack: {
-      outcome: "Link clients to servers, handle validations globally, and organize code in monorepos.",
-      bestFor: "Engineers looking to build end-to-end applications coupling react frontends with express.",
+      outcome: "Ship connected applications with auth, validation, and coordinated state.",
+      bestFor: "Engineers building complete user-facing applications end to end.",
       project: { title: "Task Management App", slug: "task-manager" }
     },
     deployment: {
-      outcome: "Package container instances, script actions workflows, and manage cloud assets.",
-      bestFor: "Full-stack engineers looking to deploy and monitor systems on AWS/Azure.",
+      outcome: "Package apps, automate releases, and manage cloud delivery steps.",
+      bestFor: "Developers moving from local builds into production deployment workflows.",
       project: { title: "Cloud Deployment Project", slug: "cloud-deployment" }
     },
     interview: {
-      outcome: "Structure system pitches and verify logic files against senior templates.",
-      bestFor: "Candidates preparing for technical frontend, backend, or full-stack interview reviews.",
+      outcome: "Explain technical decisions clearly and review systems with confidence.",
+      bestFor: "Candidates preparing for frontend, backend, or full-stack interview loops.",
       project: { title: "Portfolio Website", slug: "personal-portfolio" }
     }
   };
 
   return (
-    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 md:py-14 lg:py-20 relative animate-fade-in space-y-16">
-      
-      {/* Page Header */}
-      <div className="text-center md:text-left space-y-4">
-        <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-indigo-50 border border-indigo-100 text-indigo-700 text-xs font-semibold">
-          <Sparkles className="w-3.5 h-3.5" />
-          Choose Your Pathway
+    <div className="max-w-7xl mx-auto px-4 py-10 sm:px-6 md:py-14 lg:px-8 lg:py-16 space-y-14 animate-fade-in">
+      <section className="space-y-6">
+        <div className="max-w-3xl space-y-4">
+          <div className="inline-flex items-center gap-2 rounded-lg border border-slate-200 bg-slate-50 px-3 py-1.5 text-sm font-medium text-slate-700">
+            <span className="h-2 w-2 rounded-full bg-indigo-600" aria-hidden="true" />
+            Learning workspace
+          </div>
+          <h1 className="text-3xl font-semibold tracking-tight text-slate-950 sm:text-4xl lg:text-[3rem] lg:leading-[1.08]">
+            Professional Learning Hub
+          </h1>
+          <p className="max-w-[680px] text-base leading-7 text-slate-600 sm:text-lg">
+            Move through structured tracks, role-based roadmaps, practice tasks, and project labs inside one guided developer workspace.
+          </p>
         </div>
-        <h1 className="text-3xl sm:text-4xl lg:text-[48px] lg:leading-[56px] font-extrabold tracking-tight text-slate-900">
-          Professional Learning Hub
-        </h1>
-        <p className="text-base sm:text-lg text-slate-650 max-w-3xl leading-relaxed font-normal">
-          Skip sandbox tutorials. Expand your knowledge through structured tracks, daily programming code tasks, and real-world system templates.
-        </p>
-      </div>
 
-      {/* Student Console Overview */}
-      <section className="space-y-4">
-        <div className="flex flex-col lg:flex-row gap-6 items-stretch">
-          <div className="flex-1 bg-slate-900 rounded-3xl p-6 sm:p-8 text-white flex flex-col justify-between shadow-[0_8px_30px_rgba(0,0,0,0.015)] relative overflow-hidden border border-slate-800">
-            {/* Soft inner radial glow */}
-            <div className="absolute inset-0 pointer-events-none overflow-hidden">
-              <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[300px] bg-indigo-500/10 rounded-full filter blur-[100px]" />
+        <div className="grid gap-6 lg:grid-cols-[1.15fr_0.85fr]">
+          <div className="rounded-[24px] border border-slate-200 bg-white p-6 shadow-[0_10px_30px_rgba(15,23,42,0.05)]">
+            <div className="flex flex-wrap items-center justify-between gap-3 border-b border-slate-200 pb-4">
+              <div>
+                <p className="text-base font-semibold text-slate-950">Learning Command Center</p>
+                <p className="mt-1 text-sm text-slate-500">Plan your next track, open tasks, and move into project delivery.</p>
+              </div>
+              <div className="rounded-full border border-emerald-200 bg-emerald-50 px-3 py-1 text-xs font-medium text-emerald-700">
+                Active workspace
+              </div>
             </div>
-            
-            <div className="relative z-10 space-y-2">
-              <span className="inline-block text-[10px] font-extrabold uppercase tracking-widest text-indigo-300 bg-indigo-950/60 px-3 py-1 rounded-full border border-indigo-805/40">
-                Student Console
-              </span>
-              <h2 className="text-xl font-extrabold tracking-tight mt-2">Welcome to your Learning Space</h2>
-              <p className="text-xs text-slate-300 leading-relaxed font-normal max-w-xl">
-                CodeNivra offers an interactive curriculum spanning frontend web basics, backend APIs, relational databases, Docker containers, and CI/CD pipelines. Explore structured roadmaps or direct modules below.
-              </p>
+
+            <div className="mt-5 grid gap-4 sm:grid-cols-2">
+              <div className="rounded-2xl border border-slate-200 bg-slate-50/80 p-4">
+                <p className="text-xs font-medium text-slate-500">Recommended next move</p>
+                <p className="mt-2 text-lg font-semibold text-slate-950">Choose a learning track</p>
+              </div>
+              <div className="rounded-2xl border border-slate-200 bg-slate-50/80 p-4">
+                <p className="text-xs font-medium text-slate-500">Primary workflow</p>
+                <p className="mt-2 text-lg font-semibold text-slate-950">Learn, practice, build, review</p>
+              </div>
             </div>
-            <div className="relative z-10 flex flex-wrap gap-4 mt-6 pt-4 border-t border-slate-800">
-              <Link href="/roadmaps" className="text-xs font-bold text-white hover:text-indigo-300 flex items-center gap-1">
-                View Roadmaps <ArrowRight className="w-3.5 h-3.5" />
+
+            <div className="mt-5 flex flex-wrap gap-2 text-xs font-medium text-slate-700">
+              {["Roadmaps", "Tasks", "Projects", "Code Review", "Deployment"].map((item) => (
+                <span key={item} className="rounded-full border border-slate-200 bg-white px-3 py-1.5">
+                  {item}
+                </span>
+              ))}
+            </div>
+
+            <div className="mt-5 flex flex-wrap gap-3">
+              <Link
+                href="/roadmaps"
+                className="inline-flex min-h-11 items-center gap-2 rounded-xl bg-slate-900 px-5 text-sm font-semibold text-white transition hover:bg-slate-800 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-slate-900 focus-visible:ring-offset-2"
+              >
+                <span>Open Roadmaps</span>
+                <ArrowRight className="w-4 h-4" />
               </Link>
-              <Link href="/projects" className="text-xs font-bold text-white hover:text-indigo-205 flex items-center gap-1">
-                Explore Projects <ArrowRight className="w-3.5 h-3.5" />
-              </Link>
-              <Link href="/tasks" className="text-xs font-bold text-white hover:text-indigo-205 flex items-center gap-1">
-                Daily Tasks <ArrowRight className="w-3.5 h-3.5" />
+              <Link
+                href="/projects"
+                className="inline-flex min-h-11 items-center gap-2 rounded-xl border border-slate-300 bg-white px-5 text-sm font-semibold text-slate-700 transition hover:bg-slate-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 focus-visible:ring-offset-2"
+              >
+                <span>Explore Labs</span>
+                <ArrowRight className="w-4 h-4" />
               </Link>
             </div>
           </div>
-          <div className="lg:w-96 shrink-0">
-            <DashboardHighlights />
-          </div>
+
+          <DashboardHighlights />
         </div>
       </section>
 
-      {/* Recommended Paths by Role (Simplified Grid) */}
       <section className="space-y-6">
-        <h2 className="text-lg sm:text-[22px] font-bold text-slate-900 flex items-center gap-2">
-          <Briefcase className="w-5 h-5 text-indigo-500" />
-          Recommended Path by Role
-        </h2>
-        <div className="grid sm:grid-cols-2 lg:grid-cols-5 gap-4">
+        <div className="flex items-center gap-2">
+          <Briefcase className="h-5 w-5 text-indigo-600" />
+          <h2 className="text-2xl font-semibold tracking-tight text-slate-950">Recommended Path by Role</h2>
+        </div>
+
+        <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-5">
           {roles.map((role) => (
             <Link
               key={role.slug}
               href={`/roadmaps/${role.slug}`}
-              className={`p-5 border rounded-2xl flex flex-col justify-between transition-all duration-350 hover:-translate-y-1 hover:shadow-md cursor-pointer ${role.color}`}
+              className="rounded-[20px] border border-slate-200 bg-white p-5 shadow-[0_8px_24px_rgba(15,23,42,0.04)] transition hover:border-slate-300 hover:shadow-[0_14px_30px_rgba(15,23,42,0.06)]"
             >
-              <div className="space-y-2">
-                <div className="flex justify-between items-center gap-1.5 flex-wrap">
-                  <span className="text-[9px] font-extrabold px-2 py-0.5 rounded bg-white border uppercase tracking-wider text-slate-500">
-                    {role.level}
-                  </span>
-                  <span className="text-[10px] font-semibold text-slate-500">
-                    {role.duration}
-                  </span>
+              <div className="flex h-full flex-col justify-between gap-5">
+                <div className="space-y-3">
+                  <div className="flex items-center justify-between gap-2">
+                    <span className="rounded-md border border-slate-200 bg-slate-50 px-2 py-1 text-[10px] font-semibold uppercase tracking-[0.16em] text-slate-600">
+                      {role.level}
+                    </span>
+                    <span className="text-xs font-medium text-slate-500">{role.duration}</span>
+                  </div>
+                  <h3 className="text-base font-semibold text-slate-950">{role.title}</h3>
+                  <p className="text-sm leading-6 text-slate-600">{role.outcome}</p>
                 </div>
-                <h3 className="text-sm font-bold text-slate-900 pt-1">{role.title}</h3>
-                <p className="text-xs text-slate-650 leading-normal font-semibold">{role.outcome}</p>
-              </div>
-              <div className="mt-6 inline-flex items-center justify-center gap-1 h-10 w-full bg-white border border-slate-200 text-slate-700 hover:bg-slate-50 rounded-xl text-xs font-bold transition">
-                <span>Open Roadmap</span>
-                <ArrowRight className="w-3.5 h-3.5" />
+
+                <span className="inline-flex items-center gap-2 text-sm font-semibold text-indigo-700">
+                  Open roadmap <ArrowRight className="w-4 h-4" />
+                </span>
               </div>
             </Link>
           ))}
         </div>
       </section>
 
-      {/* Visual Tracks Section */}
-      <section className="space-y-8">
-        <div className="border-b border-slate-100 pb-4 text-center md:text-left">
-          <h2 className="text-2xl sm:text-[28px] font-extrabold text-slate-900">
-            Choose Your Learning Path
-          </h2>
-          <p className="text-sm sm:text-base text-slate-500 mt-1 font-normal">
-            Pick a track, review outcomes, and expand the syllabus preview to inspect module chapters.
+      <section className="space-y-6">
+        <div className="max-w-3xl">
+          <h2 className="text-2xl font-semibold tracking-tight text-slate-950">Choose Your Learning Path</h2>
+          <p className="mt-2 text-base text-slate-600">
+            Review outcomes, inspect the syllabus structure, and move directly into the track that matches your next growth step.
           </p>
         </div>
 
-        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8 items-start">
+        <div className="grid items-start gap-6 md:grid-cols-2 lg:grid-cols-3">
           {visualTracks.map((visualTrack) => {
             const track = tracks.find((t) => t.slug === visualTrack.slug);
             const details = trackDetails[visualTrack.slug] || {
@@ -301,66 +293,51 @@ export function LearnClient({ tracks }: LearnClientProps) {
               bestFor: "Developers looking to expand knowledge.",
               project: { title: "Portfolio Website", slug: "personal-portfolio" }
             };
-
             const isTrackOpen = !!openTracks[visualTrack.slug];
 
             return (
-              <div
+              <article
                 key={visualTrack.slug}
-                className="group bg-white border border-slate-100 rounded-3xl p-6 lg:p-8 shadow-[0_8px_30px_rgba(0,0,0,0.015)] hover:shadow-[0_15px_40px_rgba(0,0,0,0.03)] hover:-translate-y-[3px] transition-all duration-300 flex flex-col justify-between relative"
+                className="rounded-[22px] border border-slate-200 bg-white p-6 shadow-[0_8px_24px_rgba(15,23,42,0.04)] transition hover:border-slate-300 hover:shadow-[0_14px_30px_rgba(15,23,42,0.06)]"
               >
-                <div className="space-y-5 w-full">
-                  {/* Top Stats & Badge */}
-                  <div className="flex items-center justify-between">
-                    <span className={`inline-flex items-center gap-1.5 rounded-full px-2.5 py-0.5 text-[11px] font-bold ${visualTrack.colorClass}`}>
+                <div className="space-y-5">
+                  <div className="flex items-center justify-between gap-3">
+                    <span className={`inline-flex items-center gap-1.5 rounded-full border px-2.5 py-1 text-xs font-semibold ${visualTrack.badgeClass}`}>
                       {visualTrack.icon}
                       {visualTrack.level}
                     </span>
-                    <span className="text-xs font-semibold text-slate-400">
-                      {visualTrack.duration}
-                    </span>
+                    <span className="text-xs font-medium text-slate-500">{visualTrack.duration}</span>
                   </div>
 
-                  {/* Title & Short 1-2 line outcome */}
-                  <div className="space-y-1.5">
-                    <h3 className="text-lg sm:text-xl font-extrabold text-slate-900 group-hover:text-indigo-650 transition-colors">
-                      {visualTrack.title}
-                    </h3>
-                    <p className="text-xs sm:text-sm text-slate-500 leading-relaxed font-normal">
-                      {visualTrack.outcomeShort}
-                    </p>
-                  </div>
-
-                  {/* Modules & Lessons count */}
-                  <div className="grid grid-cols-2 gap-4 py-3 border-y border-slate-50 text-slate-500">
-                    <div>
-                      <p className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Syllabus</p>
-                      <p className="text-xs sm:text-sm font-bold text-slate-800 mt-0.5">{visualTrack.modulesCount} Modules</p>
-                    </div>
-                    <div>
-                      <p className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Guides</p>
-                      <p className="text-xs sm:text-sm font-bold text-slate-800 mt-0.5">{visualTrack.lessonsCount} Lessons</p>
-                    </div>
-                  </div>
-
-                  {/* Key Skills */}
                   <div className="space-y-2">
-                    <p className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Skills covered</p>
-                    <div className="flex flex-wrap gap-1.5">
-                      {visualTrack.skills.map((sk) => (
-                        <span key={sk} className="bg-slate-50 border border-slate-200/60 px-2 py-0.5 rounded-md text-[10px] font-bold text-slate-600">
-                          {sk}
-                        </span>
-                      ))}
+                    <h3 className="text-xl font-semibold text-slate-950">{visualTrack.title}</h3>
+                    <p className="text-sm leading-6 text-slate-600">{visualTrack.outcomeShort}</p>
+                  </div>
+
+                  <div className="grid grid-cols-2 gap-4 rounded-2xl border border-slate-200 bg-slate-50/70 p-4">
+                    <div>
+                      <p className="text-[11px] font-medium uppercase tracking-[0.16em] text-slate-500">Modules</p>
+                      <p className="mt-1 text-sm font-semibold text-slate-950">{visualTrack.modulesCount}</p>
                     </div>
+                    <div>
+                      <p className="text-[11px] font-medium uppercase tracking-[0.16em] text-slate-500">Lessons</p>
+                      <p className="mt-1 text-sm font-semibold text-slate-950">{visualTrack.lessonsCount}</p>
+                    </div>
+                  </div>
+
+                  <div className="flex flex-wrap gap-2">
+                    {visualTrack.skills.map((skill) => (
+                      <span key={skill} className="rounded-md border border-slate-200 bg-slate-50 px-2.5 py-1 text-xs font-medium text-slate-600">
+                        {skill}
+                      </span>
+                    ))}
                   </div>
                 </div>
 
-                {/* Bottom Toggles & CTA */}
-                <div className="mt-8 pt-4 border-t border-slate-50 flex flex-col gap-2.5">
+                <div className="mt-6 space-y-2 border-t border-slate-200 pt-4">
                   <Link
                     href={visualTrack.href}
-                    className="w-full h-12 inline-flex items-center justify-center gap-1 bg-indigo-600 hover:bg-indigo-700 text-white rounded-xl text-sm font-semibold transition cursor-pointer shadow-2xs focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 focus-visible:ring-offset-2"
+                    className="inline-flex min-h-11 w-full items-center justify-center gap-2 rounded-xl bg-slate-900 text-sm font-semibold text-white transition hover:bg-slate-800 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-slate-900 focus-visible:ring-offset-2"
                   >
                     <span>View Track</span>
                     <ArrowRight className="w-4 h-4" />
@@ -369,64 +346,62 @@ export function LearnClient({ tracks }: LearnClientProps) {
                   <button
                     onClick={() => toggleTrack(visualTrack.slug)}
                     aria-expanded={isTrackOpen}
-                    className="w-full h-11 bg-slate-50 border border-slate-200/60 hover:bg-slate-100 text-slate-700 rounded-xl text-xs font-bold flex items-center justify-center gap-1 transition cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 focus-visible:ring-offset-2"
+                    className="inline-flex min-h-11 w-full items-center justify-center gap-2 rounded-xl border border-slate-200 bg-slate-50 text-sm font-semibold text-slate-700 transition hover:bg-slate-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 focus-visible:ring-offset-2 cursor-pointer"
                   >
                     <span>Preview Syllabus</span>
                     {isTrackOpen ? <ChevronUp className="w-4 h-4" /> : <ChevronDown className="w-4 h-4" />}
                   </button>
                 </div>
 
-                {/* Collapsible syllabus preview inside the grid card flow */}
                 {isTrackOpen && (
-                  <div className="mt-6 pt-6 border-t border-slate-100 space-y-4 animate-fade-in w-full text-left">
-                    <div>
-                      <h4 className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Best For</h4>
-                      <p className="text-xs text-slate-600 font-semibold mt-0.5 leading-normal">{details.bestFor}</p>
+                  <div className="mt-6 space-y-4 border-t border-slate-200 pt-5 animate-fade-in">
+                    <div className="grid gap-4 rounded-2xl border border-slate-200 bg-slate-50/70 p-4">
+                      <div>
+                        <p className="text-[11px] font-medium uppercase tracking-[0.16em] text-slate-500">Best for</p>
+                        <p className="mt-1 text-sm leading-6 text-slate-600">{details.bestFor}</p>
+                      </div>
+                      <div className="grid gap-3 sm:grid-cols-2">
+                        <div>
+                          <p className="text-[11px] font-medium uppercase tracking-[0.16em] text-slate-500">Target project</p>
+                          <Link href={`/projects/${details.project.slug}`} className="mt-1 inline-block text-sm font-semibold text-indigo-700 hover:text-indigo-800">
+                            {details.project.title}
+                          </Link>
+                        </div>
+                        <div>
+                          <p className="text-[11px] font-medium uppercase tracking-[0.16em] text-slate-500">Outcome</p>
+                          <p className="mt-1 text-sm leading-6 text-slate-600">{details.outcome}</p>
+                        </div>
+                      </div>
                     </div>
 
-                    <div className="grid grid-cols-2 gap-4 border-t border-slate-100 pt-3">
-                      <div>
-                        <h4 className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Target Project</h4>
-                        <Link href={`/projects/${details.project.slug}`} className="text-xs font-bold text-indigo-650 hover:underline block mt-0.5 truncate">
-                          {details.project.title}
-                        </Link>
-                      </div>
-                      <div>
-                        <h4 className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Goal Outcome</h4>
-                        <p className="text-xs text-slate-500 font-semibold mt-0.5 truncate">{details.outcome}</p>
-                      </div>
-                    </div>
-
-                    {/* Modules list (using the dynamically loaded track data) */}
                     {track && track.modules && (
-                      <div className="border-t border-slate-100 pt-4 space-y-2">
-                        <h4 className="text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-2">Modules Syllabus</h4>
-                        
+                      <div className="space-y-2">
+                        <p className="text-[11px] font-medium uppercase tracking-[0.16em] text-slate-500">Modules</p>
                         {track.modules.map((module) => {
                           const isModuleOpen = !!openModules[module.slug];
                           return (
-                            <div key={module.slug} className="border border-slate-150 rounded-xl overflow-hidden bg-slate-50/20">
+                            <div key={module.slug} className="overflow-hidden rounded-2xl border border-slate-200 bg-white">
                               <button
                                 onClick={() => toggleModule(module.slug)}
                                 aria-expanded={isModuleOpen}
-                                className="w-full px-3 py-2 flex items-center justify-between text-left transition hover:bg-slate-50 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-indigo-500 text-xs font-extrabold text-slate-800 cursor-pointer"
+                                className="flex w-full items-center justify-between px-4 py-3 text-left text-sm font-semibold text-slate-800 transition hover:bg-slate-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 cursor-pointer"
                               >
                                 <span className="truncate pr-2">{module.title}</span>
-                                {isModuleOpen ? <ChevronUp className="w-3.5 h-3.5 text-slate-500" /> : <ChevronDown className="w-3.5 h-3.5 text-slate-500" />}
+                                {isModuleOpen ? <ChevronUp className="w-4 h-4 text-slate-500" /> : <ChevronDown className="w-4 h-4 text-slate-500" />}
                               </button>
-                              
+
                               {isModuleOpen && module.lessons && (
-                                <div className="p-2 bg-white border-t border-slate-100 space-y-1">
+                                <div className="space-y-1 border-t border-slate-100 bg-slate-50/50 p-2">
                                   {module.lessons
                                     .sort((a, b) => a.order - b.order)
                                     .map((lesson) => (
                                       <Link
                                         key={lesson.slug}
                                         href={`/learn/${track.slug}/${lesson.slug}`}
-                                        className="flex items-center justify-between rounded-lg p-2 hover:bg-indigo-50/40 text-[11px] font-semibold text-slate-600 transition"
+                                        className="flex items-center justify-between rounded-xl px-3 py-2 text-sm font-medium text-slate-600 transition hover:bg-white hover:text-slate-950"
                                       >
                                         <span className="truncate pr-2">{lesson.title}</span>
-                                        <Play className="w-3 h-3 text-indigo-500 shrink-0" />
+                                        <Play className="w-3.5 h-3.5 shrink-0 text-indigo-500" />
                                       </Link>
                                     ))}
                                 </div>
@@ -438,12 +413,11 @@ export function LearnClient({ tracks }: LearnClientProps) {
                     )}
                   </div>
                 )}
-              </div>
+              </article>
             );
           })}
         </div>
       </section>
-
     </div>
   );
 }
