@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import Link from "next/link";
 import { 
   ChevronLeft, FolderTree, Layers, Server, Cpu, Info, Target, Wrench, 
@@ -67,7 +67,6 @@ export function ProjectDetailClient({ project }: ProjectDetailClientProps) {
           });
         } else {
           // Check if folder exists
-          const folderName = parts.slice(0, index + 1).join("/");
           let folder = currentLevel.find(item => item.type === "folder" && item.name === part) as TreeFolder | undefined;
           if (!folder) {
             folder = {
@@ -85,23 +84,23 @@ export function ProjectDetailClient({ project }: ProjectDetailClientProps) {
     return root;
   }, [details]);
 
-  // Set initial selected file
-  useEffect(() => {
-    if (fileTree.length > 0) {
-      const findFirstFile = (nodes: any[]): TreeFile | null => {
-        for (const n of nodes) {
-          if (n.type === "file") return n;
+  // Find the first file in the tree
+  const firstFile = React.useMemo(() => {
+    if (fileTree.length === 0) return null;
+    const findFirstFile = (nodes: (TreeFile | TreeFolder)[]): TreeFile | null => {
+      for (const n of nodes) {
+        if (n.type === "file") return n;
+        if (n.type === "folder") {
           const f = findFirstFile(n.children);
           if (f) return f;
         }
-        return null;
-      };
-      const first = findFirstFile(fileTree);
-      if (first) {
-        setSelectedFile(first);
       }
-    }
+      return null;
+    };
+    return findFirstFile(fileTree);
   }, [fileTree]);
+
+  const currentSelectedFile = selectedFile || firstFile;
 
   const getLevelColor = (level: string) => {
     return {
@@ -125,7 +124,7 @@ export function ProjectDetailClient({ project }: ProjectDetailClientProps) {
   };
 
   // Recursive Tree Rendering
-  const renderTreeNodes = (nodes: any[], pathPrefix = "") => {
+  const renderTreeNodes = (nodes: (TreeFile | TreeFolder)[], pathPrefix = ""): React.ReactNode[] => {
     return nodes.map((node) => {
       const currentPath = pathPrefix ? `${pathPrefix}/${node.name}` : node.name;
       if (node.type === "folder") {
@@ -148,7 +147,7 @@ export function ProjectDetailClient({ project }: ProjectDetailClientProps) {
           </div>
         );
       } else {
-        const isSelected = selectedFile?.path === node.path;
+        const isSelected = currentSelectedFile?.path === node.path;
         return (
           <button
             key={node.path}
@@ -156,7 +155,7 @@ export function ProjectDetailClient({ project }: ProjectDetailClientProps) {
             className={`w-full flex items-center gap-2 px-2.5 py-1.5 text-xs font-semibold rounded-lg transition-colors cursor-pointer text-left focus-visible:ring-2 focus-visible:ring-indigo-500 ${
               isSelected
                 ? "bg-indigo-50 text-indigo-700 font-bold"
-                : "text-slate-600 hover:bg-slate-50"
+                : "text-slate-605 hover:bg-slate-50"
             }`}
           >
             <FileCode className={`w-3.5 h-3.5 shrink-0 ${isSelected ? "text-indigo-650" : "text-slate-400"}`} />
@@ -502,21 +501,21 @@ export function ProjectDetailClient({ project }: ProjectDetailClientProps) {
 
               {/* Right pane: Code Preview */}
               <div className="flex-1 bg-slate-950 text-slate-200 flex flex-col min-w-0">
-                {selectedFile ? (
+                {currentSelectedFile ? (
                   <>
                     <div className="flex justify-between items-center px-4 py-2 border-b border-slate-900 bg-slate-900/60">
-                      <span className="font-mono text-xs text-slate-400 truncate">{selectedFile.path}</span>
+                      <span className="font-mono text-xs text-slate-400 truncate">{currentSelectedFile.path}</span>
                       <button
-                        onClick={() => handleCopyCode("selected-file", selectedFile.code)}
+                        onClick={() => handleCopyCode("selected-file", currentSelectedFile.code)}
                         className="flex items-center gap-1.5 px-3 py-1.5 bg-slate-800 hover:bg-slate-700 text-slate-200 rounded-lg text-2xs font-bold transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500"
                       >
-                        {copiedMap["selected-file"] ? <Check className="w-3.5 h-3.5 text-emerald-400" /> : <Copy className="w-3.5 h-3.5" />}
+                        {copiedMap["selected-file"] ? <Check className="w-3.5 h-3.5 text-emerald-450" /> : <Copy className="w-3.5 h-3.5" />}
                         {copiedMap["selected-file"] ? "Copied!" : "Copy Code"}
                       </button>
                     </div>
                     <div className="p-4 flex-1 overflow-x-auto overflow-y-auto max-h-[500px]">
                       <pre className="font-mono text-xs leading-relaxed">
-                        <code>{selectedFile.code}</code>
+                        <code>{currentSelectedFile.code}</code>
                       </pre>
                     </div>
                   </>

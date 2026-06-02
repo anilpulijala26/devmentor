@@ -4,7 +4,7 @@ import React, { useState, useEffect } from "react";
 import {
   Sparkles, ClipboardCheck, Check, RefreshCw, ChevronDown, Share2,
   FolderOpen, Layers, Code2, Sliders, AlertTriangle, Loader, Eye,
-  Zap, Lock, FileCode, Rocket, Info, AlertCircle, HelpCircle, XCircle
+  Zap, Lock, FileCode, Rocket, Info, HelpCircle, XCircle
 } from "lucide-react";
 
 interface AuditCategory {

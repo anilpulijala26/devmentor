@@ -3,8 +3,8 @@
 import React, { useState } from "react";
 import Link from "next/link";
 import { 
-  ChevronLeft, Terminal, Code2, MessageSquare, ShieldAlert, Sparkles, 
-  Lightbulb, AlertTriangle, ArrowRight, Play, Check, Copy
+  ChevronLeft, Terminal, Code2, MessageSquare, Sparkles, 
+  Lightbulb, AlertTriangle, Play, Check, Copy
 } from "lucide-react";
 import { ProjectChecklist } from "./mdx/ProjectChecklist";
 import { TaskCompleteButton } from "./TaskCompleteButton";

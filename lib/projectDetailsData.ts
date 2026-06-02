@@ -328,7 +328,18 @@ export const projectDetailsData: Record<string, ProjectDetails> = {
   }
 };
 
-export function getDetailsForProject(slug: string, base: any): ProjectDetails {
+export interface ProjectBase {
+  slug: string;
+  title: string;
+  description: string;
+  techStack: string[];
+  features: string[];
+  folderStructure: string;
+  databaseSchema?: string;
+  businessRequirement: string;
+}
+
+export function getDetailsForProject(slug: string, base: ProjectBase): ProjectDetails {
   if (projectDetailsData[slug]) {
     return projectDetailsData[slug];
   }
