@@ -19,10 +19,10 @@ export function CTASection() {
 
         <div className="flex flex-wrap justify-center gap-4 pt-2">
           <Link
-            href="/roadmaps"
+            href="/learn"
             className="inline-flex items-center gap-2 bg-white text-slate-900 px-6 py-3 rounded-xl font-bold hover:bg-slate-50 transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-offset-2"
           >
-            Explore Roadmaps <ArrowRight className="w-4.5 h-4.5 text-indigo-600" />
+            Start Learning <ArrowRight className="w-4.5 h-4.5 text-indigo-600" />
           </Link>
 
           <Link

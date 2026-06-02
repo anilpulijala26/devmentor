@@ -36,7 +36,7 @@ export function HeroSection() {
             <div className="flex flex-wrap items-center gap-4 pt-2">
               <Link
                 href="/learn"
-                className="group inline-flex items-center justify-center gap-2 bg-indigo-600 hover:bg-indigo-700 active:scale-98 text-white px-6 h-12 rounded-xl font-medium text-sm transition-all duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 focus-visible:ring-offset-2 min-h-[44px] cursor-pointer shadow-xs"
+                className="group inline-flex items-center justify-center gap-2 bg-indigo-600 hover:bg-indigo-755 text-white px-6 h-12 rounded-xl font-medium text-sm transition-all duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 focus-visible:ring-offset-2 min-h-[44px] cursor-pointer shadow-xs"
               >
                 <span>Start Learning</span>
                 <ArrowRight className="w-4 h-4 transition-transform duration-200 group-hover:translate-x-1" />
@@ -47,13 +47,6 @@ export function HeroSection() {
                 className="inline-flex items-center justify-center gap-2 bg-slate-50 hover:bg-slate-100 active:scale-98 border border-slate-200 text-slate-700 px-6 h-12 rounded-xl font-medium text-sm transition duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 focus-visible:ring-offset-2 min-h-[44px] cursor-pointer"
               >
                 Explore Roadmaps
-              </Link>
-
-              <Link
-                href="/projects"
-                className="inline-flex items-center justify-center gap-2 text-slate-500 hover:text-indigo-600 text-xs font-bold transition duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 rounded px-2.5 py-2 min-h-[44px] md:min-h-0"
-              >
-                View Project Labs
               </Link>
             </div>
           </div>

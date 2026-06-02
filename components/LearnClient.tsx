@@ -18,10 +18,15 @@ import {
   Briefcase,
   HelpCircle,
   Cloud,
-  UserCheck
+  UserCheck,
+  Code2,
+  Compass
 } from "lucide-react";
 import { Track } from "@/lib/content";
 import { GuidePanel } from "./GuidePanel";
+import { DashboardHighlights } from "./DashboardHighlights";
+import { SectionHeader } from "./SectionHeader";
+import { FeatureCard } from "./FeatureCard";
 
 interface LearnClientProps {
   tracks: Track[];
@@ -241,6 +246,42 @@ export function LearnClient({ tracks }: LearnClientProps) {
         outcome="Deployable full-stack systems and professional architectural coding templates."
         nextAction="Choose your experience level or roadmap."
       />
+
+      {/* Student Console Overview */}
+      <section className="space-y-4">
+        <div className="flex flex-col lg:flex-row gap-6 items-stretch">
+          <div className="flex-1 bg-slate-900 rounded-3xl p-6 sm:p-8 text-white flex flex-col justify-between shadow-[0_8px_30px_rgba(0,0,0,0.015)] relative overflow-hidden border border-slate-800">
+            {/* Soft inner radial glow */}
+            <div className="absolute inset-0 pointer-events-none overflow-hidden">
+              <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[300px] bg-indigo-500/10 rounded-full filter blur-[100px]" />
+            </div>
+            
+            <div className="relative z-10 space-y-2">
+              <span className="inline-block text-[10px] font-extrabold uppercase tracking-widest text-indigo-300 bg-indigo-950/60 px-3 py-1 rounded-full border border-indigo-805/40">
+                Student Console
+              </span>
+              <h2 className="text-xl font-extrabold tracking-tight mt-2">Welcome to your Learning Space</h2>
+              <p className="text-xs text-slate-300 leading-relaxed font-normal max-w-xl">
+                CodeNivra offers an interactive curriculum spanning frontend web basics, backend APIs, relational databases, Docker containers, and CI/CD pipelines. Explore structured roadmaps or direct modules below.
+              </p>
+            </div>
+            <div className="relative z-10 flex flex-wrap gap-4 mt-6 pt-4 border-t border-slate-800">
+              <Link href="/roadmaps" className="text-xs font-bold text-white hover:text-indigo-300 flex items-center gap-1">
+                View Roadmaps <ArrowRight className="w-3.5 h-3.5" />
+              </Link>
+              <Link href="/projects" className="text-xs font-bold text-white hover:text-indigo-205 flex items-center gap-1">
+                Explore Projects <ArrowRight className="w-3.5 h-3.5" />
+              </Link>
+              <Link href="/tasks" className="text-xs font-bold text-white hover:text-indigo-205 flex items-center gap-1">
+                Daily Tasks <ArrowRight className="w-3.5 h-3.5" />
+              </Link>
+            </div>
+          </div>
+          <div className="lg:w-96 shrink-0">
+            <DashboardHighlights />
+          </div>
+        </div>
+      </section>
 
       {/* Choose Your Experience Level Grid */}
       <section className="space-y-6">
@@ -659,6 +700,156 @@ export function LearnClient({ tracks }: LearnClientProps) {
               </div>
             );
           })}
+        </div>
+      </section>
+
+      {/* 4. Master the Fundamentals Section */}
+      <section className="py-12 border-t border-slate-100">
+        <SectionHeader
+          badge="Core Web Basics"
+          title="Master the Fundamentals"
+          subtitle="Establish a bulletproof engineering foundation. Master the fundamental mechanics of the browser and scripting before moving to frameworks."
+        />
+        <div className="grid md:grid-cols-3 gap-8">
+          <FeatureCard
+            title="Semantic HTML5"
+            desc="Practice with real-world frontend projects. Learn semantic tags, document outlines, accessibility guidelines (WCAG), and search engine optimization (SEO)."
+            icon={<BookOpen className="w-6 h-6 text-indigo-650" />}
+            badge="STRUCTURE"
+          />
+          <FeatureCard
+            title="Modern CSS Layouts"
+            desc="Build fluid, responsive UI containers. Master Flexbox alignment, CSS Grid tracks, custom properties (CSS variables), nesting, and custom media queries."
+            icon={<Layers className="w-6 h-6 text-indigo-655" />}
+            badge="STYLING"
+            colorClass="bg-indigo-50 text-indigo-600"
+          />
+          <FeatureCard
+            title="JavaScript ES6+ & Async"
+            desc="Deconstruct advanced Javascript. Master event delegation, closures, prototype chains, browser event loop priorities, and memory profile management."
+            icon={<Code2 className="w-6 h-6 text-indigo-655" />}
+            badge="SCRIPTING"
+            colorClass="bg-indigo-50 text-indigo-600"
+          />
+        </div>
+      </section>
+
+      {/* 5. Curriculum Core Pillars Section */}
+      <section className="py-12 border-t border-slate-100">
+        <SectionHeader
+          badge="Advanced Engineering"
+          title="Curriculum Core Pillars"
+          subtitle="Deep dive into modern framework lifecycles, backend server pipelines, and production database queries."
+        />
+        <div className="grid md:grid-cols-3 gap-8">
+          <FeatureCard
+            title="React Lifecycle Rules"
+            desc="Understand how React reconcile modules render state. Practice writing optimized custom hooks, performance profiling, and typing React events."
+            icon={<Layers className="w-6 h-6 text-indigo-655" />}
+            colorClass="bg-indigo-50"
+            badge="FRONTEND"
+          />
+          <FeatureCard
+            title="Next.js App Router"
+            desc="Implement server-side rendering (SSR), React Server Components (RSC), request middleware, and cache headers to optimize response latency."
+            icon={<Compass className="w-6 h-6 text-indigo-655" />}
+            colorClass="bg-indigo-50"
+            badge="ARCHITECTURE"
+          />
+          <FeatureCard
+            title="PostgreSQL, APIs & ORMs"
+            desc="Design relational schemas, set up Express servers with Zod validation, write middleware pipelines, and query using Prisma or Drizzle ORMs."
+            icon={<Database className="w-6 h-6 text-indigo-655" />}
+            colorClass="bg-indigo-50"
+            badge="BACKEND"
+          />
+        </div>
+      </section>
+
+      {/* 6. Interactive Web Mechanics Section */}
+      <section className="py-12 border-t border-slate-100">
+        <SectionHeader
+          badge="Practical Practice"
+          title="Interactive Web Mechanics"
+          subtitle="Move past reading static books. Apply your skills with daily coding challenges, project labs, code reviews, and structured mock pitches."
+        />
+        <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
+          <div className="group border border-slate-100 bg-white rounded-3xl p-6 shadow-[0_8px_30px_rgba(0,0,0,0.02)] hover:shadow-[0_15px_40px_rgba(0,0,0,0.04)] hover:-translate-y-[3px] transition-all duration-300 ease-out flex flex-col justify-between">
+            <div>
+              <span className="text-[9px] font-semibold uppercase tracking-wider text-indigo-600">DAILY PRACTICE</span>
+              <h3 className="text-lg font-bold text-slate-900 mt-2 mb-3">Daily Coding Tasks</h3>
+              <p className="text-slate-500 text-xs leading-relaxed font-normal">Solve isolated code challenges, write reusable components, structure API routes, and validate schemas.</p>
+            </div>
+            <Link href="/tasks" className="mt-4 inline-flex items-center gap-1 text-xs font-semibold text-indigo-600 hover:text-indigo-755 cursor-pointer">
+              <span>Solve Tasks</span>
+              <span className="transition-transform duration-200 group-hover:translate-x-0.5">&rarr;</span>
+            </Link>
+          </div>
+
+          <div className="group border border-slate-100 bg-white rounded-3xl p-6 shadow-[0_8px_30px_rgba(0,0,0,0.02)] hover:shadow-[0_15px_40px_rgba(0,0,0,0.04)] hover:-translate-y-[3px] transition-all duration-300 ease-out flex flex-col justify-between">
+            <div>
+              <span className="text-[9px] font-semibold uppercase tracking-wider text-emerald-600">SYSTEMS LAB</span>
+              <h3 className="text-lg font-bold text-slate-900 mt-2 mb-3">Project Labs</h3>
+              <p className="text-slate-500 text-xs leading-relaxed font-normal">Build realistic systems like Admin Dashboards and Resume Builders from comprehensive business blueprints.</p>
+            </div>
+            <Link href="/projects" className="mt-4 inline-flex items-center gap-1 text-xs font-semibold text-indigo-600 hover:text-indigo-755 cursor-pointer">
+              <span>Explore Projects</span>
+              <span className="transition-transform duration-200 group-hover:translate-x-0.5">&rarr;</span>
+            </Link>
+          </div>
+
+          <div className="group border border-slate-100 bg-white rounded-3xl p-6 shadow-[0_8px_30px_rgba(0,0,0,0.02)] hover:shadow-[0_15px_40px_rgba(0,0,0,0.04)] hover:-translate-y-[3px] transition-all duration-300 ease-out flex flex-col justify-between">
+            <div>
+              <span className="text-[9px] font-semibold uppercase tracking-wider text-pink-600">QUALITY AUDIT</span>
+              <h3 className="text-lg font-bold text-slate-900 mt-2 mb-3">Code Reviews</h3>
+              <p className="text-slate-500 text-xs leading-relaxed font-normal">Audit code using check sheets modeled after senior logic to build code quality standards.</p>
+            </div>
+            <Link href="/code-review" className="mt-4 inline-flex items-center gap-1 text-xs font-semibold text-indigo-600 hover:text-indigo-755 cursor-pointer">
+              <span>Audit Guidelines</span>
+              <span className="transition-transform duration-200 group-hover:translate-x-0.5">&rarr;</span>
+            </Link>
+          </div>
+
+          <div className="group border border-slate-100 bg-white rounded-3xl p-6 shadow-[0_8px_30px_rgba(0,0,0,0.02)] hover:shadow-[0_15px_40px_rgba(0,0,0,0.04)] hover:-translate-y-[3px] transition-all duration-300 ease-out flex flex-col justify-between">
+            <div>
+              <span className="text-[9px] font-semibold uppercase tracking-wider text-violet-600">INTERVIEW PITCH</span>
+              <h3 className="text-lg font-bold text-slate-900 mt-2 mb-3">Interview Explanations</h3>
+              <p className="text-slate-500 text-xs leading-relaxed font-normal">Practice pitching your architecture decisions using structured templates optimized for tech interviews.</p>
+            </div>
+            <Link href="/roadmaps" className="mt-4 inline-flex items-center gap-1 text-xs font-semibold text-indigo-600 hover:text-indigo-755 cursor-pointer">
+              <span>View Templates</span>
+              <span className="transition-transform duration-200 group-hover:translate-x-0.5">&rarr;</span>
+            </Link>
+          </div>
+        </div>
+      </section>
+
+      {/* 7. Why CodeNivra is Different Section */}
+      <section className="py-12 border-t border-slate-105">
+        <SectionHeader
+          badge="Our Methodology"
+          title="Why CodeNivra is Different"
+          subtitle="CodeNivra bridges the gap between basic tutorials and complex enterprise codebases through a structured learning flow."
+        />
+        <div className="grid md:grid-cols-5 gap-6 max-w-6xl mx-auto mt-6">
+          {[
+            { step: "1. Learn", desc: "Study dynamic lessons packed with senior callouts, performance warnings, and syntax comparisons.", colorClass: "border-blue-100 bg-blue-50/10 text-blue-700" },
+            { step: "2. Practice", desc: "Commit to daily code challenges to refine TypeScript structures, components, and async states.", colorClass: "border-amber-100 bg-amber-50/10 text-amber-700" },
+            { step: "3. Build", desc: "Construct full-stack applications with Relational Database schemas, APIs, and authorization layers.", colorClass: "border-emerald-100 bg-emerald-50/10 text-emerald-700" },
+            { step: "4. Review", desc: "Audit your files using structural checklists modeled after senior engineer design reviews.", colorClass: "border-pink-100 bg-pink-50/10 text-pink-700" },
+            { step: "5. Explain", desc: "Structure your architectural choices and present your work clearly during technical interviews.", colorClass: "border-purple-100 bg-purple-50/10 text-purple-700" }
+          ].map((item, idx) => (
+            <div key={idx} className="border border-slate-100 bg-slate-50/30 rounded-3xl p-6 flex flex-col justify-between hover:shadow-sm hover:-translate-y-[3px] transition-all duration-300">
+              <div className="space-y-3">
+                <span className={`inline-block px-2.5 py-0.5 rounded-full text-[10px] font-bold border uppercase tracking-wider ${item.colorClass}`}>
+                  {item.step}
+                </span>
+                <p className="text-xs text-slate-500 leading-relaxed font-normal">
+                  {item.desc}
+                </p>
+              </div>
+            </div>
+          ))}
         </div>
       </section>
 
