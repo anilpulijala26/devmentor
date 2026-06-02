@@ -22,19 +22,20 @@ export function HeroSection() {
             </div>
 
             <h1 className="text-3xl sm:text-4xl lg:text-5xl font-extrabold text-slate-900 tracking-tight leading-[1.2]">
-              Bridge the Gap Between <br />
+              Master Frontend, Backend & <br />
               <span className="text-transparent bg-clip-text bg-gradient-to-r from-indigo-900 to-indigo-600">
-                Code & Real-World Systems
-              </span>
+                Full-Stack Development
+              </span> <br />
+              Through Real Projects
             </h1>
 
             <p className="text-sm sm:text-base lg:text-lg text-slate-500 leading-relaxed max-w-2xl font-normal">
-              CodeNivra helps developers learn real-world frontend and full-stack development through structured lessons, practical projects, coding tasks, and interview-ready explanations.
+              CodeNivra helps developers learn from fundamentals to production deployment with structured roadmaps, daily coding tasks, real-world project labs, code review checklists, and interview-ready explanations.
             </p>
 
-            <div className="flex flex-wrap gap-4 pt-2">
+            <div className="flex flex-wrap items-center gap-4 pt-2">
               <Link
-                href="/roadmaps"
+                href="/learn"
                 className="group inline-flex items-center justify-center gap-2 bg-indigo-600 hover:bg-indigo-700 active:scale-98 text-white px-6 h-12 rounded-xl font-medium text-sm transition-all duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 focus-visible:ring-offset-2 min-h-[44px] cursor-pointer shadow-xs"
               >
                 <span>Start Learning</span>
@@ -42,10 +43,17 @@ export function HeroSection() {
               </Link>
 
               <Link
-                href="/learn"
+                href="/roadmaps"
                 className="inline-flex items-center justify-center gap-2 bg-slate-50 hover:bg-slate-100 active:scale-98 border border-slate-200 text-slate-700 px-6 h-12 rounded-xl font-medium text-sm transition duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 focus-visible:ring-offset-2 min-h-[44px] cursor-pointer"
               >
-                Explore Tracks
+                Explore Roadmaps
+              </Link>
+
+              <Link
+                href="/projects"
+                className="inline-flex items-center justify-center gap-2 text-slate-500 hover:text-indigo-600 text-xs font-bold transition duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 rounded px-2.5 py-2 min-h-[44px] md:min-h-0"
+              >
+                View Project Labs
               </Link>
             </div>
           </div>
@@ -69,22 +77,22 @@ export function HeroSection() {
                   {
                     step: 1,
                     title: "Learn Fundamentals",
-                    desc: "HTML, CSS, JavaScript, Git, accessibility"
+                    desc: "HTML, CSS, JavaScript, Git"
                   },
                   {
                     step: 2,
-                    title: "Build UI Skills",
-                    desc: "React, TypeScript, components, state management"
+                    title: "Build Frontend Skills",
+                    desc: "React, TypeScript, Next.js"
                   },
                   {
                     step: 3,
-                    title: "Create Real Projects",
-                    desc: "Dashboards, e-commerce, resume builder, APIs"
+                    title: "Develop Backend APIs",
+                    desc: "Node.js, Express.js, PostgreSQL"
                   },
                   {
                     step: 4,
-                    title: "Become Job-Ready",
-                    desc: "Interview preparation, coding tasks, project explanation"
+                    title: "Deploy & Get Job-Ready",
+                    desc: "CI/CD, AWS/Azure, interview prep"
                   }
                 ].map((item) => (
                   <div key={item.step} className="flex gap-4 items-start relative z-10 group">
@@ -102,17 +110,17 @@ export function HeroSection() {
               {/* Bottom secondary summary row */}
               <div className="mt-6 pt-4 border-t border-slate-100 flex justify-around text-center text-slate-400 text-[9px] font-bold tracking-wider">
                 <div>
-                  <span className="block text-sm font-bold text-slate-800">3</span>
-                  <span>PATHS</span>
+                  <span className="block text-sm font-bold text-slate-800">5</span>
+                  <span>TRACKS</span>
                 </div>
                 <div className="border-l border-slate-100 h-6 self-center" />
                 <div>
-                  <span className="block text-sm font-bold text-slate-800">43</span>
-                  <span>GUIDES</span>
+                  <span className="block text-sm font-bold text-slate-800">25+</span>
+                  <span>MODULES</span>
                 </div>
                 <div className="border-l border-slate-100 h-6 self-center" />
                 <div>
-                  <span className="block text-sm font-bold text-slate-800">8</span>
+                  <span className="block text-sm font-bold text-slate-800">15+</span>
                   <span>PROJECTS</span>
                 </div>
               </div>

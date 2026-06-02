@@ -11,10 +11,10 @@ export function CTASection() {
 
       <div className="relative max-w-5xl mx-auto px-6 text-center z-10 space-y-6">
         <h2 className="text-3xl sm:text-4xl font-extrabold tracking-tight">
-          Ready to Build at Production Level?
+          Ready to Learn, Build, Review, and Deploy?
         </h2>
         <p className="text-sm sm:text-base text-slate-400 max-w-xl mx-auto leading-relaxed">
-          Select a role-based roadmap path, build real projects, practice daily tasks, and prepare for system architecture interviews.
+          Start with a roadmap, practice daily tasks, build real projects, and prepare to explain your work confidently in interviews.
         </p>
 
         <div className="flex flex-wrap justify-center gap-4 pt-2">
@@ -29,7 +29,7 @@ export function CTASection() {
             href="/projects"
             className="inline-flex items-center gap-2 border border-slate-700 bg-slate-800 hover:bg-slate-700 text-white px-6 py-3 rounded-xl font-bold transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 focus-visible:ring-offset-2"
           >
-            View Projects
+            View Project Labs
           </Link>
         </div>
       </div>

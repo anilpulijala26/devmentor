@@ -6,7 +6,11 @@ import {
   Play,
   Layers,
   Compass,
-  Database
+  Database,
+  Server,
+  Cloud,
+  Activity,
+  Award
 } from "lucide-react";
 import { getAllTracks } from "@/lib/content";
 import { DashboardHighlights } from "@/components/DashboardHighlights";
@@ -24,49 +28,286 @@ export default function Home() {
       {/* 1. Hero Section */}
       <HeroSection />
 
-      {/* 2. Student Developer Console (SaaS-style Padded Section - No Negative Overlaps) */}
+      {/* 2. What You Can Do with CodeNivra */}
+      <section className="py-16 bg-white border-b border-slate-100">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="text-center max-w-3xl mx-auto mb-12 space-y-3">
+            <span className="text-[10px] font-extrabold uppercase tracking-widest text-indigo-600 bg-indigo-50 px-3 py-1 rounded-full">
+              Core Capabilities
+            </span>
+            <h2 className="text-2xl sm:text-3xl font-extrabold text-slate-900 tracking-tight">
+              What you can do with CodeNivra
+            </h2>
+            <p className="text-sm text-slate-500 max-w-xl mx-auto font-normal leading-relaxed">
+              Explore dynamic learning avenues designed to take you from writing your first line of HTML to deploying production code.
+            </p>
+          </div>
+
+          <div className="grid sm:grid-cols-2 lg:grid-cols-5 gap-6">
+            {[
+              {
+                title: "Follow Roadmaps",
+                text: "Choose a role-based path from beginner to full-stack.",
+                icon: Compass,
+                href: "/roadmaps",
+                badge: "GUIDES"
+              },
+              {
+                title: "Learn Frontend & Backend",
+                text: "Master React, Next.js, Node.js, Express, APIs, and databases.",
+                icon: BookOpen,
+                href: "/learn",
+                badge: "TRACKS"
+              },
+              {
+                title: "Build Real Projects",
+                text: "Create portfolio, auth systems, dashboards, CMS apps, and upload tools.",
+                icon: Layers,
+                href: "/projects",
+                badge: "LABS"
+              },
+              {
+                title: "Practice Daily Tasks",
+                text: "Solve focused coding tasks to improve daily implementation confidence.",
+                icon: Code2,
+                href: "/tasks",
+                badge: "PRACTICE"
+              },
+              {
+                title: "Review Like a Senior",
+                text: "Use production-ready checklists for accessibility, performance, security, and clean code.",
+                icon: Database,
+                href: "/code-review",
+                badge: "REVIEWS"
+              }
+            ].map((card, idx) => {
+              const Icon = card.icon;
+              return (
+                <Link
+                  key={idx}
+                  href={card.href}
+                  className="group p-6 bg-white border border-slate-100 rounded-3xl shadow-[0_8px_30px_rgba(0,0,0,0.01)] hover:shadow-[0_15px_40px_rgba(0,0,0,0.025)] hover:-translate-y-1 hover:border-slate-200/60 transition-all duration-300 flex flex-col justify-between focus-within:ring-2 focus-within:ring-indigo-500"
+                >
+                  <div className="space-y-4">
+                    <div className="flex items-center justify-between">
+                      <div className="w-10 h-10 rounded-2xl bg-indigo-50/50 flex items-center justify-center border border-indigo-100/50 group-hover:bg-indigo-600 transition duration-300">
+                        <Icon className="w-5 h-5 text-indigo-600 group-hover:text-white transition-colors duration-300" aria-hidden="true" />
+                      </div>
+                      <span className="text-[9px] font-extrabold uppercase tracking-wider text-slate-400 bg-slate-50 px-2 py-0.5 rounded border border-slate-100">
+                        {card.badge}
+                      </span>
+                    </div>
+                    <div className="space-y-1.5">
+                      <h3 className="font-bold text-slate-900 text-sm group-hover:text-indigo-600 transition duration-200">
+                        {card.title}
+                      </h3>
+                      <p className="text-slate-500 text-xs leading-relaxed font-normal">
+                        {card.text}
+                      </p>
+                    </div>
+                  </div>
+                  <div className="mt-5 text-[10px] font-extrabold text-indigo-600 inline-flex items-center gap-1 group-hover:translate-x-0.5 transition-transform duration-200 pt-2 border-t border-slate-50">
+                    <span>Explore</span>
+                    <ArrowRight className="w-3 h-3" />
+                  </div>
+                </Link>
+              );
+            })}
+          </div>
+        </div>
+      </section>
+
+      {/* 3. From Scratch to Deployment Stepper */}
+      <section className="py-16 bg-slate-50/40 border-b border-slate-100">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="text-center max-w-3xl mx-auto mb-12 space-y-3">
+            <span className="text-[10px] font-extrabold uppercase tracking-widest text-indigo-600 bg-indigo-50 px-3 py-1 rounded-full">
+              Full-Stack Flow
+            </span>
+            <h2 className="text-2xl sm:text-3xl font-extrabold text-slate-900 tracking-tight">
+              From Scratch to Deployment
+            </h2>
+            <p className="text-sm text-slate-500 max-w-xl mx-auto font-normal leading-relaxed">
+              Accelerate your engineering competencies through a complete production lifecycle.
+            </p>
+          </div>
+
+          {/* Desktop timeline row (hidden on mobile) */}
+          <div className="hidden lg:block relative py-8">
+            {/* Horizontal Line connector */}
+            <div className="absolute top-[52px] left-[5%] right-[5%] h-0.5 bg-slate-200/60" />
+
+            <div className="grid grid-cols-8 gap-4 relative z-10">
+              {[
+                { label: "Foundations", icon: BookOpen },
+                { label: "Frontend", icon: Layers },
+                { label: "Backend", icon: Server },
+                { label: "Database", icon: Database },
+                { label: "Full-Stack", icon: Compass },
+                { label: "CI/CD", icon: Activity },
+                { label: "AWS/Azure", icon: Cloud },
+                { label: "Interview Prep", icon: Award }
+              ].map((step, idx) => {
+                const Icon = step.icon;
+                return (
+                  <div key={idx} className="text-center space-y-4 group">
+                    <div className="mx-auto w-12 h-12 rounded-full bg-white border-2 border-slate-200 flex items-center justify-center group-hover:border-indigo-600 group-hover:bg-indigo-50 transition duration-300 shadow-2xs">
+                      <Icon className="w-5 h-5 text-slate-400 group-hover:text-indigo-600 transition duration-300" aria-hidden="true" />
+                    </div>
+                    <div className="space-y-1">
+                      <span className="block text-[10px] font-extrabold text-slate-400 tracking-wider">STEP 0{idx + 1}</span>
+                      <p className="text-xs font-bold text-slate-800 group-hover:text-indigo-600 transition duration-200">{step.label}</p>
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+          </div>
+
+          {/* Mobile vertical stepper (hidden on desktop) */}
+          <div className="lg:hidden relative pl-6 space-y-6 max-w-md mx-auto">
+            {/* Vertical connector line */}
+            <div className="absolute left-[15px] top-2 bottom-6 w-0.5 bg-slate-200" />
+
+            {[
+              { label: "Foundations", icon: BookOpen },
+              { label: "Frontend", icon: Layers },
+              { label: "Backend", icon: Server },
+              { label: "Database", icon: Database },
+              { label: "Full-Stack", icon: Compass },
+              { label: "CI/CD", icon: Activity },
+              { label: "AWS/Azure", icon: Cloud },
+              { label: "Interview Prep", icon: Award }
+            ].map((step, idx) => {
+              const Icon = step.icon;
+              return (
+                <div key={idx} className="flex gap-4 items-center relative z-10 group">
+                  <div className="w-8 h-8 rounded-full bg-white border border-slate-200 flex items-center justify-center group-hover:border-indigo-600 group-hover:bg-indigo-55 transition duration-300 shadow-3xs shrink-0">
+                    <Icon className="w-4 h-4 text-slate-400 group-hover:text-indigo-600 transition duration-300" aria-hidden="true" />
+                  </div>
+                  <div className="space-y-0.5">
+                    <span className="block text-[8px] font-extrabold text-slate-400 uppercase tracking-widest">Step 0{idx + 1}</span>
+                    <p className="text-xs font-bold text-slate-800">{step.label}</p>
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+        </div>
+      </section>
+
+      {/* 4. Backend & Cloud Visibility (Skill Chips) */}
+      <section className="py-16 bg-white border-b border-slate-100">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="text-center max-w-3xl mx-auto mb-12 space-y-3">
+            <span className="text-[10px] font-extrabold uppercase tracking-widest text-indigo-600 bg-indigo-50 px-3 py-1 rounded-full">
+              Technology Ecosystem
+            </span>
+            <h2 className="text-2xl sm:text-3xl font-extrabold text-slate-900 tracking-tight">
+              Enterprise Tech Stack Coverage
+            </h2>
+            <p className="text-sm text-slate-500 max-w-xl mx-auto font-normal leading-relaxed">
+              We cover the full spectrum of frontend client architectures, server side endpoints, database structures, and DevOps pipelines.
+            </p>
+          </div>
+
+          <div className="grid md:grid-cols-4 gap-6">
+            {[
+              {
+                title: "Frontend Stack",
+                desc: "Client layouts & component states",
+                color: "indigo",
+                skills: ["HTML", "CSS", "JavaScript", "React", "TypeScript", "Next.js"]
+              },
+              {
+                title: "Backend Core",
+                desc: "Routing, middleware & authentication",
+                color: "emerald",
+                skills: ["Node.js", "Express.js", "REST APIs", "Auth", "PostgreSQL", "ORMs"]
+              },
+              {
+                title: "Full-Stack Sync",
+                desc: "Unified client-server operations",
+                color: "pink",
+                skills: ["Frontend", "Backend", "Database", "Deployment", "Monorepos", "State Sync"]
+              },
+              {
+                title: "DevOps & Cloud",
+                desc: "Containers & CI/CD deployment",
+                color: "violet",
+                skills: ["GitHub Actions", "Docker", "Vercel", "Render", "AWS", "Azure"]
+              }
+            ].map((stack, idx) => {
+              const badgeStyles = {
+                indigo: "bg-indigo-50 text-indigo-700 border-indigo-100 hover:bg-indigo-100/50",
+                emerald: "bg-emerald-50 text-emerald-700 border-emerald-100 hover:bg-emerald-100/50",
+                pink: "bg-pink-50 text-pink-700 border-pink-100 hover:bg-pink-100/50",
+                violet: "bg-violet-50 text-violet-700 border-violet-100 hover:bg-violet-100/50"
+              }[stack.color];
+
+              return (
+                <div key={idx} className="border border-slate-100 bg-slate-50/20 rounded-3xl p-6 space-y-4 hover:shadow-2xs transition-all duration-300">
+                  <div className="space-y-1">
+                    <h3 className="font-bold text-sm text-slate-900">{stack.title}</h3>
+                    <p className="text-[11px] text-slate-400 font-normal leading-normal">{stack.desc}</p>
+                  </div>
+                  <div className="flex flex-wrap gap-1.5 pt-2">
+                    {stack.skills.map((skill, skillIdx) => (
+                      <span key={skillIdx} className={`text-[10px] font-semibold border px-2.5 py-1 rounded-xl tracking-wide transition duration-150 ${badgeStyles}`}>
+                        {skill}
+                      </span>
+                    ))}
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+        </div>
+      </section>
+
+      {/* 5. Start Your Learning Journey Section */}
       <section className="py-16 bg-slate-50/40 border-y border-slate-100 relative z-20">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="border-b border-slate-100 pb-5 mb-8">
-            <h2 className="text-xl font-bold text-slate-900 tracking-tight">Student Console</h2>
-            <p className="text-sm text-slate-500 mt-1 font-normal">Access your learning paths, daily task challenges, and active project labs in one unified dashboard.</p>
+            <h2 className="text-xl font-bold text-slate-900 tracking-tight">Start Your Learning Journey</h2>
+            <p className="text-sm text-slate-500 mt-1 font-normal">Pick a track, open a roadmap, build a project, practice a task, or run a senior code review checklist.</p>
           </div>
 
           <div className="grid lg:grid-cols-12 gap-8 items-start">
             {/* Quick starts grids */}
             <div className="lg:col-span-8 grid gap-5 sm:grid-cols-2">
-              {/* Continue Learning */}
+              {/* Learning Hub / Continue Learning */}
               <div className="group border border-slate-100 bg-white p-5 rounded-3xl flex flex-col justify-between shadow-[0_8px_30px_rgba(0,0,0,0.015)] hover:shadow-[0_15px_40px_rgba(0,0,0,0.03)] hover:-translate-y-[3px] hover:border-slate-200/60 transition-all duration-300 min-h-[190px] focus-within:ring-2 focus-within:ring-indigo-500">
                 <div className="space-y-2.5">
                   <span className="inline-block text-[9px] font-semibold text-indigo-700 bg-indigo-50 px-2.5 py-0.5 rounded-full border border-indigo-100 uppercase tracking-wider">
-                    CONTINUE LEARNING
+                    LEARNING HUB
                   </span>
-                  <h3 className="font-bold text-slate-950 text-sm">Web Foundations: Introduction to HTML</h3>
-                  <p className="text-xs text-slate-400 leading-relaxed font-normal">Pick up where you left off. Learn Core HTML5 structures, semantics, and layouts.</p>
+                  <h3 className="font-bold text-slate-955 text-sm">Guided Technology Tracks</h3>
+                  <p className="text-xs text-slate-400 leading-relaxed font-normal">Master frontend framework lifecycles, backend server pipelines, databases, and DevOps deployments.</p>
                 </div>
                 <Link
-                  href="/learn/foundations/html-intro"
+                  href="/learn"
                   className="mt-4 inline-flex items-center justify-center gap-1.5 bg-indigo-600 hover:bg-indigo-700 active:scale-98 text-white text-xs font-semibold px-4 py-2.5 rounded-xl shadow-xs transition duration-200 w-fit focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 focus-visible:ring-offset-2 cursor-pointer"
                 >
-                  <Play className="w-3 h-3 fill-current" /> Resume Guide
+                  <Play className="w-3 h-3 fill-current" aria-hidden="true" /> Open Learning Hub
                 </Link>
               </div>
 
-              {/* Explore Roadmaps */}
+              {/* View Roadmaps */}
               <div className="group border border-slate-100 bg-white p-5 rounded-3xl flex flex-col justify-between shadow-[0_8px_30px_rgba(0,0,0,0.015)] hover:shadow-[0_15px_40px_rgba(0,0,0,0.03)] hover:-translate-y-[3px] hover:border-slate-200/60 transition-all duration-300 min-h-[190px] focus-within:ring-2 focus-within:ring-indigo-500">
                 <div className="space-y-2.5">
                   <span className="inline-block text-[9px] font-semibold text-violet-700 bg-violet-50 px-2.5 py-0.5 rounded-full border border-violet-100 uppercase tracking-wider">
                     ROLE ROADMAPS
                   </span>
-                  <h3 className="font-bold text-slate-955 text-sm">Junior Frontend Developer</h3>
-                  <p className="text-xs text-slate-400 leading-relaxed font-normal">Interactive roadmap tracing React lifecycle rules, TypeScript generics, and state contexts.</p>
+                  <h3 className="font-bold text-slate-955 text-sm">Career Progression Timelines</h3>
+                  <p className="text-xs text-slate-400 leading-relaxed font-normal">Explore interactive timelines tracing frontend, backend, full-stack, DevOps, and interview prep guides.</p>
                 </div>
                 <Link
-                  href="/roadmaps/junior-frontend"
+                  href="/roadmaps"
                   className="mt-4 inline-flex items-center gap-1 text-xs font-semibold text-indigo-600 hover:text-indigo-700 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 rounded px-1 cursor-pointer"
                 >
-                  <span>View Pathway</span>
-                  <span className="transition-transform duration-200 group-hover:translate-x-0.5">&rarr;</span>
+                  <span>View Roadmaps</span>
+                  <span className="transition-transform duration-200 group-hover:translate-x-0.5" aria-hidden="true">&rarr;</span>
                 </Link>
               </div>
 
@@ -76,15 +317,15 @@ export default function Home() {
                   <span className="inline-block text-[9px] font-semibold text-emerald-700 bg-emerald-50 px-2.5 py-0.5 rounded-full border border-emerald-100 uppercase tracking-wider">
                     PROJECT LABS
                   </span>
-                  <h3 className="font-bold text-slate-955 text-sm">Admin Dashboard Interface</h3>
-                  <p className="text-xs text-slate-400 leading-relaxed font-normal">Develop telemetry stats pages, sortable tables, and user edit side drawers.</p>
+                  <h3 className="font-bold text-slate-955 text-sm">Enterprise System Blueprints</h3>
+                  <p className="text-xs text-slate-400 leading-relaxed font-normal">Build portfolio websites, authentication layers, dashboards, CMS apps, and Dockerized configurations.</p>
                 </div>
                 <Link
-                  href="/projects/admin-dashboard"
+                  href="/projects"
                   className="mt-4 inline-flex items-center gap-1 text-xs font-semibold text-indigo-600 hover:text-indigo-700 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 rounded px-1 cursor-pointer"
                 >
-                  <span>Start Project Lab</span>
-                  <span className="transition-transform duration-200 group-hover:translate-x-0.5">&rarr;</span>
+                  <span>Explore Projects</span>
+                  <span className="transition-transform duration-200 group-hover:translate-x-0.5" aria-hidden="true">&rarr;</span>
                 </Link>
               </div>
 
@@ -94,15 +335,15 @@ export default function Home() {
                   <span className="inline-block text-[9px] font-semibold text-amber-700 bg-amber-50 px-2.5 py-0.5 rounded-full border border-amber-100 uppercase tracking-wider">
                     DAILY CODE
                   </span>
-                  <h3 className="font-bold text-slate-955 text-sm">React Controlled Forms</h3>
-                  <p className="text-xs text-slate-400 leading-relaxed font-normal">Practice component state. Build a login form with controlled components and dynamic error blur bindings.</p>
+                  <h3 className="font-bold text-slate-955 text-sm">Interactive Coding Challenges</h3>
+                  <p className="text-xs text-slate-400 leading-relaxed font-normal">Refine TypeScript types, component hooks, API routing controllers, and validation schemas daily.</p>
                 </div>
                 <Link
-                  href="/tasks/react-controlled-form"
+                  href="/tasks"
                   className="mt-4 inline-flex items-center gap-1 text-xs font-semibold text-indigo-600 hover:text-indigo-700 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 rounded px-1 cursor-pointer"
                 >
                   <span>Try Daily Task</span>
-                  <span className="transition-transform duration-200 group-hover:translate-x-0.5">&rarr;</span>
+                  <span className="transition-transform duration-200 group-hover:translate-x-0.5" aria-hidden="true">&rarr;</span>
                 </Link>
               </div>
             </div>
@@ -113,16 +354,16 @@ export default function Home() {
               <div className="group border border-slate-100 p-5 rounded-3xl bg-white space-y-3 shadow-[0_8px_30px_rgba(0,0,0,0.015)] hover:shadow-[0_15px_40px_rgba(0,0,0,0.03)] hover:-translate-y-[3px] transition-all duration-300">
                 <div className="flex items-center justify-between">
                   <span className="text-[10px] font-semibold text-pink-600 uppercase tracking-wider">CODE REVIEW TOOL</span>
-                  <span className="text-2xs font-extrabold bg-pink-50 text-pink-700 px-2 py-0.5 rounded border border-pink-100">11 GUIDELINES</span>
+                  <span className="text-2xs font-extrabold bg-pink-50 text-pink-700 px-2 py-0.5 rounded border border-pink-100">11 CATEGORIES</span>
                 </div>
-                <h4 className="font-bold text-sm text-slate-950">Senior Audit Checklist</h4>
-                <p className="text-xs text-slate-400 leading-relaxed font-normal">Run your repository files through the 11-step audit guidelines before submitting PRs.</p>
+                <h4 className="font-bold text-sm text-slate-950">Senior Audit Console</h4>
+                <p className="text-xs text-slate-400 leading-relaxed font-normal">Audit code using check sheets modeled after senior logic to build code quality standards.</p>
                 <Link
                   href="/code-review"
                   className="inline-flex items-center gap-1.5 text-xs font-semibold text-indigo-600 hover:text-indigo-700 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 rounded px-1 cursor-pointer"
                 >
-                  <span>Open Audit Console</span>
-                  <ArrowRight className="w-3.5 h-3.5 transition-transform duration-200 group-hover:translate-x-0.5" />
+                  <span>Open Code Review</span>
+                  <ArrowRight className="w-3.5 h-3.5 transition-transform duration-200 group-hover:translate-x-0.5" aria-hidden="true" />
                 </Link>
               </div>
 
