@@ -11,7 +11,12 @@ export interface DeveloperTask {
   solutionExplanation: string;
   commonMistakes: string[];
   interviewExplanation: string;
+  scenario?: string;
+  starterCode?: string;
+  edgeCases?: string[];
+  nextProject?: { title: string; slug: string };
 }
+
 
 export const developerTasks: DeveloperTask[] = [
   {
@@ -1403,8 +1408,75 @@ jobs:
   }
 ];
 
+export function enrichDeveloperTask(task: DeveloperTask): DeveloperTask {
+  const scenarioMap: Record<string, string> = {
+    "html-form-validation": "We are building a user registration page for a SaaS app. To prevent server spam, we must enforce robust client-side validations natively using built-in HTML5 standards without adding custom scripts.",
+    "responsive-pricing-cards": "A marketing team wants to display subscription plans. The plan cards must fit comfortably on all mobile viewports while adjusting to a 3-column layout on desktops.",
+    "js-array-transformation": "A data telemetry dashboard needs to display active developer skills and average ages. The raw API payload is noisy and has duplicate fields.",
+    "debounced-search": "A search input queries a database API. On rapid typing, the database gets flooded with multiple parallel queries, leading to server bottlenecks.",
+    "api-fetch-retry": "A critical payment service relies on an external payment provider gateway API. If the provider experiences temporary network blips, the app should retry dynamically."
+  };
+
+  const starterCodeMap: Record<string, string> = {
+    "html-form-validation": `<form id="registrationForm">\n  <!-- Add input validation parameters here -->\n</form>`,
+    "responsive-pricing-cards": `<div class="pricing-grid">\n  <!-- Style columns and highlight active plans -->\n</div>`,
+    "js-array-transformation": `function transformDevelopers(devs) {\n  // Filter out inactive devs, average ages, and sort skills\n  return {\n    activeNames: [],\n    averageAge: 0,\n    uniqueSkills: []\n  };\n}`,
+    "debounced-search": `export function useDebounce<T>(value: T, delay = 300): T {\n  // Implement timer cleanup\n}`,
+    "api-fetch-retry": `export async function fetchWithRetry(url: string, options = {}, retries = 3, delay = 1000) {\n  // Implement exponential backoffs\n}`
+  };
+
+  const edgeCasesMap: Record<string, string[]> = {
+    "html-form-validation": [
+      "User submits input containing spaces only",
+      "Screen readers fail to announce validations because label ID mapping is incorrect"
+    ],
+    "responsive-pricing-cards": [
+      "Extremely narrow screens (down to 320px) overflow",
+      "Dynamic browser scaling breaks container widths"
+    ],
+    "js-array-transformation": [
+      "Empty developers array causing division by zero (resulting in NaN)",
+      "Duplicate skill strings with different letter casing"
+    ],
+    "debounced-search": [
+      "User clicks reset button while timer is active, triggering unexpected search fires",
+      "Quick tab-outs during delays"
+    ],
+    "api-fetch-retry": [
+      "Retrying on 4xx user errors, which triggers account lockouts",
+      "Network connection drops completely before the first retry"
+    ]
+  };
+
+  const nextProjectMap: Record<string, { title: string; slug: string }> = {
+    "html-form-validation": { title: "Personal Portfolio Website", slug: "personal-portfolio" },
+    "responsive-pricing-cards": { title: "Portfolio Website", slug: "personal-portfolio" },
+    "js-array-transformation": { title: "Task Management App", slug: "task-manager" },
+    "debounced-search": { title: "SaaS Dashboard App", slug: "saas-dashboard" },
+    "api-fetch-retry": { title: "E-Commerce Backend API", slug: "ecommerce-backend-api" }
+  };
+
+  const scenario = scenarioMap[task.slug] || `We are designing the ${task.title} logic. We need to implement clean validation and handle errors cleanly prior to deployment.`;
+  const starterCode = starterCodeMap[task.slug] || `// Starter boilerplate for ${task.title}\n// TODO: Implement solution details`;
+  const edgeCases = edgeCasesMap[task.slug] || [
+    "Payload size exceeds server thresholds",
+    "Connection drops during async mutations"
+  ];
+  const nextProject = nextProjectMap[task.slug] || { title: "Task Management App", slug: "task-manager" };
+
+  return {
+    ...task,
+    scenario,
+    starterCode,
+    edgeCases,
+    nextProject
+  };
+}
+
 export function getDeveloperTaskBySlug(slug: string): DeveloperTask | undefined {
-  return developerTasks.find((t) => t.slug === slug);
+  const base = developerTasks.find((t) => t.slug === slug);
+  if (!base) return undefined;
+  return enrichDeveloperTask(base);
 }
 export function getAllDeveloperTasks(): DeveloperTask[] {
   return developerTasks;
@@ -1413,5 +1485,8 @@ export function getDeveloperTasksByLevel(level: "Beginner" | "Intermediate" | "A
   return developerTasks.filter((t) => t.level === level);
 }
 export function getDeveloperTasksBySlug(slug: string): DeveloperTask | undefined {
-  return developerTasks.find((t) => t.slug === slug);
+  const base = developerTasks.find((t) => t.slug === slug);
+  if (!base) return undefined;
+  return enrichDeveloperTask(base);
 }
+

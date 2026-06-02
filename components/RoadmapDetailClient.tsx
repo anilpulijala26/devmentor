@@ -5,7 +5,7 @@ import Link from "next/link";
 import { ArrowRight, Check, BookOpen, Compass, Terminal, ClipboardCheck, Sparkles } from "lucide-react";
 import { Roadmap } from "@/lib/roadmaps";
 import { DeveloperTask } from "@/lib/tasks";
-import { GuidePanel } from "@/components/GuidePanel";
+
 
 interface RoadmapDetailClientProps {
   roadmap: Roadmap;
@@ -83,16 +83,7 @@ export function RoadmapDetailClient({
         </section>
       )}
 
-      {/* Guide Panel */}
-      <GuidePanel
-        title="Roadmap Path Navigator"
-        what="Detailed timeline and specific technical checkpoints to complete your pathway."
-        who="Developers progressing through the structured roadmap."
-        first="Study the recommended concept modules first."
-        next="Solve matching daily coding tasks and implement the project labs."
-        outcome="Verified coding skills and deployed repository blueprints."
-        nextAction="Start first module and complete matching daily task."
-      />
+
 
       {/* 2. Weekly Learning Plan Section */}
       {plan && (

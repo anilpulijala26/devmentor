@@ -5,7 +5,7 @@ import { notFound } from "next/navigation";
 import { learningMap } from "@/lib/learning-map";
 import { getDeveloperTaskBySlug } from "@/lib/tasks";
 import { getProjectBySlug } from "@/lib/projects";
-import { GuidePanel } from "@/components/GuidePanel";
+
 
 interface Props {
   params: Promise<{ track: string }>;
@@ -252,65 +252,7 @@ export default async function TrackPage({ params }: Props) {
     }
   };
 
-  const trackGuides: Record<string, { what: string; who: string; first: string; next: string; outcome: string; nextAction: string }> = {
-    foundations: {
-      what: "Establish a bulletproof engineering foundation. Master the mechanics of the browser and scripting.",
-      who: "Beginner developers, engineering interns, and self-taught coders.",
-      first: "Start the HTML fundamentals module and practice creating semantic outlines.",
-      next: "Progress to CSS layouts and ES6 Javascript programming modules.",
-      outcome: "Deep knowledge of critical rendering pathways and dynamic browser control.",
-      nextAction: "Complete matching foundations tasks after modules."
-    },
-    "frontend-frameworks": {
-      what: "Master component reconciliation lifecycles, states, and client route structures.",
-      who: "Developers looking to build rich client-side Single Page Applications.",
-      first: "Start with React lifecycle states and hook composition guides.",
-      next: "Integrate TypeScript schemas and master Next.js App Router structures.",
-      outcome: "Fast, type-safe frontend systems that fetch data cleanly.",
-      nextAction: "Complete React components tasks after modules."
-    },
-    backend: {
-      what: "Architect secure backend server configurations, database operations, and testing runs.",
-      who: "Developers looking to construct server APIs and business endpoints.",
-      first: "Deconstruct Node runtime event loops and routing mechanics.",
-      next: "Configure PostgreSQL relationships using Prisma ORM selects.",
-      outcome: "REST endpoints with validation filters and unit checks.",
-      nextAction: "Configure database schemas and test Express servers."
-    },
-    fullstack: {
-      what: "Merge frontend interfaces with backend services, auth cookies, and permissions.",
-      who: "Engineers looking to build and deploy end-to-end product layers.",
-      first: "Review client data fetch protocols and loading skeletons layouts.",
-      next: "Secure session tokens inside secure cookie pipelines.",
-      outcome: "Fully synced client-server workspaces organized inside monorepos.",
-      nextAction: "Connect React inputs to Express DB endpoints."
-    },
-    deployment: {
-      what: "Mastering git flows, Docker containers, and cloud environments.",
-      who: "Developers looking to automate releases and launch servers.",
-      first: "Deploy your reviewed project code to staging/production.",
-      next: "Setup monitoring logs and prepare your interview explanation.",
-      outcome: "Live public applications and container deployment skills.",
-      nextAction: "Deploy your reviewed project and prepare interview explanation."
-    },
-    interview: {
-      what: "Review mock system designs, visual graphs, and code review checklists under pressure.",
-      who: "Candidates aiming to clear technical developer loops.",
-      first: "Rehearse structured architectural responses and template pitches.",
-      next: "Perform mock peer checks on existing repositories using checkpoints.",
-      outcome: "Confidence to communicate trade-offs, cache flags, and query indices.",
-      nextAction: "Prepare project explanation pitch templates."
-    }
-  };
 
-  const guide = trackGuides[trackSlug] || {
-    what: "Master targeted technical skills and architectural guidelines.",
-    who: "Developers upgrading their technical competence.",
-    first: "Read the first lesson module in the active track.",
-    next: "Audit your outputs and practice matching tasks.",
-    outcome: "Industrial-grade coding habits and portfolio blueprints.",
-    nextAction: "Complete matching task daily challenge."
-  };
 
   const theme = themeMap[trackSlug] || {
     badge: "Specialized Track",
@@ -368,16 +310,7 @@ export default async function TrackPage({ params }: Props) {
           </p>
         </div>
 
-        {/* Guide Panel */}
-        <GuidePanel
-          title={`${track.title} Navigator`}
-          what={guide.what}
-          who={guide.who}
-          first={guide.first}
-          next={guide.next}
-          outcome={guide.outcome}
-          nextAction={guide.nextAction}
-        />
+
 
         {/* 1. Track Overview & 2. Who is this for */}
         <div className="grid sm:grid-cols-2 gap-6 my-8">

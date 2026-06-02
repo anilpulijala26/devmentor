@@ -18,6 +18,8 @@ import {
 } from "lucide-react";
 import { Track, Module, Lesson } from "@/lib/content";
 import { useProgress } from "@/context/ProgressContext";
+import { productionBlueprints } from "@/lib/production-practice";
+import { CodeBlock } from "./CodeBlock";
 
 interface LessonReaderProps {
   track: Track;
@@ -38,6 +40,7 @@ export function LessonReader({
 }: LessonReaderProps) {
   const { completedLessons, toggleLessonComplete } = useProgress();
   const isLessonCompleted = completedLessons.includes(lesson.slug);
+  const blueprint = productionBlueprints[track.slug] || productionBlueprints.foundations;
 
   // Client state
   const [theme, setTheme] = useState<"system" | "cream" | "sepia" | "slate">("system");
@@ -46,6 +49,7 @@ export function LessonReader({
   const [sidebarOpen, setSidebarOpen] = useState(true);
   const [showControls, setShowControls] = useState(false);
   const [scrollProgress, setScrollProgress] = useState(0);
+  const [activeTab, setActiveTab] = useState<"overview" | "build" | "code" | "tests" | "deploy" | "interview">("overview");
 
   const pathname = usePathname();
   const contentRef = useRef<HTMLDivElement>(null);
@@ -373,13 +377,198 @@ export function LessonReader({
               </div>
             </div>
 
-            {/* MDX Content wrapper */}
+            {/* Elegant Production Practice Tab Bar */}
+            <div className="mb-6 border-b border-slate-200 dark:border-slate-800">
+              <nav className="flex flex-wrap -mb-px gap-1 sm:gap-2" aria-label="Lesson Sections">
+                {[
+                  { id: "overview", label: "Overview" },
+                  { id: "build", label: "Build Steps" },
+                  { id: "code", label: "Full Code" },
+                  { id: "tests", label: "Tests" },
+                  { id: "deploy", label: "Deploy" },
+                  { id: "interview", label: "Interview" }
+                ].map((t) => {
+                  const isActive = activeTab === t.id;
+                  return (
+                    <button
+                      key={t.id}
+                      onClick={() => setActiveTab(t.id as any)}
+                      aria-current={isActive ? "page" : undefined}
+                      className={`px-4 py-2.5 border-b-2 font-bold text-xs sm:text-sm transition-all duration-200 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 rounded-t-lg ${
+                        isActive
+                          ? "border-indigo-650 text-indigo-650 bg-indigo-50/40 dark:bg-indigo-950/20"
+                          : "border-transparent text-slate-500 hover:text-slate-805 hover:border-slate-300 dark:text-slate-400 dark:hover:text-slate-200"
+                      }`}
+                    >
+                      {t.label}
+                    </button>
+                  );
+                })}
+              </nav>
+            </div>
+
+            {/* MDX Content / Tab content wrapper */}
             <div
               ref={contentRef}
-              className={`max-w-3xl mx-auto ${textSize} ${lineSpacing === "spacious" ? "reader-spacious" : "reader-normal"
-                }`}
+              className={`max-w-3xl mx-auto ${textSize} ${lineSpacing === "spacious" ? "reader-spacious" : "reader-normal"}`}
             >
-              {children}
+              {activeTab === "overview" && children}
+
+              {activeTab === "build" && (
+                <div className="space-y-8 animate-fade-in text-slate-700 dark:text-slate-300">
+                  <div className="p-6 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-3xl space-y-4">
+                    <h3 className="text-base font-extrabold text-slate-905 dark:text-slate-100 flex items-center gap-2">
+                      📁 Production Folder Structure
+                    </h3>
+                    <p className="text-xs text-slate-500">A typical enterprise-grade repository layout for this framework:</p>
+                    <pre className="bg-slate-950 text-slate-200 p-4 rounded-2xl border border-slate-900 font-mono text-xs overflow-x-auto leading-relaxed">
+                      {blueprint.folderStructure}
+                    </pre>
+                  </div>
+
+                  <div className="p-6 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-3xl space-y-4">
+                    <h3 className="text-base font-extrabold text-slate-905 dark:text-slate-100">
+                      🛠️ Step-by-Step Implementation Phases
+                    </h3>
+                    <ol className="space-y-4">
+                      {blueprint.buildSteps.map((step, idx) => (
+                        <li key={idx} className="flex gap-4">
+                          <span className="h-6 w-6 rounded-full bg-indigo-50 dark:bg-indigo-950/50 text-indigo-600 dark:text-indigo-400 font-bold text-xs flex items-center justify-center shrink-0 border border-indigo-100 dark:border-indigo-900">
+                            {idx + 1}
+                          </span>
+                          <p className="text-xs sm:text-sm font-medium mt-0.5 leading-relaxed">{step}</p>
+                        </li>
+                      ))}
+                    </ol>
+                  </div>
+
+                  <div className="p-6 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-3xl space-y-4">
+                    <h3 className="text-base font-extrabold text-slate-905 dark:text-slate-100">
+                      ⚡ Environment Setup & Dependencies
+                    </h3>
+                    <div className="space-y-4 text-xs sm:text-sm">
+                      <div>
+                        <p className="font-bold text-slate-800 dark:text-slate-200 mb-1">Required Package Installation:</p>
+                        <pre className="bg-slate-950 text-slate-200 p-3 rounded-xl border border-slate-900 font-mono text-xs overflow-x-auto">
+                          {blueprint.environmentSetup.installCommand}
+                        </pre>
+                      </div>
+                      <div>
+                        <p className="font-bold text-slate-800 dark:text-slate-200 mb-1">Environment Variables Configuration (`.env.example`):</p>
+                        <pre className="bg-slate-950 text-slate-200 p-3 rounded-xl border border-slate-900 font-mono text-xs overflow-x-auto">
+                          {blueprint.environmentSetup.envExample}
+                        </pre>
+                      </div>
+                      <div>
+                        <p className="font-bold text-slate-800 dark:text-slate-200 mb-1">Local Development Server Commands:</p>
+                        <pre className="bg-slate-950 text-slate-200 p-3 rounded-xl border border-slate-900 font-mono text-xs overflow-x-auto">
+                          {blueprint.environmentSetup.localRunCommand}
+                        </pre>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              )}
+
+              {activeTab === "code" && (
+                <div className="space-y-8 animate-fade-in text-slate-700 dark:text-slate-300">
+                  <div className="p-6 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-3xl space-y-4">
+                    <h3 className="text-base font-extrabold text-slate-905 dark:text-slate-100">
+                      📄 Complete Runnable Code
+                    </h3>
+                    <p className="text-xs text-slate-500 leading-relaxed">
+                      Below is a fully functional component or file mapping this specific programming concept in production:
+                    </p>
+                    <div className="text-xs bg-slate-955 p-4 rounded-2xl overflow-x-auto leading-relaxed border border-slate-900 text-slate-200">
+                      <CodeBlock language="typescript">
+                        {blueprint.fullCode}
+                      </CodeBlock>
+                    </div>
+                  </div>
+
+                  <div className="p-6 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-3xl space-y-4">
+                    <h3 className="text-base font-extrabold text-slate-905 dark:text-slate-100">
+                      🛡️ Validation & Failure Handling
+                    </h3>
+                    <p className="text-xs sm:text-sm leading-relaxed">
+                      {blueprint.validationDetails}
+                    </p>
+                  </div>
+                </div>
+              )}
+
+              {activeTab === "tests" && (
+                <div className="space-y-8 animate-fade-in text-slate-700 dark:text-slate-300">
+                  <div className="p-6 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-3xl space-y-4">
+                    <h3 className="text-base font-extrabold text-slate-905 dark:text-slate-100">
+                      🧪 Automated Testing Suite
+                    </h3>
+                    <p className="text-xs text-slate-500 leading-relaxed">
+                      Run these test configurations (Unit or Integration tests) to verify code correctness under edge conditions:
+                    </p>
+                    <div className="text-xs bg-slate-955 p-4 rounded-2xl overflow-x-auto leading-relaxed border border-slate-900 text-slate-200">
+                      <CodeBlock language="typescript">
+                        {blueprint.testSuite}
+                      </CodeBlock>
+                    </div>
+                  </div>
+                </div>
+              )}
+
+              {activeTab === "deploy" && (
+                <div className="space-y-8 animate-fade-in text-slate-700 dark:text-slate-300">
+                  <div className="p-6 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-3xl space-y-4">
+                    <h3 className="text-base font-extrabold text-slate-905 dark:text-slate-100">
+                      🚀 Production Checklist
+                    </h3>
+                    <p className="text-xs text-slate-500 leading-relaxed mb-4">
+                      Complete these quality checks before deploying your changes:
+                    </p>
+                    <div className="grid gap-3 sm:grid-cols-2">
+                      {blueprint.productionChecklist.map((item, idx) => (
+                        <div key={idx} className="p-3 border border-slate-100 dark:border-slate-800 bg-slate-50/50 dark:bg-slate-950/20 rounded-xl flex gap-2.5 items-start">
+                          <span className="text-indigo-650 font-bold shrink-0">✓</span>
+                          <span className="text-xs font-semibold leading-relaxed text-slate-750 dark:text-slate-300">{item}</span>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+
+                  <div className="p-6 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-3xl space-y-4">
+                    <h3 className="text-base font-extrabold text-red-955 flex items-center gap-2">
+                      ⚠️ Common Pitfalls & Mistakes
+                    </h3>
+                    <div className="space-y-3.5">
+                      {blueprint.commonMistakes.map((mistake, idx) => (
+                        <div key={idx} className="flex gap-3 items-start text-xs sm:text-sm leading-relaxed">
+                          <span className="h-5 w-5 bg-red-50 dark:bg-red-950/30 border border-red-100 dark:border-red-900 text-red-650 rounded-lg flex items-center justify-center text-[10px] font-bold shrink-0">
+                            ✕
+                          </span>
+                          <span className="text-slate-600 dark:text-slate-300 mt-0.5">{mistake}</span>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                </div>
+              )}
+
+              {activeTab === "interview" && (
+                <div className="space-y-8 animate-fade-in text-slate-700 dark:text-slate-300">
+                  <div className="p-6 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-3xl space-y-4">
+                    <h3 className="text-base font-extrabold text-slate-905 dark:text-slate-100">
+                      🎤 How to Pitch This in Interviews
+                    </h3>
+                    <p className="text-xs text-slate-500 leading-relaxed mb-4">
+                      Use this template answers to clearly explain your technical decisions:
+                    </p>
+                    <div className="p-4 bg-purple-50/30 border border-purple-100 dark:border-purple-950/50 rounded-2xl">
+                      <p className="text-xs sm:text-sm text-slate-700 dark:text-slate-300 leading-relaxed font-semibold">
+                        &ldquo;{blueprint.interviewExplanation}&rdquo;
+                      </p>
+                    </div>
+                  </div>
+                </div>
+              )}
             </div>
 
             {/* Completion Trigger */}

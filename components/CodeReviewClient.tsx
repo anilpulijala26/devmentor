@@ -2,25 +2,10 @@
 
 import React, { useState, useEffect } from "react";
 import {
-  Sparkles,
-  ClipboardCheck,
-  Check,
-  RefreshCw,
-  ChevronDown,
-  Share2,
-  FolderOpen,
-  Layers,
-  Code2,
-  Sliders,
-  AlertTriangle,
-  Loader,
-  Eye,
-  Zap,
-  Lock,
-  FileCode,
-  Rocket
+  Sparkles, ClipboardCheck, Check, RefreshCw, ChevronDown, Share2,
+  FolderOpen, Layers, Code2, Sliders, AlertTriangle, Loader, Eye,
+  Zap, Lock, FileCode, Rocket, Info, AlertCircle, HelpCircle, XCircle
 } from "lucide-react";
-import { GuidePanel } from "./GuidePanel";
 
 interface AuditCategory {
   id: string;
@@ -144,8 +129,9 @@ const CHECKLIST_CATEGORIES: AuditCategory[] = [
 
 export function CodeReviewClient() {
   const [checkedState, setCheckedState] = useState<Record<string, boolean>>({});
-  // Accordion state to control category visibility - all collapsed by default
   const [expandedCategories, setExpandedCategories] = useState<Record<string, boolean>>({});
+  const [isHowToOpen, setIsHowToOpen] = useState(false);
+  const [showExamples, setShowExamples] = useState<Record<string, boolean>>({});
 
   useEffect(() => {
     const saved = localStorage.getItem("CodeNivra-senior-codereview");
@@ -187,6 +173,10 @@ export function CodeReviewClient() {
     localStorage.setItem("CodeNivra-senior-codereview", JSON.stringify(updated));
   };
 
+  const toggleExample = (categoryId: string) => {
+    setShowExamples(prev => ({ ...prev, [categoryId]: !prev[categoryId] }));
+  };
+
   const resetAll = () => {
     if (confirm("Are you sure you want to reset all checklist categories?")) {
       setCheckedState({});
@@ -194,44 +184,156 @@ export function CodeReviewClient() {
     }
   };
 
-  const exportSummary = () => {
-    const categoryLines = CHECKLIST_CATEGORIES.map((cat, catIdx) => {
-      const checkedCount = cat.items.filter((_, idx) => checkedState[`${cat.id}-${idx}`]).length;
-      const status = checkedCount === cat.items.length ? "Complete" : checkedCount > 0 ? "In Progress" : "Not Started";
-      let lines = `### ${catIdx + 1}. ${cat.title} (${checkedCount}/${cat.items.length} Checked - ${status})\n`;
-      cat.items.forEach((item, idx) => {
-        const isChecked = !!checkedState[`${cat.id}-${idx}`];
-        lines += `${isChecked ? "[x]" : "[ ]"} ${item}\n`;
-      });
-      return lines;
-    }).join("\n");
-
-    const text = `# CodeNivra Senior Code Audit Report\n\n` +
-      `**Progress**: ${progressPercent}% Complete (${totalChecked}/${totalItems} Guidelines checked)\n` +
-      `**Status**: ${getReviewStatus()}\n\n` +
-      `## Category Details\n\n` +
-      categoryLines;
-
-    navigator.clipboard.writeText(text);
-    alert("Full markdown code audit report successfully copied to clipboard!");
-  };
-
+  // Upgraded progress metrics
   const totalItems = CHECKLIST_CATEGORIES.reduce((sum, c) => sum + c.items.length, 0);
   const totalChecked = Object.keys(checkedState).filter((key) => checkedState[key]).length;
   const progressPercent = totalItems > 0 ? Math.round((totalChecked / totalItems) * 100) : 0;
 
-  const getReviewStatus = () => {
-    if (totalChecked === 0) return "Not Started";
-    if (totalChecked === totalItems) return "Ready";
-    return "In Progress";
+  // New readiness status limits
+  const getReviewStatusInfo = () => {
+    if (progressPercent <= 40) return { label: "Needs Work", color: "text-red-750 bg-red-50 border-red-200" };
+    if (progressPercent <= 75) return { label: "In Progress", color: "text-amber-705 bg-amber-50 border-amber-200" };
+    if (progressPercent <= 90) return { label: "Almost Ready", color: "text-indigo-705 bg-indigo-50 border-indigo-200" };
+    return { label: "Production Ready", color: "text-emerald-705 bg-emerald-50 border-emerald-250 font-bold" };
   };
 
-  const getStatusBadgeColor = (status: string) => {
-    return {
-      "Not Started": "bg-slate-50 border-slate-200 text-slate-500",
-      "In Progress": "bg-amber-50 border-amber-200 text-amber-700",
-      "Complete": "bg-emerald-50 border-emerald-200 text-emerald-700"
-    }[status] || "bg-slate-50 text-slate-500 border-slate-200";
+  // Severity Mappings
+  const getSeverity = (id: string): { label: "Critical" | "Important" | "Recommended"; color: string } => {
+    const mapping: Record<string, "Critical" | "Important" | "Recommended"> = {
+      "accessibility-a11y": "Critical",
+      "security-basics": "Critical",
+      "api-error-handling": "Critical",
+      "deployment-readiness": "Critical",
+      "performance": "Important",
+      "typescript-usage": "Important",
+      "props-state-handling": "Important",
+      "component-reusability": "Important",
+      "clean-code": "Important",
+      "folder-structure": "Recommended",
+      "loading-states": "Recommended"
+    };
+    const label = mapping[id] || "Important";
+    const color = {
+      Critical: "bg-red-50 text-red-700 border-red-100",
+      Important: "bg-amber-50 text-amber-700 border-amber-100",
+      Recommended: "bg-blue-50 text-blue-700 border-blue-100"
+    }[label];
+    return { label, color };
+  };
+
+  // Why it matters text mappings
+  const getWhyItMattersText = (id: string): string => {
+    const mapping: Record<string, string> = {
+      "folder-structure": "Consistent layout ensures fast developer onboarding and makes code maintainability and modular updates trivial.",
+      "component-reusability": "Modularity eliminates double-maintenance code bugs and keeps client scripts slim.",
+      "typescript-usage": "Strong typings identify bug traces at compile time, completely avoiding production runtime crash errors.",
+      "props-state-handling": "Proper state scopes prevent wasteful parent rerenders and optimize overall paint response times.",
+      "api-error-handling": "Graceful error catcher loops prevent blank white screens and provide helpful hints when connections fail.",
+      "loading-states": "Visual skeletons tell users data is loading, preventing multiple click actions and layout shifts.",
+      "accessibility-a11y": "Semantic HTML and label pairings ensure the application can be navigated by assistive technologies and screen readers.",
+      "performance": "Memoization and dynamic imports minimize initial script sizes, keeping site speed load times under 1 second.",
+      "security-basics": "Isolating secret keys in .env.local and blocking injection entries protects backend servers from exploit vectors.",
+      "clean-code": "Descriptive variable naming and single-responsibility code blocks keep projects readable for peer engineering reviews.",
+      "deployment-readiness": "Compiling build checks and validating dynamic router paths in advance prevents pipeline release failures."
+    };
+    return mapping[id] || "Enforces production engineering standards.";
+  };
+
+  // Good vs Bad code examples
+  const getExamples = (id: string): { bad: string; good: string } => {
+    const mapping: Record<string, { bad: string; good: string }> = {
+      "folder-structure": {
+        bad: "// Single giant file containing all state, styles and API methods\ncomponents/MainAppContainer.tsx",
+        good: "// Segregated files by responsibility\ncomponents/ui/Button.tsx\ncomponents/features/KanbanBoard.tsx"
+      },
+      "component-reusability": {
+        bad: "// Styled directly in-line everywhere\n<button className=\"px-4 py-2 bg-blue-600 rounded\">Click</button>",
+        good: "// Configured once as a reusable base component\nexport function Button({ children, ...props }) {\n  return <button className=\"px-4 py-2 bg-indigo-650 text-white rounded-xl hover:bg-indigo-700\" {...props}>{children}</button>;\n}"
+      },
+      "typescript-usage": {
+        bad: "// Bypassing typescript compiler checks\nfunction saveUser(user: any) { ... }",
+        good: "// Strict typing mapping input fields\ninterface UserProfile { id: string; email: string; }\nfunction saveUser(user: UserProfile) { ... }"
+      },
+      "props-state-handling": {
+        bad: "// Declared inside child elements independently\nconst [theme, setTheme] = useState('light');",
+        good: "// Lifted to a shared Context Provider\nconst ThemeContext = React.createContext('light');"
+      },
+      "api-error-handling": {
+        bad: "// Request made without exception catches\nfetch('/api/user').then(r => r.json());",
+        good: "// Captured inside try-catch block bounds\ntry {\n  const res = await fetch('/api/user');\n} catch (err) {\n  setError(err.message);\n}"
+      },
+      "loading-states": {
+        bad: "// Blank white screen while data fetch is running\nif (loading) return null;",
+        good: "// Skeleton loading elements representing target heights\nif (loading) return <StatsCardSkeleton />;"
+      },
+      "accessibility-a11y": {
+        bad: "// Unreachable by keyboard elements\n<div onClick={submit}>Submit Registration</div>",
+        good: "// Semantic elements with aria attributes\n<button onClick={submit} aria-label=\"Submit Registration\">Submit</button>"
+      },
+      "performance": {
+        bad: "// Giant uncompressed images\n<img src=\"large-asset.png\" />",
+        good: "// Lazily loaded compressed next-gen extensions\n<Image src=\"/large.webp\" loading=\"lazy\" />"
+      },
+      "security-basics": {
+        bad: "// Exposing private keys in repository commits\nconst API_SECRET = \"sk_live_12345\";",
+        good: "// Stored in host environment secrets\nconst API_SECRET = process.env.API_SECRET;"
+      },
+      "clean-code": {
+        bad: "// Vague arbitrary naming\nconst [x, setX] = useState(true);",
+        good: "// Explicit descriptive variable tags\nconst [isModalOpen, setIsModalOpen] = useState(true);"
+      },
+      "deployment-readiness": {
+        bad: "// Committing files containing compilation errors or print warnings\nconsole.log(\"Temporary check\");",
+        good: "// Standard Next.js metadata configurations\nexport const metadata = { title: 'Dashboard' };"
+      }
+    };
+    return mapping[id] || { bad: "// Hardcoded values", good: "// Clean configurations" };
+  };
+
+  // Upgraded Export Summary report
+  const exportSummary = () => {
+    const pendingCategories: string[] = [];
+    const criticalPendingItems: string[] = [];
+
+    CHECKLIST_CATEGORIES.forEach((cat) => {
+      const isCritical = getSeverity(cat.id).label === "Critical";
+      const catPending: string[] = [];
+
+      cat.items.forEach((item, idx) => {
+        const isChecked = !!checkedState[`${cat.id}-${idx}`];
+        if (!isChecked) {
+          catPending.push(item);
+          if (isCritical) {
+            criticalPendingItems.push(`[${cat.title}] ${item}`);
+          }
+        }
+      });
+
+      if (catPending.length > 0) {
+        pendingCategories.push(`${cat.title} (${catPending.length} pending)`);
+      }
+    });
+
+    const statusInfo = getReviewStatusInfo();
+    const nextAction = criticalPendingItems.length > 0
+      ? "Resolve critical pending checklist items (Accessibility, Security, API Error Handling, Deployment)."
+      : "Excellent! Proceed with Vercel/Render production deployment steps.";
+
+    const text = `# CodeNivra Senior Code Audit Report\n\n` +
+      `**Progress**: ${progressPercent}% Complete (${totalChecked}/${totalItems} Guidelines checked)\n` +
+      `**Status**: ${statusInfo.label}\n\n` +
+      `## Audit Summary\n` +
+      `- **Total Checked**: ${totalChecked} guidelines\n` +
+      `- **Pending Categories**: ${pendingCategories.length > 0 ? pendingCategories.join(", ") : "None"}\n` +
+      `- **Critical Pending Guidelines**: ${criticalPendingItems.length > 0 ? criticalPendingItems.length : "0"}\n\n` +
+      (criticalPendingItems.length > 0 ? `### Critical Pending Items:\n` + criticalPendingItems.map(item => `- ${item}`).join("\n") + `\n\n` : "") +
+      `## Suggested Next Action\n` +
+      `> ${nextAction}\n\n` +
+      `---\n` +
+      `*Audited on CodeNivra Code Review Console.*`;
+
+    navigator.clipboard.writeText(text);
+    alert("Upgraded audit summary markdown report copied to clipboard!");
   };
 
   const getCategoryIcon = (id: string) => {
@@ -250,6 +352,8 @@ export function CodeReviewClient() {
     };
     return mapping[id] || <ClipboardCheck className="w-4.5 h-4.5" />;
   };
+
+  const statusInfo = getReviewStatusInfo();
 
   return (
     <div className="max-w-4xl mx-auto px-4 sm:px-6 py-8 md:py-14 lg:py-20 relative animate-fade-in space-y-8">
@@ -276,7 +380,7 @@ export function CodeReviewClient() {
         <div className="flex gap-2.5 shrink-0 self-start md:self-center">
           <button
             onClick={exportSummary}
-            className="h-12 inline-flex items-center justify-center gap-2 bg-indigo-600 hover:bg-indigo-750 text-white font-semibold px-4 rounded-xl text-sm transition cursor-pointer shadow-2xs focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 focus-visible:ring-offset-2"
+            className="h-12 inline-flex items-center justify-center gap-2 bg-indigo-600 hover:bg-indigo-755 text-white font-semibold px-4 rounded-xl text-sm transition cursor-pointer shadow-2xs focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 focus-visible:ring-offset-2"
           >
             <Share2 className="w-4 h-4" />
             Export Summary
@@ -291,16 +395,31 @@ export function CodeReviewClient() {
         </div>
       </div>
 
-      {/* Guide Panel */}
-      <GuidePanel
-        title="Code Review Navigator"
-        what="Self-assessment console for security, styling, and accessibility audits."
-        who="Developers validating tasks and projects before deployment."
-        first="Select a guideline category and review your local files."
-        next="Correct lint warnings, run build audits, and deploy."
-        outcome="MNC-grade code quality compliant with production standards."
-        nextAction="Audit your project before deployment."
-      />
+      {/* 1. Collapsible 'How to use this console' section */}
+      <section className="bg-slate-50 border border-slate-200/60 rounded-3xl overflow-hidden transition-all duration-300">
+        <button
+          onClick={() => setIsHowToOpen(!isHowToOpen)}
+          aria-expanded={isHowToOpen}
+          className="w-full px-6 py-4 flex items-center justify-between text-left font-bold text-xs sm:text-sm text-slate-800 hover:bg-slate-100 transition cursor-pointer outline-none"
+        >
+          <span className="flex items-center gap-2">
+            <HelpCircle className="w-4 h-4 text-indigo-600" />
+            How to use this console
+          </span>
+          <ChevronDown className={`w-4 h-4 text-slate-500 transition-transform ${isHowToOpen ? "transform rotate-180" : ""}`} />
+        </button>
+        {isHowToOpen && (
+          <div className="px-6 pb-5 pt-1 border-t border-slate-200/60 bg-white text-xs sm:text-sm text-slate-650 leading-relaxed font-semibold">
+            <ol className="list-decimal list-inside space-y-2 text-slate-600 pl-1">
+              <li>Open one checklist category by expanding the accordion panel below.</li>
+              <li>Review your local project code against the specified engineering guidelines.</li>
+              <li>Tick only completed items when your implementation meets the standard.</li>
+              <li>Fix pending issues in your editor if any guidelines remain unchecked.</li>
+              <li>Export summary to your clipboard before executing your production deployment.</li>
+            </ol>
+          </div>
+        )}
+      </section>
 
       {/* 2. Audit Summary Section */}
       <section className="grid grid-cols-2 md:grid-cols-4 gap-4">
@@ -326,14 +445,8 @@ export function CodeReviewClient() {
         <div className="bg-white border border-slate-100 rounded-2xl p-5 shadow-2xs flex flex-col justify-between min-h-[100px]">
           <p className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Ready for Review</p>
           <div className="mt-2">
-            <span className={`inline-block px-2.5 py-0.5 rounded-full text-xs font-bold border ${
-              getReviewStatus() === "Ready"
-                ? "bg-emerald-50 border-emerald-250 text-emerald-700"
-                : getReviewStatus() === "In Progress"
-                ? "bg-amber-50 border-amber-250 text-amber-700"
-                : "bg-slate-50 border-slate-250 text-slate-500"
-            }`}>
-              {getReviewStatus()}
+            <span className={`inline-block px-2.5 py-0.5 rounded-full text-xs font-bold border ${statusInfo.color}`}>
+              {statusInfo.label}
             </span>
           </div>
         </div>
@@ -345,7 +458,7 @@ export function CodeReviewClient() {
           <span className="text-sm font-bold flex items-center gap-2">
             <ClipboardCheck className="w-5 h-5 text-indigo-600" /> Console Progress
           </span>
-          <span className="text-xs sm:text-sm font-bold text-indigo-700 bg-indigo-50/80 px-3 py-1 rounded-full border border-indigo-100">
+          <span className="text-xs sm:text-sm font-bold text-indigo-705 bg-indigo-50/85 px-3 py-1 rounded-full border border-indigo-100">
             {progressPercent}% Complete
           </span>
         </div>
@@ -355,7 +468,7 @@ export function CodeReviewClient() {
             style={{ width: `${progressPercent}%` }}
           />
         </div>
-        <p className="text-xs text-slate-400 font-semibold italic text-center sm:text-left">
+        <p className="text-xs text-slate-450 font-semibold italic text-center sm:text-left">
           Complete all categories before submitting your PR.
         </p>
       </div>
@@ -367,6 +480,7 @@ export function CodeReviewClient() {
             return sum + (checkedState[`${cat.id}-${idx}`] ? 1 : 0);
           }, 0);
           const isExpanded = !!expandedCategories[cat.id];
+          const severity = getSeverity(cat.id);
 
           const catStatus =
             catChecked === cat.items.length
@@ -399,11 +513,14 @@ export function CodeReviewClient() {
                         {getCategoryIcon(cat.id)}
                         {cat.title}
                       </h3>
-                      <span className={`inline-block px-2 py-0.5 rounded text-[10px] font-extrabold border uppercase tracking-wider ${getStatusBadgeColor(catStatus)}`}>
+                      <span className={`inline-block px-2 py-0.5 rounded text-[10px] font-extrabold border uppercase tracking-wider ${severity.color}`}>
+                        {severity.label}
+                      </span>
+                      <span className={`inline-block px-2 py-0.5 rounded text-[10px] font-extrabold border uppercase tracking-wider ${statusInfo.color}`}>
                         {catStatus}
                       </span>
                     </div>
-                    <p className="text-xs sm:text-sm text-slate-500 font-medium leading-relaxed">
+                    <p className="text-xs sm:text-sm text-slate-555 font-semibold leading-relaxed">
                       {cat.description}
                     </p>
                   </div>
@@ -432,8 +549,40 @@ export function CodeReviewClient() {
                 <div className="overflow-hidden">
                   <div className="px-6 pb-6 pt-2 border-t border-slate-50 space-y-4">
                     
+                    {/* Why it matters block */}
+                    <div className="p-3 bg-indigo-50/20 border border-indigo-100 rounded-xl flex gap-2 items-start text-xs sm:text-sm text-slate-600 font-semibold leading-relaxed">
+                      <Info className="w-4 h-4 text-indigo-550 shrink-0 mt-0.5" />
+                      <div>
+                        <strong className="text-slate-800">Why it matters: </strong>
+                        {getWhyItMattersText(cat.id)}
+                      </div>
+                    </div>
+
+                    {/* Good vs Bad Examples Collapsed Accordion */}
+                    <div className="border border-slate-150 rounded-2xl overflow-hidden bg-slate-50/30">
+                      <button
+                        onClick={() => toggleExample(cat.id)}
+                        className="w-full px-4 py-2.5 flex items-center justify-between text-left font-bold text-2xs uppercase tracking-wider text-slate-500 hover:bg-slate-100 transition cursor-pointer outline-none"
+                      >
+                        <span>Code Reference: Good vs Bad Pattern</span>
+                        <ChevronDown className={`w-3.5 h-3.5 text-slate-400 transition-transform ${showExamples[cat.id] ? "transform rotate-180" : ""}`} />
+                      </button>
+                      {showExamples[cat.id] && (
+                        <div className="p-4 border-t border-slate-150 bg-white grid sm:grid-cols-2 gap-4 font-mono text-2xs leading-relaxed">
+                          <div className="space-y-1.5">
+                            <span className="text-red-600 font-bold flex items-center gap-1"><XCircle className="w-3.5 h-3.5" /> BAD PATTERN</span>
+                            <pre className="bg-red-50/20 border border-red-100 p-3 rounded-xl overflow-x-auto text-slate-700">{getExamples(cat.id).bad}</pre>
+                          </div>
+                          <div className="space-y-1.5">
+                            <span className="text-emerald-600 font-bold flex items-center gap-1"><Check className="w-3.5 h-3.5" /> GOOD PATTERN</span>
+                            <pre className="bg-emerald-50/20 border border-emerald-100 p-3 rounded-xl overflow-x-auto text-slate-700">{getExamples(cat.id).good}</pre>
+                          </div>
+                        </div>
+                      )}
+                    </div>
+
                     {/* Checklist Guideline Rows */}
-                    <div className="space-y-2">
+                    <div className="space-y-1">
                       {cat.items.map((item, idx) => {
                         const key = `${cat.id}-${idx}`;
                         const isChecked = !!checkedState[key];
@@ -454,7 +603,7 @@ export function CodeReviewClient() {
                               <div className="w-5 h-5 rounded-md border border-slate-300 hover:border-slate-400 bg-white shrink-0 mt-0.5 transition-all" />
                             )}
                             <span className={`text-sm font-semibold leading-relaxed transition-all ${
-                              isChecked ? "text-slate-400 line-through" : "text-slate-700"
+                              isChecked ? "text-slate-400 line-through font-normal" : "text-slate-700"
                             }`}>
                               {item}
                             </span>

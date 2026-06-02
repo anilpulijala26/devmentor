@@ -1,3 +1,5 @@
+import { ProjectDetails, getDetailsForProject } from "./projectDetailsData";
+
 export interface ProjectComponent {
   name: string;
   desc: string;
@@ -41,7 +43,9 @@ export interface Project {
   seniorNotes: string[];
   interviewExplanation: ProjectInterview;
   futureEnhancements: string[];
+  details?: ProjectDetails;
 }
+
 
 export const projects: Project[] = [
   {
@@ -1230,7 +1234,12 @@ Response (202 Accepted): { "queued": true }`,
 ];
 
 export function getProjectBySlug(slug: string): Project | undefined {
-  return projects.find((p) => p.slug === slug);
+  const base = projects.find((p) => p.slug === slug);
+  if (!base) return undefined;
+  return {
+    ...base,
+    details: getDetailsForProject(slug, base)
+  };
 }
 export function getAllProjects(): Project[] {
   return projects;
@@ -1238,4 +1247,5 @@ export function getAllProjects(): Project[] {
 export function getProjectsByLevel(level: "Beginner" | "Intermediate" | "Advanced"): Project[] {
   return projects.filter((p) => p.level === level);
 }
+
 

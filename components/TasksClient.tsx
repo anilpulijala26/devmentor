@@ -5,7 +5,7 @@ import Link from "next/link";
 import { DeveloperTask } from "@/lib/tasks";
 import { Sparkles, ArrowRight, CheckCircle2, Clock } from "lucide-react";
 import { useProgress } from "@/context/ProgressContext";
-import { GuidePanel } from "./GuidePanel";
+
 
 interface TasksClientProps {
   initialTasks: DeveloperTask[];
@@ -127,16 +127,7 @@ export function TasksClient({ initialTasks }: TasksClientProps) {
         </div>
       </div>
 
-      {/* Guide Panel */}
-      <GuidePanel
-        title="Daily Tasks Navigator"
-        what="Focused coding tasks to refine daily implementation confidence."
-        who="Developers practicing component hooks, routing, or schemas."
-        first="Pick a task based on your current roadmap level."
-        next="Review your solution against code review guidelines."
-        outcome="Clean coding habits and component-level code mastery."
-        nextAction="Pick a task based on your roadmap level."
-      />
+
 
       {/* Tasks List */}
       <div className="grid gap-8 md:grid-cols-2 lg:grid-cols-3">
@@ -188,9 +179,9 @@ export function TasksClient({ initialTasks }: TasksClientProps) {
               </div>
 
               {/* Bottom */}
-              <div className="mt-8 pt-4 border-t border-slate-100 flex flex-col gap-3">
+              <div className="mt-6 pt-4 border-t border-slate-100 flex flex-col gap-3">
                 <div className="flex items-center justify-between text-xs text-slate-500 font-semibold">
-                  <span>Type: Coding Task</span>
+                  <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">EST. TIME</span>
                   <span className="bg-slate-50 border border-slate-200 px-2.5 py-0.5 rounded-lg text-[11px] font-bold text-slate-600 flex items-center gap-1">
                     <Clock className="w-3 h-3 text-slate-400" />
                     {getEstimatedTime(task.level)}
@@ -204,12 +195,8 @@ export function TasksClient({ initialTasks }: TasksClientProps) {
                   <span>Start Task</span>
                   <ArrowRight className="w-4 h-4 transition-transform duration-200 group-hover:translate-x-0.5" />
                 </Link>
-                
-                <div className="flex justify-between items-center text-[11px] font-semibold text-slate-400 px-1">
-                  <span>Checklist available</span>
-                  {task.solutionCode && <span>Solution included</span>}
-                </div>
               </div>
+
             </div>
           );
         })}
