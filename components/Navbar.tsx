@@ -28,11 +28,11 @@ export function Navbar() {
   }, []);
 
   const learnItems = [
-    { name: "Learning Hub", href: "/learn", desc: "Structured core syllabus paths", icon: <BookOpen className="w-4 h-4 text-indigo-500" /> },
-    { name: "Roadmaps", href: "/roadmaps", desc: "Role-based career pathways", icon: <Map className="w-4 h-4 text-violet-500" /> },
-    { name: "Frontend Track", href: "/learn/frontend-frameworks", desc: "React, Next.js & UI design", icon: <Cpu className="w-4 h-4 text-blue-500" /> },
-    { name: "Backend Track", href: "/learn/backend", desc: "Node.js, Express & SQL", icon: <Database className="w-4 h-4 text-emerald-500" /> },
-    { name: "Full-Stack Track", href: "/learn/fullstack", desc: "End-to-end applications", icon: <Layers className="w-4 h-4 text-purple-500" /> }
+    { name: "Learning Hub", href: "/learn", desc: "Structured paths, project practice, and learning flow", icon: <BookOpen className="w-4 h-4 text-indigo-500" /> },
+    { name: "Roadmaps", href: "/roadmaps", desc: "Choose beginner, frontend, full-stack, or job-ready paths", icon: <Map className="w-4 h-4 text-violet-500" /> },
+    { name: "Frontend Roadmap", href: "/learn/frontend-frameworks", desc: "React, Next.js, UI systems, and frontend projects", icon: <Cpu className="w-4 h-4 text-blue-500" /> },
+    { name: "Backend Roadmap", href: "/learn/backend", desc: "Node.js, APIs, auth, and database engineering", icon: <Database className="w-4 h-4 text-emerald-500" /> },
+    { name: "Full-Stack Projects", href: "/learn/fullstack", desc: "Connect frontend, backend, data, and production delivery", icon: <Layers className="w-4 h-4 text-purple-500" /> }
   ];
 
   const mainNavItems = [
@@ -140,7 +140,7 @@ export function Navbar() {
             onClick={closeMenus}
             className="inline-flex cursor-pointer items-center gap-1.5 rounded-xl bg-slate-900 px-4 py-2 text-sm font-semibold text-white transition hover:bg-slate-800 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-slate-900 focus-visible:ring-offset-2"
           >
-            Start Learning <ArrowRight className="w-3.5 h-3.5" />
+            Start My Roadmap <ArrowRight className="w-3.5 h-3.5" />
           </Link>
         </div>
 
@@ -158,7 +158,7 @@ export function Navbar() {
         <div className="space-y-4 border-b border-slate-200 bg-white/95 px-4 pt-2 pb-6 animate-fade-in backdrop-blur-md md:hidden">
           <div className="space-y-1.5">
             <p className="px-3 text-[10px] font-bold uppercase tracking-[0.18em] text-slate-400">
-              Learn curriculum
+              Start here
             </p>
             {learnItems.map((item) => {
               const isActive = pathname === item.href;
@@ -182,7 +182,7 @@ export function Navbar() {
 
           <div className="space-y-1 border-t border-slate-100 pt-3">
             <p className="mb-1.5 px-3 text-[10px] font-bold uppercase tracking-[0.18em] text-slate-400">
-              Practice & Review
+              Build & review
             </p>
             {mainNavItems.map((item) => {
               const isActive = pathname === item.href || (item.name === "Deploy" && pathname.startsWith("/learn/deployment"));
@@ -209,7 +209,7 @@ export function Navbar() {
               onClick={closeMenus}
               className="inline-flex w-full items-center justify-center gap-1.5 rounded-xl bg-slate-900 py-3 text-sm font-semibold text-white transition hover:bg-slate-800"
             >
-              Start Learning <ArrowRight className="w-4 h-4" />
+              Start My Roadmap <ArrowRight className="w-4 h-4" />
             </Link>
           </div>
         </div>

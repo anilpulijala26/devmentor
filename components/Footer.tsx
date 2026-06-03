@@ -4,18 +4,18 @@ export function Footer() {
   return (
     <footer className="border-t border-slate-200 bg-slate-50/70">
       <div className="max-w-7xl mx-auto px-4 py-12 sm:px-6 md:py-14 lg:px-8">
-        <div className="grid gap-10 md:grid-cols-[1.4fr_1fr_1fr]">
+        <div className="grid gap-10 md:grid-cols-[1.3fr_1fr_1fr_1fr]">
           <div className="space-y-4">
             <div className="inline-flex rounded-lg border border-slate-200 bg-white px-3 py-1 text-sm font-semibold text-slate-900">
               CodeNivra
             </div>
             <p className="max-w-sm text-sm leading-6 text-slate-600">
-              A structured developer learning workspace for roadmaps, practice tasks, project labs, code review, and deployment readiness.
+              A guided learning platform for full-stack development, project practice, code review, deployment, and interview readiness.
             </p>
           </div>
 
           <div>
-            <h3 className="text-sm font-semibold uppercase tracking-[0.16em] text-slate-500">Workspace</h3>
+            <h3 className="text-sm font-semibold uppercase tracking-[0.16em] text-slate-500">Start Here</h3>
             <ul className="mt-4 space-y-3 text-sm">
               <li>
                 <Link href="/learn" className="text-slate-600 transition hover:text-slate-950 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 rounded px-1">
@@ -55,11 +55,32 @@ export function Footer() {
               </li>
             </ul>
           </div>
+
+          <div>
+            <h3 className="text-sm font-semibold uppercase tracking-[0.16em] text-slate-500">Focus Areas</h3>
+            <ul className="mt-4 space-y-3 text-sm">
+              <li>
+                <Link href="/learn/frontend-frameworks" className="text-slate-600 transition hover:text-slate-950 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 rounded px-1">
+                  Frontend Roadmap
+                </Link>
+              </li>
+              <li>
+                <Link href="/learn/backend" className="text-slate-600 transition hover:text-slate-950 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 rounded px-1">
+                  Backend Roadmap
+                </Link>
+              </li>
+              <li>
+                <Link href="/code-review" className="text-slate-600 transition hover:text-slate-950 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 rounded px-1">
+                  Code Review Checklist
+                </Link>
+              </li>
+            </ul>
+          </div>
         </div>
 
         <div className="mt-10 flex flex-col gap-3 border-t border-slate-200 pt-6 text-sm text-slate-500 sm:flex-row sm:items-center sm:justify-between">
           <p>&copy; {new Date().getFullYear()} CodeNivra. All rights reserved.</p>
-          <p>Enterprise learning workspace</p>
+          <p>Built for learners moving from tutorials to real project confidence.</p>
         </div>
       </div>
     </footer>

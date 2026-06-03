@@ -23,9 +23,32 @@ export async function generateMetadata({ params }: Props) {
     const { track: trackSlug } = await params;
     const track = getTrackBySlug(trackSlug);
     if (track) {
+      const metadataMap: Record<string, { title: string; description: string }> = {
+        "frontend-frameworks": {
+          title: "Frontend Roadmap - CodeNivra",
+          description:
+            "Follow a frontend roadmap covering React, Next.js, UI architecture, and project-based practice.",
+        },
+        backend: {
+          title: "Backend Roadmap - CodeNivra",
+          description:
+            "Learn Node.js, APIs, authentication, validation, and database design through a structured backend roadmap.",
+        },
+        fullstack: {
+          title: "Full-Stack Projects - CodeNivra",
+          description:
+            "Build connected frontend and backend applications with guided full-stack lessons and production workflows.",
+        },
+        deployment: {
+          title: "Deployment Learning Path - CodeNivra",
+          description:
+            "Learn CI/CD, Docker, cloud deployment, secrets management, and production release workflows.",
+        },
+      };
+
       return {
-        title: `${track.title} Path - CodeNivra`,
-        description: track.description,
+        title: metadataMap[trackSlug]?.title ?? `${track.title} Path - CodeNivra`,
+        description: metadataMap[trackSlug]?.description ?? track.description,
       };
     }
   } catch { }

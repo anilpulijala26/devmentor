@@ -4,6 +4,7 @@ import React, { useState } from "react";
 import Link from "next/link";
 import { Project } from "@/lib/projects";
 import { Clock, ArrowRight } from "lucide-react";
+import { ActionLink, StatusBadge, TagBadge } from "./marketing-primitives";
 
 interface ProjectsClientProps {
   initialProjects: Project[];
@@ -15,12 +16,22 @@ export function ProjectsClient({ initialProjects }: ProjectsClientProps) {
   const filtered =
     activeFilter === "All" ? initialProjects : initialProjects.filter((project) => project.level === activeFilter);
 
-  const getLevelColor = (level: string) => {
-    return {
-      Beginner: "bg-blue-50 text-blue-700 border-blue-100",
-      Intermediate: "bg-violet-50 text-violet-700 border-violet-100",
-      Advanced: "bg-emerald-50 text-emerald-700 border-emerald-100"
-    }[level] || "bg-slate-50 text-slate-700 border-slate-100";
+  const getProjectBadges = (project: Project) => {
+    const badges: string[] = [project.level];
+
+    if (project.slug.includes("portfolio") || project.slug.includes("resume")) {
+      badges.push("Portfolio-ready");
+    }
+
+    if (project.slug.includes("dashboard") || project.slug.includes("auth") || project.slug.includes("ecommerce")) {
+      badges.push("Interview-ready");
+    }
+
+    if (project.level === "Advanced") {
+      badges.push("Production-style");
+    }
+
+    return badges;
   };
 
   return (
@@ -69,9 +80,7 @@ export function ProjectsClient({ initialProjects }: ProjectsClientProps) {
             >
               <div className="space-y-5">
                 <div className="flex items-center justify-between gap-3">
-                  <span className={`inline-block rounded-full border px-2.5 py-1 text-xs font-semibold ${getLevelColor(project.level)}`}>
-                    {project.level}
-                  </span>
+                  <StatusBadge label="Available Now" tone="emerald" />
                   <div className="inline-flex items-center gap-1 text-xs font-medium text-slate-500">
                     <Clock className="w-3.5 h-3.5" />
                     <span>{project.duration}</span>
@@ -83,41 +92,61 @@ export function ProjectsClient({ initialProjects }: ProjectsClientProps) {
                   <p className="line-clamp-3 text-sm leading-6 text-slate-600">{project.description}</p>
                 </div>
 
-                <div className="rounded-2xl border border-slate-200 bg-slate-50/70 p-4">
-                  <p className="text-[11px] font-medium uppercase tracking-[0.16em] text-slate-500">Scope</p>
-                  <ul className="mt-3 space-y-2">
-                    {project.features.slice(0, 2).map((item, index) => (
-                      <li key={index} className="flex items-start gap-2 text-sm leading-6 text-slate-600">
-                        <span className="mt-2 h-1.5 w-1.5 rounded-full bg-emerald-500 shrink-0" />
-                        <span>{item}</span>
-                      </li>
-                    ))}
-                  </ul>
+                <div className="flex flex-wrap gap-2">
+                  {getProjectBadges(project).map((badge) => (
+                    <TagBadge
+                      key={badge}
+                      label={badge}
+                      tone={
+                        badge === "Beginner"
+                          ? "blue"
+                          : badge === "Intermediate"
+                            ? "violet"
+                            : badge === "Advanced"
+                              ? "emerald"
+                              : "slate"
+                      }
+                    />
+                  ))}
+                </div>
+
+                <div className="grid gap-4 rounded-2xl border border-slate-200 bg-slate-50/70 p-4">
+                  <div>
+                    <p className="text-[11px] font-medium uppercase tracking-[0.16em] text-slate-500">What you will build</p>
+                    <p className="mt-2 text-sm leading-6 text-slate-600">{project.features[0]}</p>
+                  </div>
+                  <div className="grid gap-4 sm:grid-cols-2">
+                    <div>
+                      <p className="text-[11px] font-medium uppercase tracking-[0.16em] text-slate-500">Difficulty</p>
+                      <p className="mt-1 text-sm font-semibold text-slate-950">{project.level}</p>
+                    </div>
+                    <div>
+                      <p className="text-[11px] font-medium uppercase tracking-[0.16em] text-slate-500">Outcome</p>
+                      <p className="mt-1 text-sm text-slate-600">
+                        Build and explain a {project.level.toLowerCase()} project with real delivery patterns.
+                      </p>
+                    </div>
+                  </div>
                 </div>
 
                 <div className="space-y-2">
                   <p className="text-[11px] font-medium uppercase tracking-[0.16em] text-slate-500">Tech stack</p>
                   <div className="flex flex-wrap gap-2">
                     {visibleTech.map((tech) => (
-                      <span key={tech} className="rounded-md border border-slate-200 bg-slate-50 px-2.5 py-1 text-xs font-medium text-slate-600">
-                        {tech}
-                      </span>
+                      <TagBadge key={tech} label={tech} />
                     ))}
-                    {extraTechCount > 0 && (
-                      <span className="rounded-md border border-indigo-100 bg-indigo-50 px-2.5 py-1 text-xs font-medium text-indigo-700">
-                        +{extraTechCount} more
-                      </span>
-                    )}
+                    {extraTechCount > 0 && <TagBadge label={`+${extraTechCount} more`} tone="blue" />}
                   </div>
                 </div>
               </div>
 
-              <div className="mt-6 border-t border-slate-200 pt-4">
+              <div className="mt-6 flex gap-3 border-t border-slate-200 pt-4">
+                <ActionLink href={`/projects/${project.slug}`}>Start Project</ActionLink>
                 <Link
                   href={`/projects/${project.slug}`}
-                  className="inline-flex min-h-11 w-full items-center justify-center gap-2 rounded-xl bg-slate-900 text-sm font-semibold text-white transition hover:bg-slate-800 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-slate-900 focus-visible:ring-offset-2"
+                  className="inline-flex min-h-11 items-center justify-center gap-2 rounded-xl border border-slate-300 bg-white px-5 text-sm font-semibold text-slate-700 transition hover:bg-slate-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-600 focus-visible:ring-offset-2"
                 >
-                  Start Project
+                  View Project
                   <ArrowRight className="w-4 h-4 transition-transform duration-200 group-hover:translate-x-0.5" />
                 </Link>
               </div>

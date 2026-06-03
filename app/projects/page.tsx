@@ -2,11 +2,13 @@ import { projects } from "@/lib/projects";
 import { ProjectsClient } from "@/components/ProjectsClient";
 
 export const metadata = {
-  title: "Project Labs - CodeNivra",
-  description: "Tackle real-time full-stack projects featuring system architecture designs, API contracts, folder layouts, and deployment details.",
+  title: "Full-Stack Projects - CodeNivra",
+  description:
+    "Explore full-stack projects, portfolio labs, and production-style builds with clear outcomes, tech stacks, and implementation guidance.",
   openGraph: {
-    title: "Project Labs - CodeNivra",
-    description: "Learn to build production-style applications with structured contracts and DB models.",
+    title: "Full-Stack Projects - CodeNivra",
+    description:
+      "Explore full-stack projects, portfolio labs, and production-style builds with clear outcomes and implementation guidance.",
     type: "website",
   }
 };

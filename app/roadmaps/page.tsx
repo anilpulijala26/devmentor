@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { roadmaps } from "@/lib/roadmaps";
 import { ArrowRight, Clock, Compass, BookOpen } from "lucide-react";
+import { StatusBadge, TagBadge } from "@/components/marketing-primitives";
 
 export const metadata = {
   title: "Developer Roadmaps - CodeNivra",
@@ -8,14 +9,14 @@ export const metadata = {
 };
 
 export default function RoadmapsPage() {
-  const getBadgeColor = (level: string) => {
+  const getBadgeTone = (level: string) => {
     return {
-      Beginner: "bg-blue-50 text-blue-700 border-blue-100",
-      Intermediate: "bg-violet-50 text-violet-700 border-violet-100",
-      Advanced: "bg-emerald-50 text-emerald-700 border-emerald-100",
-      Professional: "bg-pink-50 text-pink-700 border-pink-100",
-      "Interview Prep": "bg-purple-50 text-purple-700 border-purple-100"
-    }[level] || "bg-slate-50 text-slate-700 border-slate-100";
+      Beginner: "blue",
+      Intermediate: "violet",
+      Advanced: "emerald",
+      Professional: "rose",
+      "Interview Prep": "violet"
+    }[level] as "blue" | "violet" | "emerald" | "rose" | undefined;
   };
 
   return (
@@ -49,9 +50,7 @@ export default function RoadmapsPage() {
                 >
                   <div className="space-y-5">
                     <div className="flex items-center justify-between gap-3">
-                      <span className={`inline-block rounded-full border px-2.5 py-1 text-xs font-semibold ${getBadgeColor(roadmap.level)}`}>
-                        {roadmap.level}
-                      </span>
+                      <StatusBadge label="Available Now" tone="emerald" />
                       <div className="inline-flex items-center gap-1 text-xs font-medium text-slate-500">
                         <Clock className="w-3.5 h-3.5" />
                         <span>{roadmap.duration}</span>
@@ -80,18 +79,23 @@ export default function RoadmapsPage() {
                       </div>
                     </div>
 
+                    <div className="rounded-2xl border border-slate-200 bg-white p-4">
+                      <p className="text-[11px] font-medium uppercase tracking-[0.16em] text-slate-500">Outcome</p>
+                      <p className="mt-2 text-sm leading-6 text-slate-600">
+                        {roadmap.projectTasks.length > 0
+                          ? `Complete ${roadmap.projectTasks.length} guided project lab${roadmap.projectTasks.length > 1 ? "s" : ""} and demonstrate ${roadmap.level.toLowerCase()} delivery skills.`
+                          : "Build confidence with a structured roadmap and practical checkpoints."}
+                      </p>
+                    </div>
+
                     <div className="space-y-2">
                       <p className="text-[11px] font-medium uppercase tracking-[0.16em] text-slate-500">Skill preview</p>
                       <div className="flex flex-wrap gap-2">
                         {visibleSkills.map((skill) => (
-                          <span key={skill} className="rounded-md border border-slate-200 bg-slate-50 px-2.5 py-1 text-xs font-medium text-slate-600">
-                            {skill}
-                          </span>
+                          <TagBadge key={skill} label={skill} tone={getBadgeTone(roadmap.level) ?? "slate"} />
                         ))}
                         {extraSkillsCount > 0 && (
-                          <span className="rounded-md border border-indigo-100 bg-indigo-50 px-2.5 py-1 text-xs font-medium text-indigo-700">
-                            +{extraSkillsCount} more
-                          </span>
+                          <TagBadge label={`+${extraSkillsCount} more`} tone="blue" />
                         )}
                       </div>
                     </div>
