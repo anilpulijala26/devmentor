@@ -17,12 +17,22 @@ import { ProjectChecklist } from "./mdx/ProjectChecklist";
 import { DeploymentNote } from "./mdx/DeploymentNote";
 import { AssignmentBox } from "./mdx/AssignmentBox";
 import { InterviewExplanation } from "./mdx/InterviewExplanation";
+import { slugifyHeading } from "@/lib/lesson-outline";
 
 function getHeadingText(children: any): string {
   if (typeof children === "string") return children;
   if (Array.isArray(children)) return children.map(getHeadingText).join("");
   if (children?.props?.children) return getHeadingText(children.props.children);
   return "";
+}
+
+const headingCounts = new Map<string, number>();
+
+function getHeadingId(text: string) {
+  const baseId = slugifyHeading(text);
+  const count = headingCounts.get(baseId) ?? 0;
+  headingCounts.set(baseId, count + 1);
+  return count === 0 ? baseId : `${baseId}-${count + 1}`;
 }
 
 const components = {
@@ -46,11 +56,28 @@ const components = {
   h2: (props: any) => {
     const text = getHeadingText(props.children).trim();
     if (/^watch\b/i.test(text)) return null;
-    return <h2 className="text-3xl font-bold mt-6 mb-3" {...props} />;
+    const id = props.id || getHeadingId(text);
+    return (
+      <h2
+        id={id}
+        data-lesson-section="true"
+        className="mt-8 mb-3 scroll-mt-28 text-3xl font-bold text-slate-950"
+        {...props}
+      />
+    );
   },
-  h3: (props: any) => (
-    <h3 className="text-2xl font-bold mt-4 mb-2" {...props} />
-  ),
+  h3: (props: any) => {
+    const text = getHeadingText(props.children).trim();
+    const id = props.id || getHeadingId(text);
+    return (
+      <h3
+        id={id}
+        data-lesson-section="true"
+        className="mt-6 mb-2 scroll-mt-28 text-2xl font-bold text-slate-900"
+        {...props}
+      />
+    );
+  },
   p: (props: any) => (
     <div className="text-[inherit] leading-[inherit] my-4" {...props} />
   ),
@@ -121,6 +148,8 @@ interface MDXContentProps {
 }
 
 export async function MDXContent({ source }: MDXContentProps) {
+  headingCounts.clear();
+
   return (
     <MDXRemote
       source={source}

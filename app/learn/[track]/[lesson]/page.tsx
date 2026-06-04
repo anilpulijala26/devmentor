@@ -1,5 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { getLessonContent, getTrackBySlug, generateStaticParamsForLesson } from "@/lib/content";
+import { extractLessonOutline, LessonOutlineItem } from "@/lib/lesson-outline";
 import { notFound } from "next/navigation";
 import { MDXContent } from "@/components/MDXContent";
 import { LessonReader } from "@/components/LessonReader";
@@ -101,6 +102,50 @@ export default async function LessonPage({ params }: Props) {
       : null;
 
   const lines = (lesson.content || "").split("\n");
+  const contentOutline = extractLessonOutline(lesson.content || "");
+  const supplementalOutline: LessonOutlineItem[] = [];
+
+  if (objectives.length > 0) {
+    supplementalOutline.push({
+      id: "learning-objectives",
+      title: "Learning Objectives",
+      level: 2,
+    });
+  }
+
+  if (sections.length > 0) {
+    supplementalOutline.push({
+      id: "lesson-outline",
+      title: "Lesson Outline",
+      level: 2,
+    });
+  }
+
+  if (examples.length > 0) {
+    supplementalOutline.push({
+      id: "key-examples",
+      title: "Key Examples",
+      level: 2,
+    });
+  }
+
+  if (exercises.length > 0) {
+    supplementalOutline.push({
+      id: "practice-exercises",
+      title: "Practice Exercises",
+      level: 2,
+    });
+  }
+
+  if (resources.length > 0) {
+    supplementalOutline.push({
+      id: "additional-resources",
+      title: "Additional Resources",
+      level: 2,
+    });
+  }
+
+  const outlineSections = [...supplementalOutline, ...contentOutline];
   const checklistIndex = lines.findIndex(
     (line) =>
       line.trim().startsWith("<Checklist") &&
@@ -128,10 +173,15 @@ export default async function LessonPage({ params }: Props) {
       lesson={lesson}
       prevLesson={prevLesson}
       nextLesson={nextLesson}
+      outlineSections={outlineSections}
     >
       {/* Learning Objectives */}
       {objectives.length > 0 && (
-        <div className="my-6 p-6 bg-indigo-50/40 dark:bg-slate-900/50 border border-indigo-100 dark:border-slate-800 rounded-2xl">
+        <section
+          id="learning-objectives"
+          data-lesson-section="true"
+          className="scroll-mt-28 my-6 rounded-2xl border border-indigo-100 bg-indigo-50/40 p-6 dark:border-slate-800 dark:bg-slate-900/50"
+        >
           <h3 className="text-lg font-bold text-indigo-900 dark:text-indigo-400 mb-3">Learning Objectives</h3>
           <ul className="list-disc list-inside space-y-1.5 text-slate-700 dark:text-slate-300">
             {objectives.map((obj: any, index: number) => (
@@ -140,12 +190,16 @@ export default async function LessonPage({ params }: Props) {
               </li>
             ))}
           </ul>
-        </div>
+        </section>
       )}
 
       {/* Lesson Outline/Sections */}
       {sections.length > 0 && (
-        <div className="my-6 p-6 bg-slate-50 dark:bg-slate-900/20 border border-slate-200/60 dark:border-slate-800 rounded-2xl">
+        <section
+          id="lesson-outline"
+          data-lesson-section="true"
+          className="scroll-mt-28 my-6 rounded-2xl border border-slate-200/60 bg-slate-50 p-6 dark:border-slate-800 dark:bg-slate-900/20"
+        >
           <h3 className="text-lg font-bold text-slate-900 dark:text-slate-100 mb-3">Lesson Outline</h3>
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
             {sections.map((section: any, index: number) => (
@@ -156,12 +210,16 @@ export default async function LessonPage({ params }: Props) {
               </div>
             ))}
           </div>
-        </div>
+        </section>
       )}
 
       {/* Examples */}
       {examples.length > 0 && (
-        <div className="my-6 p-6 bg-blue-50/40 dark:bg-slate-900/50 border border-blue-100 dark:border-slate-800 rounded-2xl">
+        <section
+          id="key-examples"
+          data-lesson-section="true"
+          className="scroll-mt-28 my-6 rounded-2xl border border-blue-100 bg-blue-50/40 p-6 dark:border-slate-800 dark:bg-slate-900/50"
+        >
           <h3 className="text-lg font-bold text-blue-900 dark:text-blue-400 mb-3">Key Examples</h3>
           <div className="space-y-3">
             {examples.map((ex: any, index: number) => (
@@ -172,12 +230,16 @@ export default async function LessonPage({ params }: Props) {
               </div>
             ))}
           </div>
-        </div>
+        </section>
       )}
 
       {/* Exercises */}
       {exercises.length > 0 && (
-        <div className="my-6 p-6 bg-emerald-50/40 dark:bg-slate-900/50 border border-emerald-100 dark:border-slate-800 rounded-2xl">
+        <section
+          id="practice-exercises"
+          data-lesson-section="true"
+          className="scroll-mt-28 my-6 rounded-2xl border border-emerald-100 bg-emerald-50/40 p-6 dark:border-slate-800 dark:bg-slate-900/50"
+        >
           <h3 className="text-lg font-bold text-emerald-900 dark:text-emerald-400 mb-3">Practice Exercises</h3>
           <div className="space-y-3">
             {exercises.map((exc: any, index: number) => (
@@ -188,12 +250,16 @@ export default async function LessonPage({ params }: Props) {
               </div>
             ))}
           </div>
-        </div>
+        </section>
       )}
 
       {/* Resources */}
       {resources.length > 0 && (
-        <div className="my-6 p-6 bg-purple-50/40 dark:bg-slate-900/50 border border-purple-100 dark:border-slate-800 rounded-2xl">
+        <section
+          id="additional-resources"
+          data-lesson-section="true"
+          className="scroll-mt-28 my-6 rounded-2xl border border-purple-100 bg-purple-50/40 p-6 dark:border-slate-800 dark:bg-slate-900/50"
+        >
           <h3 className="text-lg font-bold text-purple-900 dark:text-purple-400 mb-3">Additional Resources</h3>
           <ul className="list-disc list-inside space-y-1.5 text-slate-700 dark:text-slate-300">
             {resources.map((res: any, index: number) => (
@@ -202,7 +268,7 @@ export default async function LessonPage({ params }: Props) {
               </li>
             ))}
           </ul>
-        </div>
+        </section>
       )}
 
       {markerLineIndex === -1 ? (
