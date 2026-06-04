@@ -214,13 +214,13 @@ export function LessonReader({
 
         {/* Right Content Space */}
         <main
-          className={`flex-1 transition-all duration-300 px-4 md:px-8 py-8 ${sidebarOpen ? "lg:pl-[340px]" : "pl-4 md:pl-8"
+          className={`min-w-0 flex-1 overflow-x-hidden px-3 py-6 transition-all duration-300 sm:px-4 md:px-8 md:py-8 ${sidebarOpen ? "lg:pl-[340px]" : "pl-3 sm:pl-4 md:pl-8"
             }`}
         >
-          <div className="max-w-4xl mx-auto">
+          <div className="mx-auto max-w-4xl min-w-0">
             {/* Top Toolbar */}
-            <div className="flex flex-wrap items-center justify-between gap-4 mb-8 pb-4 border-b border-slate-200/60 dark:border-slate-800">
-              <div className="flex items-center gap-2">
+            <div className="mb-8 flex flex-col gap-3 border-b border-slate-200/60 pb-4 dark:border-slate-800 sm:flex-row sm:flex-wrap sm:items-center sm:justify-between">
+              <div className="flex flex-wrap items-center gap-2 min-w-0">
                 <Link
                   href={`/learn/${track.slug}`}
                   className="p-2 rounded-xl border border-slate-200 dark:border-slate-800 transition hover:bg-slate-100 dark:hover:bg-slate-800 text-xs font-bold inline-flex items-center gap-1.5"
@@ -242,10 +242,10 @@ export function LessonReader({
               </div>
 
               {/* Reader Preferences Controls Panel */}
-              <div className="relative">
+              <div className="relative self-start sm:self-auto">
                 <button
                   onClick={() => setShowControls(!showControls)}
-                  className={`p-2 rounded-xl border border-slate-200 dark:border-slate-800 transition hover:bg-slate-100 dark:hover:bg-slate-800 flex items-center gap-1.5 text-xs font-bold ${showControls ? "bg-indigo-500 border-indigo-500 text-white hover:bg-indigo-600" : ""
+                  className={`inline-flex min-h-11 items-center gap-1.5 rounded-xl border border-slate-200 p-2 text-xs font-bold transition hover:bg-slate-100 dark:border-slate-800 dark:hover:bg-slate-800 ${showControls ? "border-indigo-500 bg-indigo-500 text-white hover:bg-indigo-600" : ""
                     }`}
                 >
                   <Settings className="w-4 h-4" />
@@ -258,7 +258,7 @@ export function LessonReader({
                       onClick={() => setShowControls(false)}
                       className="fixed inset-0 z-30"
                     />
-                    <div className="absolute right-0 mt-2 w-72 rounded-2xl border border-slate-200 bg-white p-4 shadow-xl z-40 animate-fade-in text-slate-800 dark:bg-slate-900 dark:border-slate-800 dark:text-slate-100">
+                    <div className="absolute right-0 z-40 mt-2 w-[min(18rem,calc(100vw-2rem))] rounded-2xl border border-slate-200 bg-white p-4 text-slate-800 shadow-xl animate-fade-in dark:border-slate-800 dark:bg-slate-900 dark:text-slate-100">
                       <h4 className="text-xs font-bold tracking-wider text-slate-400 uppercase mb-3">
                         Reading Preferences
                       </h4>
@@ -359,7 +359,7 @@ export function LessonReader({
             </div>
 
             {/* Title / Description */}
-            <div className="mb-8">
+            <div className="mb-8 min-w-0">
               <div className="flex items-center gap-2 mb-2 text-xs font-bold text-indigo-500 uppercase tracking-widest">
                 <span>{currentModule.title}</span>
               </div>
@@ -370,11 +370,11 @@ export function LessonReader({
                 {lesson.frontmatter.description}
               </p>
 
-              <div className="flex flex-wrap gap-4 text-xs mt-4">
+              <div className="mt-4 flex flex-wrap gap-3 text-xs">
                 {lesson?.frontmatter?.tags && lesson.frontmatter.tags.length > 0 && (
-                  <div className="flex items-center gap-2">
+                  <div className="flex min-w-0 flex-wrap items-center gap-2">
                     <span className="font-semibold text-slate-500">Tags:</span>
-                    <div className="flex gap-1.5">
+                    <div className="flex min-w-0 flex-wrap gap-1.5">
                       {(lesson.frontmatter.tags || []).map((tag: string) => (
                         <span
                           key={tag}
@@ -397,38 +397,43 @@ export function LessonReader({
 
             {/* Elegant Production Practice Tab Bar */}
             <div className="mb-6 border-b border-slate-200 dark:border-slate-800">
-              <nav className="flex flex-wrap -mb-px gap-1 sm:gap-2" aria-label="Lesson Sections">
-                {[
-                  { id: "overview", label: "Overview" },
-                  { id: "build", label: "Build Steps" },
-                  { id: "code", label: "Full Code" },
-                  { id: "tests", label: "Tests" },
-                  { id: "deploy", label: "Deploy" },
-                  { id: "interview", label: "Interview" }
-                ].map((t) => {
-                  const isActive = activeTab === t.id;
-                  return (
-                    <button
-                      key={t.id}
-                      onClick={() => setActiveTab(t.id as any)}
-                      aria-current={isActive ? "page" : undefined}
-                      className={`px-4 py-2.5 border-b-2 font-bold text-xs sm:text-sm transition-all duration-200 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 rounded-t-lg ${
-                        isActive
-                          ? "border-indigo-650 text-indigo-650 bg-indigo-50/40 dark:bg-indigo-950/20"
-                          : "border-transparent text-slate-500 hover:text-slate-805 hover:border-slate-300 dark:text-slate-400 dark:hover:text-slate-200"
-                      }`}
-                    >
-                      {t.label}
-                    </button>
-                  );
-                })}
-              </nav>
+              <div className="overflow-x-auto no-scrollbar">
+                <nav
+                  className="inline-flex min-w-full flex-nowrap gap-1.5 sm:gap-2"
+                  aria-label="Lesson Sections"
+                >
+                  {[
+                    { id: "overview", label: "Overview" },
+                    { id: "build", label: "Build Steps" },
+                    { id: "code", label: "Full Code" },
+                    { id: "tests", label: "Tests" },
+                    { id: "deploy", label: "Deploy" },
+                    { id: "interview", label: "Interview" }
+                  ].map((t) => {
+                    const isActive = activeTab === t.id;
+                    return (
+                      <button
+                        key={t.id}
+                        onClick={() => setActiveTab(t.id as any)}
+                        aria-current={isActive ? "page" : undefined}
+                        className={`shrink-0 whitespace-nowrap px-4 py-2.5 border-b-2 font-bold text-xs sm:text-sm transition-all duration-200 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 rounded-t-lg ${
+                          isActive
+                            ? "border-indigo-650 text-indigo-650 bg-indigo-50/40 dark:bg-indigo-950/20"
+                            : "border-transparent text-slate-500 hover:text-slate-805 hover:border-slate-300 dark:text-slate-400 dark:hover:text-slate-200"
+                        }`}
+                      >
+                        {t.label}
+                      </button>
+                    );
+                  })}
+                </nav>
+              </div>
             </div>
 
             {/* MDX Content / Tab content wrapper */}
             <div
               ref={contentRef}
-              className={`max-w-3xl mx-auto ${textSize} ${lineSpacing === "spacious" ? "reader-spacious" : "reader-normal"}`}
+              className={`mx-auto max-w-3xl min-w-0 overflow-x-hidden ${textSize} ${lineSpacing === "spacious" ? "reader-spacious" : "reader-normal"}`}
             >
               {activeTab === "overview" && children}
 

@@ -302,7 +302,7 @@ export default async function TrackPage({ params }: Props) {
       <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-10 md:py-14 lg:py-16 relative animate-fade-in">
 
         {/* Navigation header bar */}
-        <div className="sticky top-16 z-40 mb-8 flex items-center justify-between gap-4 rounded-2xl border border-slate-200 bg-white/95 px-4 py-3 shadow-sm backdrop-blur-md">
+        <div className="sticky top-16 z-40 mb-8 flex flex-wrap items-center justify-between gap-3 rounded-2xl border border-slate-200 bg-white/95 px-4 py-3 shadow-sm backdrop-blur-md">
           <Link
             href="/learn"
             className="inline-flex items-center gap-2 text-xs sm:text-sm font-semibold text-slate-600 hover:text-indigo-700 transition-colors"
@@ -336,7 +336,7 @@ export default async function TrackPage({ params }: Props) {
 
 
         {/* 1. Track Overview & 2. Who is this for */}
-        <div className="grid sm:grid-cols-2 gap-6 my-8">
+        <div className="grid gap-6 sm:grid-cols-2 my-8">
           <section className="p-6 bg-white border border-slate-200 rounded-[24px] shadow-[0_8px_24px_rgba(15,23,42,0.04)] space-y-3">
             <h2 className="text-sm font-extrabold text-slate-900 flex items-center gap-2 pb-2 border-b border-slate-100">
               <Compass className="w-4.5 h-4.5 text-indigo-500" />
@@ -386,20 +386,20 @@ export default async function TrackPage({ params }: Props) {
 
         {/* Lesson Modules Roadmap Timeline */}
         <h2 className="text-lg font-extrabold text-slate-900 mt-12 mb-6">Lesson Modules Timeline</h2>
-        <div className="space-y-12 relative pl-8 mb-12">
+        <div className="relative mb-12 space-y-8 sm:space-y-12 sm:pl-8">
           {/* Timeline Connector Line */}
-          <div className="absolute left-[15px] top-2 bottom-6 w-[2px] bg-slate-200 dark:bg-slate-800" />
+          <div className="absolute left-[15px] top-2 bottom-6 hidden w-[2px] bg-slate-200 sm:block" />
 
           {track.modules.map((module, idx) => (
             <div key={module.slug} className="relative group/module">
               {/* Connector Dot */}
-              <div className="absolute -left-[25px] top-1.5 flex h-[18px] w-[18px] items-center justify-center rounded-full bg-slate-300 border-4 border-slate-50 dark:border-slate-900 group-hover/module:bg-indigo-600 group-hover/module:border-indigo-100 transition-all duration-300 z-10" />
+              <div className="absolute -left-[25px] top-1.5 hidden h-[18px] w-[18px] items-center justify-center rounded-full border-4 border-slate-50 bg-slate-300 transition-all duration-300 z-10 group-hover/module:border-indigo-100 group-hover/module:bg-indigo-600 sm:flex" />
 
               <div className="mb-4">
                 <span className="text-[10px] font-extrabold text-indigo-600 tracking-widest uppercase">
                   PHASE {idx + 1}
                 </span>
-                <h2 className="text-xl font-extrabold text-slate-900 mt-1 tracking-tight">
+                <h2 className="mt-1 text-lg font-extrabold tracking-tight text-slate-900 sm:text-xl">
                   {module.title}
                 </h2>
               </div>
@@ -409,23 +409,23 @@ export default async function TrackPage({ params }: Props) {
                 {module.lessons
                   .sort((a, b) => a.order - b.order)
                   .map((lesson, lessonIdx) => (
-                    <div key={lesson.slug} className="relative pl-6 group/lesson">
-                      <div className="absolute left-[-21px] top-5.5 w-2.5 h-2.5 rounded-full bg-white border-2 border-slate-300 group-hover/lesson:bg-indigo-500 group-hover/lesson:border-indigo-200 transition z-10" />
+                    <div key={lesson.slug} className="relative group/lesson sm:pl-6">
+                      <div className="absolute left-[-21px] top-5.5 hidden h-2.5 w-2.5 rounded-full border-2 border-slate-300 bg-white transition z-10 group-hover/lesson:border-indigo-200 group-hover/lesson:bg-indigo-500 sm:block" />
 
                       <Link
                         href={`/learn/${track.slug}/${lesson.slug}`}
-                        className="block p-4 border border-slate-200 rounded-2xl bg-white hover:border-slate-300 transition"
+                        className="block rounded-2xl border border-slate-200 bg-white p-4 transition hover:border-slate-300"
                       >
-                        <div className="flex items-center justify-between">
-                          <div className="flex items-center gap-3">
+                        <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+                          <div className="flex min-w-0 items-start gap-3">
                             <span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-indigo-50 text-[10px] font-bold text-indigo-600 group-hover/lesson:bg-indigo-600 group-hover/lesson:text-white transition">
                               {idx + 1}.{lessonIdx + 1}
                             </span>
-                            <h3 className="font-bold text-slate-800 text-sm group-hover/lesson:text-indigo-600 transition">
+                            <h3 className="pr-2 text-sm font-bold text-slate-800 transition group-hover/lesson:text-indigo-600">
                               {lesson.title}
                             </h3>
                           </div>
-                          <div className="flex items-center gap-1 text-xs font-bold text-indigo-600 transition group-hover/lesson:translate-x-1">
+                          <div className="flex items-center gap-1 pl-9 text-xs font-bold text-indigo-600 transition sm:pl-0 group-hover/lesson:translate-x-1">
                             Start Guide <ArrowRight className="w-4 h-4" />
                           </div>
                         </div>
@@ -444,7 +444,7 @@ export default async function TrackPage({ params }: Props) {
               <Terminal className="w-5 h-5 text-indigo-500" />
               Recommended Practice Tasks
             </h2>
-            <div className="grid sm:grid-cols-2 gap-4">
+            <div className="grid gap-4 sm:grid-cols-2">
               {recommendedTasks.slice(0, 4).map((task) => (
                 <Link
                   key={task.slug}
@@ -467,7 +467,7 @@ export default async function TrackPage({ params }: Props) {
               <Compass className="w-5 h-5 text-indigo-500" />
               Recommended Project Labs
             </h2>
-            <div className="grid sm:grid-cols-2 gap-4">
+            <div className="grid gap-4 sm:grid-cols-2">
               {recommendedProjects.map((project) => (
                 <Link
                   key={project.slug}
