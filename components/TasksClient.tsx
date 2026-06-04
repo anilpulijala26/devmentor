@@ -1,89 +1,76 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useMemo, useState } from "react";
 import Link from "next/link";
-import { DeveloperTask } from "@/lib/tasks";
-import { ArrowRight, CheckCircle2, Clock } from "lucide-react";
+import { ArrowRight, CheckCircle2, Clock, Search } from "lucide-react";
 import { useProgress } from "@/context/ProgressContext";
+import type { DeveloperTask } from "@/lib/tasks";
+import {
+  getEstimatedTime,
+  getLevelTone,
+  getTaskCategory,
+  getVisibleTaskTags,
+  TASK_FILTERS,
+  type TaskFilter,
+} from "./tasks/task-helpers";
 
 interface TasksClientProps {
   initialTasks: DeveloperTask[];
 }
 
 export function TasksClient({ initialTasks }: TasksClientProps) {
-  const [activeFilter, setActiveFilter] = useState<
-    "All" | "Beginner" | "Mid-Level" | "Senior" | "Frontend" | "Backend" | "Full-Stack" | "Deployment"
-  >("All");
+  const [activeFilter, setActiveFilter] = useState<TaskFilter>("All");
+  const [searchQuery, setSearchQuery] = useState("");
+  const [visibleCount, setVisibleCount] = useState(12);
   const { completedTasks } = useProgress();
 
-  const getTaskCategory = (slug: string): "Frontend" | "Backend" | "Full-Stack" | "Deployment" => {
-    const frontendSlugs = [
-      "html-form-validation",
-      "responsive-pricing-cards",
-      "js-array-transformation",
-      "debounced-search",
-      "react-controlled-form",
-      "react-custom-hook",
-      "nextjs-dynamic-route",
-      "nextjs-loading-ui",
-      "accessibility-audit",
-      "performance-audit"
-    ];
-    const fullstackSlugs = ["api-route-handler", "postgres-crud-query", "postgres-prisma", "api-tests-supertest"];
-    const deploymentSlugs = ["dockerize-node-api", "deploy-backend-cloud"];
+  const filtered = useMemo(() => {
+    const normalizedQuery = searchQuery.trim().toLowerCase();
 
-    if (frontendSlugs.includes(slug)) return "Frontend";
-    if (fullstackSlugs.includes(slug)) return "Full-Stack";
-    if (deploymentSlugs.includes(slug)) return "Deployment";
-    return "Backend";
+    return initialTasks.filter((task) => {
+      const matchesFilter =
+        activeFilter === "All"
+          ? true
+          : activeFilter === "Beginner"
+            ? task.level === "Beginner"
+            : activeFilter === "Mid-Level"
+              ? task.level === "Intermediate"
+              : activeFilter === "Senior"
+                ? task.level === "Advanced"
+                : getTaskCategory(task.slug) === activeFilter;
+
+      if (!matchesFilter) return false;
+      if (!normalizedQuery) return true;
+
+      const searchableText = [
+        task.title,
+        task.requirement,
+        task.expectedOutput,
+        ...getVisibleTaskTags(task.slug),
+      ]
+        .join(" ")
+        .toLowerCase();
+
+      return searchableText.includes(normalizedQuery);
+    });
+  }, [activeFilter, initialTasks, searchQuery]);
+
+  const visibleTasks = filtered.slice(0, visibleCount);
+  const canLoadMore = visibleCount < filtered.length;
+
+  const handleFilterChange = (filter: TaskFilter) => {
+    setActiveFilter(filter);
+    setVisibleCount(12);
   };
 
-  const filtered = initialTasks.filter((task) => {
-    if (activeFilter === "All") return true;
-    if (activeFilter === "Beginner") return task.level === "Beginner";
-    if (activeFilter === "Mid-Level") return task.level === "Intermediate";
-    if (activeFilter === "Senior") return task.level === "Advanced";
-    return getTaskCategory(task.slug) === activeFilter;
-  });
-
-  const getLevelColor = (level: string) => {
-    return {
-      Beginner: "bg-blue-50 text-blue-700 border-blue-100",
-      Intermediate: "bg-violet-50 text-violet-700 border-violet-100",
-      Advanced: "bg-emerald-50 text-emerald-700 border-emerald-100"
-    }[level] || "bg-slate-50 text-slate-700 border-slate-100";
-  };
-
-  const getEstimatedTime = (level: string) => {
-    if (level === "Beginner") return "15 mins";
-    if (level === "Intermediate") return "30 mins";
-    return "45 mins";
-  };
-
-  const getTaskTags = (slug: string) => {
-    const mapping: Record<string, string[]> = {
-      "html-form-validation": ["HTML5", "Validation", "A11y"],
-      "responsive-pricing-cards": ["CSS Grid", "Flexbox", "Responsive"],
-      "js-array-transformation": ["JavaScript", "ES6", "FP"],
-      "debounced-search": ["JavaScript", "Async", "Perf"],
-      "api-fetch-retry": ["JavaScript", "API", "Resilience"],
-      "react-controlled-form": ["React", "State", "Forms"],
-      "react-custom-hook": ["React Hooks", "State", "Storage"],
-      "nextjs-dynamic-route": ["Next.js", "Routing", "SEO"],
-      "nextjs-loading-ui": ["Next.js", "Suspense", "UX"],
-      "api-route-handler": ["Next.js", "API", "JSON"],
-      "jwt-protected-route": ["Express", "JWT", "Security"],
-      "postgres-crud-query": ["PostgreSQL", "SQL", "ACID"],
-      "file-upload-validation": ["Node.js", "Multer", "Security"],
-      "accessibility-audit": ["WCAG", "A11y", "Semantic"],
-      "performance-audit": ["Performance", "DOM", "Lazy-Loading"]
-    };
-    return (mapping[slug] || ["Web Dev"]).slice(0, 3);
+  const handleSearchChange = (value: string) => {
+    setSearchQuery(value);
+    setVisibleCount(12);
   };
 
   return (
-    <div className="max-w-7xl mx-auto px-4 py-10 sm:px-6 md:py-14 lg:px-8 lg:py-16 space-y-10 animate-fade-in">
-      <div className="flex flex-col gap-6 lg:flex-row lg:items-end lg:justify-between">
+    <div className="mx-auto max-w-7xl animate-fade-in space-y-10 px-4 py-10 sm:px-6 md:py-14 lg:px-8 lg:py-16">
+      <div className="space-y-6">
         <div className="max-w-3xl space-y-4">
           <div className="inline-flex items-center gap-2 rounded-lg border border-slate-200 bg-slate-50 px-3 py-1.5 text-sm font-medium text-slate-700">
             <span className="h-2 w-2 rounded-full bg-indigo-600" aria-hidden="true" />
@@ -95,16 +82,19 @@ export function TasksClient({ initialTasks }: TasksClientProps) {
           <p className="max-w-[680px] text-base leading-7 text-slate-600 sm:text-lg">
             Practice implementation details, UI patterns, API handling, and production engineering habits through focused hands-on tasks.
           </p>
+          <p className="text-sm font-medium text-slate-500">
+            30+ Tasks {"\u00b7"} Frontend + Backend {"\u00b7"} 15-45 min challenges
+          </p>
         </div>
 
-        <div className="max-w-full overflow-x-auto rounded-2xl border border-slate-200 bg-white p-1.5 shadow-sm no-scrollbar">
-          <div className="flex w-max min-w-full flex-nowrap gap-2">
-            {(["All", "Beginner", "Mid-Level", "Senior", "Frontend", "Backend", "Full-Stack", "Deployment"] as const).map((filter) => (
+        <div className="max-w-full overflow-x-auto rounded-2xl border border-slate-200 bg-white p-1.5 shadow-sm no-scrollbar md:overflow-visible">
+          <div className="flex w-max min-w-full flex-nowrap gap-2 md:min-w-0 md:w-auto md:flex-wrap">
+            {TASK_FILTERS.map((filter) => (
               <button
                 key={filter}
-                onClick={() => setActiveFilter(filter)}
+                onClick={() => handleFilterChange(filter)}
                 aria-pressed={activeFilter === filter}
-                className={`shrink-0 whitespace-nowrap rounded-xl px-3.5 py-2 text-sm font-medium transition cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 focus-visible:ring-offset-2 ${
+                className={`shrink-0 whitespace-nowrap rounded-xl px-3.5 py-2 text-sm font-medium transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 focus-visible:ring-offset-2 ${
                   activeFilter === filter
                     ? "bg-slate-900 text-white"
                     : "text-slate-600 hover:bg-slate-50 hover:text-slate-950"
@@ -115,65 +105,108 @@ export function TasksClient({ initialTasks }: TasksClientProps) {
             ))}
           </div>
         </div>
+
+        <div className="rounded-2xl border border-slate-200 bg-white p-3 shadow-sm">
+          <label htmlFor="task-search" className="sr-only">
+            Search tasks
+          </label>
+          <div className="flex items-center gap-3 rounded-xl border border-slate-200 bg-slate-50 px-4 py-3 transition focus-within:border-slate-300 focus-within:ring-4 focus-within:ring-slate-200/60">
+            <Search className="h-4 w-4 text-slate-400" />
+            <input
+              id="task-search"
+              type="search"
+              value={searchQuery}
+              onChange={(event) => handleSearchChange(event.target.value)}
+              placeholder="Search tasks by React, API, JWT, SQL..."
+              className="w-full border-0 bg-transparent text-sm text-slate-700 outline-none ring-0 placeholder:text-slate-400 focus:outline-none focus:ring-0"
+            />
+          </div>
+        </div>
       </div>
 
-      <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-        {filtered.map((task) => {
-          const isCompleted = completedTasks.includes(task.slug);
-          return (
-            <article
-              key={task.slug}
-              className="group flex h-full flex-col justify-between rounded-[22px] border border-slate-200 bg-white p-6 shadow-[0_8px_24px_rgba(15,23,42,0.04)] transition hover:border-slate-300 hover:shadow-[0_14px_30px_rgba(15,23,42,0.06)]"
-            >
-              <div className="space-y-4">
-                <div className="flex items-center justify-between gap-3">
-                  <span className={`inline-block rounded-full border px-2.5 py-1 text-xs font-semibold ${getLevelColor(task.level)}`}>
-                    {task.level}
-                  </span>
-                  {isCompleted ? (
-                    <span className="inline-flex items-center gap-1 rounded-full border border-emerald-100 bg-emerald-50 px-2.5 py-1 text-xs font-medium text-emerald-700">
-                      <CheckCircle2 className="w-3.5 h-3.5" /> Completed
-                    </span>
-                  ) : (
-                    <span className="text-[11px] font-medium uppercase tracking-[0.16em] text-slate-400">Daily challenge</span>
-                  )}
-                </div>
+      {visibleTasks.length === 0 ? (
+        <div className="rounded-[22px] border border-slate-200 bg-white p-8 text-center shadow-[0_8px_24px_rgba(15,23,42,0.04)]">
+          <p className="text-base font-medium text-slate-600">No tasks found for this filter.</p>
+        </div>
+      ) : (
+        <>
+          <div className="grid gap-6 md:grid-cols-2 xl:grid-cols-3">
+            {visibleTasks.map((task) => {
+              const isCompleted = completedTasks.includes(task.slug);
 
-                <div className="space-y-2">
-                  <h3 className="text-lg font-semibold text-slate-950">{task.title}</h3>
-                  <p className="line-clamp-3 text-sm leading-6 text-slate-600">{task.requirement}</p>
-                </div>
-
-                <div className="flex flex-wrap gap-2">
-                  {getTaskTags(task.slug).map((tag) => (
-                    <span key={tag} className="rounded-md border border-slate-200 bg-slate-50 px-2.5 py-1 text-xs font-medium text-slate-600">
-                      {tag}
-                    </span>
-                  ))}
-                </div>
-              </div>
-
-              <div className="mt-6 space-y-4 border-t border-slate-200 pt-4">
-                <div className="flex items-center justify-between text-sm text-slate-600">
-                  <span className="font-medium">Estimated time</span>
-                  <span className="inline-flex items-center gap-1 rounded-full border border-slate-200 bg-slate-50 px-2.5 py-1 text-xs font-medium text-slate-600">
-                    <Clock className="w-3.5 h-3.5 text-slate-400" />
-                    {getEstimatedTime(task.level)}
-                  </span>
-                </div>
-
-                <Link
-                  href={`/tasks/${task.slug}`}
-                  className="inline-flex min-h-11 w-full items-center justify-center gap-2 rounded-xl bg-slate-900 text-sm font-semibold text-white transition hover:bg-slate-800 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-slate-900 focus-visible:ring-offset-2"
+              return (
+                <article
+                  key={task.slug}
+                  className="group flex h-full flex-col justify-between rounded-[22px] border border-slate-200 bg-white p-6 shadow-[0_8px_24px_rgba(15,23,42,0.04)] transition hover:border-slate-300 hover:shadow-[0_14px_30px_rgba(15,23,42,0.06)]"
                 >
-                  <span>Start Task</span>
-                  <ArrowRight className="w-4 h-4 transition-transform duration-200 group-hover:translate-x-0.5" />
-                </Link>
-              </div>
-            </article>
-          );
-        })}
-      </div>
+                  <div className="flex flex-1 flex-col space-y-4">
+                    <div className="flex items-center justify-between gap-3">
+                      <span className={`inline-block rounded-full border px-2.5 py-1 text-xs font-semibold ${getLevelTone(task.level)}`}>
+                        {task.level}
+                      </span>
+                      {isCompleted ? (
+                        <span className="inline-flex items-center gap-1 rounded-full border border-emerald-100 bg-emerald-50 px-2.5 py-1 text-xs font-medium text-emerald-700">
+                          <CheckCircle2 className="h-3.5 w-3.5" /> Completed
+                        </span>
+                      ) : (
+                        <span className="text-[11px] font-medium uppercase tracking-[0.16em] text-slate-400">
+                          Daily challenge
+                        </span>
+                      )}
+                    </div>
+
+                    <div className="space-y-2">
+                      <h3 className="text-lg font-semibold text-slate-950">{task.title}</h3>
+                      <p className="line-clamp-3 text-sm leading-6 text-slate-600">{task.requirement}</p>
+                    </div>
+
+                    <div className="flex flex-wrap gap-2">
+                      {getVisibleTaskTags(task.slug).map((tag) => (
+                        <span
+                          key={tag}
+                          className="rounded-md border border-slate-200 bg-slate-50 px-2.5 py-1 text-xs font-medium text-slate-600"
+                        >
+                          {tag}
+                        </span>
+                      ))}
+                    </div>
+                  </div>
+
+                  <div className="mt-6 space-y-4 border-t border-slate-200 pt-4">
+                    <div className="flex items-center justify-between text-sm text-slate-600">
+                      <span className="font-medium">Estimated time</span>
+                      <span className="inline-flex items-center gap-1 rounded-full border border-slate-200 bg-slate-50 px-2.5 py-1 text-xs font-medium text-slate-600">
+                        <Clock className="h-3.5 w-3.5 text-slate-400" />
+                        {getEstimatedTime(task.level)}
+                      </span>
+                    </div>
+
+                    <Link
+                      href={`/tasks/${task.slug}`}
+                      className="inline-flex min-h-11 w-full items-center justify-center gap-2 rounded-xl bg-slate-900 text-sm font-semibold text-white transition hover:bg-slate-800 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-slate-900 focus-visible:ring-offset-2"
+                    >
+                      <span>Start Task</span>
+                      <ArrowRight className="h-4 w-4 transition-transform duration-200 group-hover:translate-x-0.5" />
+                    </Link>
+                  </div>
+                </article>
+              );
+            })}
+          </div>
+
+          {canLoadMore ? (
+            <div className="flex justify-center">
+              <button
+                type="button"
+                onClick={() => setVisibleCount((prev) => prev + 12)}
+                className="inline-flex min-h-11 items-center justify-center rounded-xl border border-slate-200 bg-white px-5 text-sm font-semibold text-slate-700 transition hover:bg-slate-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 focus-visible:ring-offset-2"
+              >
+                Load More
+              </button>
+            </div>
+          ) : null}
+        </>
+      )}
     </div>
   );
 }

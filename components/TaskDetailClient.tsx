@@ -2,13 +2,34 @@
 
 import React, { useState } from "react";
 import Link from "next/link";
-import { 
-  ChevronLeft, Terminal, Code2, MessageSquare, Sparkles, 
-  Lightbulb, AlertTriangle, Play, Check, Copy
+import {
+  AlertTriangle,
+  ArrowRight,
+  Check,
+  ChevronLeft,
+  ClipboardCheck,
+  Code2,
+  Copy,
+  Lightbulb,
+  MessageSquare,
+  Play,
+  Sparkles,
+  Terminal,
 } from "lucide-react";
+import { useProgress } from "@/context/ProgressContext";
+import type { DeveloperTask } from "@/lib/tasks";
 import { ProjectChecklist } from "./mdx/ProjectChecklist";
 import { TaskCompleteButton } from "./TaskCompleteButton";
-import { DeveloperTask } from "@/lib/tasks";
+import {
+  getEstimatedTime,
+  getRequirementChecklist,
+  getLevelTone,
+  getNextRecommendedTask,
+  getSuggestedImprovement,
+  getTaskCategory,
+  getTaskMetaLine,
+  getTaskTags,
+} from "./tasks/task-helpers";
 
 interface TaskDetailClientProps {
   task: DeveloperTask;
@@ -17,286 +38,441 @@ interface TaskDetailClientProps {
 export function TaskDetailClient({ task }: TaskDetailClientProps) {
   const [activeTab, setActiveTab] = useState<"overview" | "solution" | "review">("overview");
   const [copiedMap, setCopiedMap] = useState<Record<string, boolean>>({});
+  const { completedTasks } = useProgress();
+
+  const isCompleted = completedTasks.includes(task.slug);
+  const nextRecommendedTask = getNextRecommendedTask(task.slug);
+  const suggestedImprovement = getSuggestedImprovement(task);
+  const requirementChecklist = getRequirementChecklist(task.requirement);
+  const skillTags = getTaskTags(task.slug);
 
   const handleCopyCode = (id: string, text: string) => {
     navigator.clipboard.writeText(text).then(() => {
-      setCopiedMap(prev => ({ ...prev, [id]: true }));
+      setCopiedMap((prev) => ({ ...prev, [id]: true }));
       setTimeout(() => {
-        setCopiedMap(prev => ({ ...prev, [id]: false }));
+        setCopiedMap((prev) => ({ ...prev, [id]: false }));
       }, 2000);
     });
   };
 
-  const getLevelColor = (level: string) => {
-    return {
-      Beginner: "bg-blue-50 text-blue-700 border-blue-200",
-      Intermediate: "bg-violet-50 text-violet-700 border-violet-200",
-      Advanced: "bg-emerald-50 text-emerald-700 border-emerald-200"
-    }[level] || "bg-slate-50 text-slate-700";
-  };
-
   return (
-    <div className="max-w-4xl mx-auto px-6 py-10 relative animate-fade-in">
-      {/* Navigation back bar */}
-      <div className="sticky top-16 z-40 -mx-4 px-4 py-3 bg-slate-50/90 backdrop-blur-md border-b border-slate-200/60 mb-8 flex items-center justify-between rounded-b-xl shadow-xs">
+    <div className="relative mx-auto max-w-6xl animate-fade-in px-4 py-8 sm:px-6 md:py-10 lg:px-8">
+      <div className="sticky top-16 z-40 -mx-4 mb-8 flex items-center justify-between rounded-b-xl border-b border-slate-200/60 bg-slate-50/90 px-4 py-3 shadow-xs backdrop-blur-md sm:-mx-6 sm:px-6 lg:-mx-8 lg:px-8">
         <Link
           href="/tasks"
-          className="inline-flex items-center gap-2 text-xs sm:text-sm font-semibold text-slate-600 hover:text-indigo-700 transition-colors"
+          className="inline-flex items-center gap-2 text-xs font-semibold text-slate-600 transition-colors hover:text-indigo-700 sm:text-sm"
         >
-          <ChevronLeft className="w-4 h-4" />
+          <ChevronLeft className="h-4 w-4" />
           Back to Daily Tasks
         </Link>
         <div className="flex items-center gap-3">
-          <span className="text-[10px] font-bold text-slate-500 uppercase tracking-widest hidden sm:inline">
+          <span className="hidden text-[10px] font-bold uppercase tracking-widest text-slate-500 sm:inline">
             DAILY CHALLENGE // {task.slug.toUpperCase()}
           </span>
           <TaskCompleteButton taskSlug={task.slug} />
         </div>
       </div>
 
-      {/* Task Header */}
-      <div className="mb-8">
-        <div className="flex items-center gap-2 mb-3">
-          <span className={`inline-block px-3 py-1 rounded-full text-xs font-bold border ${getLevelColor(task.level)}`}>
+      <div className="mb-8 lg:mb-10">
+        <div className="mb-3 flex items-center gap-2">
+          <span className={`inline-block rounded-full border px-3 py-1 text-xs font-bold ${getLevelTone(task.level)}`}>
             {task.level} Challenge
           </span>
-          <span className="text-xs text-slate-500 font-semibold">Daily Developer Exercise</span>
+          <span className="text-xs font-semibold text-slate-500">Daily Developer Exercise</span>
         </div>
-        <h1 className="text-3xl sm:text-4xl font-black tracking-tight mb-4 text-transparent bg-clip-text bg-gradient-to-r from-slate-900 via-indigo-950 to-indigo-900">
+        <h1 className="mb-4 bg-gradient-to-r from-slate-900 via-indigo-950 to-indigo-900 bg-clip-text text-3xl font-black tracking-tight text-transparent sm:text-4xl lg:text-[2.8rem] lg:leading-tight">
           {task.title}
         </h1>
+        <p className="text-sm font-medium text-slate-500">{getTaskMetaLine(task)}</p>
       </div>
 
-      {/* Tab Navigation */}
-      <div className="mb-6 border-b border-slate-200 dark:border-slate-800">
-        <nav className="flex flex-wrap -mb-px gap-1 sm:gap-2" aria-label="Task Sections">
-          {[
-            { id: "overview", label: "Overview" },
-            { id: "solution", label: "Solution & Implementation" },
-            { id: "review", label: "Review & Next Steps" }
-          ].map((t) => {
-            const isActive = activeTab === t.id;
-            return (
-              <button
-                key={t.id}
-                onClick={() => setActiveTab(t.id as typeof activeTab)}
-                aria-current={isActive ? "page" : undefined}
-                className={`px-4 py-2.5 border-b-2 font-bold text-xs sm:text-sm transition-all duration-200 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 rounded-t-lg ${
-                  isActive
-                    ? "border-indigo-650 text-indigo-650 bg-indigo-50/40"
-                    : "border-transparent text-slate-500 hover:text-slate-800 hover:border-slate-300"
-                }`}
-              >
-                {t.label}
-              </button>
-            );
-          })}
-        </nav>
-      </div>
-
-      {/* Tab Contents */}
-      <div className="space-y-8">
-        {/* OVERVIEW TAB */}
-        {activeTab === "overview" && (
-          <div className="space-y-6 animate-fade-in">
-            {/* Real-World Scenario */}
-            {task.scenario && (
-              <section className="p-6 bg-white border border-slate-200/80 rounded-3xl shadow-xs space-y-3">
-                <h2 className="text-base font-extrabold text-slate-900 flex items-center gap-2 pb-2 border-b border-slate-100">
-                  <Sparkles className="w-4.5 h-4.5 text-indigo-500" />
-                  Real-World Scenario
-                </h2>
-                <p className="text-xs sm:text-sm text-slate-650 leading-relaxed font-semibold">
-                  {task.scenario}
-                </p>
-              </section>
-            )}
-
-            {/* Task Requirement */}
-            <section className="p-6 bg-white border border-slate-200/80 rounded-3xl shadow-xs space-y-4">
-              <h2 className="text-lg font-extrabold text-slate-900 flex items-center gap-2 pb-3 border-b border-slate-100">
-                <Terminal className="w-5 h-5 text-indigo-500" />
-                Task Requirement
-              </h2>
-              <p className="text-xs sm:text-sm text-slate-650 leading-relaxed font-semibold">
-                {task.requirement}
-              </p>
-
-              <div className="pt-3 border-t border-slate-100">
-                <p className="text-xs font-bold text-slate-450 uppercase tracking-wider mb-2">Expected Output</p>
-                <p className="text-xs text-slate-700 font-semibold leading-relaxed bg-slate-50 border border-slate-200 p-3.5 rounded-xl">
-                  {task.expectedOutput}
-                </p>
-              </div>
-            </section>
-
-            {/* Hints */}
-            <section className="p-6 bg-white border border-slate-200/80 rounded-3xl shadow-xs space-y-4">
-              <h2 className="text-lg font-extrabold text-slate-900 flex items-center gap-2 pb-3 border-b border-slate-100">
-                <Lightbulb className="w-5 h-5 text-indigo-500" />
-                Hints & Tips
-              </h2>
-              <ul className="space-y-3">
-                {task.hints.map((hint, idx) => (
-                  <li key={idx} className="flex gap-3 items-start text-xs sm:text-sm text-slate-600 leading-relaxed">
-                    <span className="h-5 w-5 bg-indigo-50 border border-indigo-200 rounded-lg flex items-center justify-center text-[10px] font-bold text-indigo-700 shrink-0">
-                      {idx + 1}
-                    </span>
-                    <span className="font-semibold text-slate-650">{hint}</span>
-                  </li>
-                ))}
-              </ul>
-            </section>
-          </div>
-        )}
-
-        {/* SOLUTION & IMPLEMENTATION TAB */}
-        {activeTab === "solution" && (
-          <div className="space-y-6 animate-fade-in">
-            {/* Starter Code */}
-            {task.starterCode && (
-              <section className="p-6 bg-white border border-slate-200/80 rounded-3xl shadow-xs space-y-3">
-                <div className="flex justify-between items-center pb-2 border-b border-slate-100">
-                  <h2 className="text-base font-extrabold text-slate-900 flex items-center gap-2">
-                    <Code2 className="w-4.5 h-4.5 text-indigo-500" />
-                    Starter Template
-                  </h2>
+      <div className="grid gap-8 lg:grid-cols-[minmax(680px,760px)_minmax(260px,300px)] lg:items-start">
+        <div className="min-w-0 space-y-6">
+          <nav
+            className="border-b border-slate-200"
+            aria-label="Task Sections"
+            role="tablist"
+          >
+            <div className="flex flex-wrap -mb-px gap-1 sm:gap-2">
+              {[
+                { id: "overview", label: "Overview" },
+                { id: "solution", label: "Solution & Implementation" },
+                { id: "review", label: "Review & Next Steps" },
+              ].map((tab) => {
+                const isActive = activeTab === tab.id;
+                return (
                   <button
-                    onClick={() => handleCopyCode("starter-code", task.starterCode || "")}
-                    className="flex items-center gap-1 px-2.5 py-1 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-lg text-2xs font-bold transition focus-visible:outline-none"
+                    key={tab.id}
+                    type="button"
+                    onClick={() => setActiveTab(tab.id as typeof activeTab)}
+                    role="tab"
+                    aria-selected={isActive}
+                    aria-controls={`task-panel-${tab.id}`}
+                    id={`task-tab-${tab.id}`}
+                    className={`rounded-t-lg border-b-2 px-4 py-2.5 text-xs font-bold transition-all duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 sm:text-sm ${
+                      isActive
+                        ? "border-indigo-650 bg-indigo-50/40 text-indigo-650"
+                        : "border-transparent text-slate-500 hover:border-slate-300 hover:text-slate-800"
+                    }`}
                   >
-                    {copiedMap["starter-code"] ? <Check className="w-3 h-3 text-emerald-600" /> : <Copy className="w-3 h-3" />}
-                    {copiedMap["starter-code"] ? "Copied" : "Copy"}
+                    {tab.label}
                   </button>
-                </div>
-                <pre className="bg-slate-950 text-slate-200 p-4 rounded-xl border border-slate-900 font-mono text-2xs overflow-x-auto leading-relaxed">
-                  {task.starterCode}
-                </pre>
-              </section>
-            )}
+                );
+              })}
+            </div>
+          </nav>
 
-            {/* Full working solution */}
-            <section className="border border-indigo-250 bg-indigo-50/5 rounded-3xl overflow-hidden shadow-xs">
-              <div className="p-5 border-b border-indigo-100 bg-indigo-50/15 flex items-center justify-between">
-                <div className="flex items-center gap-2.5">
-                  <span className="h-9 w-9 bg-indigo-600 text-white rounded-xl flex items-center justify-center shrink-0">
-                    <Code2 className="w-4.5 h-4.5" />
-                  </span>
-                  <div>
-                    <h3 className="text-sm font-extrabold text-slate-905">Full Working Solution</h3>
-                    <p className="text-2xs text-slate-500 mt-0.5">Tested production-style code solution</p>
-                  </div>
-                </div>
-                <button
-                  onClick={() => handleCopyCode("solution-code", task.solutionCode)}
-                  className="flex items-center gap-1.5 px-3 py-1.5 bg-slate-800 hover:bg-slate-700 text-white rounded-lg text-2xs font-bold transition focus-visible:outline-none"
-                >
-                  {copiedMap["solution-code"] ? <Check className="w-3.5 h-3.5 text-emerald-400" /> : <Copy className="w-3.5 h-3.5" />}
-                  {copiedMap["solution-code"] ? "Copied!" : "Copy Solution"}
-                </button>
-              </div>
-
-              <div className="p-6 space-y-6 bg-white">
-                <div className="text-xs sm:text-sm text-slate-750 leading-relaxed font-semibold">
-                  <p className="font-bold text-slate-850 mb-1.5">Code Explanation</p>
-                  <p className="leading-relaxed font-medium">
-                    {task.solutionExplanation}
+          {activeTab === "overview" ? (
+            <div
+              id="task-panel-overview"
+              role="tabpanel"
+              aria-labelledby="task-tab-overview"
+              className="space-y-6 animate-fade-in"
+            >
+              <section className="grid gap-5 rounded-3xl border border-slate-200/80 bg-white p-6 shadow-xs md:grid-cols-2">
+                <div className="space-y-3">
+                  <p className="text-xs font-bold uppercase tracking-[0.18em] text-slate-500">
+                    What you will build
+                  </p>
+                  <p className="text-sm font-semibold leading-relaxed text-slate-650">
+                    {task.expectedOutput}
                   </p>
                 </div>
-                <div>
-                  <p className="text-2xs font-extrabold text-slate-400 uppercase tracking-wider mb-2">Solution Code</p>
-                  <pre className="bg-slate-950 text-slate-200 p-4 rounded-xl border border-slate-900 font-mono text-2xs overflow-x-auto leading-relaxed">
-                    {task.solutionCode}
-                  </pre>
+                <div className="space-y-3">
+                  <p className="text-xs font-bold uppercase tracking-[0.18em] text-slate-500">
+                    Success criteria
+                  </p>
+                  <ul className="space-y-2">
+                    {task.checklist.slice(0, 3).map((item) => (
+                      <li key={item} className="flex items-start gap-2 text-sm text-slate-600">
+                        <span className="mt-2 h-1.5 w-1.5 shrink-0 rounded-full bg-indigo-500" />
+                        <span>{item}</span>
+                      </li>
+                    ))}
+                  </ul>
                 </div>
-              </div>
-            </section>
-
-            {/* Edge Cases */}
-            {task.edgeCases && task.edgeCases.length > 0 && (
-              <section className="p-6 bg-yellow-50/15 border border-yellow-200 rounded-3xl shadow-xs space-y-3">
-                <h3 className="text-sm font-extrabold text-yellow-800 uppercase tracking-wider">Edge Cases Covered</h3>
-                <ul className="space-y-2">
-                  {task.edgeCases.map((edge, idx) => (
-                    <li key={idx} className="flex gap-2 items-start text-xs sm:text-sm text-slate-650">
-                      <span className="text-yellow-600 font-bold">⚠️</span>
-                      <span className="font-semibold">{edge}</span>
-                    </li>
-                  ))}
-                </ul>
               </section>
-            )}
-          </div>
-        )}
 
-        {/* REVIEW & NEXT STEPS TAB */}
-        {activeTab === "review" && (
-          <div className="space-y-6 animate-fade-in">
-            {/* Senior Code Review Checklist */}
-            <ProjectChecklist
-              title="Senior Code Review Checklist"
-              storageKey={`task-checklist-${task.slug}`}
-              items={task.checklist}
-            />
+              <section className="space-y-4 rounded-3xl border border-slate-200/80 bg-white p-6 shadow-xs">
+                <h2 className="flex items-center gap-2 border-b border-slate-100 pb-3 text-lg font-extrabold text-slate-900">
+                  <ClipboardCheck className="h-5 w-5 text-indigo-500" />
+                  Skills You Will Practice
+                </h2>
+                <div className="flex flex-wrap gap-2">
+                  {skillTags.map((skill) => (
+                    <span
+                      key={skill}
+                      className="rounded-full border border-slate-200 bg-slate-50 px-3 py-1 text-xs font-semibold text-slate-600"
+                    >
+                      {skill}
+                    </span>
+                  ))}
+                </div>
+              </section>
 
-            {/* Common Mistakes */}
-            {task.commonMistakes && task.commonMistakes.length > 0 && (
-              <section className="p-6 bg-red-50/20 border border-red-200 rounded-3xl shadow-xs space-y-4">
-                <h2 className="text-lg font-extrabold text-red-950 flex items-center gap-2 pb-3 border-b border-red-100">
-                  <AlertTriangle className="w-5 h-5 text-red-600" />
-                  Common Mistakes to Avoid
+              {task.scenario ? (
+                <section className="space-y-3 rounded-3xl border border-slate-200/80 bg-white p-6 shadow-xs">
+                  <h2 className="flex items-center gap-2 border-b border-slate-100 pb-2 text-base font-extrabold text-slate-900">
+                    <Sparkles className="h-4.5 w-4.5 text-indigo-500" />
+                    Real-world use case
+                  </h2>
+                  <p className="text-sm font-semibold leading-relaxed text-slate-650">
+                    {task.scenario}
+                  </p>
+                </section>
+              ) : null}
+
+              <section className="space-y-4 rounded-3xl border border-slate-200/80 bg-white p-6 shadow-xs">
+                <h2 className="flex items-center gap-2 border-b border-slate-100 pb-3 text-lg font-extrabold text-slate-900">
+                  <Terminal className="h-5 w-5 text-indigo-500" />
+                  Requirements checklist
                 </h2>
                 <ul className="space-y-3">
-                  {task.commonMistakes.map((mistake, idx) => (
-                    <li key={idx} className="flex gap-3 items-start text-xs sm:text-sm text-slate-700 leading-relaxed font-semibold">
-                      <span className="text-red-505 font-bold shrink-0">✕</span>
-                      <span>{mistake}</span>
+                  {requirementChecklist.map((item) => (
+                    <li key={item} className="flex items-start gap-3 text-sm leading-relaxed text-slate-650">
+                      <span className="mt-2 h-1.5 w-1.5 shrink-0 rounded-full bg-indigo-500" />
+                      <span className="font-semibold">{item}</span>
+                    </li>
+                  ))}
+                </ul>
+                <div className="pt-2">
+                  <p className="mb-2 text-xs font-bold uppercase tracking-wider text-slate-450">
+                    Expected output
+                  </p>
+                  <p className="rounded-xl bg-slate-50 px-4 py-3 text-xs font-semibold leading-relaxed text-slate-600">
+                    {task.expectedOutput}
+                  </p>
+                </div>
+              </section>
+
+              <section className="space-y-4 rounded-3xl border border-slate-200/80 bg-white p-6 shadow-xs">
+                <h2 className="flex items-center gap-2 border-b border-slate-100 pb-3 text-lg font-extrabold text-slate-900">
+                  <Lightbulb className="h-5 w-5 text-indigo-500" />
+                  Hints & Tips
+                </h2>
+                <ul className="space-y-3">
+                  {task.hints.map((hint, idx) => (
+                    <li key={idx} className="flex items-start gap-3 text-sm leading-relaxed text-slate-600">
+                      <span className="flex h-5 w-5 shrink-0 items-center justify-center rounded-lg border border-indigo-200 bg-indigo-50 text-[10px] font-bold text-indigo-700">
+                        {idx + 1}
+                      </span>
+                      <span className="font-semibold text-slate-650">{hint}</span>
                     </li>
                   ))}
                 </ul>
               </section>
-            )}
+            </div>
+          ) : null}
 
-            {/* Explain in Interview */}
-            <section className="border border-purple-250 bg-purple-50/5 rounded-3xl overflow-hidden shadow-xs">
-              <div className="p-5 border-b border-purple-100 bg-purple-50/15 flex items-center gap-2.5">
-                <span className="h-9 w-9 bg-purple-600 text-white rounded-xl flex items-center justify-center shrink-0">
-                  <MessageSquare className="w-4.5 h-4.5" />
-                </span>
-                <div>
-                  <h3 className="text-sm font-extrabold text-slate-900">Explain in Interview</h3>
-                  <p className="text-2xs text-slate-500 mt-0.5">How to pitch this solution during technical reviews</p>
+          {activeTab === "solution" ? (
+            <div
+              id="task-panel-solution"
+              role="tabpanel"
+              aria-labelledby="task-tab-solution"
+              className="space-y-6 animate-fade-in"
+            >
+              <section className="space-y-4 rounded-3xl border border-slate-200/80 bg-white p-6 shadow-xs">
+                <h2 className="flex items-center gap-2 border-b border-slate-100 pb-3 text-lg font-extrabold text-slate-900">
+                  <Play className="h-5 w-5 text-indigo-500" />
+                  Step-by-step approach
+                </h2>
+                <ol className="space-y-3">
+                  {task.hints.map((hint, idx) => (
+                    <li key={idx} className="flex items-start gap-3 text-sm leading-relaxed text-slate-650">
+                      <span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full border border-indigo-200 bg-indigo-50 text-[10px] font-bold text-indigo-700">
+                        {idx + 1}
+                      </span>
+                      <span className="font-semibold">{hint}</span>
+                    </li>
+                  ))}
+                </ol>
+              </section>
+
+              {task.starterCode ? (
+                <section className="space-y-3 rounded-3xl border border-slate-200/80 bg-white p-6 shadow-xs">
+                  <div className="flex items-center justify-between border-b border-slate-100 pb-2">
+                    <h2 className="flex items-center gap-2 text-base font-extrabold text-slate-900">
+                      <Code2 className="h-4.5 w-4.5 text-indigo-500" />
+                      Starter template
+                    </h2>
+                    <button
+                      type="button"
+                      onClick={() => handleCopyCode("starter-code", task.starterCode || "")}
+                      className="flex items-center gap-1 rounded-lg bg-slate-100 px-2.5 py-1 text-[10px] font-bold text-slate-700 transition hover:bg-slate-200 focus-visible:outline-none"
+                    >
+                      {copiedMap["starter-code"] ? (
+                        <Check className="h-3 w-3 text-emerald-600" />
+                      ) : (
+                        <Copy className="h-3 w-3" />
+                      )}
+                      {copiedMap["starter-code"] ? "Copied" : "Copy"}
+                    </button>
+                  </div>
+                  <pre className="max-h-64 overflow-auto rounded-xl bg-slate-950 p-4 font-mono text-[11px] leading-relaxed text-slate-200">
+                    {task.starterCode}
+                  </pre>
+                </section>
+              ) : null}
+
+              <section className="overflow-hidden rounded-3xl border border-slate-200/80 bg-white shadow-xs">
+                <div className="flex items-center justify-between border-b border-slate-100 bg-slate-50/60 p-5">
+                  <div className="flex items-center gap-2.5">
+                    <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-indigo-600 text-white">
+                      <Code2 className="h-4.5 w-4.5" />
+                    </span>
+                    <div>
+                      <h3 className="text-sm font-extrabold text-slate-905">Code example</h3>
+                      <p className="mt-0.5 text-[11px] text-slate-500">
+                        Production-style reference implementation
+                      </p>
+                    </div>
+                  </div>
+                  <button
+                    type="button"
+                    onClick={() => handleCopyCode("solution-code", task.solutionCode)}
+                    className="flex items-center gap-1.5 rounded-lg bg-slate-800 px-3 py-1.5 text-[10px] font-bold text-white transition hover:bg-slate-700 focus-visible:outline-none"
+                  >
+                    {copiedMap["solution-code"] ? (
+                      <Check className="h-3.5 w-3.5 text-emerald-400" />
+                    ) : (
+                      <Copy className="h-3.5 w-3.5" />
+                    )}
+                    {copiedMap["solution-code"] ? "Copied!" : "Copy Solution"}
+                  </button>
                 </div>
-              </div>
 
-              <div className="p-6 bg-white">
-                <p className="text-xs sm:text-sm text-slate-750 leading-relaxed font-semibold italic bg-slate-50 p-4 border rounded-2xl">
-                  &ldquo;{task.interviewExplanation}&rdquo;
+                <div className="space-y-5 p-6">
+                  <div className="text-sm font-medium leading-relaxed text-slate-650">
+                    <p className="mb-1.5 text-sm font-bold text-slate-850">Explanation</p>
+                    <p>{task.solutionExplanation}</p>
+                  </div>
+                  <div>
+                    <p className="mb-2 text-[11px] font-extrabold uppercase tracking-wider text-slate-400">
+                      Code example
+                    </p>
+                    <pre className="max-h-[28rem] overflow-auto rounded-xl bg-slate-950 p-4 font-mono text-[11px] leading-relaxed text-slate-200">
+                      {task.solutionCode}
+                    </pre>
+                  </div>
+                </div>
+              </section>
+
+              {task.commonMistakes.length > 0 ? (
+                <section className="space-y-4 rounded-3xl border border-red-200/80 bg-red-50/20 p-6 shadow-xs">
+                  <h2 className="flex items-center gap-2 border-b border-red-100 pb-3 text-lg font-extrabold text-red-950">
+                    <AlertTriangle className="h-5 w-5 text-red-600" />
+                    Common mistakes
+                  </h2>
+                  <ul className="space-y-3">
+                    {task.commonMistakes.map((mistake, idx) => (
+                      <li key={idx} className="flex items-start gap-3 text-sm font-semibold leading-relaxed text-slate-700">
+                        <span className="shrink-0 font-bold text-red-505">•</span>
+                        <span>{mistake}</span>
+                      </li>
+                    ))}
+                  </ul>
+                </section>
+              ) : null}
+            </div>
+          ) : null}
+
+          {activeTab === "review" ? (
+            <div
+              id="task-panel-review"
+              role="tabpanel"
+              aria-labelledby="task-tab-review"
+              className="space-y-6 animate-fade-in"
+            >
+              <ProjectChecklist
+                title="Self-review Checklist"
+                storageKey={`task-checklist-${task.slug}`}
+                items={task.checklist}
+              />
+
+              <section className="space-y-4 rounded-3xl border border-slate-200/80 bg-white p-6 shadow-xs">
+                <h2 className="flex items-center gap-2 border-b border-slate-100 pb-3 text-lg font-extrabold text-slate-900">
+                  <Sparkles className="h-5 w-5 text-indigo-500" />
+                  Suggested improvement
+                </h2>
+                <p className="text-sm font-semibold leading-relaxed text-slate-650">
+                  {suggestedImprovement}
                 </p>
-              </div>
-            </section>
+              </section>
 
-            {/* Next Matching Project */}
-            {task.nextProject && (
-              <section className="p-6 bg-indigo-600 rounded-3xl text-white flex flex-col sm:flex-row items-center justify-between gap-4 shadow-sm">
-                <div className="space-y-1 text-center sm:text-left">
-                  <span className="inline-block text-[10px] font-extrabold uppercase tracking-widest text-indigo-200">Suggested Next Action</span>
-                  <h3 className="text-base font-extrabold mt-1">Practice in a Project Lab</h3>
-                  <p className="text-xs text-indigo-150 leading-relaxed font-semibold max-w-md">
-                    Apply this challenge concept inside a complete, runnable build-along project: <strong className="text-white">{task.nextProject.title}</strong>.
+              <section className="overflow-hidden rounded-3xl border border-slate-200/80 bg-white shadow-xs">
+                <div className="flex items-center gap-2.5 border-b border-slate-100 bg-slate-50/60 p-5">
+                  <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-violet-600 text-white">
+                    <MessageSquare className="h-4.5 w-4.5" />
+                  </span>
+                  <div>
+                    <h3 className="text-sm font-extrabold text-slate-900">Explain in Interview</h3>
+                    <p className="mt-0.5 text-[11px] text-slate-500">
+                      How to pitch this solution during technical reviews
+                    </p>
+                  </div>
+                </div>
+                <div className="p-6">
+                  <p className="rounded-2xl bg-slate-50 p-4 text-sm font-semibold italic leading-relaxed text-slate-650">
+                    &ldquo;{task.interviewExplanation}&rdquo;
                   </p>
                 </div>
-                <Link
-                  href={`/projects/${task.nextProject.slug}`}
-                  className="bg-white text-indigo-700 px-5 py-2.5 rounded-2xl text-xs font-bold shadow-xs hover:bg-slate-50 transition flex items-center gap-1.5 shrink-0"
-                >
-                  <span>Build Project</span>
-                  <Play className="w-3 h-3 fill-indigo-700 text-indigo-700" />
-                </Link>
               </section>
-            )}
-          </div>
-        )}
+
+              <div className="grid gap-6 lg:grid-cols-2">
+                <section className="flex flex-col justify-between gap-4 rounded-3xl border border-slate-200/80 bg-white p-6 shadow-xs">
+                  <div className="space-y-1">
+                    <span className="inline-block text-[10px] font-extrabold uppercase tracking-widest text-slate-400">
+                      Code quality next step
+                    </span>
+                    <h3 className="mt-1 text-base font-extrabold text-slate-900">
+                      Open the Code Review Console
+                    </h3>
+                    <p className="text-sm font-medium leading-relaxed text-slate-600">
+                      Audit this solution against frontend, accessibility, performance, security, and deployment review checks.
+                    </p>
+                  </div>
+                  <Link
+                    href="/code-review"
+                    className="inline-flex min-h-11 items-center justify-center gap-2 rounded-xl bg-slate-900 px-5 text-sm font-semibold text-white transition hover:bg-slate-800 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-slate-900 focus-visible:ring-offset-2"
+                  >
+                    Open Review Console
+                    <ArrowRight className="h-4 w-4" />
+                  </Link>
+                </section>
+
+                {nextRecommendedTask ? (
+                  <section className="flex flex-col justify-between gap-4 rounded-3xl border border-indigo-100 bg-indigo-50/70 p-6 shadow-xs">
+                    <div className="space-y-1">
+                      <span className="inline-block text-[10px] font-extrabold uppercase tracking-widest text-indigo-500">
+                        Next recommended task
+                      </span>
+                      <h3 className="mt-1 text-base font-extrabold text-slate-900">
+                        {nextRecommendedTask.title}
+                      </h3>
+                      <p className="max-w-md text-sm font-medium leading-relaxed text-slate-600">
+                        Continue with another challenge to build momentum step by step in the practice workspace.
+                      </p>
+                    </div>
+                    <Link
+                      href={`/tasks/${nextRecommendedTask.slug}`}
+                      className="inline-flex shrink-0 items-center gap-1.5 self-start rounded-2xl bg-white px-5 py-2.5 text-xs font-bold text-indigo-700 shadow-xs transition hover:bg-slate-50"
+                    >
+                      <span>Start Next Task</span>
+                      <Play className="h-3 w-3 fill-indigo-700 text-indigo-700" />
+                    </Link>
+                  </section>
+                ) : null}
+              </div>
+            </div>
+          ) : null}
+        </div>
+
+        <aside className="order-first lg:order-none lg:sticky lg:top-28 lg:self-start">
+          <section className="rounded-3xl border border-slate-200/80 bg-white p-5 shadow-xs">
+            <p className="text-xs font-bold uppercase tracking-[0.18em] text-slate-500">
+              Challenge Summary
+            </p>
+            <div className="mt-4 space-y-4">
+              <div className="space-y-1">
+                <p className="text-[11px] font-bold uppercase tracking-[0.16em] text-slate-400">Level</p>
+                <p className="text-sm font-semibold text-slate-900">{task.level}</p>
+              </div>
+              <div className="space-y-1">
+                <p className="text-[11px] font-bold uppercase tracking-[0.16em] text-slate-400">Duration</p>
+                <p className="text-sm font-semibold text-slate-900">{getEstimatedTime(task.level)}</p>
+              </div>
+              <div className="space-y-1">
+                <p className="text-[11px] font-bold uppercase tracking-[0.16em] text-slate-400">Category</p>
+                <p className="text-sm font-semibold text-slate-900">{getTaskCategory(task.slug)}</p>
+              </div>
+              <div className="space-y-2">
+                <p className="text-[11px] font-bold uppercase tracking-[0.16em] text-slate-400">Skills</p>
+                <div className="flex flex-wrap gap-2">
+                  {skillTags.map((skill) => (
+                    <span
+                      key={skill}
+                      className="rounded-full border border-slate-200 bg-slate-50 px-2.5 py-1 text-xs font-semibold text-slate-600"
+                    >
+                      {skill}
+                    </span>
+                  ))}
+                </div>
+              </div>
+              <div className="space-y-1">
+                <p className="text-[11px] font-bold uppercase tracking-[0.16em] text-slate-400">Status</p>
+                <span
+                  className={`inline-flex rounded-full border px-2.5 py-1 text-xs font-semibold ${
+                    isCompleted
+                      ? "border-emerald-200 bg-emerald-50 text-emerald-700"
+                      : "border-slate-200 bg-slate-50 text-slate-600"
+                  }`}
+                >
+                  {isCompleted ? "Completed" : "In Progress"}
+                </span>
+              </div>
+            </div>
+          </section>
+        </aside>
       </div>
     </div>
   );

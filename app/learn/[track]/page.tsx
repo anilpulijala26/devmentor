@@ -1,11 +1,13 @@
 import Link from "next/link";
-import { getTrackBySlug, getAllTracks } from "@/lib/content";
-import { ChevronLeft, Compass, Sparkles, ArrowRight, Terminal, Award } from "lucide-react";
+import { ChevronLeft } from "lucide-react";
 import { notFound } from "next/navigation";
+import { getAllTracks, getTrackBySlug } from "@/lib/content";
 import { learningMap } from "@/lib/learning-map";
 import { getDeveloperTaskBySlug } from "@/lib/tasks";
 import { getProjectBySlug } from "@/lib/projects";
-
+import { TrackHero } from "@/components/track-detail/TrackHero";
+import { TrackInfoCards } from "@/components/track-detail/TrackInfoCards";
+import { TrackTabs } from "@/components/track-detail/TrackTabs";
 
 interface Props {
   params: Promise<{ track: string }>;
@@ -51,11 +53,181 @@ export async function generateMetadata({ params }: Props) {
         description: metadataMap[trackSlug]?.description ?? track.description,
       };
     }
-  } catch { }
+  } catch {}
+
   return {
     title: "Track Roadmap - CodeNivra",
   };
 }
+
+type ThemeConfig = {
+  badge: string;
+  level: string;
+  whoIsFor: string;
+  prerequisites: string[];
+  interviewReadiness: string[];
+  completionOutcomes: string[];
+  nextStep: { label: string; url: string };
+};
+
+const themeMap: Record<string, ThemeConfig> = {
+  foundations: {
+    badge: "Core Engineering",
+    level: "Beginner Path",
+    whoIsFor:
+      "Beginners, interns, and self-taught learners building strong frontend fundamentals.",
+    prerequisites: [
+      "Basic computer literacy",
+      "Comfort using a browser and editor",
+      "No prior coding experience required",
+    ],
+    interviewReadiness: [
+      "Explain semantic HTML and accessibility basics",
+      "Describe the critical rendering path",
+      "Talk through event loop fundamentals and page performance",
+    ],
+    completionOutcomes: [
+      "Build semantic, responsive web pages with confidence",
+      "Use HTML, CSS, and JavaScript fundamentals in real tasks",
+      "Understand core accessibility and performance habits",
+      "Ship a clean beginner-friendly portfolio project",
+    ],
+    nextStep: {
+      label: "Proceed to Frontend Frameworks",
+      url: "/learn/frontend-frameworks",
+    },
+  },
+  "frontend-frameworks": {
+    badge: "Advanced Web Apps",
+    level: "Advanced Path",
+    whoIsFor:
+      "Frontend developers moving into React, Next.js, and scalable UI engineering.",
+    prerequisites: [
+      "Strong ES6 JavaScript fundamentals",
+      "Comfort with HTML forms and layouts",
+      "Basic understanding of async data fetching",
+    ],
+    interviewReadiness: [
+      "Explain React reconciliation and render cycles",
+      "Differentiate client and server components",
+      "Talk through Next.js routing and caching decisions",
+    ],
+    completionOutcomes: [
+      "Build reusable React and Next.js interfaces",
+      "Manage state, forms, routing, and async UI cleanly",
+      "Understand scalable component architecture",
+      "Ship polished frontend portfolio projects",
+    ],
+    nextStep: {
+      label: "Proceed to Full-Stack Applications",
+      url: "/learn/fullstack",
+    },
+  },
+  fullstack: {
+    badge: "Production Systems",
+    level: "Advanced Path",
+    whoIsFor:
+      "Developers building complete applications across UI, APIs, auth, and databases.",
+    prerequisites: [
+      "Comfort with React or Next.js basics",
+      "Understanding of HTTP requests and APIs",
+      "Familiarity with JavaScript project structure",
+    ],
+    interviewReadiness: [
+      "Explain auth flows and HttpOnly cookie sessions",
+      "Describe API service layers and validation strategy",
+      "Walk through full-stack architecture decisions clearly",
+    ],
+    completionOutcomes: [
+      "Connect frontend, backend, and database layers confidently",
+      "Handle auth, validation, and production-ready app structure",
+      "Build projects you can demo and explain in interviews",
+      "Move from feature work into complete application delivery",
+    ],
+    nextStep: {
+      label: "Review All Daily Developer Tasks",
+      url: "/tasks",
+    },
+  },
+  backend: {
+    badge: "Backend Engineering",
+    level: "Advanced Path",
+    whoIsFor:
+      "Developers focused on APIs, databases, security, and backend architecture.",
+    prerequisites: [
+      "Comfort with JavaScript or TypeScript syntax",
+      "Understanding of request and response flow",
+      "Basic terminal and database familiarity",
+    ],
+    interviewReadiness: [
+      "Explain REST API design and middleware pipelines",
+      "Discuss JWT auth and secure cookie handling",
+      "Talk through validation, indexing, and database choices",
+    ],
+    completionOutcomes: [
+      "Build secure backend services with clean structure",
+      "Design and query relational schemas effectively",
+      "Write tested APIs with validation and auth",
+      "Understand practical backend production concerns",
+    ],
+    nextStep: {
+      label: "Proceed to Full-Stack Applications",
+      url: "/learn/fullstack",
+    },
+  },
+  deployment: {
+    badge: "Cloud & Deployment",
+    level: "Professional Path",
+    whoIsFor:
+      "Developers moving from local builds to CI/CD, Docker, cloud hosting, and production workflows.",
+    prerequisites: [
+      "Familiarity with a full-stack project codebase",
+      "Working knowledge of Git and GitHub",
+      "Basic command line comfort",
+    ],
+    interviewReadiness: [
+      "Explain build-time vs runtime configuration",
+      "Discuss Docker, CI/CD, and deployment rollouts",
+      "Talk through cloud security and release workflows",
+    ],
+    completionOutcomes: [
+      "Containerize apps and automate builds confidently",
+      "Deploy frontend and backend projects using production workflows",
+      "Manage secrets, cloud infrastructure, and release quality",
+      "Explain deployment choices in interviews and team settings",
+    ],
+    nextStep: {
+      label: "Proceed to Interview Preparation",
+      url: "/learn/interview",
+    },
+  },
+  interview: {
+    badge: "Interview Preparation",
+    level: "Interview Path",
+    whoIsFor:
+      "Candidates preparing for technical interviews, project walkthroughs, and code reviews.",
+    prerequisites: [
+      "Completion of at least one technical track",
+      "Familiarity with frontend, backend, or full-stack concepts",
+      "Some project experience to talk through",
+    ],
+    interviewReadiness: [
+      "Explain architecture and tradeoffs with clarity",
+      "Structure technical answers under time pressure",
+      "Review code and highlight improvements confidently",
+    ],
+    completionOutcomes: [
+      "Present projects clearly in interviews",
+      "Answer systems, frontend, and backend discussion prompts",
+      "Show stronger confidence in technical explanation",
+      "Move into job-ready interview practice",
+    ],
+    nextStep: {
+      label: "Review All Career Pathways",
+      url: "/roadmaps",
+    },
+  },
+};
 
 export default async function TrackPage({ params }: Props) {
   const { track: trackSlug } = await params;
@@ -65,490 +237,89 @@ export default async function TrackPage({ params }: Props) {
     notFound();
   }
 
-  // Retrieve matching learning map topics for this track
   const trackTopicMappings = learningMap.filter((topic) =>
-    topic.relatedLessons.some((l) => l.track === trackSlug)
+    topic.relatedLessons.some((lesson) => lesson.track === trackSlug),
   );
 
-  // Load recommended task objects dynamically from lib/tasks
-  const recommendedTasks = trackTopicMappings.flatMap((topic) =>
-    topic.relatedTasks.map((tSlug) => getDeveloperTaskBySlug(tSlug))
-  ).filter((t): t is NonNullable<typeof t> => t !== undefined);
+  const recommendedTasks = Array.from(
+    new Set(trackTopicMappings.flatMap((topic) => topic.relatedTasks)),
+  )
+    .map((slug) => getDeveloperTaskBySlug(slug))
+    .filter((task): task is NonNullable<typeof task> => task !== undefined);
 
-  // Load recommended project objects dynamically from lib/projects
   const recommendedProjects = Array.from(
-    new Set(trackTopicMappings.flatMap((topic) => topic.relatedProjects))
-  ).map((pSlug) => getProjectBySlug(pSlug))
-    .filter((p): p is NonNullable<typeof p> => p !== undefined);
+    new Set(trackTopicMappings.flatMap((topic) => topic.relatedProjects)),
+  )
+    .map((slug) => getProjectBySlug(slug))
+    .filter((project): project is NonNullable<typeof project> => project !== undefined);
 
-  // Dynamic theme configurations
-  const themeMap: Record<
-    string,
-    {
-      badge: string;
-      colorClass: string;
-      bgClass: string;
-      textClass: string;
-      borderClass: string;
-      hours: string;
-      level: string;
-      whoIsFor: string;
-      prerequisites: string[];
-      skillsGained: string[];
-      interviewReadiness: string[];
-      completionOutcomes: string[];
-      nextStep: { label: string; url: string };
-    }
-  > = {
-    foundations: {
-      badge: "Core Engineering",
-      colorClass: "from-blue-600 to-indigo-600",
-      bgClass: "bg-indigo-50",
-      textClass: "text-indigo-700",
-      borderClass: "border-indigo-100",
-      hours: "12 Hours",
-      level: "Intermediate",
-      whoIsFor: "Beginner developers, engineering interns, and self-taught coders looking to build a high-performance web development foundation.",
-      prerequisites: ["Basic computer literacy", "Understanding how to open a web browser", "No prior coding experience required"],
-      skillsGained: [
-        "Write accessible HTML5 landmarks that comply with WCAG AA compliance.",
-        "Design responsive web layouts using modern CSS Grid and Flexbox variables.",
-        "Code dynamic client interactions, closures, and promises in ES6+ JavaScript.",
-        "Setup clean static website hosting environments on Netlify or Vercel."
-      ],
-      interviewReadiness: [
-        "How to explain the Critical Rendering Path (CRP) and paint cycles.",
-        "How to explain the event loop priorities (microtasks vs macrotasks).",
-        "How to explain semantic HTML landmarks and visual outline hidden options."
-      ],
-      completionOutcomes: [
-        "I can write a valid HTML document using semantic tags without generic divs.",
-        "I can build responsive grid card layouts without hardcoding static pixels.",
-        "I understand lexical scopes, closures, and async-await code structures.",
-        "I can host and deploy website repositories securely."
-      ],
-      nextStep: { label: "Proceed to Frontend Frameworks (React & Next.js)", url: "/learn/frontend-frameworks" }
-    },
-    "frontend-frameworks": {
-      badge: "Advanced Web Apps",
-      colorClass: "from-indigo-600 to-violet-600",
-      bgClass: "bg-violet-50",
-      textClass: "text-violet-700",
-      borderClass: "border-violet-100",
-      hours: "18 Hours",
-      level: "Advanced",
-      whoIsFor: "Frontend developers looking to transition to component-based state architectures, dynamic routing, and server-side rendering with Next.js.",
-      prerequisites: ["Strong understanding of ES6 JavaScript", "Familiarity with HTML forms and variables", "Understanding of asynchronous fetch requests"],
-      skillsGained: [
-        "Manage React state using useState, useReducer, and Context APIs.",
-        "Implement Next.js App Router folders, nested layouts, and server actions.",
-        "Optimize React render loops using memo, useMemo, and useCallback hooks.",
-        "Handle Next.js dynamic routing, route parameters, and caching pipelines."
-      ],
-      interviewReadiness: [
-        "How to explain the React Fiber reconciliation updates.",
-        "How to explain React Server Components (RSC) vs Client Components.",
-        "How to explain Next.js caching tiers and revalidation triggers."
-      ],
-      completionOutcomes: [
-        "I can create reusable and type-safe React components.",
-        "I can utilize React hooks correctly without rendering loop leaks.",
-        "I understand the routing directories of the App Router.",
-        "I can serialize layouts filter criteria into URL query params."
-      ],
-      nextStep: { label: "Proceed to Full-Stack Applications (API & Databases)", url: "/learn/fullstack" }
-    },
-    fullstack: {
-      badge: "Production Systems",
-      colorClass: "from-violet-600 to-fuchsia-600",
-      bgClass: "bg-fuchsia-50",
-      textClass: "text-fuchsia-700",
-      borderClass: "border-fuchsia-100",
-      hours: "24 Hours",
-      level: "Professional",
-      whoIsFor: "Advanced developers seeking to expand into server-side architectures, write SQL database tables, and configure container deployments.",
-      prerequisites: ["Understanding of JavaScript arrays and objects", "Familiarity with server APIs and dynamic routing concepts", "Experience with command-line terminals"],
-      skillsGained: [
-        "Develop Express server APIs with custom routing controllers.",
-        "Define Zod validation middleware schemas to filter payloads.",
-        "Model PostgreSQL databases with relations using Prisma or Drizzle ORMs.",
-        "Setup containerized developer workflows using multi-stage Docker builds."
-      ],
-      interviewReadiness: [
-        "How to design secure authentication flows using JWT and HttpOnly cookies.",
-        "How to analyze database query execution speeds using EXPLAIN commands.",
-        "How to configure container layers in multi-stage Dockerfiles."
-      ],
-      completionOutcomes: [
-        "I can write Express routing controllers with error catching boundaries.",
-        "I can write relational PostgreSQL tables and database indexing rules.",
-        "I understand CORS headers and secure JWT rotation operations.",
-        "I can write a multi-stage Docker configuration."
-      ],
-      nextStep: { label: "Review All Daily Developer Tasks", url: "/tasks" }
-    },
-    backend: {
-      badge: "Backend Engineering",
-      colorClass: "from-emerald-600 to-teal-600",
-      bgClass: "bg-emerald-50",
-      textClass: "text-emerald-700",
-      borderClass: "border-emerald-100",
-      hours: "30 Hours",
-      level: "Advanced",
-      whoIsFor: "Frontend or full-stack developers seeking deep mastery of server-side logic, database query design, REST API specifications, secure authentication mechanisms, and unit-integration testing pipelines.",
-      prerequisites: ["Comfortable with asynchronous JavaScript or TypeScript syntax", "Understanding of HTTP request/response concepts", "Basic terminal and database concepts"],
-      skillsGained: [
-        "Design robust REST APIs with modular router controller structures in Express.js.",
-        "Secure endpoints using JWT access/refresh token rotation patterns and HttpOnly cookies.",
-        "Implement relational database tables, indexing, and transactional operations using Prisma and PostgreSQL.",
-        "Construct comprehensive unit and integration tests with Jest, Supertest, and ORM mock engines."
-      ],
-      interviewReadiness: [
-        "How to configure CORS permissions and secure HTTP headers via Helmet.",
-        "How to handle race conditions and index query plans with EXPLAIN ANALYZE.",
-        "How to structure custom error handling middlewares with async handler patterns."
-      ],
-      completionOutcomes: [
-        "I can build and scale an Express server featuring custom error class captures.",
-        "I can design normalized relational database tables and transaction blocks.",
-        "I can write integration tests covering database mock and token authentication behaviors.",
-        "I understand rate limiting, environment variable encryption, and payload sanitization."
-      ],
-      nextStep: { label: "Proceed to Full-Stack Applications Track", url: "/learn/fullstack" }
-    },
-    deployment: {
-      badge: "Cloud & Deployment",
-      colorClass: "from-indigo-600 to-cyan-600",
-      bgClass: "bg-indigo-50",
-      textClass: "text-indigo-700",
-      borderClass: "border-indigo-100",
-      hours: "20 Hours",
-      level: "Professional",
-      whoIsFor: "Advanced developers and DevOps enthusiasts seeking to automate pipelines, package applications using container networks, manage environment configs, and deploy scale platforms onto AWS and Azure infrastructure.",
-      prerequisites: ["Familiarity with full-stack application code architectures", "Working knowledge of git commands and GitHub interface", "Basic comfort with the command line"],
-      skillsGained: [
-        "Establish GitHub Actions automated test, lint, and build staging-to-production workflows.",
-        "Write slim, secure multi-stage Dockerfiles for node/web applications.",
-        "Deploy scale services to PaaS (Render, Railway) and cloud servers (AWS EC2, Azure App Service).",
-        "Configure cloud storage resources (AWS S3, Azure Blob Storage) with secure signed URL access."
-      ],
-      interviewReadiness: [
-        "How to configure build-time variables versus runtime environment variables.",
-        "How to manage zero-downtime deployment pipelines and rolling updates.",
-        "How to structure secure network access policies inside IAM roles."
-      ],
-      completionOutcomes: [
-        "I can dockerize any node/web application using secure multi-stage builds.",
-        "I can write standard CI/CD workflow YAML specifications for GitHub Actions.",
-        "I understand AWS IAM permissions, Route 53 domain mappings, and CDN caching.",
-        "I can setup persistent database configurations with automated database migration runs."
-      ],
-      nextStep: { label: "Proceed to Interview Preparation Track", url: "/learn/interview" }
-    },
-    interview: {
-      badge: "Interview Preparation",
-      colorClass: "from-amber-600 to-orange-600",
-      bgClass: "bg-amber-50",
-      textClass: "text-amber-700",
-      borderClass: "border-amber-100",
-      hours: "10 Hours",
-      level: "Prep",
-      whoIsFor: "Developers seeking to review key system designs, practice visual architectural responses, and master code reviews to excel in technical assessments for tech organizations.",
-      prerequisites: ["Completion of Frontend, Backend, or Full-Stack curriculum tracks", "Familiarity with standard software engineering practices"],
-      skillsGained: [
-        "Deconstruct complex structural questions into structured, phased architectural answers.",
-        "Perform code reviews quickly on live repositories using dynamic console checklists.",
-        "Explain rendering, event loop priorities, and caching strategies eloquently to senior interviewers."
-      ],
-      interviewReadiness: [
-        "How to explain the React Fiber architecture and render loop updates.",
-        "How to describe the event loop priorities (microtasks vs macrotasks).",
-        "How to pitch full-stack database architectures and API contracts under pressure."
-      ],
-      completionOutcomes: [
-        "I feel confident explaining React reconciliation, server components, and routing patterns.",
-        "I can audit complex codebase security and accessibility gaps systematically.",
-        "I can clearly map out API interfaces and relational schemas for mock interview boards.",
-        "I am ready to successfully clear technical developer interview loops."
-      ],
-      nextStep: { label: "Review All Career Pathways", url: "/roadmaps" }
-    }
-  };
-
-
-
-  const theme = themeMap[trackSlug] || {
+  const theme = themeMap[trackSlug] ?? {
     badge: "Specialized Track",
-    colorClass: "from-indigo-600 to-violet-600",
-    bgClass: "bg-indigo-50",
-    textClass: "text-indigo-700",
-    borderClass: "border-indigo-100",
-    hours: "15 Hours",
-    level: "Intermediate",
-    whoIsFor: "Developers seeking career upgrades.",
+    level: "Intermediate Path",
+    whoIsFor: "Developers looking to expand into a focused engineering area.",
     prerequisites: ["Basic coding literacy"],
-    skillsGained: ["Gain target competencies"],
-    interviewReadiness: ["Answer project questions"],
-    completionOutcomes: ["Master core topics"],
-    nextStep: { label: "Review roadmaps", url: "/roadmaps" }
+    interviewReadiness: ["Be ready to discuss your project decisions clearly"],
+    completionOutcomes: ["Build practical confidence in this track's core topics"],
+    nextStep: { label: "Review Roadmaps", url: "/roadmaps" },
   };
+
+  const totalLessons = track.modules.reduce(
+    (count, module) => count + (module.lessons?.length ?? 0),
+    0,
+  );
+
+  const heroBadges = [
+    `${track.modules.length} Modules`,
+    `${totalLessons} Lessons`,
+    theme.level,
+    "Project Based",
+  ];
+
+  const overview = `This track organizes ${track.modules.length} modules and ${totalLessons} lessons into a guided path with lessons, practice tasks, and project work.`;
 
   return (
-    <div className="min-h-screen bg-slate-50/40 pb-20 relative overflow-hidden">
-      {/* Background gradients */}
-      <div className="absolute top-0 right-1/4 w-80 h-80 bg-indigo-200/20 rounded-full blur-3xl pointer-events-none" />
-      <div className="absolute bottom-20 left-1/4 w-[400px] h-[400px] bg-violet-200/10 rounded-full blur-3xl pointer-events-none" />
+    <div className="relative min-h-screen overflow-hidden bg-slate-50/40 pb-20">
+      <div className="pointer-events-none absolute top-0 right-1/4 h-80 w-80 rounded-full bg-indigo-200/20 blur-3xl" />
+      <div className="pointer-events-none absolute bottom-20 left-1/4 h-[400px] w-[400px] rounded-full bg-violet-200/10 blur-3xl" />
 
-      <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-10 md:py-14 lg:py-16 relative animate-fade-in">
-
-        {/* Navigation header bar */}
+      <div className="relative mx-auto max-w-6xl px-4 py-10 sm:px-6 md:py-14 lg:px-8 lg:py-16 animate-fade-in">
         <div className="sticky top-16 z-40 mb-8 flex flex-wrap items-center justify-between gap-3 rounded-2xl border border-slate-200 bg-white/95 px-4 py-3 shadow-sm backdrop-blur-md">
           <Link
             href="/learn"
-            className="inline-flex items-center gap-2 text-xs sm:text-sm font-semibold text-slate-600 hover:text-indigo-700 transition-colors"
+            className="inline-flex items-center gap-2 text-xs font-semibold text-slate-600 transition-colors hover:text-indigo-700 sm:text-sm"
           >
-            <ChevronLeft className="w-4.5 h-4.5" />
+            <ChevronLeft className="h-4.5 w-4.5" />
             Back to Learning Tracks
           </Link>
-          <span className="text-[10px] font-bold text-slate-500 uppercase tracking-widest">
+          <span className="text-[10px] font-bold uppercase tracking-widest text-slate-500">
             {theme.badge}
           </span>
         </div>
 
-        {/* Track Title Heading */}
-        <div className="mb-8">
-          <div className="flex items-center gap-2 mb-3">
-            <span className={`inline-flex items-center rounded-full bg-gradient-to-r ${theme.colorClass} px-3 py-1 text-xs font-bold text-white shadow-sm`}>
-              {theme.badge}
-            </span>
-            <span className="inline-flex items-center rounded-full bg-slate-100 px-2.5 py-0.5 text-xs font-semibold text-slate-600">
-              {theme.level} Path
-            </span>
-          </div>
-          <h1 className="text-3xl sm:text-4xl lg:text-[3rem] lg:leading-[1.08] font-semibold tracking-tight mb-4 text-slate-950">
-            {track.title}
-          </h1>
-          <p className="text-sm sm:text-base text-slate-600 leading-relaxed max-w-3xl">
-            {track.description}
-          </p>
+        <div className="space-y-8">
+          <TrackHero
+            title={track.title}
+            description={track.description}
+            badges={heroBadges}
+          />
+
+          <TrackInfoCards
+            overview={overview}
+            whoIsFor={theme.whoIsFor}
+            prerequisites={theme.prerequisites}
+          />
+
+          <TrackTabs
+            modules={track.modules}
+            trackSlug={track.slug}
+            trackLevel={theme.level}
+            practiceTasks={recommendedTasks}
+            projects={recommendedProjects}
+            interviewTopics={theme.interviewReadiness}
+            outcomes={theme.completionOutcomes}
+            nextStep={theme.nextStep}
+          />
         </div>
-
-
-
-        {/* 1. Track Overview & 2. Who is this for */}
-        <div className="grid gap-6 sm:grid-cols-2 my-8">
-          <section className="p-6 bg-white border border-slate-200 rounded-[24px] shadow-[0_8px_24px_rgba(15,23,42,0.04)] space-y-3">
-            <h2 className="text-sm font-extrabold text-slate-900 flex items-center gap-2 pb-2 border-b border-slate-100">
-              <Compass className="w-4.5 h-4.5 text-indigo-500" />
-              Track Overview
-            </h2>
-            <p className="text-xs sm:text-sm text-slate-600 leading-relaxed">
-              This track features {track.modules.length} modules outlining core production requirements. Follow the lessons to understand the conceptual architectures and complete the recommended tasks.
-            </p>
-          </section>
-
-          <section className="p-6 bg-white border border-slate-200 rounded-[24px] shadow-[0_8px_24px_rgba(15,23,42,0.04)] space-y-3">
-            <h2 className="text-sm font-extrabold text-slate-900 flex items-center gap-2 pb-2 border-b border-slate-100">
-              <Compass className="w-4.5 h-4.5 text-indigo-500" />
-              Who This Is For
-            </h2>
-            <p className="text-xs sm:text-sm text-slate-600 leading-relaxed">
-              {theme.whoIsFor}
-            </p>
-          </section>
-        </div>
-
-        {/* 3. Prerequisites & 4. Skills Learner Will Gain */}
-        <section className="my-8 p-6 bg-white border border-slate-200 rounded-[24px] shadow-[0_8px_24px_rgba(15,23,42,0.04)] space-y-6">
-          <div>
-            <h2 className="text-sm font-extrabold text-slate-900 mb-3 uppercase tracking-wider">Prerequisites</h2>
-            <ul className="list-disc list-inside space-y-1.5 pl-1 text-xs text-slate-600 font-semibold">
-              {theme.prerequisites.map((req, idx) => (
-                <li key={idx}>{req}</li>
-              ))}
-            </ul>
-          </div>
-
-          <div className="border-t border-slate-100 pt-6">
-            <h2 className="text-sm font-extrabold text-slate-900 mb-3 uppercase tracking-wider">Target Competencies You Will Gain</h2>
-            <ul className="space-y-3">
-              {theme.skillsGained.map((skill, idx) => (
-                <li key={idx} className="flex gap-2.5 items-start text-xs sm:text-sm text-slate-600 leading-relaxed">
-                  <span className="h-5 w-5 bg-indigo-50 border border-indigo-200 rounded-md flex items-center justify-center shrink-0 mt-0.5 text-indigo-600 font-bold text-2xs">
-                    {idx + 1}
-                  </span>
-                  <span>{skill}</span>
-                </li>
-              ))}
-            </ul>
-          </div>
-        </section>
-
-        {/* Lesson Modules Roadmap Timeline */}
-        <h2 className="text-lg font-extrabold text-slate-900 mt-12 mb-6">Lesson Modules Timeline</h2>
-        <div className="relative mb-12 space-y-8 sm:space-y-12 sm:pl-8">
-          {/* Timeline Connector Line */}
-          <div className="absolute left-[15px] top-2 bottom-6 hidden w-[2px] bg-slate-200 sm:block" />
-
-          {track.modules.map((module, idx) => (
-            <div key={module.slug} className="relative group/module">
-              {/* Connector Dot */}
-              <div className="absolute -left-[25px] top-1.5 hidden h-[18px] w-[18px] items-center justify-center rounded-full border-4 border-slate-50 bg-slate-300 transition-all duration-300 z-10 group-hover/module:border-indigo-100 group-hover/module:bg-indigo-600 sm:flex" />
-
-              <div className="mb-4">
-                <span className="text-[10px] font-extrabold text-indigo-600 tracking-widest uppercase">
-                  PHASE {idx + 1}
-                </span>
-                <h2 className="mt-1 text-lg font-extrabold tracking-tight text-slate-900 sm:text-xl">
-                  {module.title}
-                </h2>
-              </div>
-
-              {/* Module lessons block */}
-              <div className="space-y-3 mt-4">
-                {module.lessons
-                  .sort((a, b) => a.order - b.order)
-                  .map((lesson, lessonIdx) => (
-                    <div key={lesson.slug} className="relative group/lesson sm:pl-6">
-                      <div className="absolute left-[-21px] top-5.5 hidden h-2.5 w-2.5 rounded-full border-2 border-slate-300 bg-white transition z-10 group-hover/lesson:border-indigo-200 group-hover/lesson:bg-indigo-500 sm:block" />
-
-                      <Link
-                        href={`/learn/${track.slug}/${lesson.slug}`}
-                        className="block rounded-2xl border border-slate-200 bg-white p-4 transition hover:border-slate-300"
-                      >
-                        <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-                          <div className="flex min-w-0 items-start gap-3">
-                            <span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-indigo-50 text-[10px] font-bold text-indigo-600 group-hover/lesson:bg-indigo-600 group-hover/lesson:text-white transition">
-                              {idx + 1}.{lessonIdx + 1}
-                            </span>
-                            <h3 className="pr-2 text-sm font-bold text-slate-800 transition group-hover/lesson:text-indigo-600">
-                              {lesson.title}
-                            </h3>
-                          </div>
-                          <div className="flex items-center gap-1 pl-9 text-xs font-bold text-indigo-600 transition sm:pl-0 group-hover/lesson:translate-x-1">
-                            Start Guide <ArrowRight className="w-4 h-4" />
-                          </div>
-                        </div>
-                      </Link>
-                    </div>
-                  ))}
-              </div>
-            </div>
-          ))}
-        </div>
-
-        {/* Recommended Daily Tasks Section */}
-        {recommendedTasks.length > 0 && (
-          <section className="my-10 p-6 bg-white border border-slate-200 rounded-[24px] shadow-[0_8px_24px_rgba(15,23,42,0.04)] space-y-4">
-            <h2 className="text-lg font-extrabold text-slate-900 flex items-center gap-2 pb-3 border-b border-slate-100">
-              <Terminal className="w-5 h-5 text-indigo-500" />
-              Recommended Practice Tasks
-            </h2>
-            <div className="grid gap-4 sm:grid-cols-2">
-              {recommendedTasks.slice(0, 4).map((task) => (
-                <Link
-                  key={task.slug}
-                  href={`/tasks/${task.slug}`}
-                  className="p-4 border border-slate-200 rounded-2xl hover:border-slate-300 transition"
-                >
-                  <span className="text-[10px] font-bold uppercase tracking-wider text-slate-400">{task.level} Task</span>
-                  <h3 className="text-xs font-black text-slate-800 mt-1">{task.title}</h3>
-                  <p className="text-2xs text-slate-500 mt-1 line-clamp-2 leading-relaxed font-semibold">{task.requirement}</p>
-                </Link>
-              ))}
-            </div>
-          </section>
-        )}
-
-        {/* Recommended Project Labs Section */}
-        {recommendedProjects.length > 0 && (
-          <section className="my-10 p-6 bg-white border border-slate-200 rounded-[24px] shadow-[0_8px_24px_rgba(15,23,42,0.04)] space-y-4">
-            <h2 className="text-lg font-extrabold text-slate-900 flex items-center gap-2 pb-3 border-b border-slate-100">
-              <Compass className="w-5 h-5 text-indigo-500" />
-              Recommended Project Labs
-            </h2>
-            <div className="grid gap-4 sm:grid-cols-2">
-              {recommendedProjects.map((project) => (
-                <Link
-                  key={project.slug}
-                  href={`/projects/${project.slug}`}
-                  className="p-4 border border-slate-200 rounded-2xl hover:border-slate-300 transition"
-                >
-                  <span className="text-[10px] font-bold uppercase tracking-wider text-slate-400">{project.level} Lab</span>
-                  <h3 className="text-xs font-black text-slate-800 mt-1">{project.title}</h3>
-                  <p className="text-2xs text-slate-500 mt-1 line-clamp-2 leading-relaxed font-semibold">{project.description}</p>
-                </Link>
-              ))}
-            </div>
-          </section>
-        )}
-
-        {/* Code Review Checklist CTA */}
-        <section className="my-8 p-6 bg-slate-950 rounded-[24px] text-white flex flex-col sm:flex-row items-center justify-between gap-4 shadow-[0_12px_30px_rgba(15,23,42,0.12)]">
-          <div className="space-y-1 text-center sm:text-left">
-            <h3 className="text-base font-extrabold">Ready to Audit Your Code?</h3>
-            <p className="text-xs text-indigo-200 leading-relaxed font-medium">
-              Validate your task solutions and project outputs against senior coding standards.
-            </p>
-          </div>
-          <Link
-            href="/code-review"
-            className="bg-white text-slate-950 px-6 py-2.5 rounded-xl text-sm font-semibold hover:bg-slate-100 transition whitespace-nowrap"
-          >
-            Open Code Review Console
-          </Link>
-        </section>
-
-        {/* Interview Readiness Section */}
-        <section className="my-8 p-6 bg-white border border-slate-200 rounded-[24px] shadow-[0_8px_24px_rgba(15,23,42,0.04)] space-y-4">
-          <h2 className="text-lg font-extrabold text-slate-900 flex items-center gap-2 pb-3 border-b border-slate-100">
-            <Award className="w-5 h-5 text-indigo-500" />
-            Interview Readiness Topics
-          </h2>
-          <ul className="space-y-3">
-            {theme.interviewReadiness.map((topic, idx) => (
-              <li key={idx} className="flex gap-2.5 items-start text-xs sm:text-sm text-slate-600 leading-relaxed">
-                <span className="h-5 w-5 bg-purple-50 border border-purple-200 rounded-lg flex items-center justify-center shrink-0 text-purple-700">
-                  ✔
-                </span>
-                <span>{topic}</span>
-              </li>
-            ))}
-          </ul>
-        </section>
-
-        {/* Completion Outcome Checklist */}
-        <section className="my-8 p-6 bg-white border border-slate-200 rounded-[24px] text-slate-900 space-y-4 shadow-[0_8px_24px_rgba(15,23,42,0.04)]">
-          <h2 className="text-base font-extrabold flex items-center gap-2 border-b border-slate-200 pb-2">
-            <Sparkles className="w-4.5 h-4.5 text-indigo-600" />
-            Milestone Completion Outcomes
-          </h2>
-          <div className="space-y-3">
-            {theme.completionOutcomes.map((outcome, idx) => (
-              <div key={idx} className="flex gap-2.5 items-start text-xs font-semibold text-slate-600 leading-relaxed">
-                <span className="h-4.5 w-4.5 bg-indigo-50 border border-indigo-100 rounded-md flex items-center justify-center shrink-0 mt-0.5 text-indigo-600">
-                  ✓
-                </span>
-                <span>{outcome}</span>
-              </div>
-            ))}
-          </div>
-        </section>
-
-        {/* Next Step Recommendation */}
-        <section className="my-8 p-6 border border-slate-200 bg-slate-50/80 rounded-[24px] text-center space-y-3 shadow-sm">
-          <h3 className="text-sm font-bold text-slate-800">Your Next Learning Step</h3>
-          <p className="text-xs text-slate-600 leading-relaxed max-w-xl mx-auto font-medium">
-            Once you have completed the module lessons and practice tasks in this path, click below to proceed.
-          </p>
-          <Link
-            href={theme.nextStep.url}
-            className="inline-flex items-center gap-1.5 bg-slate-900 hover:bg-slate-800 text-white px-5 py-2.5 rounded-xl text-sm font-semibold transition"
-          >
-            {theme.nextStep.label} <ArrowRight className="w-4 h-4" />
-          </Link>
-        </section>
-
       </div>
     </div>
   );

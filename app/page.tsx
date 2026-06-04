@@ -67,13 +67,13 @@ const pathCards = [
 ];
 
 const howItWorks = [
-  { title: "Choose your level", icon: Target },
-  { title: "Follow roadmap", icon: BookOpen },
-  { title: "Practice daily", icon: Code2 },
-  { title: "Build real projects", icon: FolderKanban },
-  { title: "Review your code", icon: ShieldCheck },
-  { title: "Deploy apps", icon: Rocket },
-  { title: "Explain in interviews", icon: BriefcaseBusiness },
+  { title: "Choose your level", label: "Pick the right starting path", icon: Target },
+  { title: "Follow roadmap", label: "Move through structured lessons", icon: BookOpen },
+  { title: "Practice daily", label: "Build consistency with short reps", icon: Code2 },
+  { title: "Build real projects", label: "Turn concepts into portfolio work", icon: FolderKanban },
+  { title: "Review your code", label: "Check quality before shipping", icon: ShieldCheck },
+  { title: "Deploy apps", label: "Practice real production delivery", icon: Rocket },
+  { title: "Explain in interviews", label: "Speak clearly about decisions", icon: BriefcaseBusiness },
 ];
 
 const learningAreas = [
@@ -170,16 +170,27 @@ export default function Home() {
 
         <div className="mx-auto grid max-w-7xl gap-12 px-4 py-14 sm:px-6 lg:grid-cols-[1.05fr_0.95fr] lg:px-8 lg:py-24">
           <div className="relative z-10">
-            <StatusBadge label="Guided full-stack learning platform" tone="blue" />
-            <h1 className="mt-6 max-w-3xl text-4xl font-semibold tracking-tight text-slate-950 sm:text-5xl lg:text-[3.6rem] lg:leading-[1.02]">
+            <div className="animate-fade-in" style={{ animationDelay: "40ms" }}>
+              <StatusBadge label="Guided full-stack learning platform" tone="blue" />
+            </div>
+            <h1
+              className="mt-6 max-w-3xl animate-fade-in text-4xl font-semibold tracking-tight text-slate-950 sm:text-5xl lg:text-[3.6rem] lg:leading-[1.02]"
+              style={{ animationDelay: "120ms" }}
+            >
               Master Full-Stack Development Through Real-World Practice
             </h1>
-            <p className="mt-5 max-w-2xl text-base leading-8 text-slate-600 sm:text-lg">
+            <p
+              className="mt-5 max-w-2xl animate-fade-in text-base leading-8 text-slate-600 sm:text-lg"
+              style={{ animationDelay: "220ms" }}
+            >
               Follow structured roadmaps, practice daily coding tasks, build portfolio-ready
               projects, review your code, deploy apps, and prepare for developer interviews.
             </p>
 
-            <div className="mt-8 flex flex-col gap-3 sm:flex-row sm:flex-wrap">
+            <div
+              className="mt-8 flex animate-fade-in flex-col gap-3 sm:flex-row sm:flex-wrap"
+              style={{ animationDelay: "320ms" }}
+            >
               <ActionLink href="/roadmaps">Start My Roadmap</ActionLink>
               <ActionLink href="/projects" variant="secondary">
                 Build My First Project
@@ -189,7 +200,10 @@ export default function Home() {
               </ActionLink>
             </div>
 
-            <div className="mt-8 flex flex-wrap gap-2">
+            <div
+              className="mt-8 flex animate-fade-in flex-wrap gap-2"
+              style={{ animationDelay: "420ms" }}
+            >
               {["Roadmaps", "Daily practice", "Project labs", "Code review", "Deployment"].map(
                 (item) => (
                   <TagBadge key={item} label={item} />
@@ -198,63 +212,53 @@ export default function Home() {
             </div>
           </div>
 
-          <div className="relative">
-            <div className="relative overflow-hidden rounded-[28px] border border-slate-200 bg-white/90 p-5 shadow-[0_24px_60px_rgba(15,23,42,0.08)] backdrop-blur">
+          <div
+            className="relative self-start animate-fade-in lg:pl-6"
+            style={{ animationDelay: "220ms" }}
+          >
+            <div className="relative h-auto overflow-hidden rounded-[30px] border border-white/70 bg-white/70 px-6 py-6 shadow-[0_24px_70px_rgba(15,23,42,0.08)] backdrop-blur-xl sm:px-8 sm:py-7">
               <div
                 aria-hidden="true"
-                className="absolute inset-0 bg-[radial-gradient(circle_at_top_right,rgba(59,130,246,0.12),transparent_28%),radial-gradient(circle_at_bottom_left,rgba(139,92,246,0.12),transparent_32%)]"
+                className="absolute inset-0 bg-[radial-gradient(circle_at_top_right,rgba(59,130,246,0.12),transparent_30%),radial-gradient(circle_at_bottom_left,rgba(139,92,246,0.10),transparent_36%)]"
               />
               <div className="relative">
-                <div className="flex items-center justify-between gap-4 border-b border-slate-200 pb-3">
-                  <div>
-                    <p className="text-sm font-semibold uppercase tracking-[0.18em] text-slate-500">
-                      Your Guided Path
-                    </p>
-                    <p className="mt-1 text-lg font-semibold text-slate-950 sm:text-xl">
-                      From beginner steps to job-ready projects
-                    </p>
-                  </div>
-                  <StatusBadge label="Available Now" tone="emerald" />
+                <StatusBadge label="Available Now" tone="emerald" />
+
+                <div className="mt-4 border-b border-slate-200/80 pb-4">
+                  <p className="text-sm font-semibold uppercase tracking-[0.18em] text-slate-500">
+                    Your Guided Path
+                  </p>
+                  <p className="mt-2 text-xl font-semibold text-slate-950 sm:text-2xl">
+                    From beginner steps to job-ready projects
+                  </p>
                 </div>
 
-                <div className="mt-4 rounded-[24px] border border-slate-200 bg-white p-4 shadow-[0_10px_24px_rgba(15,23,42,0.05)]">
-                  <div className="flex items-start justify-between gap-4">
-                    <div>
-                      <p className="text-xs font-semibold uppercase tracking-[0.16em] text-indigo-700">
-                        Active path
-                      </p>
-                      <p className="mt-1.5 text-base font-semibold text-slate-950 sm:text-lg">
-                        Full-Stack Developer
-                      </p>
-                      <p className="mt-1.5 max-w-xl text-sm leading-6 text-slate-600">
-                        Learn React, APIs, auth, database design, deployment, and interview-ready delivery.
-                      </p>
-                    </div>
-                    <div className="shrink-0 space-y-1.5 text-right">
-                      <TagBadge label="10-12 weeks" tone="blue" />
-                      <p className="text-xs font-medium text-slate-500">Project-led</p>
-                    </div>
-                  </div>
-
-                  <div className="mt-4 grid gap-3 sm:grid-cols-2">
+                <div className="relative mt-5 pl-2">
+                  <div
+                    aria-hidden="true"
+                    className="animate-line-grow-y absolute left-[1.2rem] top-4 bottom-4 w-px bg-gradient-to-b from-blue-200 via-slate-200 to-violet-200"
+                  />
+                  <div className="space-y-6">
                     {howItWorks.slice(0, 4).map((item, index) => {
                       const Icon = item.icon;
 
                       return (
                         <div
                           key={item.title}
-                          className="rounded-2xl border border-slate-200 bg-slate-50/80 p-3.5"
+                          className="group relative flex items-start gap-4 animate-fade-in"
+                          style={{ animationDelay: `${220 + index * 110}ms` }}
                         >
-                          <div className="flex items-center gap-3">
-                            <div className="flex h-9 w-9 items-center justify-center rounded-2xl bg-white text-indigo-700 shadow-sm">
-                              <Icon aria-hidden="true" className="h-4.5 w-4.5" />
+                          <div className="relative z-10 flex h-10 w-10 shrink-0 items-center justify-center rounded-full border border-white/80 bg-white/95 text-indigo-700 shadow-[0_10px_30px_rgba(15,23,42,0.08)] transition duration-300 group-hover:-translate-y-0.5 group-hover:shadow-[0_16px_36px_rgba(15,23,42,0.1)]">
+                            <Icon aria-hidden="true" className="h-4.5 w-4.5" />
+                          </div>
+                          <div className="min-w-0 pt-1">
+                            <div className="flex flex-wrap items-center gap-x-3 gap-y-1">
+                              <span className="text-[11px] font-semibold uppercase tracking-[0.18em] text-slate-500">
+                                {String(index + 1).padStart(2, "0")}
+                              </span>
+                              <p className="text-base font-semibold text-slate-950">{item.title}</p>
                             </div>
-                            <div>
-                              <p className="text-[11px] font-semibold uppercase tracking-[0.16em] text-slate-500">
-                                Step {index + 1}
-                              </p>
-                              <p className="mt-0.5 text-sm font-semibold text-slate-900">{item.title}</p>
-                            </div>
+                            <p className="mt-1 text-sm leading-6 text-slate-500">{item.label}</p>
                           </div>
                         </div>
                       );
@@ -262,24 +266,15 @@ export default function Home() {
                   </div>
                 </div>
 
-                <div className="mt-4 rounded-[24px] border border-slate-200 bg-slate-50/85 p-4">
-                  <div className="flex items-center justify-between gap-4">
-                    <div>
-                      <p className="text-xs font-semibold uppercase tracking-[0.16em] text-slate-500">
-                        Next action
-                      </p>
-                      <p className="mt-1 text-sm font-semibold text-slate-950 sm:text-base">
-                        Open your guided roadmap
-                      </p>
-                    </div>
-                    <Link
-                      href="/roadmaps"
-                      className="inline-flex items-center gap-2 rounded-xl bg-slate-950 px-4 py-2.5 text-sm font-semibold text-white transition hover:bg-slate-800 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-slate-950 focus-visible:ring-offset-2"
-                    >
-                      Start Track
-                      <ArrowRight aria-hidden="true" className="h-4 w-4" />
-                    </Link>
-                  </div>
+                <div className="mt-6 border-t border-slate-200/80 pt-4">
+                  <Link
+                    href="/roadmaps"
+                    className="inline-flex items-center gap-2 text-sm font-semibold text-slate-950 transition hover:text-indigo-700 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-slate-950 focus-visible:ring-offset-2"
+                  >
+                    <span className="text-slate-500">Next action:</span>
+                    Start Track
+                    <ArrowRight aria-hidden="true" className="h-4 w-4" />
+                  </Link>
                 </div>
               </div>
             </div>
@@ -343,24 +338,62 @@ export default function Home() {
             description="CodeNivra helps users move through one practical sequence: choose a path, practice consistently, build projects, review quality, deploy, and explain decisions with confidence."
           />
 
-          <div className="mt-10 grid gap-4 sm:grid-cols-2 xl:grid-cols-7">
-            {howItWorks.map((step, index) => {
-              const Icon = step.icon;
-              return (
-                <article
-                  key={step.title}
-                  className="rounded-[22px] border border-slate-200 bg-white px-4 py-5 text-center shadow-[0_8px_24px_rgba(15,23,42,0.04)]"
-                >
-                  <div className="mx-auto flex h-11 w-11 items-center justify-center rounded-2xl bg-slate-100 text-indigo-700">
-                    <Icon aria-hidden="true" className="h-4.5 w-4.5" />
-                  </div>
-                  <p className="mt-3 text-[11px] font-semibold uppercase tracking-[0.18em] text-slate-500">
-                    Step {index + 1}
-                  </p>
-                  <h3 className="mt-2 text-sm font-semibold text-slate-900">{step.title}</h3>
-                </article>
-              );
-            })}
+          <div className="mt-10 lg:hidden">
+            <div className="relative pl-2">
+              <div
+                aria-hidden="true"
+                className="animate-line-grow-y absolute left-[1.42rem] top-4 bottom-4 w-px bg-gradient-to-b from-blue-200 via-slate-200 to-violet-200"
+              />
+              <div className="space-y-6">
+                {howItWorks.map((step, index) => {
+                  const Icon = step.icon;
+                  return (
+                    <article
+                      key={step.title}
+                      className="group relative flex items-start gap-4 animate-fade-in"
+                      style={{ animationDelay: `${80 + index * 90}ms` }}
+                    >
+                      <div className="relative z-10 flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-white text-indigo-700 shadow-[0_10px_24px_rgba(15,23,42,0.06)] ring-1 ring-slate-200 transition duration-300 group-hover:-translate-y-0.5 group-hover:shadow-[0_14px_28px_rgba(15,23,42,0.08)]">
+                        <Icon aria-hidden="true" className="h-4.5 w-4.5" />
+                      </div>
+                      <div className="min-w-0 pt-1">
+                        <p className="text-[11px] font-semibold uppercase tracking-[0.18em] text-slate-500">
+                          Step {index + 1}
+                        </p>
+                        <h3 className="mt-1 text-base font-semibold text-slate-950">{step.title}</h3>
+                      </div>
+                    </article>
+                  );
+                })}
+              </div>
+            </div>
+          </div>
+
+          <div className="relative mt-12 hidden lg:block">
+            <div
+              aria-hidden="true"
+              className="animate-line-grow absolute left-[7%] right-[7%] top-6 h-px bg-gradient-to-r from-blue-200 via-slate-200 to-violet-200"
+            />
+            <div className="relative grid gap-6 xl:grid-cols-7">
+              {howItWorks.map((step, index) => {
+                const Icon = step.icon;
+                return (
+                  <article
+                    key={step.title}
+                    className="group animate-fade-in text-center"
+                    style={{ animationDelay: `${80 + index * 90}ms` }}
+                  >
+                    <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-full bg-white text-indigo-700 shadow-[0_10px_24px_rgba(15,23,42,0.05)] ring-1 ring-slate-200 transition duration-300 group-hover:-translate-y-1 group-hover:shadow-[0_18px_36px_rgba(15,23,42,0.08)]">
+                      <Icon aria-hidden="true" className="h-4.5 w-4.5" />
+                    </div>
+                    <p className="mt-4 text-[11px] font-semibold uppercase tracking-[0.18em] text-slate-500">
+                      Step {index + 1}
+                    </p>
+                    <h3 className="mt-2 text-sm font-semibold text-slate-900">{step.title}</h3>
+                  </article>
+                );
+              })}
+            </div>
           </div>
         </div>
       </section>

@@ -76,10 +76,12 @@ export function ActionLink({
   href,
   children,
   variant = "primary",
+  className = "",
 }: {
   href: string;
   children: ReactNode;
   variant?: "primary" | "secondary" | "ghost";
+  className?: string;
 }) {
   const variants = {
     primary:
@@ -93,7 +95,7 @@ export function ActionLink({
   return (
     <Link
       href={href}
-      className={`inline-flex min-h-11 items-center justify-center gap-2 rounded-xl px-5 text-sm font-semibold transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 ${variants[variant]}`}
+      className={`inline-flex min-h-11 items-center justify-center gap-2 rounded-xl px-5 text-sm font-semibold transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 ${variants[variant]} ${className}`}
     >
       <span>{children}</span>
       {variant !== "secondary" ? <ArrowRight aria-hidden="true" className="h-4 w-4" /> : null}

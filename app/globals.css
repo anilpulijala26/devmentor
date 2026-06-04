@@ -49,12 +49,32 @@ button {
   }
 }
 
+@keyframes lineGrow {
+  from { transform: scaleX(0); opacity: 0.35; }
+  to { transform: scaleX(1); opacity: 1; }
+}
+
+@keyframes lineGrowY {
+  from { transform: scaleY(0); opacity: 0.35; }
+  to { transform: scaleY(1); opacity: 1; }
+}
+
 .animate-fade-in {
   animation: fadeIn 0.5s cubic-bezier(0.16, 1, 0.3, 1) forwards;
 }
 
 .animate-pulse-glow {
   animation: pulseGlow 2.5s infinite ease-in-out;
+}
+
+.animate-line-grow {
+  transform-origin: left center;
+  animation: lineGrow 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+.animate-line-grow-y {
+  transform-origin: center top;
+  animation: lineGrowY 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards;
 }
 
 /* Reader Mode Custom Themes (scoped to .reader-mode) */

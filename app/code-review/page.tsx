@@ -1,12 +1,12 @@
 import { CodeReviewClient } from "@/components/CodeReviewClient";
 
 export const metadata = {
-  title: "Code Review Checklist - CodeNivra",
+  title: "Senior Code Review & Audit Console - CodeNivra",
   description:
-    "Review frontend, backend, and full-stack projects with a practical code review checklist covering structure, accessibility, security, and performance.",
+    "Use the CodeNivra review console after tasks or project labs to audit code against frontend, accessibility, performance, security, and deployment standards.",
   openGraph: {
-    title: "Code Review Checklist - CodeNivra",
-    description: "Audit repositories like a senior engineer using interactive checklists.",
+    title: "Senior Code Review & Audit Console - CodeNivra",
+    description: "Audit repositories like a senior engineer using interactive review checks and progress tracking.",
     type: "website",
   }
 };

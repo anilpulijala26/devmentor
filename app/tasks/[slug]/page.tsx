@@ -26,7 +26,7 @@ export default async function TaskDetailPage({ params }: Props) {
   }
 
   return (
-    <div className="min-h-screen bg-slate-50/50 pb-24 relative overflow-hidden">
+    <div className="min-h-screen bg-slate-50/50 pb-16 relative overflow-hidden">
       {/* Background gradients */}
       <div className="absolute top-0 right-1/4 w-80 h-80 bg-indigo-200/20 rounded-full blur-3xl pointer-events-none" />
 

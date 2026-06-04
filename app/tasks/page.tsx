@@ -13,7 +13,7 @@ export const metadata = {
 
 export default function TasksPage() {
   return (
-    <div className="min-h-screen bg-slate-50/50 pb-20 relative overflow-hidden">
+    <div className="min-h-screen bg-slate-50/50 pb-16 relative overflow-hidden">
       <TasksClient initialTasks={developerTasks} />
     </div>
   );

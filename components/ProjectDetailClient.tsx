@@ -1,794 +1,676 @@
 "use client";
 
-import React, { useState } from "react";
 import Link from "next/link";
-import { 
-  ChevronLeft, FolderTree, Layers, Server, Cpu, Info, Target, Wrench, 
-  ShieldAlert, Sparkles, Folder, FolderOpen, FileCode, Check, Copy, 
-  ChevronDown, ChevronRight, FileText, CheckCircle2, ListFilter
+import { useMemo, useState } from "react";
+import {
+  ArrowRight,
+  CheckCircle2,
+  ChevronDown,
+  ChevronLeft,
+  ChevronRight,
+  Copy,
+  Cpu,
+  FileCode,
+  FolderTree,
+  Info,
+  ListChecks,
+  Sparkles,
+  Target,
 } from "lucide-react";
 import { ProjectChecklist } from "./mdx/ProjectChecklist";
-import { Project } from "@/lib/projects";
+import { ProjectAccordion } from "./project-detail/ProjectAccordion";
+import { ProjectCTA } from "./project-detail/ProjectCTA";
+import { ProjectCodeExplorer } from "./project-detail/ProjectCodeExplorer";
+import { ProjectHero } from "./project-detail/ProjectHero";
+import { ProjectInfoCards } from "./project-detail/ProjectInfoCards";
+import type { Project } from "@/lib/projects";
 
 interface ProjectDetailClientProps {
   project: Project;
 }
 
-// Tree types for Full Code Explorer
-interface TreeFile {
-  type: "file";
-  name: string;
-  path: string;
-  code: string;
-  language: string;
+type ProjectTab = "overview" | "build" | "code" | "tests" | "deploy" | "interview";
+
+const tabs: { id: ProjectTab; label: string }[] = [
+  { id: "overview", label: "Overview" },
+  { id: "build", label: "Build" },
+  { id: "code", label: "Code" },
+  { id: "tests", label: "Tests" },
+  { id: "deploy", label: "Deploy" },
+  { id: "interview", label: "Interview" },
+];
+
+function CompactList({ items, icon = "check" }: { items: string[]; icon?: "check" | "dot" }) {
+  return (
+    <ul className="grid gap-3 sm:grid-cols-2">
+      {items.map((item) => (
+        <li
+          key={item}
+          className="flex items-start gap-2 rounded-2xl border border-slate-200/80 bg-slate-50/70 p-3 text-sm text-slate-600"
+        >
+          {icon === "check" ? (
+            <CheckCircle2 className="mt-0.5 h-4 w-4 shrink-0 text-emerald-600" />
+          ) : (
+            <span className="mt-2 h-1.5 w-1.5 shrink-0 rounded-full bg-indigo-500" />
+          )}
+          <span>{item}</span>
+        </li>
+      ))}
+    </ul>
+  );
 }
 
-interface TreeFolder {
-  type: "folder";
-  name: string;
-  children: (TreeFile | TreeFolder)[];
+function CodeBlock({
+  title,
+  code,
+  copyId,
+  onCopy,
+  copied,
+}: {
+  title: string;
+  code: string;
+  copyId: string;
+  onCopy: (id: string, text: string) => void;
+  copied: boolean;
+}) {
+  return (
+    <div className="space-y-3">
+      <div className="flex items-center justify-between gap-3">
+        <p className="text-xs font-bold uppercase tracking-[0.24em] text-slate-500">{title}</p>
+        <button
+          type="button"
+          onClick={() => onCopy(copyId, code)}
+          className="inline-flex items-center gap-1 rounded-lg border border-slate-200 bg-white px-3 py-1.5 text-[11px] font-bold text-slate-600 transition hover:bg-slate-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500"
+        >
+          <Copy className="h-3.5 w-3.5" />
+          {copied ? "Copied" : "Copy"}
+        </button>
+      </div>
+      <pre className="overflow-x-auto rounded-2xl border border-slate-900 bg-slate-950 p-4 font-mono text-xs leading-relaxed text-slate-200">
+        {code}
+      </pre>
+    </div>
+  );
 }
 
 export function ProjectDetailClient({ project }: ProjectDetailClientProps) {
-  const [activeTab, setActiveTab] = useState<"overview" | "requirements" | "build" | "code" | "tests" | "deploy" | "interview">("overview");
-
-  // State for selected code file in explorer
-  const [selectedFile, setSelectedFile] = useState<TreeFile | null>(null);
-  
-  // State for theme copy buttons
+  const [activeTab, setActiveTab] = useState<ProjectTab>("overview");
   const [copiedMap, setCopiedMap] = useState<Record<string, boolean>>({});
-
-  // Expand state for folder nodes in file tree
-  const [expandedFolders, setExpandedFolders] = useState<Record<string, boolean>>({});
-
-  // Parse project details fallback
-  const details = project.details;
-
-  // Build the file tree
-  const fileTree = React.useMemo(() => {
-    if (!details || !details.codeFiles || details.codeFiles.length === 0) return [];
-    
-    const root: (TreeFile | TreeFolder)[] = [];
-    
-    details.codeFiles.forEach(file => {
-      const parts = file.path.split("/");
-      let currentLevel = root;
-      
-      parts.forEach((part, index) => {
-        const isLast = index === parts.length - 1;
-        
-        if (isLast) {
-          currentLevel.push({
-            type: "file",
-            name: part,
-            path: file.path,
-            code: file.code,
-            language: file.language
-          });
-        } else {
-          // Check if folder exists
-          let folder = currentLevel.find(item => item.type === "folder" && item.name === part) as TreeFolder | undefined;
-          if (!folder) {
-            folder = {
-              type: "folder",
-              name: part,
-              children: []
-            };
-            currentLevel.push(folder);
-          }
-          currentLevel = folder.children;
-        }
-      });
-    });
-    
-    return root;
-  }, [details]);
-
-  // Find the first file in the tree
-  const firstFile = React.useMemo(() => {
-    if (fileTree.length === 0) return null;
-    const findFirstFile = (nodes: (TreeFile | TreeFolder)[]): TreeFile | null => {
-      for (const n of nodes) {
-        if (n.type === "file") return n;
-        if (n.type === "folder") {
-          const f = findFirstFile(n.children);
-          if (f) return f;
-        }
-      }
-      return null;
-    };
-    return findFirstFile(fileTree);
-  }, [fileTree]);
-
-  const currentSelectedFile = selectedFile || firstFile;
-
-  const getLevelColor = (level: string) => {
-    return {
-      Beginner: "bg-blue-50 text-blue-700 border-blue-200",
-      Intermediate: "bg-violet-50 text-violet-700 border-violet-200",
-      Advanced: "bg-emerald-50 text-emerald-700 border-emerald-200"
-    }[level] || "bg-slate-50 text-slate-700";
-  };
-
-  const handleCopyCode = (id: string, text: string) => {
-    navigator.clipboard.writeText(text).then(() => {
-      setCopiedMap(prev => ({ ...prev, [id]: true }));
-      setTimeout(() => {
-        setCopiedMap(prev => ({ ...prev, [id]: false }));
-      }, 2000);
-    });
-  };
-
-  const toggleFolder = (folderName: string) => {
-    setExpandedFolders(prev => ({ ...prev, [folderName]: !prev[folderName] }));
-  };
-
-  // Recursive Tree Rendering
-  const renderTreeNodes = (nodes: (TreeFile | TreeFolder)[], pathPrefix = ""): React.ReactNode[] => {
-    return nodes.map((node) => {
-      const currentPath = pathPrefix ? `${pathPrefix}/${node.name}` : node.name;
-      if (node.type === "folder") {
-        const isExpanded = expandedFolders[currentPath] !== false; // expanded by default
-        return (
-          <div key={currentPath} className="space-y-1">
-            <button
-              onClick={() => toggleFolder(currentPath)}
-              className="w-full flex items-center gap-2 px-2 py-1 text-xs font-bold text-slate-700 hover:bg-slate-100 rounded-lg transition-colors cursor-pointer text-left focus-visible:ring-2 focus-visible:ring-indigo-500"
-            >
-              {isExpanded ? <ChevronDown className="w-3.5 h-3.5 shrink-0 text-slate-400" /> : <ChevronRight className="w-3.5 h-3.5 shrink-0 text-slate-400" />}
-              {isExpanded ? <FolderOpen className="w-4 h-4 shrink-0 text-indigo-550" /> : <Folder className="w-4 h-4 shrink-0 text-indigo-550" />}
-              <span className="truncate">{node.name}</span>
-            </button>
-            {isExpanded && (
-              <div className="pl-4 border-l border-slate-200/60 ml-3.5 space-y-1">
-                {renderTreeNodes(node.children, currentPath)}
-              </div>
-            )}
-          </div>
-        );
-      } else {
-        const isSelected = currentSelectedFile?.path === node.path;
-        return (
-          <button
-            key={node.path}
-            onClick={() => setSelectedFile(node)}
-            className={`w-full flex items-center gap-2 px-2.5 py-1.5 text-xs font-semibold rounded-lg transition-colors cursor-pointer text-left focus-visible:ring-2 focus-visible:ring-indigo-500 ${
-              isSelected
-                ? "bg-indigo-50 text-indigo-700 font-bold"
-                : "text-slate-605 hover:bg-slate-50"
-            }`}
-          >
-            <FileCode className={`w-3.5 h-3.5 shrink-0 ${isSelected ? "text-indigo-650" : "text-slate-400"}`} />
-            <span className="truncate">{node.name}</span>
-          </button>
-        );
-      }
-    });
-  };
-
-  // State for Interview Questions Accordion
+  const [openSections, setOpenSections] = useState<Record<string, boolean>>({
+    requirements: true,
+    buildSteps: true,
+    folder: false,
+    codeArchitecture: true,
+    automatedTests: true,
+    commands: true,
+    interviewPrep: true,
+    qas: true,
+  });
   const [openQA, setOpenQA] = useState<Record<number, boolean>>({});
 
-  const toggleQA = (idx: number) => {
-    setOpenQA(prev => ({ ...prev, [idx]: !prev[idx] }));
+  const details = project.details;
+
+  const copyText = async (id: string, text: string) => {
+    await navigator.clipboard.writeText(text);
+    setCopiedMap((prev) => ({ ...prev, [id]: true }));
+    window.setTimeout(() => {
+      setCopiedMap((prev) => ({ ...prev, [id]: false }));
+    }, 1500);
   };
 
+  const toggleSection = (id: string) => {
+    setOpenSections((prev) => ({ ...prev, [id]: !prev[id] }));
+  };
+
+  const toggleQA = (index: number) => {
+    setOpenQA((prev) => ({ ...prev, [index]: !prev[index] }));
+  };
+
+  const overviewStats = useMemo(
+    () => [
+      { label: "Core Features", value: `${project.features.length}` },
+      { label: "Tech Stack", value: `${project.techStack.length}` },
+      { label: "Build Phases", value: `${details?.buildSteps.length ?? project.implementationPhases.length}` },
+    ],
+    [details?.buildSteps.length, project.features.length, project.implementationPhases.length, project.techStack.length],
+  );
+
   return (
-    <div className="max-w-4xl mx-auto px-6 py-10 relative animate-fade-in">
-      {/* Top Back Navigation */}
-      <div className="sticky top-16 z-40 -mx-4 px-4 py-3 bg-slate-50/90 backdrop-blur-md border-b border-slate-200/60 mb-8 flex items-center justify-between rounded-b-xl shadow-xs">
-        <Link
-          href="/projects"
-          className="inline-flex items-center gap-2 text-xs sm:text-sm font-semibold text-slate-600 hover:text-indigo-700 transition-colors"
-        >
-          <ChevronLeft className="w-4 h-4" />
-          Back to Project Labs
-        </Link>
-        <span className="text-[10px] font-bold text-slate-500 uppercase tracking-widest">
-          LAB // {project.slug.toUpperCase()}
-        </span>
-      </div>
-
-      {/* Project Header */}
-      <div className="mb-8">
-        <div className="flex items-center gap-2 mb-3">
-          <span className={`inline-block px-3 py-1 rounded-full text-xs font-bold border ${getLevelColor(project.level)}`}>
-            {project.level} Lab
+    <div className="mx-auto max-w-6xl px-4 py-6 sm:px-6 sm:py-8">
+      <div className="sticky top-16 z-40 -mx-4 mb-6 border-b border-slate-200/70 bg-slate-50/90 px-4 py-3 backdrop-blur-md sm:-mx-6 sm:px-6">
+        <div className="flex flex-wrap items-center justify-between gap-3">
+          <Link
+            href="/projects"
+            className="inline-flex items-center gap-2 text-sm font-semibold text-slate-600 transition hover:text-indigo-700"
+          >
+            <ChevronLeft className="h-4 w-4" />
+            Back to Project Labs
+          </Link>
+          <span className="text-[10px] font-bold uppercase tracking-[0.24em] text-slate-500">
+            Lab / {project.slug.replaceAll("-", " ")}
           </span>
-          <span className="text-xs text-slate-500 font-semibold">{project.duration} Duration</span>
         </div>
-        <h1 className="text-3xl sm:text-4xl md:text-5xl font-black tracking-tight mb-4 text-transparent bg-clip-text bg-gradient-to-r from-slate-900 via-indigo-950 to-indigo-900">
-          {project.title}
-        </h1>
-        <p className="text-sm sm:text-base text-slate-600 leading-relaxed">
-          {project.description}
-        </p>
       </div>
 
-      {/* Tab Navigation */}
-      <div className="mb-6 border-b border-slate-200 dark:border-slate-800">
-        <nav className="flex flex-wrap -mb-px gap-1 sm:gap-2" aria-label="Project Sections">
-          {[
-            { id: "overview", label: "Overview" },
-            { id: "requirements", label: "Requirements" },
-            { id: "build", label: "Build Steps" },
-            { id: "code", label: "Full Code" },
-            { id: "tests", label: "Tests" },
-            { id: "deploy", label: "Deploy" },
-            { id: "interview", label: "Interview" }
-          ].map((t) => {
-            const isActive = activeTab === t.id;
-            return (
-              <button
-                key={t.id}
-                onClick={() => setActiveTab(t.id as typeof activeTab)}
-                aria-current={isActive ? "page" : undefined}
-                className={`px-3 py-2.5 border-b-2 font-bold text-xs sm:text-sm transition-all duration-200 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 rounded-t-lg ${
-                  isActive
-                    ? "border-indigo-600 text-indigo-600 bg-indigo-50/40"
-                    : "border-transparent text-slate-500 hover:text-slate-800 hover:border-slate-300"
-                }`}
-              >
-                {t.label}
-              </button>
-            );
-          })}
-        </nav>
-      </div>
+      <div className="space-y-6">
+        <ProjectHero project={project} />
+        <ProjectInfoCards project={project} />
 
-      {/* Tab Contents */}
-      <div className="space-y-8">
-        {/* OVERVIEW TAB */}
-        {activeTab === "overview" && (
-          <div className="space-y-6 animate-fade-in">
-            <div className="grid sm:grid-cols-2 gap-6">
-              <section className="p-6 bg-white border border-slate-200/80 rounded-3xl shadow-xs space-y-3">
-                <h2 className="text-base font-extrabold text-slate-900 flex items-center gap-2 pb-2 border-b border-slate-100">
-                  <Info className="w-4.5 h-4.5 text-indigo-500" />
-                  Project Purpose
-                </h2>
-                <p className="text-xs sm:text-sm text-slate-650 leading-relaxed font-semibold">
-                  {project.description}
-                </p>
-              </section>
-
-              <section className="p-6 bg-white border border-slate-200/80 rounded-3xl shadow-xs space-y-3">
-                <h2 className="text-base font-extrabold text-slate-900 flex items-center gap-2 pb-2 border-b border-slate-100">
-                  <Target className="w-4.5 h-4.5 text-indigo-500" />
-                  Who Should Build This?
-                </h2>
-                <p className="text-xs sm:text-sm text-slate-650 leading-relaxed font-semibold">
-                  {project.whoShouldBuild}
-                </p>
-              </section>
+        <div className="sticky top-[7.2rem] z-30 overflow-hidden rounded-[1.75rem] border border-slate-200/80 bg-white/95 shadow-xs backdrop-blur">
+          <nav
+            aria-label="Project detail sections"
+            className="no-scrollbar overflow-x-auto px-2 py-2"
+          >
+            <div className="flex w-max min-w-full gap-2">
+              {tabs.map((tab) => {
+                const isActive = activeTab === tab.id;
+                return (
+                  <button
+                    key={tab.id}
+                    type="button"
+                    onClick={() => setActiveTab(tab.id)}
+                    aria-current={isActive ? "page" : undefined}
+                    className={`shrink-0 whitespace-nowrap rounded-full px-4 py-2 text-sm font-semibold transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 ${
+                      isActive
+                        ? "bg-slate-950 text-white"
+                        : "text-slate-600 hover:bg-slate-100 hover:text-slate-900"
+                    }`}
+                  >
+                    {tab.label}
+                  </button>
+                );
+              })}
             </div>
+          </nav>
+        </div>
 
-            {/* Final Outcome / Core Features */}
-            <section className="p-6 bg-white border border-slate-200/80 rounded-3xl shadow-xs space-y-6">
-              <h2 className="text-lg font-extrabold text-slate-900 flex items-center gap-2 pb-3 border-b border-slate-100">
-                <Layers className="w-5 h-5 text-indigo-500" />
-                Final Outcome & Core Deliverables
-              </h2>
-
-              <div className="space-y-4">
-                <div>
-                  <p className="text-xs font-bold text-slate-800 uppercase tracking-wider mb-2">Core Features List</p>
-                  <ul className="grid sm:grid-cols-2 gap-3 pl-1">
-                    {project.features.map((feature, idx) => (
-                      <li key={idx} className="flex gap-2.5 items-start text-xs sm:text-sm font-semibold text-slate-650">
-                        <CheckCircle2 className="w-4 h-4 text-emerald-550 shrink-0 mt-0.5" />
-                        <span>{feature}</span>
-                      </li>
-                    ))}
-                  </ul>
-                </div>
-              </div>
+        {activeTab === "overview" ? (
+          <div className="space-y-5">
+            <section className="grid gap-4 sm:grid-cols-3">
+              {overviewStats.map((item) => (
+                <article key={item.label} className="rounded-3xl border border-slate-200/80 bg-white p-5 shadow-xs">
+                  <p className="text-xs font-bold uppercase tracking-[0.24em] text-slate-500">{item.label}</p>
+                  <p className="mt-3 text-3xl font-black tracking-tight text-slate-950">{item.value}</p>
+                </article>
+              ))}
             </section>
 
-            {/* Skills & Tech Stack */}
-            <section className="p-6 bg-white border border-slate-200/80 rounded-3xl shadow-xs space-y-6">
-              <h2 className="text-lg font-extrabold text-slate-900 flex items-center gap-2 pb-3 border-b border-slate-100">
-                <Wrench className="w-5 h-5 text-indigo-500" />
-                Skills Practiced & Stack
-              </h2>
+            <ProjectAccordion
+              title="Core Features"
+              subtitle="What the finished lab should include."
+              isOpen={openSections.features ?? true}
+              onToggle={() => toggleSection("features")}
+            >
+              <CompactList items={project.features} />
+            </ProjectAccordion>
 
-              <div className="space-y-4">
-                <div>
-                  <p className="text-xs font-bold text-slate-400 uppercase tracking-wider mb-2">Technologies Used</p>
+            <ProjectAccordion
+              title="Skills and Stack"
+              subtitle="The main tools and engineering areas covered in this lab."
+              isOpen={openSections.skills ?? true}
+              onToggle={() => toggleSection("skills")}
+            >
+              <div className="grid gap-5 lg:grid-cols-2">
+                <div className="space-y-3">
+                  <p className="text-xs font-bold uppercase tracking-[0.24em] text-slate-500">Tech Stack</p>
                   <div className="flex flex-wrap gap-2">
                     {project.techStack.map((tech) => (
                       <span
                         key={tech}
-                        className="bg-indigo-50/50 border border-indigo-100 text-indigo-750 px-3 py-1.5 rounded-xl text-xs font-bold"
+                        className="rounded-full border border-indigo-100 bg-indigo-50 px-3 py-1 text-xs font-semibold text-indigo-700"
                       >
                         {tech}
                       </span>
                     ))}
                   </div>
                 </div>
-
-                <div>
-                  <p className="text-xs font-bold text-slate-400 uppercase tracking-wider mb-2">Primary Developer Skills</p>
+                <div className="space-y-3">
+                  <p className="text-xs font-bold uppercase tracking-[0.24em] text-slate-500">Skills Practiced</p>
                   <div className="flex flex-wrap gap-2">
                     {project.skillsCovered.map((skill) => (
                       <span
                         key={skill}
-                        className="bg-slate-50 border border-slate-200/80 text-slate-650 px-3 py-1 rounded-xl text-xs font-bold"
+                        className="rounded-full border border-slate-200 bg-slate-50 px-3 py-1 text-xs font-semibold text-slate-600"
                       >
-                        🧠 {skill}
+                        {skill}
                       </span>
                     ))}
                   </div>
                 </div>
               </div>
-            </section>
+            </ProjectAccordion>
 
-            {/* Future Enhancements */}
-            <section className="p-6 bg-white border border-slate-200/80 rounded-3xl shadow-xs space-y-4">
-              <h2 className="text-lg font-extrabold text-slate-900 flex items-center gap-2 pb-3 border-b border-slate-100">
-                <Sparkles className="w-5 h-5 text-indigo-500" />
-                Future Enhancements
-              </h2>
-              <ul className="list-disc list-inside space-y-2 text-xs sm:text-sm text-slate-600 leading-relaxed pl-1">
-                {project.futureEnhancements.map((enh, idx) => (
-                  <li key={idx} className="text-slate-600 font-semibold">{enh}</li>
-                ))}
-              </ul>
-            </section>
-          </div>
-        )}
-
-        {/* REQUIREMENTS TAB */}
-        {activeTab === "requirements" && details && (
-          <div className="space-y-6 animate-fade-in">
-            <section className="p-6 bg-white border border-slate-200/80 rounded-3xl shadow-xs space-y-4">
-              <h2 className="text-lg font-extrabold text-slate-900 flex items-center gap-2 pb-3 border-b border-slate-100">
-                <Target className="w-5 h-5 text-indigo-500" />
-                Business Objectives & Target Audience
-              </h2>
-              <div className="p-4 bg-indigo-50/30 border border-indigo-100 rounded-2xl">
-                <p className="text-xs font-bold text-indigo-805 uppercase tracking-wider mb-1.5">Business Statement</p>
-                <p className="text-xs sm:text-sm text-slate-650 leading-relaxed font-semibold">
-                  {details.requirements.businessObjective}
-                </p>
-              </div>
-            </section>
-
-            <div className="grid sm:grid-cols-2 gap-6">
-              {/* Functional Requirements */}
-              <section className="p-6 bg-white border border-slate-200/80 rounded-3xl shadow-xs space-y-4">
-                <h3 className="font-extrabold text-slate-900 border-b pb-2 text-sm uppercase tracking-wider">Functional Requirements</h3>
-                <ul className="space-y-2">
-                  {details.requirements.functional.map((item, idx) => (
-                    <li key={idx} className="flex gap-2 items-start text-xs sm:text-sm text-slate-600">
-                      <span className="text-indigo-600 font-black mt-0.5">•</span>
-                      <span className="font-medium">{item}</span>
-                    </li>
-                  ))}
-                </ul>
-              </section>
-
-              {/* Non-Functional Requirements */}
-              <section className="p-6 bg-white border border-slate-200/80 rounded-3xl shadow-xs space-y-4">
-                <h3 className="font-extrabold text-slate-900 border-b pb-2 text-sm uppercase tracking-wider">Non-Functional Specs</h3>
-                <ul className="space-y-2">
-                  {details.requirements.nonFunctional.map((item, idx) => (
-                    <li key={idx} className="flex gap-2 items-start text-xs sm:text-sm text-slate-600">
-                      <span className="text-indigo-600 font-black mt-0.5">⚙️</span>
-                      <span className="font-medium">{item}</span>
-                    </li>
-                  ))}
-                </ul>
-              </section>
-            </div>
-
-            {/* User Stories & Acceptance Criteria */}
-            <section className="p-6 bg-white border border-slate-200/80 rounded-3xl shadow-xs space-y-6">
-              <h2 className="text-base font-extrabold text-slate-900 border-b pb-2">User Stories & Acceptance</h2>
-              <div className="space-y-4">
-                <div>
-                  <h4 className="text-xs font-bold text-slate-550 uppercase tracking-wider mb-2">User Stories</h4>
-                  <div className="space-y-2.5">
-                    {details.requirements.userStories.map((story, idx) => (
-                      <div key={idx} className="p-3 bg-slate-50 border border-slate-100 rounded-xl text-xs sm:text-sm font-semibold text-slate-650 leading-relaxed">
-                        {story}
+            <ProjectAccordion
+              title="Architecture Snapshot"
+              subtitle="Components, flow, and future expansion ideas."
+              isOpen={openSections.architecture ?? false}
+              onToggle={() => toggleSection("architecture")}
+            >
+              <div className="grid gap-5 lg:grid-cols-2">
+                <div className="space-y-3">
+                  <div className="flex items-center gap-2">
+                    <FolderTree className="h-4 w-4 text-indigo-600" />
+                    <p className="text-sm font-bold text-slate-900">Component Breakdown</p>
+                  </div>
+                  <div className="space-y-3">
+                    {project.componentBreakdown.map((component) => (
+                      <div key={component.name} className="rounded-2xl border border-slate-200/80 bg-slate-50/70 p-4">
+                        <p className="font-semibold text-slate-900">{component.name}</p>
+                        <p className="mt-1 text-sm leading-relaxed text-slate-600">{component.desc}</p>
                       </div>
                     ))}
                   </div>
                 </div>
-
-                <div>
-                  <h4 className="text-xs font-bold text-slate-550 uppercase tracking-wider mb-2">Acceptance Criteria</h4>
-                  <ul className="space-y-2 pl-1">
-                    {details.requirements.acceptanceCriteria.map((crit, idx) => (
-                      <li key={idx} className="flex gap-2 items-start text-xs sm:text-sm text-slate-600">
-                        <span className="text-emerald-500 font-bold">✓</span>
-                        <span className="font-semibold text-slate-650">{crit}</span>
-                      </li>
-                    ))}
-                  </ul>
+                <div className="space-y-3">
+                  <div className="flex items-center gap-2">
+                    <Sparkles className="h-4 w-4 text-indigo-600" />
+                    <p className="text-sm font-bold text-slate-900">Future Enhancements</p>
+                  </div>
+                  <CompactList items={project.futureEnhancements} icon="dot" />
                 </div>
               </div>
-            </section>
-
-            {/* Edge Cases */}
-            <section className="p-6 bg-yellow-50/15 border border-yellow-200 rounded-3xl shadow-xs space-y-3">
-              <h3 className="text-sm font-extrabold text-yellow-800 uppercase tracking-wider">Edge Cases to Handle</h3>
-              <ul className="space-y-2">
-                {details.requirements.edgeCases.map((edge, idx) => (
-                  <li key={idx} className="flex gap-2 items-start text-xs sm:text-sm text-slate-650">
-                    <span className="text-yellow-600 font-bold">⚠️</span>
-                    <span className="font-semibold">{edge}</span>
-                  </li>
-                ))}
-              </ul>
-            </section>
+            </ProjectAccordion>
           </div>
-        )}
+        ) : null}
 
-        {/* BUILD STEPS TAB */}
-        {activeTab === "build" && details && (
-          <div className="space-y-6 animate-fade-in">
-            {/* Folder Structure Code Block */}
-            <section className="p-6 bg-white border border-slate-200/80 rounded-3xl shadow-xs space-y-4">
-              <h2 className="text-lg font-extrabold text-slate-900 flex items-center gap-2 pb-3 border-b border-slate-100">
-                <FolderTree className="w-5 h-5 text-indigo-500" />
-                Folder Directory Blueprint
-              </h2>
-              <pre className="bg-slate-950 text-slate-200 p-4 rounded-2xl border border-slate-900 font-mono text-xs overflow-x-auto leading-relaxed">
-                {project.folderStructure}
-              </pre>
-            </section>
+        {activeTab === "build" && details ? (
+          <div className="space-y-5">
+            <ProjectAccordion
+              title="Requirements"
+              subtitle="Business goals, user stories, and edge cases."
+              isOpen={openSections.requirements}
+              onToggle={() => toggleSection("requirements")}
+            >
+              <div className="grid gap-5 lg:grid-cols-2">
+                <article className="space-y-4 rounded-3xl border border-indigo-100 bg-indigo-50/40 p-5">
+                  <div className="flex items-center gap-2">
+                    <Target className="h-4 w-4 text-indigo-600" />
+                    <p className="text-sm font-bold text-slate-900">Business Objective</p>
+                  </div>
+                  <p className="text-sm leading-relaxed text-slate-600">
+                    {details.requirements.businessObjective}
+                  </p>
+                </article>
 
-            {/* 10-Step Timeline */}
-            <section className="p-6 bg-white border border-slate-200/80 rounded-3xl shadow-xs space-y-6">
-              <h2 className="text-lg font-extrabold text-slate-900 flex items-center gap-2 pb-3 border-b border-slate-100">
-                <Cpu className="w-5 h-5 text-indigo-500" />
-                Step-by-Step Implementation Path
-              </h2>
+                <article className="space-y-4 rounded-3xl border border-slate-200/80 bg-white p-5">
+                  <div className="flex items-center gap-2">
+                    <Info className="h-4 w-4 text-indigo-600" />
+                    <p className="text-sm font-bold text-slate-900">User Stories</p>
+                  </div>
+                  <CompactList items={details.requirements.userStories} icon="dot" />
+                </article>
 
-              <div className="relative border-l-2 border-indigo-100 ml-3.5 pl-6 space-y-8">
-                {details.buildSteps.map((step, idx) => (
-                  <div key={idx} className="relative">
-                    {/* Circle Node */}
-                    <span className="absolute -left-10 top-0.5 h-7 w-7 rounded-full bg-indigo-650 text-white font-extrabold text-xs flex items-center justify-center shrink-0 shadow-sm">
-                      {step.step}
-                    </span>
-                    <div className="space-y-2">
-                      <h4 className="font-extrabold text-slate-900 text-sm sm:text-base">{step.title}</h4>
-                      <p className="text-slate-600 text-xs sm:text-sm leading-relaxed font-semibold">{step.description}</p>
-                      {step.code && (
-                        <div className="relative group">
-                          <button
-                            onClick={() => handleCopyCode(`step-${idx}`, step.code || "")}
-                            className="absolute right-3 top-3 bg-slate-800 hover:bg-slate-700 text-slate-300 p-1.5 rounded-lg text-2xs font-bold transition flex items-center gap-1 opacity-0 group-hover:opacity-100 focus-visible:opacity-100 focus-visible:outline-none"
-                            aria-label="Copy code block"
-                          >
-                            {copiedMap[`step-${idx}`] ? <Check className="w-3 h-3 text-emerald-450" /> : <Copy className="w-3 h-3" />}
-                            {copiedMap[`step-${idx}`] ? "Copied" : "Copy"}
-                          </button>
-                          <pre className="bg-slate-950 text-slate-200 p-3.5 rounded-xl border border-slate-900 font-mono text-2xs overflow-x-auto">
-                            {step.code}
-                          </pre>
-                        </div>
-                      )}
+                <article className="space-y-4 rounded-3xl border border-slate-200/80 bg-white p-5">
+                  <p className="text-sm font-bold text-slate-900">Functional Requirements</p>
+                  <CompactList items={details.requirements.functional} icon="dot" />
+                </article>
+
+                <article className="space-y-4 rounded-3xl border border-slate-200/80 bg-white p-5">
+                  <p className="text-sm font-bold text-slate-900">Non-Functional Requirements</p>
+                  <CompactList items={details.requirements.nonFunctional} icon="dot" />
+                </article>
+
+                <article className="space-y-4 rounded-3xl border border-slate-200/80 bg-white p-5">
+                  <p className="text-sm font-bold text-slate-900">Acceptance Criteria</p>
+                  <CompactList items={details.requirements.acceptanceCriteria} />
+                </article>
+
+                <article className="space-y-4 rounded-3xl border border-amber-200 bg-amber-50/50 p-5">
+                  <p className="text-sm font-bold text-slate-900">Edge Cases</p>
+                  <CompactList items={details.requirements.edgeCases} icon="dot" />
+                </article>
+              </div>
+            </ProjectAccordion>
+
+            <ProjectAccordion
+              title="Implementation Path"
+              subtitle="A cleaner step-by-step plan instead of one long build section."
+              isOpen={openSections.buildSteps}
+              onToggle={() => toggleSection("buildSteps")}
+            >
+              <div className="space-y-3">
+                {details.buildSteps.map((step) => (
+                  <div
+                    key={step.step}
+                    className="rounded-3xl border border-slate-200/80 bg-white p-4 transition hover:border-indigo-200 hover:bg-indigo-50/20"
+                  >
+                    <div className="flex items-start gap-4">
+                      <span className="inline-flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-slate-950 text-xs font-bold text-white">
+                        {step.step}
+                      </span>
+                      <div className="min-w-0 flex-1 space-y-2">
+                        <p className="text-base font-bold text-slate-900">{step.title}</p>
+                        <p className="text-sm leading-relaxed text-slate-600">{step.description}</p>
+                        {step.code ? (
+                          <details className="rounded-2xl border border-slate-200 bg-slate-50/70 p-3">
+                            <summary className="cursor-pointer text-sm font-semibold text-slate-700">
+                              View supporting code
+                            </summary>
+                            <pre className="mt-3 overflow-x-auto rounded-xl bg-slate-950 p-4 font-mono text-xs leading-relaxed text-slate-200">
+                              {step.code}
+                            </pre>
+                          </details>
+                        ) : null}
+                      </div>
                     </div>
                   </div>
                 ))}
               </div>
-            </section>
+            </ProjectAccordion>
+
+            <ProjectAccordion
+              title="Folder Structure"
+              subtitle="Reference blueprint for the lab workspace."
+              isOpen={openSections.folder}
+              onToggle={() => toggleSection("folder")}
+            >
+              <CodeBlock
+                title="Project Folder Blueprint"
+                code={project.folderStructure}
+                copyId="folder-structure"
+                onCopy={copyText}
+                copied={!!copiedMap["folder-structure"]}
+              />
+            </ProjectAccordion>
           </div>
-        )}
+        ) : null}
 
-        {/* FULL CODE TAB */}
-        {activeTab === "code" && details && (
-          <div className="space-y-6 animate-fade-in">
-            {/* Split pane file explorer */}
-            <div className="flex flex-col md:flex-row border border-slate-200 rounded-3xl overflow-hidden bg-white shadow-xs min-h-[500px] items-stretch">
-              
-              {/* Left pane: File explorer */}
-              <div className="w-full md:w-64 border-b md:border-b-0 md:border-r border-slate-200 p-4 bg-slate-50/50 overflow-y-auto max-h-[400px] md:max-h-[600px] space-y-3">
-                <div className="flex items-center gap-2 pb-2 border-b border-slate-200">
-                  <ListFilter className="w-4 h-4 text-slate-400" />
-                  <span className="text-xs font-bold text-slate-500 uppercase tracking-wider">Project Files</span>
-                </div>
-                <div className="space-y-1">
-                  {fileTree.length > 0 ? renderTreeNodes(fileTree) : (
-                    <span className="text-xs text-slate-400 italic">No files available</span>
-                  )}
-                </div>
+        {activeTab === "code" && details ? (
+          <div className="space-y-5">
+            <ProjectCodeExplorer files={details.codeFiles} />
+
+            <ProjectAccordion
+              title="API and Database Reference"
+              subtitle="Keep the full technical reference available without making the page feel heavy."
+              isOpen={openSections.codeArchitecture}
+              onToggle={() => toggleSection("codeArchitecture")}
+            >
+              <div className="grid gap-6">
+                <CodeBlock
+                  title="API Contract"
+                  code={project.apiContract}
+                  copyId="api-contract"
+                  onCopy={copyText}
+                  copied={!!copiedMap["api-contract"]}
+                />
+                {project.databaseSchema ? (
+                  <CodeBlock
+                    title="Database Schema"
+                    code={project.databaseSchema}
+                    copyId="database-schema"
+                    onCopy={copyText}
+                    copied={!!copiedMap["database-schema"]}
+                  />
+                ) : null}
               </div>
-
-              {/* Right pane: Code Preview */}
-              <div className="flex-1 bg-slate-950 text-slate-200 flex flex-col min-w-0">
-                {currentSelectedFile ? (
-                  <>
-                    <div className="flex justify-between items-center px-4 py-2 border-b border-slate-900 bg-slate-900/60">
-                      <span className="font-mono text-xs text-slate-400 truncate">{currentSelectedFile.path}</span>
-                      <button
-                        onClick={() => handleCopyCode("selected-file", currentSelectedFile.code)}
-                        className="flex items-center gap-1.5 px-3 py-1.5 bg-slate-800 hover:bg-slate-700 text-slate-200 rounded-lg text-2xs font-bold transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500"
-                      >
-                        {copiedMap["selected-file"] ? <Check className="w-3.5 h-3.5 text-emerald-450" /> : <Copy className="w-3.5 h-3.5" />}
-                        {copiedMap["selected-file"] ? "Copied!" : "Copy Code"}
-                      </button>
-                    </div>
-                    <div className="p-4 flex-1 overflow-x-auto overflow-y-auto max-h-[500px]">
-                      <pre className="font-mono text-xs leading-relaxed">
-                        <code>{currentSelectedFile.code}</code>
-                      </pre>
-                    </div>
-                  </>
-                ) : (
-                  <div className="flex-1 flex flex-col items-center justify-center p-8 text-slate-500">
-                    <FileText className="w-8 h-8 mb-2 stroke-1" />
-                    <span className="text-xs">Select a file from the explorer to view the code</span>
-                  </div>
-                )}
-              </div>
-            </div>
-
-            {/* API Contract & Database Schema */}
-            <section className="p-6 bg-white border border-slate-200/80 rounded-3xl shadow-xs space-y-6">
-              <h2 className="text-lg font-extrabold text-slate-900 flex items-center gap-2 pb-3 border-b border-slate-100">
-                <Server className="w-5 h-5 text-indigo-500" />
-                API Contract & Database Schema
-              </h2>
-
-              <div className="space-y-6 text-sm text-slate-700">
-                <div>
-                  <h3 className="font-bold text-slate-900 mb-2 text-xs uppercase tracking-wider">REST API Interface Contract</h3>
-                  <pre className="bg-slate-950 text-slate-200 p-4 rounded-xl border border-slate-900 font-mono text-xs overflow-x-auto">
-                    {project.apiContract}
-                  </pre>
-                </div>
-
-                {project.databaseSchema && (
-                  <div>
-                    <h3 className="font-bold text-slate-900 mb-2 text-xs uppercase tracking-wider">PostgreSQL Database Schema</h3>
-                    <pre className="bg-slate-950 text-slate-200 p-4 rounded-xl border border-slate-900 font-mono text-xs overflow-x-auto">
-                      {project.databaseSchema}
-                    </pre>
-                  </div>
-                )}
-              </div>
-            </section>
+            </ProjectAccordion>
           </div>
-        )}
+        ) : null}
 
-        {/* TESTS TAB */}
-        {activeTab === "tests" && details && (
-          <div className="space-y-6 animate-fade-in">
-            {/* Testing Checklist */}
+        {activeTab === "tests" && details ? (
+          <div className="space-y-5">
             <ProjectChecklist
               title="Manual Testing Checklist"
               storageKey={`project-testing-${project.slug}`}
               items={details.tests.manualChecklist}
             />
 
-            {/* Test Framework advice */}
-            <section className="p-6 bg-white border border-slate-200/80 rounded-3xl shadow-xs space-y-4">
-              <h2 className="text-base font-extrabold text-slate-900 flex items-center gap-2 pb-2 border-b border-slate-100">
-                🧪 Automated Unit Test Spec
-              </h2>
-              <div className="relative group">
-                <button
-                  onClick={() => handleCopyCode("unit-test", details.tests.unitTestCode)}
-                  className="absolute right-3 top-3 bg-slate-800 hover:bg-slate-700 text-slate-300 p-1.5 rounded-lg text-2xs font-bold transition flex items-center gap-1 opacity-0 group-hover:opacity-100 focus-visible:opacity-100"
-                >
-                  {copiedMap["unit-test"] ? <Check className="w-3.5 h-3.5 text-emerald-450" /> : <Copy className="w-3.5 h-3.5" />}
-                  {copiedMap["unit-test"] ? "Copied" : "Copy"}
-                </button>
-                <pre className="bg-slate-950 text-slate-200 p-4 rounded-xl border border-slate-900 font-mono text-xs overflow-x-auto leading-relaxed">
-                  {details.tests.unitTestCode}
-                </pre>
+            <ProjectAccordion
+              title="Automated Test References"
+              subtitle="Unit and optional API/frontend examples in one compact area."
+              isOpen={openSections.automatedTests}
+              onToggle={() => toggleSection("automatedTests")}
+            >
+              <div className="grid gap-6">
+                <CodeBlock
+                  title={details.tests.unitTestPath}
+                  code={details.tests.unitTestCode}
+                  copyId="unit-test"
+                  onCopy={copyText}
+                  copied={!!copiedMap["unit-test"]}
+                />
+                {details.tests.apiTestCode ? (
+                  <CodeBlock
+                    title={details.tests.apiTestPath || "API Test"}
+                    code={details.tests.apiTestCode}
+                    copyId="api-test"
+                    onCopy={copyText}
+                    copied={!!copiedMap["api-test"]}
+                  />
+                ) : null}
+                {details.tests.frontendTestCode ? (
+                  <CodeBlock
+                    title={details.tests.frontendTestPath || "Frontend Test"}
+                    code={details.tests.frontendTestCode}
+                    copyId="frontend-test"
+                    onCopy={copyText}
+                    copied={!!copiedMap["frontend-test"]}
+                  />
+                ) : null}
               </div>
-            </section>
+            </ProjectAccordion>
 
-            {/* Accessibility & Performance Checklist */}
-            <div className="grid sm:grid-cols-2 gap-6">
-              <section className="p-6 bg-white border border-slate-200/80 rounded-3xl shadow-xs space-y-3">
-                <h3 className="text-sm font-extrabold text-indigo-950 uppercase tracking-wider pb-2 border-b">Accessibility Checks</h3>
-                <ul className="space-y-2">
-                  {details.tests.accessibilityChecklist.map((item, idx) => (
-                    <li key={idx} className="flex gap-2 items-start text-xs sm:text-sm text-slate-650">
-                      <span className="text-indigo-650">✓</span>
-                      <span className="font-semibold">{item}</span>
-                    </li>
-                  ))}
-                </ul>
-              </section>
+            <div className="grid gap-5 lg:grid-cols-2">
+              <article className="rounded-3xl border border-slate-200/80 bg-white p-5 shadow-xs">
+                <div className="mb-4 flex items-center gap-2">
+                  <ListChecks className="h-4 w-4 text-indigo-600" />
+                  <p className="text-sm font-bold text-slate-900">Accessibility Checks</p>
+                </div>
+                <CompactList items={details.tests.accessibilityChecklist} />
+              </article>
 
-              <section className="p-6 bg-white border border-slate-200/80 rounded-3xl shadow-xs space-y-3">
-                <h3 className="text-sm font-extrabold text-indigo-950 uppercase tracking-wider pb-2 border-b">Performance Profiling</h3>
-                <ul className="space-y-2">
-                  {details.tests.performanceChecklist.map((item, idx) => (
-                    <li key={idx} className="flex gap-2 items-start text-xs sm:text-sm text-slate-650">
-                      <span className="text-indigo-650">⚡</span>
-                      <span className="font-semibold">{item}</span>
-                    </li>
-                  ))}
-                </ul>
-              </section>
+              <article className="rounded-3xl border border-slate-200/80 bg-white p-5 shadow-xs">
+                <div className="mb-4 flex items-center gap-2">
+                  <Cpu className="h-4 w-4 text-indigo-600" />
+                  <p className="text-sm font-bold text-slate-900">Performance Checks</p>
+                </div>
+                <CompactList items={details.tests.performanceChecklist} />
+              </article>
             </div>
-          </div>
-        )}
 
-        {/* DEPLOY TAB */}
-        {activeTab === "deploy" && details && (
-          <div className="space-y-6 animate-fade-in">
-            {/* Deploy checklists */}
+            <ProjectCTA />
+          </div>
+        ) : null}
+
+        {activeTab === "deploy" && details ? (
+          <div className="space-y-5">
             <ProjectChecklist
               title="Production Deployment Checklist"
               storageKey={`project-deploy-${project.slug}`}
               items={details.deploy.productionChecklist}
             />
 
-            {/* Run Commands & Environment */}
-            <section className="p-6 bg-white border border-slate-200/80 rounded-3xl shadow-xs space-y-6">
-              <h2 className="text-lg font-extrabold text-slate-900 border-b pb-3">Local Run Commands</h2>
-              
-              <div className="space-y-4">
-                <div>
-                  <h4 className="text-xs font-bold text-slate-450 uppercase tracking-wider mb-2">Startup commands sequence</h4>
-                  <pre className="bg-slate-950 text-slate-200 p-4 rounded-xl border border-slate-900 font-mono text-xs overflow-x-auto leading-relaxed">
-                    {details.deploy.localRun.join("\n")}
-                  </pre>
-                </div>
-
-                <div>
-                  <h4 className="text-xs font-bold text-slate-450 uppercase tracking-wider mb-2">Environment Configuration (.env.example)</h4>
-                  <pre className="bg-slate-950 text-slate-200 p-4 rounded-xl border border-slate-900 font-mono text-xs overflow-x-auto leading-relaxed">
-                    {details.deploy.envVariables.join("\n")}
-                  </pre>
-                </div>
+            <ProjectAccordion
+              title="Run Commands and Environment"
+              subtitle="Startup flow, env variables, and build commands."
+              isOpen={openSections.commands}
+              onToggle={() => toggleSection("commands")}
+            >
+              <div className="grid gap-6 lg:grid-cols-3">
+                <CodeBlock
+                  title="Local Run"
+                  code={details.deploy.localRun.join("\n")}
+                  copyId="local-run"
+                  onCopy={copyText}
+                  copied={!!copiedMap["local-run"]}
+                />
+                <CodeBlock
+                  title="Environment Variables"
+                  code={details.deploy.envVariables.join("\n")}
+                  copyId="env-vars"
+                  onCopy={copyText}
+                  copied={!!copiedMap["env-vars"]}
+                />
+                <CodeBlock
+                  title="Build Commands"
+                  code={details.deploy.buildCommands.join("\n")}
+                  copyId="build-commands"
+                  onCopy={copyText}
+                  copied={!!copiedMap["build-commands"]}
+                />
               </div>
-            </section>
+            </ProjectAccordion>
 
-            {/* Deployment configs (Docker, vercel, render etc) */}
-            {(details.deploy.dockerfile || details.deploy.dockerCompose || details.deploy.githubActions) && (
-              <section className="p-6 bg-white border border-slate-200/80 rounded-3xl shadow-xs space-y-6">
-                <h2 className="text-lg font-extrabold text-slate-900 border-b pb-3">Cloud Configuration Files</h2>
-                <div className="space-y-4">
-                  {details.deploy.dockerfile && (
-                    <div>
-                      <h4 className="text-xs font-bold text-slate-450 uppercase tracking-wider mb-2">Docker Environment Specifications</h4>
-                      <pre className="bg-slate-950 text-slate-200 p-4 rounded-xl border border-slate-900 font-mono text-xs overflow-x-auto leading-relaxed">
-                        {details.deploy.dockerfile}
-                      </pre>
-                    </div>
-                  )}
-
-                  {details.deploy.dockerCompose && (
-                    <div>
-                      <h4 className="text-xs font-bold text-slate-450 uppercase tracking-wider mb-2">Docker Compose Linkers</h4>
-                      <pre className="bg-slate-950 text-slate-200 p-4 rounded-xl border border-slate-900 font-mono text-xs overflow-x-auto leading-relaxed">
-                        {details.deploy.dockerCompose}
-                      </pre>
-                    </div>
-                  )}
+            {(details.deploy.dockerfile || details.deploy.dockerCompose || details.deploy.githubActions) ? (
+              <ProjectAccordion
+                title="Deployment Config Files"
+                subtitle="Optional infrastructure files used by this lab."
+                isOpen={openSections.configs ?? false}
+                onToggle={() => toggleSection("configs")}
+              >
+                <div className="grid gap-6">
+                  {details.deploy.dockerfile ? (
+                    <CodeBlock
+                      title="Dockerfile"
+                      code={details.deploy.dockerfile}
+                      copyId="dockerfile"
+                      onCopy={copyText}
+                      copied={!!copiedMap["dockerfile"]}
+                    />
+                  ) : null}
+                  {details.deploy.dockerCompose ? (
+                    <CodeBlock
+                      title="docker-compose.yml"
+                      code={details.deploy.dockerCompose}
+                      copyId="docker-compose"
+                      onCopy={copyText}
+                      copied={!!copiedMap["docker-compose"]}
+                    />
+                  ) : null}
+                  {details.deploy.githubActions ? (
+                    <CodeBlock
+                      title="GitHub Actions"
+                      code={details.deploy.githubActions}
+                      copyId="github-actions"
+                      onCopy={copyText}
+                      copied={!!copiedMap["github-actions"]}
+                    />
+                  ) : null}
                 </div>
-              </section>
-            )}
+              </ProjectAccordion>
+            ) : null}
 
-            {/* Common Mistakes */}
-            <section className="p-6 bg-red-50/20 border border-red-200 rounded-3xl shadow-xs space-y-4">
-              <h2 className="text-lg font-extrabold text-red-950 flex items-center gap-2 pb-3 border-b border-red-100">
-                <ShieldAlert className="w-5 h-5 text-red-605" />
-                Common Mistakes to Avoid
-              </h2>
-              <ul className="space-y-3.5 text-xs sm:text-sm text-slate-650 leading-relaxed font-semibold">
-                {project.commonMistakes.map((mistake, idx) => (
-                  <li key={idx} className="flex gap-2 items-start">
-                    <span className="text-red-500 font-bold shrink-0">✕</span>
-                    <span className="text-slate-700">{mistake}</span>
-                  </li>
-                ))}
-              </ul>
-            </section>
-
-            {/* Advice */}
-            <section className="p-6 bg-indigo-50/20 border border-indigo-200 rounded-3xl shadow-xs space-y-4">
-              <h2 className="text-lg font-extrabold text-indigo-950 flex items-center gap-2 pb-3 border-b border-indigo-100">
-                <Sparkles className="w-5 h-5 text-indigo-650" />
-                Senior Developer Advice
-              </h2>
-              <div className="space-y-3 text-xs sm:text-sm text-slate-750 leading-relaxed font-semibold">
-                {project.seniorNotes.map((note, idx) => (
-                  <p key={idx}>
-                    💡 {note}
-                  </p>
-                ))}
-              </div>
-            </section>
-          </div>
-        )}
-
-        {/* INTERVIEW TAB */}
-        {activeTab === "interview" && details && (
-          <div className="space-y-6 animate-fade-in">
-            {/* Pitch & Architecture */}
-            <section className="p-6 bg-white border border-slate-200/80 rounded-3xl shadow-xs space-y-6">
-              <h2 className="text-lg font-extrabold text-slate-900 border-b pb-3">How to Pitch This Project</h2>
-              <div className="space-y-4">
-                <div>
-                  <h4 className="text-xs font-bold text-slate-500 uppercase tracking-wider mb-2">30-Second Elevator Pitch</h4>
-                  <p className="text-xs sm:text-sm text-slate-650 leading-relaxed font-semibold bg-indigo-50/30 p-4 border border-indigo-100 rounded-2xl">
-                    {details.interview.howToExplain}
-                  </p>
+            <div className="grid gap-5 lg:grid-cols-2">
+              <article className="rounded-3xl border border-rose-200 bg-rose-50/50 p-5 shadow-xs">
+                <div className="mb-4 flex items-center gap-2">
+                  <Target className="h-4 w-4 text-rose-600" />
+                  <p className="text-sm font-bold text-slate-900">Common Mistakes</p>
                 </div>
+                <CompactList items={project.commonMistakes} icon="dot" />
+              </article>
 
-                <div>
-                  <h4 className="text-xs font-bold text-slate-500 uppercase tracking-wider mb-2">Architectural Blueprint Flow</h4>
-                  <p className="text-xs sm:text-sm text-slate-650 leading-relaxed font-semibold">
-                    {details.interview.architecture}
-                  </p>
+              <article className="rounded-3xl border border-indigo-200 bg-indigo-50/40 p-5 shadow-xs">
+                <div className="mb-4 flex items-center gap-2">
+                  <Sparkles className="h-4 w-4 text-indigo-600" />
+                  <p className="text-sm font-bold text-slate-900">Senior Notes</p>
                 </div>
-              </div>
-            </section>
-
-            {/* Challenges & Improvements */}
-            <div className="grid sm:grid-cols-2 gap-6">
-              <section className="p-6 bg-white border border-slate-200/80 rounded-3xl shadow-xs space-y-3">
-                <h3 className="font-extrabold text-slate-900 border-b pb-2 text-sm uppercase tracking-wider">Key Challenge Solved</h3>
-                <p className="text-xs sm:text-sm text-slate-650 leading-relaxed font-semibold">
-                  {details.interview.challenges}
-                </p>
-              </section>
-
-              <section className="p-6 bg-white border border-slate-200/80 rounded-3xl shadow-xs space-y-3">
-                <h3 className="font-extrabold text-slate-900 border-b pb-2 text-sm uppercase tracking-wider">Improvements & Enhancements</h3>
-                <ul className="space-y-2">
-                  {details.interview.improvements.map((item, idx) => (
-                    <li key={idx} className="flex gap-2 items-start text-xs sm:text-sm text-slate-600">
-                      <span className="text-indigo-650">✓</span>
-                      <span className="font-semibold text-slate-650">{item}</span>
-                    </li>
-                  ))}
-                </ul>
-              </section>
+                <CompactList items={project.seniorNotes} icon="dot" />
+              </article>
             </div>
+          </div>
+        ) : null}
 
-            {/* Resume Bullet Points */}
-            <section className="p-6 bg-white border border-slate-200/80 rounded-3xl shadow-xs space-y-4">
-              <h2 className="text-lg font-extrabold text-slate-900 border-b pb-3">Resume Bullet Points</h2>
-              <ul className="space-y-2.5">
-                {details.interview.resumeBullets.map((bullet, idx) => (
-                  <li key={idx} className="flex gap-3 items-start text-xs sm:text-sm text-slate-650 font-semibold bg-slate-50 p-3 rounded-xl border border-slate-100">
-                    <span className="text-indigo-500 font-bold mt-0.5">🚀</span>
-                    <span>{bullet}</span>
-                  </li>
-                ))}
-              </ul>
-            </section>
+        {activeTab === "interview" && details ? (
+          <div className="space-y-5">
+            <ProjectAccordion
+              title="Project Pitch and Architecture"
+              subtitle="How to explain the lab clearly in interviews."
+              isOpen={openSections.interviewPrep}
+              onToggle={() => toggleSection("interviewPrep")}
+            >
+              <div className="grid gap-5 lg:grid-cols-2">
+                <article className="rounded-3xl border border-indigo-100 bg-indigo-50/40 p-5">
+                  <p className="text-xs font-bold uppercase tracking-[0.24em] text-slate-500">30-Second Pitch</p>
+                  <p className="mt-3 text-sm leading-relaxed text-slate-600">{details.interview.howToExplain}</p>
+                </article>
+                <article className="rounded-3xl border border-slate-200/80 bg-white p-5">
+                  <p className="text-xs font-bold uppercase tracking-[0.24em] text-slate-500">Architecture</p>
+                  <p className="mt-3 text-sm leading-relaxed text-slate-600">{details.interview.architecture}</p>
+                </article>
+                <article className="rounded-3xl border border-slate-200/80 bg-white p-5">
+                  <p className="text-xs font-bold uppercase tracking-[0.24em] text-slate-500">Key Challenge Solved</p>
+                  <p className="mt-3 text-sm leading-relaxed text-slate-600">{details.interview.challenges}</p>
+                </article>
+                <article className="rounded-3xl border border-slate-200/80 bg-white p-5">
+                  <p className="text-xs font-bold uppercase tracking-[0.24em] text-slate-500">Improvements</p>
+                  <CompactList items={details.interview.improvements} />
+                </article>
+              </div>
+            </ProjectAccordion>
 
-            {/* Interview Q&As Accordion */}
-            <section className="p-6 bg-white border border-slate-200/80 rounded-3xl shadow-xs space-y-4">
-              <h2 className="text-lg font-extrabold text-slate-900 border-b pb-3">Interviewer Questions & Answers</h2>
+            <ProjectAccordion
+              title="Resume Bullets"
+              subtitle="Ready-to-practice talking points for your portfolio or resume."
+              isOpen={openSections.resume ?? true}
+              onToggle={() => toggleSection("resume")}
+            >
+              <CompactList items={details.interview.resumeBullets} />
+            </ProjectAccordion>
+
+            <ProjectAccordion
+              title="Interview Q and A"
+              subtitle="Expandable answers so the page stays compact by default."
+              isOpen={openSections.qas}
+              onToggle={() => toggleSection("qas")}
+            >
               <div className="space-y-3">
-                {details.interview.qas.map((qa, idx) => {
-                  const isOpen = openQA[idx] === true;
+                {details.interview.qas.map((qa, index) => {
+                  const isOpen = openQA[index] === true;
                   return (
-                    <div key={idx} className="border border-slate-100 rounded-2xl overflow-hidden bg-slate-50/50">
+                    <div key={qa.question} className="overflow-hidden rounded-2xl border border-slate-200/80 bg-slate-50/60">
                       <button
-                        onClick={() => toggleQA(idx)}
-                        className="w-full flex justify-between items-center p-4 text-left font-bold text-xs sm:text-sm text-slate-805 hover:bg-slate-100 transition cursor-pointer focus-visible:outline-none"
+                        type="button"
+                        onClick={() => toggleQA(index)}
+                        aria-expanded={isOpen}
+                        className="flex w-full items-center justify-between gap-3 px-4 py-4 text-left transition hover:bg-slate-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500"
                       >
-                        <span>{qa.question}</span>
-                        {isOpen ? <ChevronDown className="w-4 h-4 text-slate-450 shrink-0" /> : <ChevronRight className="w-4 h-4 text-slate-450 shrink-0" />}
+                        <span className="text-sm font-semibold text-slate-800">{qa.question}</span>
+                        {isOpen ? (
+                          <ChevronDown className="h-4 w-4 shrink-0 text-slate-400" />
+                        ) : (
+                          <ChevronRight className="h-4 w-4 shrink-0 text-slate-400" />
+                        )}
                       </button>
-                      {isOpen && (
-                        <div className="p-4 pt-0 border-t border-slate-100 text-xs sm:text-sm text-slate-650 leading-relaxed font-semibold bg-white">
+                      {isOpen ? (
+                        <div className="border-t border-slate-200/70 bg-white px-4 py-4 text-sm leading-relaxed text-slate-600">
                           {qa.answer}
                         </div>
-                      )}
+                      ) : null}
                     </div>
                   );
                 })}
               </div>
-            </section>
+            </ProjectAccordion>
+
+            <div className="rounded-[2rem] border border-slate-200/80 bg-white p-5 shadow-xs">
+              <div className="flex items-start justify-between gap-4">
+                <div>
+                  <p className="text-xs font-bold uppercase tracking-[0.24em] text-slate-500">Next Step</p>
+                  <p className="mt-2 text-lg font-bold text-slate-950">Practice your explanation, then review the code quality.</p>
+                </div>
+                <Link
+                  href="/code-review"
+                  className="inline-flex shrink-0 items-center gap-2 rounded-full bg-slate-950 px-4 py-2 text-sm font-bold text-white transition hover:bg-slate-800"
+                >
+                  Start Review
+                  <ArrowRight className="h-4 w-4" />
+                </Link>
+              </div>
+            </div>
           </div>
-        )}
+        ) : null}
+
+        {!details ? (
+          <div className="rounded-3xl border border-slate-200/80 bg-white p-6 shadow-xs">
+            <div className="flex items-center gap-2">
+              <FileCode className="h-4 w-4 text-indigo-600" />
+              <p className="font-semibold text-slate-900">Detailed lab content is not available for this project yet.</p>
+            </div>
+            <p className="mt-2 text-sm text-slate-600">
+              The summary above still reflects the project scope, stack, and expected outcomes.
+            </p>
+          </div>
+        ) : null}
       </div>
     </div>
   );
