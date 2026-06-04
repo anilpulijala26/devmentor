@@ -1,7 +1,5 @@
-import Link from "next/link";
 import { getRoadmapBySlug, roadmaps } from "@/lib/roadmaps";
 import { notFound } from "next/navigation";
-import { ChevronLeft } from "lucide-react";
 import { getAllDeveloperTasks } from "@/lib/tasks";
 import { RoadmapDetailClient } from "@/components/RoadmapDetailClient";
 
@@ -95,16 +93,6 @@ export default async function RoadmapDetailPage({ params }: Props) {
     notFound();
   }
 
-  const getBadgeColor = (level: string) => {
-    return {
-      Beginner: "bg-blue-50 text-blue-700 border-blue-200",
-      Intermediate: "bg-violet-50 text-violet-700 border-violet-200",
-      Advanced: "bg-emerald-50 text-emerald-700 border-emerald-200",
-      Professional: "bg-pink-50 text-pink-700 border-pink-200",
-      "Interview Prep": "bg-purple-50 text-purple-700 border-purple-200",
-    }[level] || "bg-slate-50 text-slate-700";
-  };
-
   const allTasks = getAllDeveloperTasks();
   const getTasksForRoadmapLevel = (level: string) => {
     if (level === "Beginner") {
@@ -127,38 +115,7 @@ export default async function RoadmapDetailPage({ params }: Props) {
       <div className="absolute top-0 right-1/4 w-80 h-80 bg-indigo-200/20 rounded-full blur-3xl pointer-events-none" />
       <div className="absolute bottom-20 left-1/4 w-[400px] h-[400px] bg-violet-200/10 rounded-full blur-3xl pointer-events-none" />
 
-      <div className="max-w-4xl mx-auto px-6 py-10 relative animate-fade-in">
-        {/* Navigation back bar */}
-        <div className="sticky top-16 z-40 -mx-4 px-4 py-3 bg-slate-50/90 backdrop-blur-md border-b border-slate-200/60 mb-8 flex items-center justify-between rounded-b-xl shadow-xs">
-          <Link
-            href="/roadmaps"
-            className="inline-flex items-center gap-2 text-xs sm:text-sm font-semibold text-slate-600 hover:text-indigo-700 transition-colors"
-          >
-            <ChevronLeft className="w-4 h-4" />
-            Back to Roadmaps
-          </Link>
-          <span className="text-[10px] font-bold text-slate-500 uppercase tracking-widest">
-            {roadmap.level} PATHWAY
-          </span>
-        </div>
-
-        {/* Roadmap Info Header */}
-        <div className="mb-8">
-          <div className="flex items-center gap-2 mb-3">
-            <span className={`inline-block px-3 py-1 rounded-full text-xs font-bold border ${getBadgeColor(roadmap.level)}`}>
-              {roadmap.level}
-            </span>
-            <span className="text-xs text-slate-500 font-semibold">{roadmap.duration} Timeline</span>
-          </div>
-          <h1 className="text-3xl sm:text-4xl md:text-5xl font-black tracking-tight mb-4 text-transparent bg-clip-text bg-gradient-to-r from-slate-900 via-indigo-950 to-indigo-900">
-            {roadmap.title}
-          </h1>
-          <p className="text-sm sm:text-base text-slate-605 leading-relaxed max-w-3xl font-medium">
-            {roadmap.description}
-          </p>
-        </div>
-
-        {/* Client Side Interactive Component */}
+      <div className="max-w-7xl mx-auto px-4 py-10 sm:px-6 md:py-12 lg:px-8 relative animate-fade-in">
         <RoadmapDetailClient
           roadmap={roadmap}
           tasksForThisPath={tasksForThisPath}
