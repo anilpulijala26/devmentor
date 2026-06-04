@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { IBM_Plex_Mono, Manrope } from "next/font/google";
 import "./globals.css";
+import { Analytics } from "@vercel/analytics/next";
 import { ScrollToTop } from "@/components/ScrollToTop";
 import { RouteSpinner } from "@/components/RouteSpinner";
 import { ProgressProvider } from "@/context/ProgressContext";
@@ -54,6 +55,7 @@ export default function RootLayout({
           <ProgressProvider>
             {children}
           </ProgressProvider>
+          <Analytics />
         </main>
 
         <RouteSpinner />
