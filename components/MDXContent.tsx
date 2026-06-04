@@ -145,10 +145,16 @@ const components = {
 
 interface MDXContentProps {
   source: string;
+  resetHeadingCounts?: boolean;
 }
 
-export async function MDXContent({ source }: MDXContentProps) {
-  headingCounts.clear();
+export async function MDXContent({
+  source,
+  resetHeadingCounts = true,
+}: MDXContentProps) {
+  if (resetHeadingCounts) {
+    headingCounts.clear();
+  }
 
   return (
     <MDXRemote

@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import {
   ChevronRight,
   Menu,
@@ -29,6 +29,10 @@ export function LessonOutlineNav({
     sections[0]?.id ?? "",
   );
   const navItemRefs = useRef(new Map<string, HTMLButtonElement>());
+  const desktopNavScrollRef = useRef<HTMLDivElement>(null);
+  const mobileNavScrollRef = useRef<HTMLDivElement>(null);
+  const pendingSectionIdRef = useRef<string | null>(null);
+  const pendingSectionTimerRef = useRef<number | null>(null);
 
   const sectionCountText = useMemo(() => {
     if (sections.length === 1) {
@@ -75,6 +79,14 @@ export function LessonOutlineNav({
   }, [mobileOpen]);
 
   useEffect(() => {
+    return () => {
+      if (pendingSectionTimerRef.current !== null) {
+        window.clearTimeout(pendingSectionTimerRef.current);
+      }
+    };
+  }, []);
+
+  useEffect(() => {
     const targets = sections
       .map((section) => document.getElementById(section.id))
       .filter((section): section is HTMLElement => Boolean(section));
@@ -85,6 +97,26 @@ export function LessonOutlineNav({
 
     const observer = new IntersectionObserver(
       (entries) => {
+        const pendingSectionId = pendingSectionIdRef.current;
+
+        if (pendingSectionId) {
+          const pendingTarget = document.getElementById(pendingSectionId);
+
+          if (pendingTarget) {
+            const distanceFromTop = Math.abs(
+              pendingTarget.getBoundingClientRect().top - 112,
+            );
+
+            if (distanceFromTop <= 36) {
+              pendingSectionIdRef.current = null;
+            } else {
+              return;
+            }
+          } else {
+            pendingSectionIdRef.current = null;
+          }
+        }
+
         const visibleEntries = entries
           .filter((entry) => entry.isIntersecting)
           .sort(
@@ -113,11 +145,39 @@ export function LessonOutlineNav({
       return;
     }
 
-    navItemRefs.current.get(activeSectionId)?.scrollIntoView({
-      block: "nearest",
-      behavior: "smooth",
+    const activeItem = navItemRefs.current.get(activeSectionId);
+
+    if (!activeItem) {
+      return;
+    }
+
+    const scrollContainers = [
+      desktopNavScrollRef.current,
+      mobileOpen ? mobileNavScrollRef.current : null,
+    ].filter((container): container is HTMLDivElement => Boolean(container));
+
+    scrollContainers.forEach((container) => {
+      const itemTop = activeItem.offsetTop;
+      const itemBottom = itemTop + activeItem.offsetHeight;
+      const visibleTop = container.scrollTop;
+      const visibleBottom = visibleTop + container.clientHeight;
+
+      if (itemTop < visibleTop) {
+        container.scrollTo({
+          top: Math.max(itemTop - 12, 0),
+          behavior: "smooth",
+        });
+        return;
+      }
+
+      if (itemBottom > visibleBottom) {
+        container.scrollTo({
+          top: itemBottom - container.clientHeight + 12,
+          behavior: "smooth",
+        });
+      }
     });
-  }, [activeSectionId]);
+  }, [activeSectionId, mobileOpen]);
 
   const toggleDesktopCollapsed = () => {
     setDesktopCollapsed((current) => {
@@ -130,18 +190,72 @@ export function LessonOutlineNav({
     });
   };
 
-  const scrollToSection = (sectionId: string) => {
-    const target = document.getElementById(sectionId);
+  const getSectionTarget = useCallback((sectionId: string) => {
+    return document.getElementById(sectionId);
+  }, []);
+
+  const scrollToSection = useCallback((
+    sectionId: string,
+    updateHash = true,
+  ) => {
+    const target = getSectionTarget(sectionId);
 
     if (!target) {
       return;
     }
 
+    pendingSectionIdRef.current = sectionId;
+    if (pendingSectionTimerRef.current !== null) {
+      window.clearTimeout(pendingSectionTimerRef.current);
+    }
+    pendingSectionTimerRef.current = window.setTimeout(() => {
+      pendingSectionIdRef.current = null;
+      pendingSectionTimerRef.current = null;
+    }, 1200);
+
     setActiveSectionId(sectionId);
     target.scrollIntoView({ behavior: "smooth", block: "start" });
-    window.history.replaceState(null, "", `#${sectionId}`);
+
+    if (updateHash) {
+      window.history.replaceState(null, "", `#${sectionId}`);
+    }
+
     setMobileOpen(false);
-  };
+  }, [getSectionTarget]);
+
+  useEffect(() => {
+    const hash = window.location.hash.replace(/^#/, "");
+
+    if (!hash) {
+      return;
+    }
+
+    const runScroll = () => {
+      if (getSectionTarget(hash)) {
+        scrollToSection(hash, false);
+      }
+    };
+
+    const firstFrame = window.requestAnimationFrame(() => {
+      runScroll();
+      window.setTimeout(runScroll, 120);
+    });
+
+    return () => window.cancelAnimationFrame(firstFrame);
+  }, [getSectionTarget, scrollToSection, sections]);
+
+  useEffect(() => {
+    const handleHashChange = () => {
+      const hash = window.location.hash.replace(/^#/, "");
+
+      if (hash) {
+        scrollToSection(hash, false);
+      }
+    };
+
+    window.addEventListener("hashchange", handleHashChange);
+    return () => window.removeEventListener("hashchange", handleHashChange);
+  }, [scrollToSection, sections]);
 
   return (
     <>
@@ -161,10 +275,10 @@ export function LessonOutlineNav({
         }`}
       >
         <div
-          className={`sticky top-24 max-h-[calc(100vh-7.5rem)] ${
+          className={`sticky top-24 ${
             desktopCollapsed
               ? "w-0 overflow-visible border-0 bg-transparent shadow-none"
-              : "overflow-hidden rounded-[24px] border border-slate-200/80 bg-white/95 shadow-[0_14px_36px_rgba(15,23,42,0.05)] backdrop-blur-sm"
+              : "overflow-visible rounded-[24px] border border-slate-200/80 bg-white/95 shadow-[0_14px_36px_rgba(15,23,42,0.05)] backdrop-blur-sm"
           }`}
         >
           <div
@@ -217,10 +331,11 @@ export function LessonOutlineNav({
           </div>
 
           <div
-            className={`overflow-y-auto ${
+            ref={desktopNavScrollRef}
+            className={`${
               desktopCollapsed
                 ? "hidden"
-                : "max-h-[calc(100vh-15rem)] pl-3 pr-2 py-3 [scrollbar-gutter:stable]"
+                : "pl-3 pr-2 py-3"
             }`}
           >
             <nav aria-label="Lesson outline" className="space-y-1">
@@ -231,6 +346,7 @@ export function LessonOutlineNav({
 
                 return (
                   <button
+                    type="button"
                     key={section.id}
                     ref={(node) => {
                       if (node) {
@@ -308,13 +424,17 @@ export function LessonOutlineNav({
                 </button>
               </div>
 
-              <div className="min-h-0 flex-1 overflow-y-auto pr-1 pb-4">
+              <div
+                ref={mobileNavScrollRef}
+                className="min-h-0 flex-1 overflow-y-auto pr-1 pb-4"
+              >
                 <nav aria-label="Mobile lesson outline" className="space-y-1">
                   {sections.map((section, index) => {
                     const isActive = activeSectionId === section.id;
 
                     return (
                       <button
+                        type="button"
                         key={section.id}
                         onClick={() => scrollToSection(section.id)}
                         className={`flex w-full items-center gap-3 rounded-2xl px-3 py-3 text-left transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 ${

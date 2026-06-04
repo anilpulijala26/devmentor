@@ -277,7 +277,7 @@ export default async function LessonPage({ params }: Props) {
         <>
           <MDXContent source={contentBeforeMarker} />
           {lesson.frontmatter.youtubeId && null}
-          <MDXContent source={contentAfterMarker} />
+          <MDXContent source={contentAfterMarker} resetHeadingCounts={false} />
         </>
       )}
     </LessonReader>
