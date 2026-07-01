@@ -1,7 +1,37 @@
 ---
-title: "Azure SQL, Functions, and Key Vault Secrets"
-description: "Manage SQL databases in Azure. Deploy serverless functions and encrypt environment keys in Key Vault."
-tags: ["azure","security"]
+title: 'Azure SQL, Functions, and Key Vault Secrets'
+description: >-
+  Manage SQL databases in Azure. Deploy serverless functions and encrypt
+  environment keys in Key Vault.
+tags:
+  - azure
+  - security
+fullCode:
+  title: Cloud Deployment Pipeline Configuration
+  description: A CI/CD deployment configuration for automated building and hosting.
+  language: yaml
+  code: |-
+    name: Production Deployment
+
+    on:
+      push:
+        branches: [ main ]
+
+    jobs:
+      deploy:
+        runs-on: ubuntu-latest
+        steps:
+          - name: Checkout Code
+            uses: actions/checkout@v3
+
+          - name: Install & Test
+            run: |
+              npm ci
+              npm run test
+              npm run build
+
+          - name: Deploy to Hosting Provider
+            run: npx vercel --token ${{ secrets.VERCEL_TOKEN }} --prod
 ---
 
 ## What You Will Learn

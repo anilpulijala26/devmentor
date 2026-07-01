@@ -3,6 +3,43 @@ title: "JavaScript Interview Cracking Guide"
 description: "A comprehensive compile of junior, mid, and senior level JavaScript interview questions and answers covering closures, event loop priorities, debounce/throttle algorithms, and prototype mechanics"
 tags: ["javascript", "interview", "career", "scoping"]
 estimatedTime: "50 minutes"
+fullCode:
+  title: "Debounce and Throttle Implementation"
+  description: "A production-grade implementation of the debounce and throttle rate-limiting helper functions in JavaScript."
+  language: "javascript"
+  code: |
+    // 1. Debounce implementation (Delays execution until user stops typing)
+    export function debounce(fn, delay) {
+      let timeoutId = null;
+      return function (...args) {
+        const context = this;
+        if (timeoutId) {
+          clearTimeout(timeoutId);
+        }
+        timeoutId = setTimeout(() => {
+          fn.apply(context, args);
+        }, delay);
+      };
+    }
+
+    // 2. Throttle implementation (Restricts execution to once per tick interval)
+    export function throttle(fn, limit) {
+      let inThrottle = false;
+      return function (...args) {
+        const context = this;
+        if (!inThrottle) {
+          fn.apply(context, args);
+          inThrottle = true;
+          setTimeout(() => {
+            inThrottle = false;
+          }, limit);
+        }
+      };
+    }
+
+    // Example Usage:
+    // const processChange = debounce(() => console.log('API Fetch'), 300);
+    // window.addEventListener('scroll', throttle(() => console.log('Scroll Track'), 100));
 ---
 
 # JavaScript Interview Cracking Guide

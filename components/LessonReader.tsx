@@ -1,7 +1,7 @@
 "use client";
 /* eslint-disable @typescript-eslint/no-explicit-any */
 
-import React, { useEffect, useMemo, useRef, useState } from "react";
+import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import Link from "next/link";
 import {
   AlignJustify,
@@ -19,6 +19,7 @@ import { productionBlueprints } from "@/lib/production-practice";
 import { LessonOutlineNav } from "./LessonOutlineNav";
 import { CodeBlock } from "./CodeBlock";
 import { LessonOutlineItem } from "@/lib/lesson-outline";
+import { CodeExampleRenderer } from "./CodeExampleRenderer";
 
 interface LessonReaderProps {
   track: Track;
@@ -118,6 +119,10 @@ export function LessonReader({
     localStorage.setItem("CodeNivra-reader-spacing", newSpacing);
   };
 
+  const handleSectionClick = useCallback(() => {
+    setActiveTab("overview");
+  }, []);
+
   const sizePercentage = {
     "text-sm": "90%",
     "text-base": "100%",
@@ -164,6 +169,7 @@ export function LessonReader({
           progressText={progressText}
           sections={outlineSections}
           onDesktopCollapsedChange={setDesktopOutlineCollapsed}
+          onSectionClick={handleSectionClick}
         />
 
         <main className="min-w-0 flex-1">
@@ -452,30 +458,11 @@ export function LessonReader({
               ) : null}
 
               {activeTab === "code" ? (
-                <div className="space-y-6 animate-fade-in">
-                  <section className="rounded-[24px] border border-slate-200 bg-white p-6">
-                    <h3 className="text-lg font-semibold text-slate-950">
-                      Complete Runnable Code
-                    </h3>
-                    <p className="mt-2 text-sm leading-6 text-slate-600">
-                      A production-style implementation mapped to this concept.
-                    </p>
-                    <div className="mt-4 overflow-x-auto rounded-2xl border border-slate-900 bg-slate-950 p-4 text-slate-200">
-                      <CodeBlock language="typescript">
-                        {blueprint.fullCode}
-                      </CodeBlock>
-                    </div>
-                  </section>
-
-                  <section className="rounded-[24px] border border-slate-200 bg-white p-6">
-                    <h3 className="text-lg font-semibold text-slate-950">
-                      Validation & Failure Handling
-                    </h3>
-                    <p className="mt-3 text-sm leading-7 text-slate-700">
-                      {blueprint.validationDetails}
-                    </p>
-                  </section>
-                </div>
+                <CodeExampleRenderer
+                  lesson={lesson}
+                  track={track}
+                  currentModule={currentModule}
+                />
               ) : null}
 
               {activeTab === "tests" ? (

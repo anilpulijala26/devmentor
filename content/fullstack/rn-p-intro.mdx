@@ -1,9 +1,39 @@
 ---
-title: "Full-Stack Architecture"
-description: "Learn full-stack application architecture with React, Node.js, and PostgreSQL"
-tags: ["full-stack", "architecture", "nodejs", "postgres"]
-estimatedTime: "100 minutes"
-youtubeId: "dQw4w9WgXcQ"
+title: Full-Stack Architecture
+description: 'Learn full-stack application architecture with React, Node.js, and PostgreSQL'
+tags:
+  - full-stack
+  - architecture
+  - nodejs
+  - postgres
+estimatedTime: 100 minutes
+youtubeId: dQw4w9WgXcQ
+fullCode:
+  title: Database Schema & Query Migration
+  description: >-
+    A relational database schema table structure mapping foreign key constraints
+    and index mappings.
+  language: sql
+  code: |-
+    -- Create Users Table
+    CREATE TABLE IF NOT EXISTS users (
+      id SERIAL PRIMARY KEY,
+      email VARCHAR(255) UNIQUE NOT NULL,
+      password_hash VARCHAR(255) NOT NULL,
+      role VARCHAR(50) DEFAULT 'student',
+      created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+    );
+
+    -- Create Index to speed up lookup queries
+    CREATE INDEX IF NOT EXISTS idx_users_email ON users(email);
+
+    -- Create Profiles Table linked to Users
+    CREATE TABLE IF NOT EXISTS profiles (
+      id SERIAL PRIMARY KEY,
+      user_id INTEGER UNIQUE REFERENCES users(id) ON DELETE CASCADE,
+      avatar_url TEXT,
+      bio TEXT
+    );
 ---
 
 # Full-Stack Architecture: React + Node + PostgreSQL

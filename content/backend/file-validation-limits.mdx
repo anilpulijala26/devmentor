@@ -1,7 +1,32 @@
 ---
-title: "File Validations & Signed URLs"
-description: "Secure upload pipelines. Enforce file type controls, verify MIME targets, and generate S3 pre-signed URLs."
-tags: ["file-upload","security"]
+title: File Validations & Signed URLs
+description: >-
+  Secure upload pipelines. Enforce file type controls, verify MIME targets, and
+  generate S3 pre-signed URLs.
+tags:
+  - file-upload
+  - security
+fullCode:
+  title: TypeScript Type Definitions & Generic Function
+  description: 'Strongly-typed type constraints, interface unions, and reusable generics.'
+  language: typescript
+  code: |-
+    // Define User metadata schemas
+    interface AppUser {
+      id: string;
+      name: string;
+      email: string;
+      role: "admin" | "student";
+    }
+
+    // Reusable generic fetch wrapper
+    async function apiFetchWrapper<T>(url: string): Promise<T> {
+      const response = await fetch(url);
+      if (!response.ok) {
+        throw new Error("Network request failed");
+      }
+      return response.json() as Promise<T>;
+    }
 ---
 
 ## What You Will Learn

@@ -1,8 +1,37 @@
 ---
-title: "Performance Optimization & Scale"
-description: "Master enterprise optimization: next/font, next/script, next/dynamic, bundle analyzing, Winston/Pino production logging, and Turborepo monorepos"
-tags: ["nextjs", "performance", "logging", "monitoring", "turborepo"]
-estimatedTime: "85 minutes"
+title: Performance Optimization & Scale
+description: >-
+  Master enterprise optimization: next/font, next/script, next/dynamic, bundle
+  analyzing, Winston/Pino production logging, and Turborepo monorepos
+tags:
+  - nextjs
+  - performance
+  - logging
+  - monitoring
+  - turborepo
+estimatedTime: 85 minutes
+fullCode:
+  title: Next.js App Router Page & API Handler
+  description: A Next.js server-rendered component alongside a POST route handler.
+  language: tsx
+  code: |-
+    // app/items/[id]/page.tsx
+    import React from "react";
+
+    interface ItemPageProps {
+      params: Promise<{ id: string }>;
+    }
+
+    export default async function ItemPage({ params }: ItemPageProps) {
+      const { id } = await params;
+      
+      return (
+        <main className="p-8 max-w-4xl mx-auto">
+          <h1 className="text-2xl font-bold">Item Detail View</h1>
+          <p className="text-slate-500 mt-2">Active Item ID: {id}</p>
+        </main>
+      );
+    }
 ---
 
 # Performance Optimization & Production Scale

@@ -1,8 +1,44 @@
 ---
-title: "CSS Custom Properties & Nesting"
-description: "Master modern styling techniques using native CSS variables, native selector nesting, and container-query layouts"
-tags: ["css", "variables", "nesting", "modern-css"]
-estimatedTime: "45 minutes"
+title: CSS Custom Properties & Nesting
+description: >-
+  Master modern styling techniques using native CSS variables, native selector
+  nesting, and container-query layouts
+tags:
+  - css
+  - variables
+  - nesting
+  - modern-css
+estimatedTime: 45 minutes
+fullCode:
+  title: Modern CSS Flexbox & Responsive Grid
+  description: >-
+    A modular, responsive CSS layout blueprint using variables, media queries,
+    and flex alignment rules.
+  language: css
+  code: |-
+    .container {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 16px;
+      padding: 24px;
+    }
+
+    .flex-card {
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      background: #ffffff;
+      border: 1px solid #e2e8f0;
+      border-radius: 8px;
+      padding: 16px;
+    }
+
+    @media (max-width: 640px) {
+      .container {
+        padding: 12px;
+        gap: 8px;
+      }
+    }
 ---
 
 # CSS Custom Properties & Nesting

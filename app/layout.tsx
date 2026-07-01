@@ -5,6 +5,7 @@ import { Analytics } from "@vercel/analytics/next";
 import { ScrollToTop } from "@/components/ScrollToTop";
 import { RouteSpinner } from "@/components/RouteSpinner";
 import { ProgressProvider } from "@/context/ProgressContext";
+import { AuthProvider } from "@/context/AuthContext";
 import { Navbar } from "@/components/Navbar";
 import { Footer } from "@/components/Footer";
 
@@ -47,24 +48,27 @@ export default function RootLayout({
       <body
         className={`${sans.variable} ${mono.variable} bg-slate-50 text-slate-800 antialiased`}
       >
-        {/* Header/Navbar */}
-        <Navbar />
+        <AuthProvider>
+          {/* Header/Navbar */}
+          <Navbar />
 
-        {/* Main Content */}
-        <main id="main-content" className="focus:outline-none">
-          <ProgressProvider>
-            {children}
-          </ProgressProvider>
-          <Analytics />
-        </main>
+          {/* Main Content */}
+          <main id="main-content" className="focus:outline-none">
+            <ProgressProvider>
+              {children}
+            </ProgressProvider>
+            <Analytics />
+          </main>
 
-        <RouteSpinner />
+          <RouteSpinner />
 
-        <ScrollToTop />
+          <ScrollToTop />
 
-        {/* Footer */}
-        <Footer />
+          {/* Footer */}
+          <Footer />
+        </AuthProvider>
       </body>
     </html>
   );
 }
+

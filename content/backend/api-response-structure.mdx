@@ -1,7 +1,37 @@
 ---
-title: "API Response Structure & Versioning"
-description: "Design standard, clean JSON API response formats. Master global error collections, data envelopes, and API version routing (/v1)."
-tags: ["api","design"]
+title: API Response Structure & Versioning
+description: >-
+  Design standard, clean JSON API response formats. Master global error
+  collections, data envelopes, and API version routing (/v1).
+tags:
+  - api
+  - design
+fullCode:
+  title: Express API Route Controller & Handler
+  description: >-
+    A modular router pipeline parsing parameters and returning standard JSON
+    payloads.
+  language: javascript
+  code: |-
+    const express = require('express');
+    const router = express.Router();
+
+    // GET dynamic item route
+    router.get('/items/:id', (req, res) => {
+      const { id } = req.params;
+      const { fields } = req.query;
+
+      res.status(200).json({
+        success: true,
+        data: {
+          id,
+          name: "Product Item " + id,
+          fieldsRequested: fields ? fields.split(',') : []
+        }
+      });
+    });
+
+    module.exports = router;
 ---
 
 ## What You Will Learn

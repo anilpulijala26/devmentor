@@ -1,7 +1,33 @@
 ---
-title: "Branching, Pull Requests & Code Reviews"
-description: "Collaborate using Git branching workflows, write PR templates, and establish merge rules."
-tags: ["git","devops"]
+title: 'Branching, Pull Requests & Code Reviews'
+description: >-
+  Collaborate using Git branching workflows, write PR templates, and establish
+  merge rules.
+tags:
+  - git
+  - devops
+fullCode:
+  title: Git Collaboration & Version Control Workflow
+  description: >-
+    Standard production commands for branch management, commit staging, and
+    merge conflict resolution.
+  language: bash
+  code: |-
+    # 1. Create and switch to a feature branch
+    git checkout -b feature/user-auth
+
+    # 2. Stage changes and commit with conventional messages
+    git add .
+    git commit -m "feat(auth): integrate JWT session cookie verification"
+
+    # 3. Pull latest main and rebase feature branch
+    git checkout main
+    git pull origin main
+    git checkout feature/user-auth
+    git rebase main
+
+    # 4. Push feature branch and open PR
+    git push origin feature/user-auth
 ---
 
 ## What You Will Learn

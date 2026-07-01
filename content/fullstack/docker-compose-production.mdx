@@ -1,8 +1,49 @@
 ---
-title: "Production Docker & Compose"
-description: "Master multi-stage Docker builds, production-grade docker-compose architectures, database backup schedules, network isolation, and non-root security standards"
-tags: ["docker", "docker-compose", "devops", "security", "deployment"]
-estimatedTime: "80 minutes"
+title: Production Docker & Compose
+description: >-
+  Master multi-stage Docker builds, production-grade docker-compose
+  architectures, database backup schedules, network isolation, and non-root
+  security standards
+tags:
+  - docker
+  - docker-compose
+  - devops
+  - security
+  - deployment
+estimatedTime: 80 minutes
+fullCode:
+  title: Docker Containerization Blueprint
+  description: >-
+    A production-ready Dockerfile and docker-compose configuration for deploying
+    the service.
+  language: yaml
+  code: |-
+    version: '3.8'
+
+    services:
+      web:
+        build:
+          context: .
+          dockerfile: Dockerfile
+        ports:
+          - "3000:3000"
+        environment:
+          - NODE_ENV=production
+          - DATABASE_URL=postgresql://user:pass@db:5432/mydb
+        depends_on:
+          - db
+
+      db:
+        image: postgres:15-alpine
+        environment:
+          - POSTGRES_USER=user
+          - POSTGRES_PASSWORD=pass
+          - POSTGRES_DB=mydb
+        volumes:
+          - pgdata:/var/lib/postgresql/data
+
+    volumes:
+      pgdata:
 ---
 
 # Production Docker & Compose

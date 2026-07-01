@@ -2,6 +2,52 @@
 title: "PostgreSQL & MongoDB Core Basics"
 description: "Compare relational and non-relational database architectures, evaluating SQL schemas against NoSQL document structures and ACID vs CAP tradeoffs."
 tags: ["database","sql","nosql"]
+fullCode:
+  title: "Database Modeling Comparison Example"
+  description: "A dual-modeling database blueprint demonstrating table structures in PostgreSQL (SQL) and document schemas in MongoDB (Mongoose)."
+  language: "sql"
+  code: |
+    -- ==========================================
+    -- 1. PostgreSQL (Relational Database Design)
+    -- ==========================================
+    CREATE TABLE IF NOT EXISTS users (
+      id SERIAL PRIMARY KEY,
+      email VARCHAR(255) UNIQUE NOT NULL,
+      created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+    );
+
+    CREATE TABLE IF NOT EXISTS posts (
+      id SERIAL PRIMARY KEY,
+      user_id INTEGER REFERENCES users(id) ON DELETE CASCADE,
+      title VARCHAR(255) NOT NULL,
+      content TEXT NOT NULL,
+      created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+    );
+
+    -- Query post details with user email using native JOIN
+    SELECT posts.id, posts.title, users.email
+    FROM posts
+    INNER JOIN users ON posts.user_id = users.id;
+
+    -- ==========================================
+    -- 2. MongoDB (NoSQL Document Structure)
+    -- ==========================================
+    /*
+    const mongoose = require('mongoose');
+
+    const PostSchema = new mongoose.Schema({
+      title: { type: String, required: true },
+      content: { type: String, required: true },
+      user: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true },
+      comments: [{
+        body: String,
+        date: { type: Date, default: Date.now }
+      }],
+      createdAt: { type: Date, default: Date.now }
+    });
+
+    module.exports = mongoose.model('Post', PostSchema);
+    */
 ---
 
 ## What You Will Learn

@@ -1,8 +1,35 @@
 ---
-title: "Advanced Types & Generics"
-description: "Master advanced static type checking using TypeScript Generics, type guards, and native utility type configurations"
-tags: ["typescript", "types", "generics", "advanced-ts"]
-estimatedTime: "60 minutes"
+title: Advanced Types & Generics
+description: >-
+  Master advanced static type checking using TypeScript Generics, type guards,
+  and native utility type configurations
+tags:
+  - typescript
+  - types
+  - generics
+  - advanced-ts
+estimatedTime: 60 minutes
+fullCode:
+  title: TypeScript Type Definitions & Generic Function
+  description: 'Strongly-typed type constraints, interface unions, and reusable generics.'
+  language: typescript
+  code: |-
+    // Define User metadata schemas
+    interface AppUser {
+      id: string;
+      name: string;
+      email: string;
+      role: "admin" | "student";
+    }
+
+    // Reusable generic fetch wrapper
+    async function apiFetchWrapper<T>(url: string): Promise<T> {
+      const response = await fetch(url);
+      if (!response.ok) {
+        throw new Error("Network request failed");
+      }
+      return response.json() as Promise<T>;
+    }
 ---
 
 # Advanced Types & Generics

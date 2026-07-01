@@ -3,6 +3,53 @@ title: "TypeScript Interview Cracking Guide"
 description: "Master TypeScript interview concepts including any/unknown/never, Type vs Interface, Discriminated Unions, and Mapped/Conditional Types with production-grade QA"
 tags: ["typescript", "interview", "types", "advanced-ts"]
 estimatedTime: "50 minutes"
+fullCode:
+  title: "Advanced TypeScript Types & Exhaustiveness Checks"
+  description: "A production-grade TypeScript snippet showcasing discriminated unions, exhaustiveness checks, and mapped/conditional types."
+  language: "typescript"
+  code: |
+    // 1. Discriminated Union Shape Definitions
+    interface Circle {
+      kind: "circle";
+      radius: number;
+    }
+
+    interface Square {
+      kind: "square";
+      sideLength: number;
+    }
+
+    interface Rectangle {
+      kind: "rectangle";
+      width: number;
+      height: number;
+    }
+
+    type Shape = Circle | Square | Rectangle;
+
+    // 2. Compile-Time Exhaustiveness Checking function
+    function calculateArea(shape: Shape): number {
+      switch (shape.kind) {
+        case "circle":
+          return Math.PI * shape.radius ** 2;
+        case "square":
+          return shape.sideLength ** 2;
+        case "rectangle":
+          return shape.width * shape.height;
+        default:
+          // The compile check triggers if any type in the Shape union is unhandled
+          const _exhaustiveCheck: never = shape;
+          return _exhaustiveCheck;
+      }
+    }
+
+    // 3. Mapped & Conditional Types
+    type ReadonlyShape<T> = {
+      readonly [P in keyof T]: T[P];
+    };
+
+    type IsCircle<T> = T extends { kind: "circle" } ? true : false;
+    type TestCircle = IsCircle<Circle>; // true
 ---
 
 # TypeScript Interview Cracking Guide

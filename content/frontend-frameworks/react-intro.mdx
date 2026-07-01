@@ -1,9 +1,41 @@
 ---
-title: "Introduction to React"
-description: "Learn React fundamentals and start building component-based UIs"
-tags: ["react", "components", "beginner"]
-estimatedTime: "90 minutes"
-youtubeId: "w7ejDZ8SWv8"
+title: Introduction to React
+description: Learn React fundamentals and start building component-based UIs
+tags:
+  - react
+  - components
+  - beginner
+estimatedTime: 90 minutes
+youtubeId: w7ejDZ8SWv8
+fullCode:
+  title: React Functional Component & Custom Hook
+  description: >-
+    A custom React component consuming a state hook to manage local state
+    parameters.
+  language: tsx
+  code: |-
+    import React, { useState, useEffect } from "react";
+
+    export function DynamicTogglable() {
+      const [isOpen, setIsOpen] = useState<boolean>(false);
+
+      return (
+        <div className="border border-slate-200 rounded-xl p-4 max-w-xs mx-auto">
+          <button
+            onClick={() => setIsOpen(prev => !prev)}
+            className="bg-indigo-600 text-white font-bold text-xs px-4 py-2 rounded-lg"
+          >
+            {isOpen ? "Hide Content" : "Show Content"}
+          </button>
+          
+          {isOpen && (
+            <p className="text-xs text-slate-500 mt-3 animate-fade-in">
+              This content is rendered conditionally based on state.
+            </p>
+          )}
+        </div>
+      );
+    }
 ---
 
 # Introduction to React

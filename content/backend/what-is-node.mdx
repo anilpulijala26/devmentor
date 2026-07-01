@@ -1,7 +1,39 @@
 ---
-title: "What is Node.js Runtime"
-description: "Understand the core Node.js architecture, including V8 engine compilation, Libuv asynchronous I/O binding, thread pools, and the single-threaded execution model."
-tags: ["node","backend","runtime"]
+title: What is Node.js Runtime
+description: >-
+  Understand the core Node.js architecture, including V8 engine compilation,
+  Libuv asynchronous I/O binding, thread pools, and the single-threaded
+  execution model.
+tags:
+  - node
+  - backend
+  - runtime
+fullCode:
+  title: Express API Route Controller & Handler
+  description: >-
+    A modular router pipeline parsing parameters and returning standard JSON
+    payloads.
+  language: javascript
+  code: |-
+    const express = require('express');
+    const router = express.Router();
+
+    // GET dynamic item route
+    router.get('/items/:id', (req, res) => {
+      const { id } = req.params;
+      const { fields } = req.query;
+
+      res.status(200).json({
+        success: true,
+        data: {
+          id,
+          name: "Product Item " + id,
+          fieldsRequested: fields ? fields.split(',') : []
+        }
+      });
+    });
+
+    module.exports = router;
 ---
 
 ## What You Will Learn

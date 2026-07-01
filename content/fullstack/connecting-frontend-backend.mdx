@@ -1,7 +1,34 @@
 ---
-title: "Connecting React/Next.js and Express"
-description: "Establish cross-origin communication between frontends and backends. Configure CORS rules, query APIs, and set up Next.js proxy rewrites."
-tags: ["fullstack","react","express"]
+title: Connecting React/Next.js and Express
+description: >-
+  Establish cross-origin communication between frontends and backends. Configure
+  CORS rules, query APIs, and set up Next.js proxy rewrites.
+tags:
+  - fullstack
+  - react
+  - express
+fullCode:
+  title: Next.js App Router Page & API Handler
+  description: A Next.js server-rendered component alongside a POST route handler.
+  language: tsx
+  code: |-
+    // app/items/[id]/page.tsx
+    import React from "react";
+
+    interface ItemPageProps {
+      params: Promise<{ id: string }>;
+    }
+
+    export default async function ItemPage({ params }: ItemPageProps) {
+      const { id } = await params;
+      
+      return (
+        <main className="p-8 max-w-4xl mx-auto">
+          <h1 className="text-2xl font-bold">Item Detail View</h1>
+          <p className="text-slate-500 mt-2">Active Item ID: {id}</p>
+        </main>
+      );
+    }
 ---
 
 ## What You Will Learn

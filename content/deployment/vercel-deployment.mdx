@@ -1,7 +1,35 @@
 ---
-title: "Vercel Deployment & Custom Domain Setup"
-description: "Deploy client frameworks, configure DNS headers, and sync domains."
-tags: ["deployment","vercel"]
+title: Vercel Deployment & Custom Domain Setup
+description: 'Deploy client frameworks, configure DNS headers, and sync domains.'
+tags:
+  - deployment
+  - vercel
+fullCode:
+  title: Cloud Deployment Pipeline Configuration
+  description: A CI/CD deployment configuration for automated building and hosting.
+  language: yaml
+  code: |-
+    name: Production Deployment
+
+    on:
+      push:
+        branches: [ main ]
+
+    jobs:
+      deploy:
+        runs-on: ubuntu-latest
+        steps:
+          - name: Checkout Code
+            uses: actions/checkout@v3
+
+          - name: Install & Test
+            run: |
+              npm ci
+              npm run test
+              npm run build
+
+          - name: Deploy to Hosting Provider
+            run: npx vercel --token ${{ secrets.VERCEL_TOKEN }} --prod
 ---
 
 ## What You Will Learn

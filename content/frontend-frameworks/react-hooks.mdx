@@ -4,6 +4,72 @@ description: "Master hooks and modern React patterns"
 tags: ["react", "hooks", "state-management"]
 estimatedTime: "100 minutes"
 youtubeId: "TNhaISOUy6Q"
+fullCode:
+  title: "React Hooks Example"
+  description: "A counter with step selection showing useState hooks, useEffect side-effect title sync, and cleanup event handlers."
+  language: "tsx"
+  code: |
+    import React, { useState, useEffect } from "react";
+
+    export function CounterWithHooks() {
+      const [count, setCount] = useState<number>(0);
+      const [step, setStep] = useState<number>(1);
+
+      // Effect to update browser document title
+      useEffect(() => {
+        document.title = `Count is: ${count}`;
+        
+        // Cleanup function (runs before executing next effect)
+        return () => {
+          document.title = "CodeNivra Learning Hub";
+        };
+      }, [count]);
+
+      // Effect to track window width with event listener and cleanup
+      useEffect(() => {
+        const handleResize = () => console.log(window.innerWidth);
+        window.addEventListener("resize", handleResize);
+        
+        return () => {
+          window.removeEventListener("resize", handleResize);
+        };
+      }, []);
+
+      return (
+        <div className="p-6 bg-slate-50 border border-slate-200 rounded-2xl max-w-sm mx-auto my-4 text-center">
+          <h2 className="text-xl font-bold text-slate-800">State & Effect Hooks</h2>
+          <div className="text-3xl font-extrabold text-indigo-650 font-mono my-4">{count}</div>
+          
+          <div className="flex gap-2 justify-center mb-4">
+            <button
+              onClick={() => setCount(prev => prev - step)}
+              className="px-3.5 py-1.5 bg-white border border-slate-250 rounded-lg text-slate-700 text-xs font-bold hover:bg-slate-50"
+            >
+              -{step}
+            </button>
+            <button
+              onClick={() => setCount(prev => prev + step)}
+              className="px-3.5 py-1.5 bg-indigo-600 rounded-lg text-white text-xs font-bold hover:bg-indigo-750"
+            >
+              +{step}
+            </button>
+          </div>
+
+          <div className="flex items-center justify-between text-xs text-slate-400 font-mono">
+            <span>Increment Step:</span>
+            <select
+              value={step}
+              onChange={(e) => setStep(Number(e.target.value))}
+              className="bg-white border border-slate-200 rounded p-1 text-slate-700 font-bold"
+            >
+              <option value={1}>1</option>
+              <option value={5}>5</option>
+              <option value={10}>10</option>
+            </select>
+          </div>
+        </div>
+      );
+    }
 ---
 
 # React Hooks

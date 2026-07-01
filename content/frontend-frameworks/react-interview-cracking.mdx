@@ -3,6 +3,69 @@ title: "React Interview Cracking Guide"
 description: "A comprehensive compilation of top React interview questions and detailed answers categorized by Junior, Mid, and Senior levels"
 tags: ["react", "interview", "career", "career-guide"]
 estimatedTime: "90 minutes"
+fullCode:
+  title: "React Memoization & Performance Example"
+  description: "A React TSX example showing performance optimizations, React.memo usage, and memoized values and handler references."
+  language: "tsx"
+  code: |
+    import React, { useState, useMemo, useCallback } from "react";
+
+    // Sub-component memoized with React.memo to prevent parent re-renders
+    const ActionButton = React.memo(({ onClick, label }: { onClick: () => void; label: string }) => {
+      console.log(`Rendering ActionButton: ${label}`);
+      return (
+        <button
+          onClick={onClick}
+          className="px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white font-bold rounded-lg text-sm"
+        >
+          {label}
+        </button>
+      );
+    });
+    ActionButton.displayName = "ActionButton";
+
+    export function OptimizeComponent() {
+      const [count, setCount] = useState<number>(0);
+      const [searchQuery, setSearchQuery] = useState<string>("");
+
+      // 1. useCallback: Memoizes function reference to prevent sub-component re-renders
+      const incrementCount = useCallback(() => {
+        setCount(prev => prev + 1);
+      }, []);
+
+      // 2. useMemo: Memoizes heavy calculation value
+      const calculatedData = useMemo(() => {
+        console.log("Running heavy calculation...");
+        let sum = 0;
+        for (let i = 0; i < 1000000; i++) {
+          sum += i;
+        }
+        return sum + count;
+      }, [count]);
+
+      return (
+        <div className="p-6 bg-white border border-slate-200 rounded-2xl max-w-md mx-auto my-4 shadow-sm">
+          <h3 className="text-lg font-bold text-slate-800 mb-2">React Performance Playground</h3>
+          
+          <div className="mb-4">
+            <label className="block text-xs font-mono text-slate-400 mb-1">Search Input (Trigger parent state updates)</label>
+            <input
+              type="text"
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              className="w-full border border-slate-200 rounded-lg p-2 text-sm"
+              placeholder="Type to trigger search update..."
+            />
+          </div>
+
+          <div className="text-sm text-slate-650 mb-4">
+            <p>Calculated Value: <strong className="font-mono text-indigo-600">{calculatedData}</strong></p>
+          </div>
+
+          <ActionButton onClick={incrementCount} label={`Increment (Count: ${count})`} />
+        </div>
+      );
+    }
 ---
 
 # React Interview Cracking Guide

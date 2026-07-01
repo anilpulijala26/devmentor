@@ -1,8 +1,43 @@
 ---
-title: "Fiber & Under the Hood"
-description: "Understand React's internal Fiber architecture, reconciliation, render vs commit phases, and concurrent rendering"
-tags: ["react", "fiber", "reconciliation", "under-the-hood"]
-estimatedTime: "95 minutes"
+title: Fiber & Under the Hood
+description: >-
+  Understand React's internal Fiber architecture, reconciliation, render vs
+  commit phases, and concurrent rendering
+tags:
+  - react
+  - fiber
+  - reconciliation
+  - under-the-hood
+estimatedTime: 95 minutes
+fullCode:
+  title: React Functional Component & Custom Hook
+  description: >-
+    A custom React component consuming a state hook to manage local state
+    parameters.
+  language: tsx
+  code: |-
+    import React, { useState, useEffect } from "react";
+
+    export function DynamicTogglable() {
+      const [isOpen, setIsOpen] = useState<boolean>(false);
+
+      return (
+        <div className="border border-slate-200 rounded-xl p-4 max-w-xs mx-auto">
+          <button
+            onClick={() => setIsOpen(prev => !prev)}
+            className="bg-indigo-600 text-white font-bold text-xs px-4 py-2 rounded-lg"
+          >
+            {isOpen ? "Hide Content" : "Show Content"}
+          </button>
+          
+          {isOpen && (
+            <p className="text-xs text-slate-500 mt-3 animate-fade-in">
+              This content is rendered conditionally based on state.
+            </p>
+          )}
+        </div>
+      );
+    }
 ---
 
 # Fiber & Under the Hood

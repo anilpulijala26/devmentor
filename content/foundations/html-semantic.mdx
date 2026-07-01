@@ -4,6 +4,58 @@ description: "Write meaningful HTML that's accessible, SEO-friendly, and maintai
 tags: ["html", "semantic", "accessibility"]
 estimatedTime: "50 minutes"
 youtubeId: "og4APl4Wjl0"
+fullCode:
+  title: "Semantic HTML Layout Example"
+  description: "A complete semantic HTML5 template showing standard page sections and CSS styling."
+  language: "html"
+  code: |
+    <!DOCTYPE html>
+    <html lang="en">
+    <head>
+      <meta charset="UTF-8">
+      <meta name="viewport" content="width=device-width, initial-scale=1.0">
+      <title>Semantic Page Template</title>
+      <style>
+        body { font-family: system-ui, sans-serif; line-height: 1.5; margin: 0; padding: 0; }
+        header { background: #1e293b; color: #fff; padding: 1rem; }
+        nav ul { list-style: none; padding: 0; display: flex; gap: 1rem; }
+        nav a { color: #fff; text-decoration: none; }
+        main { display: grid; grid-template-columns: 3fr 1fr; gap: 2rem; max-width: 1200px; margin: 2rem auto; padding: 0 1rem; }
+        article { background: #f8fafc; padding: 2rem; border-radius: 8px; border: 1px border #e2e8f0; }
+        aside { background: #f1f5f9; padding: 1.5rem; border-radius: 8px; }
+        footer { text-align: center; padding: 2rem; background: #f8fafc; border-top: 1px solid #e2e8f0; }
+      </style>
+    </head>
+    <body>
+      <header>
+        <h1>CodeNivra Learning Hub</h1>
+        <nav aria-label="Main Navigation">
+          <ul>
+            <li><a href="/">Home</a></li>
+            <li><a href="/courses">Courses</a></li>
+            <li><a href="/dashboard">Dashboard</a></li>
+          </ul>
+        </nav>
+      </header>
+      <main>
+        <article>
+          <h2>Optimizing Accessibility & Core Web Vitals</h2>
+          <p>Writing semantic documents communicates page structure to assistive technologies and search crawlers automatically.</p>
+          <section>
+            <h3>Key Benefits</h3>
+            <p>1. Built-in keyboard accessibility.<br>2. Clear layout boundaries.<br>3. Search rank optimizations.</p>
+          </section>
+        </article>
+        <aside>
+          <h3>Additional Resources</h3>
+          <p>Read the MDN Web Docs on ARIA landmarks and HTML5 structural tags.</p>
+        </aside>
+      </main>
+      <footer>
+        <p>&copy; 2026 CodeNivra Platform. All rights reserved.</p>
+      </footer>
+    </body>
+    </html>
 ---
 
 # Semantic HTML

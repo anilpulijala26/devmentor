@@ -3,6 +3,77 @@ title: "HTML Interview Cracking Guide"
 description: "A comprehensive compile of junior, mid, and senior level HTML interview questions and answers covering semantic structures, storage strategies, and accessibility standards"
 tags: ["html", "interview", "accessibility", "seo", "career"]
 estimatedTime: "40 minutes"
+fullCode:
+  title: "Keyboard-Accessible Modal Dialog with Focus Trap"
+  description: "A complete HTML and JavaScript implementation of a fully keyboard-accessible modal, illustrating ARIA attributes and focus trap logic."
+  language: "html"
+  code: |
+    <!DOCTYPE html>
+    <html lang="en">
+    <head>
+      <meta charset="UTF-8">
+      <title>Accessible Modal Dialog</title>
+      <style>
+        .modal { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.5); align-items: center; justify-content: center; }
+        .modal.open { display: flex; }
+        .modal-content { background: white; padding: 2rem; border-radius: 8px; max-width: 500px; width: 100%; }
+      </style>
+    </head>
+    <body>
+      <button id="openModalBtn">Open Modal</button>
+
+      <!-- Modal Container -->
+      <div id="myModal" class="modal" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
+        <div class="modal-content">
+          <h2 id="modalTitle">Terms and Conditions</h2>
+          <p>Please read and accept our developer guidelines.</p>
+          <button id="acceptBtn">Accept</button>
+          <button id="closeModalBtn">Cancel</button>
+        </div>
+      </div>
+
+      <script>
+        const modal = document.getElementById('myModal');
+        const openBtn = document.getElementById('openModalBtn');
+        const closeBtn = document.getElementById('closeModalBtn');
+        const focusableElements = modal.querySelectorAll('button, [href], input, select, textarea, [tabindex]:not([-1])');
+        const firstFocusable = focusableElements[0];
+        const lastFocusable = focusableElements[focusableElements.length - 1];
+
+        function openModal() {
+          modal.classList.add('open');
+          firstFocusable.focus(); // Initial focus trap target
+          document.addEventListener('keydown', handleKeydown);
+        }
+
+        function closeModal() {
+          modal.classList.remove('open');
+          document.removeEventListener('keydown', handleKeydown);
+          openBtn.focus(); // Restore trigger focus
+        }
+
+        function handleKeydown(e) {
+          if (e.key === 'Escape') return closeModal();
+          if (e.key === 'Tab') {
+            if (e.shiftKey) { // Shift + Tab: reverse navigation loop
+              if (document.activeElement === firstFocusable) {
+                lastFocusable.focus();
+                e.preventDefault();
+              }
+            } else { // Tab: forward navigation loop
+              if (document.activeElement === lastFocusable) {
+                firstFocusable.focus();
+                e.preventDefault();
+              }
+            }
+          }
+        }
+
+        openBtn.addEventListener('click', openModal);
+        closeBtn.addEventListener('click', closeModal);
+      </script>
+    </body>
+    </html>
 ---
 
 # HTML Interview Cracking Guide

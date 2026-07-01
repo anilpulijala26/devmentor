@@ -2,6 +2,60 @@
 title: "Signup/Login APIs & Bcrypt Hashing"
 description: "Implement secure user registration and login pathways, securely hashing password keys using Bcrypt salt iterations."
 tags: ["auth","security"]
+fullCode:
+  title: "Password Hashing & Registration API Example"
+  description: "A complete Express auth routing pipeline demonstrating safe password hashing with Bcrypt, constant-time comparisons, and validation checks."
+  language: "javascript"
+  code: |
+    import express from 'express';
+    import bcrypt from 'bcrypt';
+
+    const router = express.Router();
+    const SALT_ROUNDS = 10;
+    const mockUserDB = []; // In-memory user store replacement for demonstration
+
+    // 1. SIGNUP API ROUTE
+    router.post('/signup', async (req, res) => {
+      try {
+        const { email, password } = req.body;
+        
+        if (!email || !password) {
+          return res.status(400).json({ error: "Email and password are required." });
+        }
+
+        // Securely hash password keys with Salt work iterations
+        const passwordHash = await bcrypt.hash(password, SALT_ROUNDS);
+        mockUserDB.push({ email, passwordHash });
+
+        res.status(201).json({ success: true, message: "User registered successfully." });
+      } catch (error) {
+        res.status(500).json({ error: "Internal server error." });
+      }
+    });
+
+    // 2. LOGIN API ROUTE
+    router.post('/login', async (req, res) => {
+      try {
+        const { email, password } = req.body;
+        const user = mockUserDB.find(u => u.email === email);
+
+        if (!user) {
+          return res.status(401).json({ error: "Invalid credentials." });
+        }
+
+        // Timing-attack safe password verification
+        const isMatch = await bcrypt.compare(password, user.passwordHash);
+        if (!isMatch) {
+          return res.status(401).json({ error: "Invalid credentials." });
+        }
+
+        res.status(200).json({ success: true, message: "Authentication successful." });
+      } catch (error) {
+        res.status(500).json({ error: "Internal server error." });
+      }
+    });
+
+    export default router;
 ---
 
 ## What You Will Learn

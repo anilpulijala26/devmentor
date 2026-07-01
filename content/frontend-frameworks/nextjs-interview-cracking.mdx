@@ -3,6 +3,59 @@ title: "Next.js Interview Cracking Guide"
 description: "A comprehensive compilation of top Next.js interview questions and answers categorized by Junior, Mid, and Senior levels"
 tags: ["nextjs", "interview", "career", "career-guide"]
 estimatedTime: "90 minutes"
+fullCode:
+  title: "Secure Server Actions & Dynamic Revalidation API"
+  description: "A Next.js Server Action code block illustrating authentication checks, payload validation with Zod, and data cache invalidations."
+  language: "typescript"
+  code: |
+    "use server";
+
+    import { revalidateTag } from "next/cache";
+    import { z } from "zod";
+
+    const schema = z.object({
+      itemId: z.string().uuid("Invalid UUID identifier"),
+      quantity: z.number().min(1, "Quantity must be at least 1"),
+    });
+
+    // Mock authentication helper
+    async function getSessionUser() {
+      return { id: "user_123", role: "member" };
+    }
+
+    export async function updateInventoryAction(prevState: any, formData: FormData) {
+      try {
+        // 1. Authenticate Request
+        const user = await getSessionUser();
+        if (!user) {
+          return { success: false, error: "Unauthorized access" };
+        }
+
+        // 2. Validate Payload Schema
+        const validated = schema.safeParse({
+          itemId: formData.get("itemId"),
+          quantity: Number(formData.get("quantity")),
+        });
+
+        if (!validated.success) {
+          return {
+            success: false,
+            error: "Validation failed",
+            fieldErrors: validated.error.flatten().fieldErrors,
+          };
+        }
+
+        const { itemId, quantity } = validated.data;
+        console.log(`Writing to database: User ${user.id} updated Item ${itemId} to ${quantity}`);
+
+        // 3. Invalidate server Data Cache and rebuild static layouts
+        revalidateTag("inventory");
+
+        return { success: true, message: "Inventory updated successfully" };
+      } catch (error: any) {
+        return { success: false, error: error.message || "Internal server error" };
+      }
+    }
 ---
 
 # Next.js Interview Cracking Guide

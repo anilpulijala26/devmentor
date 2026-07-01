@@ -1,8 +1,43 @@
 ---
-title: "CSS Grid Layout"
-description: "Master two-dimensional layouts using CSS Grid, responsive auto-fitting templates, and layout alignment rules"
-tags: ["css", "grid", "layout"]
-estimatedTime: "50 minutes"
+title: CSS Grid Layout
+description: >-
+  Master two-dimensional layouts using CSS Grid, responsive auto-fitting
+  templates, and layout alignment rules
+tags:
+  - css
+  - grid
+  - layout
+estimatedTime: 50 minutes
+fullCode:
+  title: Modern CSS Flexbox & Responsive Grid
+  description: >-
+    A modular, responsive CSS layout blueprint using variables, media queries,
+    and flex alignment rules.
+  language: css
+  code: |-
+    .container {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 16px;
+      padding: 24px;
+    }
+
+    .flex-card {
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      background: #ffffff;
+      border: 1px solid #e2e8f0;
+      border-radius: 8px;
+      padding: 16px;
+    }
+
+    @media (max-width: 640px) {
+      .container {
+        padding: 12px;
+        gap: 8px;
+      }
+    }
 ---
 
 # CSS Grid Layout

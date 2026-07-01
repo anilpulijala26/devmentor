@@ -15,6 +15,7 @@ interface LessonOutlineNavProps {
   progressText: string;
   sections: LessonOutlineItem[];
   onDesktopCollapsedChange?: (collapsed: boolean) => void;
+  onSectionClick?: (sectionId: string) => void;
 }
 
 export function LessonOutlineNav({
@@ -22,6 +23,7 @@ export function LessonOutlineNav({
   progressText,
   sections,
   onDesktopCollapsedChange,
+  onSectionClick,
 }: LessonOutlineNavProps) {
   const [desktopCollapsed, setDesktopCollapsed] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
@@ -31,8 +33,6 @@ export function LessonOutlineNav({
   const navItemRefs = useRef(new Map<string, HTMLButtonElement>());
   const desktopNavScrollRef = useRef<HTMLDivElement>(null);
   const mobileNavScrollRef = useRef<HTMLDivElement>(null);
-  const pendingSectionIdRef = useRef<string | null>(null);
-  const pendingSectionTimerRef = useRef<number | null>(null);
 
   const sectionCountText = useMemo(() => {
     if (sections.length === 1) {
@@ -79,14 +79,6 @@ export function LessonOutlineNav({
   }, [mobileOpen]);
 
   useEffect(() => {
-    return () => {
-      if (pendingSectionTimerRef.current !== null) {
-        window.clearTimeout(pendingSectionTimerRef.current);
-      }
-    };
-  }, []);
-
-  useEffect(() => {
     const targets = sections
       .map((section) => document.getElementById(section.id))
       .filter((section): section is HTMLElement => Boolean(section));
@@ -97,25 +89,6 @@ export function LessonOutlineNav({
 
     const observer = new IntersectionObserver(
       (entries) => {
-        const pendingSectionId = pendingSectionIdRef.current;
-
-        if (pendingSectionId) {
-          const pendingTarget = document.getElementById(pendingSectionId);
-
-          if (pendingTarget) {
-            const distanceFromTop = Math.abs(
-              pendingTarget.getBoundingClientRect().top - 112,
-            );
-
-            if (distanceFromTop <= 36) {
-              pendingSectionIdRef.current = null;
-            } else {
-              return;
-            }
-          } else {
-            pendingSectionIdRef.current = null;
-          }
-        }
 
         const visibleEntries = entries
           .filter((entry) => entry.isIntersecting)
@@ -198,30 +171,45 @@ export function LessonOutlineNav({
     sectionId: string,
     updateHash = true,
   ) => {
-    const target = getSectionTarget(sectionId);
-
-    if (!target) {
-      return;
-    }
-
-    pendingSectionIdRef.current = sectionId;
-    if (pendingSectionTimerRef.current !== null) {
-      window.clearTimeout(pendingSectionTimerRef.current);
-    }
-    pendingSectionTimerRef.current = window.setTimeout(() => {
-      pendingSectionIdRef.current = null;
-      pendingSectionTimerRef.current = null;
-    }, 1200);
-
-    setActiveSectionId(sectionId);
-    target.scrollIntoView({ behavior: "smooth", block: "start" });
-
-    if (updateHash) {
-      window.history.replaceState(null, "", `#${sectionId}`);
-    }
-
+    // 1. Close mobile drawer immediately to unlock body scrolling
     setMobileOpen(false);
-  }, [getSectionTarget]);
+
+    // 2. Notify parent to switch back to overview tab
+    onSectionClick?.(sectionId);
+
+    // 3. Poll for target element mounting (up to 10 attempts over 500ms)
+    let attempts = 0;
+    const scrollInterval = setInterval(() => {
+      const target = getSectionTarget(sectionId);
+      attempts++;
+
+      if (target) {
+        clearInterval(scrollInterval);
+
+        const elementPosition = target.getBoundingClientRect().top;
+        const offsetPosition = elementPosition + window.pageYOffset - 112; // 112px sticky header offset
+
+        window.scrollTo({
+          top: offsetPosition,
+          behavior: "smooth",
+        });
+
+        setActiveSectionId(sectionId);
+
+        if (updateHash) {
+          window.history.replaceState(null, "", `#${sectionId}`);
+        }
+      } else if (attempts >= 10) {
+        clearInterval(scrollInterval);
+      }
+    }, 50);
+  }, [getSectionTarget, onSectionClick]);
+
+  const scrollToSectionRef = useRef(scrollToSection);
+  scrollToSectionRef.current = scrollToSection;
+
+  const getSectionTargetRef = useRef(getSectionTarget);
+  getSectionTargetRef.current = getSectionTarget;
 
   useEffect(() => {
     const hash = window.location.hash.replace(/^#/, "");
@@ -231,8 +219,8 @@ export function LessonOutlineNav({
     }
 
     const runScroll = () => {
-      if (getSectionTarget(hash)) {
-        scrollToSection(hash, false);
+      if (getSectionTargetRef.current(hash)) {
+        scrollToSectionRef.current(hash, false);
       }
     };
 
@@ -242,20 +230,20 @@ export function LessonOutlineNav({
     });
 
     return () => window.cancelAnimationFrame(firstFrame);
-  }, [getSectionTarget, scrollToSection, sections]);
+  }, []);
 
   useEffect(() => {
     const handleHashChange = () => {
       const hash = window.location.hash.replace(/^#/, "");
 
       if (hash) {
-        scrollToSection(hash, false);
+        scrollToSectionRef.current(hash, false);
       }
     };
 
     window.addEventListener("hashchange", handleHashChange);
     return () => window.removeEventListener("hashchange", handleHashChange);
-  }, [scrollToSection, sections]);
+  }, []);
 
   return (
     <>

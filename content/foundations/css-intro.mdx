@@ -4,6 +4,90 @@ description: "CSS (Cascading Style Sheets) transforms plain HTML into beautiful,
 tags: ["css", "styling", "layout"]
 estimatedTime: "60 minutes"
 youtubeId: "OXGznpKZ_sA"
+fullCode:
+  title: "CSS Box Model & Selectors Example"
+  description: "A style sheet demonstrating low-specificity BEM styling, responsive breakpoints, and custom CSS properties."
+  language: "css"
+  code: |
+    /* Custom Design Tokens */
+    :root {
+      --primary-color: #4f46e5;
+      --primary-hover: #4338ca;
+      --text-color: #1e293b;
+      --background-color: #ffffff;
+      --border-radius-lg: 12px;
+      --spacing-md: 16px;
+      --font-family: system-ui, -apple-system, sans-serif;
+    }
+
+    /* Base Elements */
+    body {
+      font-family: var(--font-family);
+      color: var(--text-color);
+      background-color: #f8fafc;
+      margin: 0;
+      padding: var(--spacing-md);
+      box-sizing: border-box;
+    }
+
+    *, *::before, *::after {
+      box-sizing: inherit;
+    }
+
+    /* BEM Card Component showing the Box Model */
+    .card {
+      background: var(--background-color);
+      border: 1px solid #e2e8f0;
+      border-radius: var(--border-radius-lg);
+      padding: 24px;
+      margin: 20px auto;
+      max-width: 480px;
+      box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+      transition: transform 0.2s ease, box-shadow 0.2s ease;
+    }
+
+    .card:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+    }
+
+    .card__title {
+      font-size: 1.25rem;
+      font-weight: 700;
+      margin: 0 0 12px 0;
+    }
+
+    .card__description {
+      font-size: 0.875rem;
+      color: #64748b;
+      line-height: 1.5;
+      margin-bottom: 20px;
+    }
+
+    .card__action {
+      display: inline-flex;
+      align-items: center;
+      background-color: var(--primary-color);
+      color: #fff;
+      text-decoration: none;
+      font-weight: 600;
+      font-size: 0.875rem;
+      padding: 10px 20px;
+      border-radius: 8px;
+      transition: background-color 0.2s ease;
+    }
+
+    .card__action:hover {
+      background-color: var(--primary-hover);
+    }
+
+    /* Responsive adjustments */
+    @media (max-width: 640px) {
+      .card {
+        padding: 16px;
+        margin: 10px;
+      }
+    }
 ---
 
 ## Selectors and Specificity

@@ -9,6 +9,46 @@ sections: []
 examples: []
 exercises: []
 resources: []
+fullCode:
+  title: "TypeScript Fundamentals Example"
+  description: "A type-safe script showing interface declarations, optional properties, union roles, and functional return typing."
+  language: "typescript"
+  code: |
+    // 1. Interface & Union Type Declarations
+    type UserRole = "admin" | "instructor" | "student";
+
+    interface UserProfile {
+      readonly id: number;
+      name: string;
+      email: string;
+      role: UserRole;
+      phoneNumber?: string; // Optional property
+    }
+
+    // 2. Strongly Typed Collections
+    const userRegistry: UserProfile[] = [
+      { id: 1, name: "Alice", email: "alice@codenivra.io", role: "admin" },
+      { id: 2, name: "Bob", email: "bob@codenivra.io", role: "student", phoneNumber: "+1-555-0199" }
+    ];
+
+    // 3. Strongly Typed Functions
+    const getUserContactInfo = (user: UserProfile): string => {
+      if (user.phoneNumber) {
+        return `${user.name} can be reached at ${user.phoneNumber} or via email at ${user.email}`;
+      }
+      return `${user.name} has no phone. Contact email is: ${user.email}`;
+    };
+
+    // 4. Union & Narrowing Logic
+    const formatIdentifier = (id: string | number): string => {
+      if (typeof id === "string") {
+        return `UUID_${id.toUpperCase()}`;
+      }
+      return `ID_#${id.toFixed(0)}`;
+    };
+
+    console.log(getUserContactInfo(userRegistry[1]));
+    console.log(formatIdentifier("f47a-b2c3"));
 ---
 
 ## Basic Types

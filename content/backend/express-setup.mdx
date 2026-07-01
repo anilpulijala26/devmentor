@@ -2,6 +2,42 @@
 title: "Express Setup & Routing Mechanics"
 description: "Initialize Express applications, configure server port binders, register routing channels, and read URL parameters."
 tags: ["express","routing"]
+fullCode:
+  title: "Express Setup & Router Example"
+  description: "A complete Express.js server boilerplate displaying JSON middleware parsing, route parameters, search query parameters, sub-routers, and port binding."
+  language: "javascript"
+  code: |
+    import express from 'express';
+    import cors from 'cors';
+
+    const app = express();
+    const router = express.Router();
+
+    // 1. Register global server middlewares
+    app.use(cors());
+    app.use(express.json());
+
+    // 2. Define route parameter mapping
+    router.get('/products/:id', (req, res) => {
+      const { id } = req.params; // Route parameters
+      const { limit, sort } = req.query; // Query string variables
+      
+      res.status(200).json({
+        success: true,
+        productId: id,
+        queryParams: { limit: limit || "10", sort: sort || "asc" },
+        timestamp: new Date().toISOString()
+      });
+    });
+
+    // 3. Mount router namespace
+    app.use('/api/v1', router);
+
+    // 4. Server listener port binding
+    const PORT = process.env.PORT || 8080;
+    app.listen(PORT, () => {
+      console.log(`Express API server operational on port ${PORT}`);
+    });
 ---
 
 ## What You Will Learn
