@@ -36,8 +36,15 @@ export async function dbQuery<T extends QueryResultRow = any>(
       console.log("[DB Query]", { text, duration: `${duration}ms`, rows: res.rowCount });
     }
     return res;
-  } catch (error) {
-    console.error("[DB Query Error]", { text, error });
+  } catch (error: any) {
+    console.error("[DB Query Error] Query failed:", text);
+    console.error("[DB Query Error] Details:", {
+      message: error?.message,
+      code: error?.code,
+      detail: error?.detail,
+      hint: error?.hint,
+      stack: error?.stack,
+    });
     throw error;
   }
 }

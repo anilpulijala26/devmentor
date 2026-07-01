@@ -4,7 +4,7 @@ A fully static, production-quality tutorial web application built with modern we
 
 ## Project Overview
 
-CodeNivra is a tutorial platform that feels like a senior software engineer mentoring an intern. It focuses on production-ready guidance, real-world patterns, and modern tooling. There is **no database and no backend**. Everything is static and stored in the repository.
+CodeNivra is a tutorial platform that feels like a senior software engineer mentoring an intern. It focuses on production-ready guidance, real-world patterns, and modern tooling. It features a PostgreSQL database connection to track user accounts, streaks, daily missions, and syllabus progress.
 
 ## Why MDX
 
@@ -89,7 +89,22 @@ Helpful tips go here.
 
 ## Environment Variables
 
-This project is fully static and does not require environment variables. A `.env.example` file is included as a placeholder for future use.
+Configure your database connection string and credentials in `.env` or `.env.local` using the keys defined in `.env.example`:
+- `DATABASE_URL`: Connection string to your PostgreSQL database.
+- `JWT_SECRET`: Secret key used for signing and verifying JWT tokens.
+
+## Database Setup
+
+To set up the database schema and seed data on Supabase (or any PostgreSQL instance):
+
+1. **Run the Schema**:
+   - Go to your Supabase Dashboard.
+   - Navigate to the **SQL Editor** from the left-hand navigation pane.
+   - Create a new blank query, copy/paste the entire contents of [schema.sql](file:///c:/DevMentor/supabase/schema.sql), and click **Run**.
+
+2. **Seed the Database**:
+   - Create another new blank query in the SQL Editor.
+   - Copy/paste the entire contents of [seed.sql](file:///c:/DevMentor/supabase/seed.sql), and click **Run**.
 
 ## Development Notes
 

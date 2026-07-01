@@ -74,7 +74,12 @@ export async function POST(request: Request) {
       { status: 200 }
     );
   } catch (error: any) {
-    console.error("Login Error:", error);
+    console.error("Login Error:", {
+      message: error?.message,
+      stack: error?.stack,
+      code: error?.code,
+      detail: error?.detail,
+    });
     return NextResponse.json({ error: "An internal server error occurred." }, { status: 500 });
   }
 }
