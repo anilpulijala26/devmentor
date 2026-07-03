@@ -19,13 +19,28 @@ export interface LearningLevelOption {
 export interface DayPlan {
   day: number;
   lessonTitle: string;
+  dbLessonId?: string;
+  lessonRoute?: {
+    trackSlug: string;
+    lessonSlug: string;
+  };
   practiceTitle: string;
   practiceSlug?: string;
+  practiceHref?: string;
   challengeTitle: string;
+  challengeHref?: string;
   interviewQuestion: string;
   interviewAnswer: string;
+  interviewHref?: string;
   projectStepTitle: string;
   projectSlug?: string;
+  projectHref?: string;
+}
+
+interface DayPlanMatch {
+  pathTitle: string;
+  moduleTitle: string;
+  dayPlan: DayPlan;
 }
 
 export interface PathModule {
@@ -136,6 +151,7 @@ export const LEARNING_PATHS: Record<"fresher" | "upgrade", LearningPathDefinitio
           {
             day: 2,
             lessonTitle: "How websites work from browser to server",
+            lessonRoute: { trackSlug: "foundations", lessonSlug: "web-works" },
             practiceTitle: "Install VS Code and create your first HTML file",
             challengeTitle: "Save and reopen a file correctly",
             interviewQuestion: "What happens when you open a website in the browser?",
@@ -165,6 +181,8 @@ export const LEARNING_PATHS: Record<"fresher" | "upgrade", LearningPathDefinitio
           {
             day: 1,
             lessonTitle: "HTML structure and semantic tags",
+            dbLessonId: "f47ac10b-58cc-4372-a567-0e02b2c3d491",
+            lessonRoute: { trackSlug: "foundations", lessonSlug: "html-semantic" },
             practiceTitle: "Build a profile card",
             practiceSlug: "html-form-validation",
             challengeTitle: "Create a registration form",
@@ -176,6 +194,8 @@ export const LEARNING_PATHS: Record<"fresher" | "upgrade", LearningPathDefinitio
           {
             day: 2,
             lessonTitle: "Flexbox and responsive design basics",
+            dbLessonId: "f47ac10b-58cc-4372-a567-0e02b2c3d493",
+            lessonRoute: { trackSlug: "foundations", lessonSlug: "css-flexbox" },
             practiceTitle: "Build a pricing card layout",
             practiceSlug: "responsive-pricing-cards",
             challengeTitle: "Make the layout stack on mobile",
@@ -204,6 +224,8 @@ export const LEARNING_PATHS: Record<"fresher" | "upgrade", LearningPathDefinitio
           {
             day: 1,
             lessonTitle: "Functions in JavaScript",
+            dbLessonId: "f47ac10b-58cc-4372-a567-0e02b2c3d494",
+            lessonRoute: { trackSlug: "foundations", lessonSlug: "js-intro" },
             practiceTitle: "Write a simple function",
             practiceSlug: "js-array-transformation",
             challengeTitle: "Convert Minutes into Seconds",
@@ -234,6 +256,7 @@ export const LEARNING_PATHS: Record<"fresher" | "upgrade", LearningPathDefinitio
           {
             day: 1,
             lessonTitle: "DOM selection and events",
+            lessonRoute: { trackSlug: "foundations", lessonSlug: "js-event-loop-dom" },
             practiceTitle: "Build a counter app",
             challengeTitle: "Increase and decrease a number",
             interviewQuestion: "What is the DOM?",
@@ -255,6 +278,8 @@ export const LEARNING_PATHS: Record<"fresher" | "upgrade", LearningPathDefinitio
           {
             day: 1,
             lessonTitle: "React components and props",
+            dbLessonId: "f47ac10b-58cc-4372-a567-0e02b2c3d496",
+            lessonRoute: { trackSlug: "frontend-frameworks", lessonSlug: "react-components" },
             practiceTitle: "Build course cards",
             practiceSlug: "react-controlled-form",
             challengeTitle: "Render a list of dashboard cards",
@@ -276,6 +301,8 @@ export const LEARNING_PATHS: Record<"fresher" | "upgrade", LearningPathDefinitio
           {
             day: 1,
             lessonTitle: "Express server and routes",
+            dbLessonId: "f47ac10b-58cc-4372-a567-0e02b2c3d498",
+            lessonRoute: { trackSlug: "backend", lessonSlug: "express-setup" },
             practiceTitle: "Create a GET API",
             challengeTitle: "Create a POST API",
             interviewQuestion: "What is middleware in Express?",
@@ -297,6 +324,8 @@ export const LEARNING_PATHS: Record<"fresher" | "upgrade", LearningPathDefinitio
           {
             day: 1,
             lessonTitle: "Tables, keys, and relationships",
+            dbLessonId: "f47ac10b-58cc-4372-a567-0e02b2c3d4a0",
+            lessonRoute: { trackSlug: "backend", lessonSlug: "db-index-transactions" },
             practiceTitle: "Create users and courses tables",
             challengeTitle: "Write a join query",
             interviewQuestion: "What is a primary key?",
@@ -317,6 +346,7 @@ export const LEARNING_PATHS: Record<"fresher" | "upgrade", LearningPathDefinitio
           {
             day: 1,
             lessonTitle: "Connect React to a Node API",
+            lessonRoute: { trackSlug: "fullstack", lessonSlug: "connecting-frontend-backend" },
             practiceTitle: "Build the login flow",
             challengeTitle: "Submit a coding problem to the backend",
             interviewQuestion: "Why do we protect dashboard routes?",
@@ -337,6 +367,8 @@ export const LEARNING_PATHS: Record<"fresher" | "upgrade", LearningPathDefinitio
           {
             day: 1,
             lessonTitle: "Deploying your final full-stack app",
+            dbLessonId: "f47ac10b-58cc-4372-a567-0e02b2c3d4a3",
+            lessonRoute: { trackSlug: "deployment", lessonSlug: "vercel-deployment" },
             practiceTitle: "Write the README and setup steps",
             challengeTitle: "Explain your project clearly",
             interviewQuestion: "What did you build and how does it work?",
@@ -363,6 +395,7 @@ export const LEARNING_PATHS: Record<"fresher" | "upgrade", LearningPathDefinitio
           {
             day: 1,
             lessonTitle: "Advanced React architecture",
+            lessonRoute: { trackSlug: "frontend-frameworks", lessonSlug: "react-fiber-architecture" },
             practiceTitle: "Refactor dashboard cards into reusable sections",
             challengeTitle: "Explain prop drilling vs composition",
             interviewQuestion: "How do you scale a React codebase?",
@@ -382,6 +415,7 @@ export const LEARNING_PATHS: Record<"fresher" | "upgrade", LearningPathDefinitio
           {
             day: 1,
             lessonTitle: "Backend API architecture for frontend engineers",
+            lessonRoute: { trackSlug: "backend", lessonSlug: "modular-folder-structure" },
             practiceTitle: "Create a protected route",
             challengeTitle: "Design the auth request flow",
             interviewQuestion: "How would you structure a Node.js API?",
@@ -434,10 +468,20 @@ export function getCurrentPathModule(profile: LearningProfile, completedLessonsC
   return path.modules[moduleIndex];
 }
 
+function resolveDayPlanLinks(dayPlan: DayPlan): DayPlan {
+  return {
+    ...dayPlan,
+    practiceHref: dayPlan.practiceHref ?? (dayPlan.practiceSlug ? `/tasks/${dayPlan.practiceSlug}` : "/tasks"),
+    challengeHref: dayPlan.challengeHref ?? "/challenges/today",
+    interviewHref: dayPlan.interviewHref ?? "/interview",
+    projectHref: dayPlan.projectHref ?? (dayPlan.projectSlug ? `/projects/${dayPlan.projectSlug}#project-submission` : "/projects"),
+  };
+}
+
 export function getCurrentDayPlan(profile: LearningProfile, completedLessonsCount = 0) {
   const currentPathModule = getCurrentPathModule(profile, completedLessonsCount);
   const dayIndex = Math.min(Math.floor(completedLessonsCount % Math.max(currentPathModule.dayPlans.length, 1)), currentPathModule.dayPlans.length - 1);
-  return currentPathModule.dayPlans[Math.max(dayIndex, 0)];
+  return resolveDayPlanLinks(currentPathModule.dayPlans[Math.max(dayIndex, 0)]);
 }
 
 export function getModuleStatus(
@@ -453,20 +497,43 @@ export function getModuleStatus(
   return "Locked";
 }
 
-export function getInterviewQuestionForLesson(title: string) {
+function findDayPlanMatch(predicate: (dayPlan: DayPlan) => boolean): DayPlanMatch | null {
   for (const path of Object.values(LEARNING_PATHS)) {
     for (const moduleItem of path.modules) {
       for (const day of moduleItem.dayPlans) {
-        if (day.lessonTitle.toLowerCase() === title.toLowerCase()) {
+        if (predicate(day)) {
           return {
-            question: day.interviewQuestion,
-            answer: day.interviewAnswer,
-            moduleTitle: moduleItem.title,
             pathTitle: path.title,
+            moduleTitle: moduleItem.title,
+            dayPlan: resolveDayPlanLinks(day),
           };
         }
       }
     }
+  }
+
+  return null;
+}
+
+export function getDayPlanForDbLessonId(lessonId: string) {
+  return findDayPlanMatch((dayPlan) => dayPlan.dbLessonId === lessonId);
+}
+
+export function getDayPlanForLessonRoute(trackSlug: string, lessonSlug: string) {
+  return findDayPlanMatch(
+    (dayPlan) =>
+      dayPlan.lessonRoute?.trackSlug === trackSlug && dayPlan.lessonRoute?.lessonSlug === lessonSlug,
+  );
+}
+
+export function getInterviewQuestionFromDayPlanMatch(match: DayPlanMatch | null) {
+  if (match) {
+    return {
+      question: match.dayPlan.interviewQuestion,
+      answer: match.dayPlan.interviewAnswer,
+      moduleTitle: match.moduleTitle,
+      pathTitle: match.pathTitle,
+    };
   }
 
   return {

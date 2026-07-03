@@ -4,7 +4,10 @@ import Link from "next/link";
 import { verifyJWT } from "@/lib/jwt";
 import { dbQuery } from "@/lib/db";
 import { getOrUpdateStreakInfo } from "@/lib/streaks";
-import { ArrowLeft, BookOpen, Flame, Award, Target, Trophy, ArrowRight, CheckCircle2 } from "lucide-react";
+import { projects } from "@/lib/projects";
+import { developerTasks } from "@/lib/tasks";
+import { getCurrentDayPlan, getCurrentPathModule, parseLearningProfileCookie } from "@/lib/learningProfile";
+import { ArrowLeft, BookOpen, Flame, Award, Target, Trophy, ArrowRight, CheckCircle2, CheckSquare } from "lucide-react";
 
 export const metadata = {
   title: "My Progress - CodeNivra",
@@ -38,10 +41,33 @@ export default async function ProgressPage() {
     );
     const completedCount = parseInt(completedLessonsRes.rows[0].count, 10);
 
-    // --- PROJECTS COMPLETED ---
-    // TODO: Integrate completed projects with a specific user projects completion tracking API/DB table when available
-    const completedProjectsCount = 0; 
-    const totalProjects = 8;
+    // --- TASKS COMPLETED ---
+    let completedTasksCount = 0;
+    const totalTasks = developerTasks.length;
+
+    try {
+      const completedTasksRes = await dbQuery(
+        `SELECT COUNT(*) as count FROM user_task_progress WHERE user_id = $1 AND is_completed = TRUE`,
+        [decoded.userId],
+      );
+      completedTasksCount = parseInt(completedTasksRes.rows[0].count, 10);
+    } catch (error) {
+      console.error("Progress task completion lookup failed:", error);
+    }
+
+    // --- PROJECTS COMPLETED / SUBMITTED ---
+    let completedProjectsCount = 0;
+    const totalProjects = projects.length;
+
+    try {
+      const completedProjectsRes = await dbQuery(
+        `SELECT COUNT(*) as count FROM user_project_submissions WHERE user_id = $1 AND review_status <> 'not_submitted_yet'`,
+        [decoded.userId],
+      );
+      completedProjectsCount = parseInt(completedProjectsRes.rows[0].count, 10);
+    } catch (error) {
+      console.error("Progress project submissions lookup failed:", error);
+    }
 
     // --- CONTINUE LEARNING LESSON ---
     const lastOpenedRes = await dbQuery(
@@ -101,8 +127,13 @@ export default async function ProgressPage() {
     const dailyMissions = missionsRes.rows;
     const completedMissionsCount = dailyMissions.filter((m) => m.is_completed).length;
 
+    const learningProfile = parseLearningProfileCookie(cookieStore.get("learning_profile")?.value);
+    const currentModule = getCurrentPathModule(learningProfile, completedCount);
+    const currentDayPlan = getCurrentDayPlan(learningProfile, completedCount);
+
     // Percent computations
     const lessonsPercent = totalCount > 0 ? Math.min(Math.round((completedCount / totalCount) * 100), 100) : 0;
+    const tasksPercent = totalTasks > 0 ? Math.min(Math.round((completedTasksCount / totalTasks) * 100), 100) : 0;
     const projectsPercent = totalProjects > 0 ? Math.min(Math.round((completedProjectsCount / totalProjects) * 100), 100) : 0;
 
     return (
@@ -137,7 +168,7 @@ export default async function ProgressPage() {
             </div>
 
             {/* Metrics cards grid */}
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+            <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-6">
               
               {/* Completed lessons metric card */}
               <div className="bg-white rounded-2xl border border-slate-200/80 p-6 shadow-sm">
@@ -154,6 +185,24 @@ export default async function ProgressPage() {
                 </div>
                 <span className="text-[10px] text-slate-400 mt-2 block font-mono font-medium">
                   {lessonsPercent}% syllabus completed
+                </span>
+              </div>
+
+
+              <div className="bg-white rounded-2xl border border-slate-200/80 p-6 shadow-sm">
+                <div className="flex items-center justify-between">
+                  <span className="text-xs font-bold text-slate-400 uppercase tracking-widest font-mono">Practice Completion</span>
+                  <CheckSquare className="w-5 h-5 text-emerald-500" />
+                </div>
+                <div className="mt-4 flex items-baseline gap-2">
+                  <span className="text-4xl font-extrabold text-slate-900 font-mono">{completedTasksCount}</span>
+                  <span className="text-sm font-semibold text-slate-400">/ {totalTasks}</span>
+                </div>
+                <div className="mt-4 h-2 bg-slate-100 rounded-full overflow-hidden">
+                  <div className="h-full bg-emerald-600 rounded-full transition-all" style={{ width: `${tasksPercent}%` }} />
+                </div>
+                <span className="text-[10px] text-slate-400 mt-2 block font-mono font-medium">
+                  {tasksPercent}% practice tasks completed
                 </span>
               </div>
 
@@ -204,29 +253,29 @@ export default async function ProgressPage() {
                       <BookOpen className="w-5 h-5" />
                     </div>
                     <div>
-                      <h3 className="text-lg font-bold text-slate-900">Current Roadmap Goal</h3>
-                      <p className="text-xs text-slate-400 font-medium">Your active study lesson module</p>
+                      <h3 className="text-lg font-bold text-slate-900">Current Learning Step</h3>
+                      <p className="text-xs text-slate-400 font-medium">Your active module, day, and next lesson</p>
                     </div>
                   </div>
 
                   <div className="bg-slate-50 border border-slate-100 rounded-2xl p-5 mt-6">
                     <p className="text-[10px] font-bold text-slate-400 uppercase tracking-wider font-mono">CURRENT TOPIC</p>
                     <h4 className="text-base font-black text-slate-800 mt-1">
-                      {continueLesson ? continueLesson.title : "Full Stack Web Development Roadmap"}
+                      {continueLesson ? continueLesson.title : currentDayPlan.lessonTitle}
                     </h4>
                     <p className="text-xs text-slate-500 mt-2 leading-relaxed">
                       {continueLesson 
-                        ? "You are currently advancing through this module. Complete the lesson guide to update your completion metrics." 
-                        : "Ready to launch your learning track? Click below to begin the HTML foundation modules."}
+                        ? `Module: ${currentModule.title} ? Day ${currentDayPlan.day}. Finish the lesson, then move into practice, challenge, interview, and project submission.`
+                        : `Module: ${currentModule.title} ? Day ${currentDayPlan.day}. Start today's lesson and follow the guided daily plan.`}
                     </p>
                   </div>
 
                   <div className="mt-8 flex items-center">
                     <Link
-                      href={continueLesson ? `/lessons/${continueLesson.id}` : `/lessons/f47ac10b-58cc-4372-a567-0e02b2c3d490`}
+                      href={continueLesson ? `/lessons/${continueLesson.id}` : `/courses`}
                       className="inline-flex items-center justify-center gap-2 bg-indigo-600 hover:bg-indigo-700 text-white font-bold px-6 py-3.5 rounded-xl shadow-md transition-all text-sm w-full sm:w-auto"
                     >
-                      {continueLesson ? "Continue Learning" : "Start Full Stack Path"} <ArrowRight className="w-4 h-4" />
+                      {continueLesson ? "Continue Learning" : "Start Today's Lesson"} <ArrowRight className="w-4 h-4" />
                     </Link>
                   </div>
                 </div>

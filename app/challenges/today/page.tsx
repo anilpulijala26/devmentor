@@ -81,6 +81,10 @@ export default async function TodayChallengePage() {
           hint: content?.hint ?? "Break the problem into one small step first.",
           interviewQuestion: content?.interviewQuestion ?? "How would you explain your solution?",
           interviewAnswer: content?.interviewAnswer ?? "Explain the input, logic, and return value in simple words.",
+          referenceSolution: content?.referenceSolution,
+          solutionSteps: content?.solutionSteps ?? [],
+          commonMistakes: content?.commonMistakes ?? [],
+          interviewExplanation: content?.interviewExplanation,
         }}
         prevSubmission={prevAttempt ? prevAttempt.submitted_code : null}
         isSolved={prevAttempt ? prevAttempt.is_solved : false}

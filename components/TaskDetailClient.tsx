@@ -63,11 +63,11 @@ export function TaskDetailClient({ task }: TaskDetailClientProps) {
           className="inline-flex items-center gap-2 text-xs font-semibold text-slate-600 transition-colors hover:text-indigo-700 sm:text-sm"
         >
           <ChevronLeft className="h-4 w-4" />
-          Back to Daily Tasks
+          Back to Practice Tasks
         </Link>
         <div className="flex items-center gap-3">
           <span className="hidden text-[10px] font-bold uppercase tracking-widest text-slate-500 sm:inline">
-            DAILY CHALLENGE // {task.slug.toUpperCase()}
+            PRACTICE TASK // {task.slug.toUpperCase()}
           </span>
           <TaskCompleteButton taskSlug={task.slug} />
         </div>
@@ -76,9 +76,9 @@ export function TaskDetailClient({ task }: TaskDetailClientProps) {
       <div className="mb-8 lg:mb-10">
         <div className="mb-3 flex items-center gap-2">
           <span className={`inline-block rounded-full border px-3 py-1 text-xs font-bold ${getLevelTone(task.level)}`}>
-            {task.level} Challenge
+            {task.level} Practice Task
           </span>
-          <span className="text-xs font-semibold text-slate-500">Daily Developer Exercise</span>
+          <span className="text-xs font-semibold text-slate-500">Implementation-first practice</span>
         </div>
         <h1 className="mb-4 bg-gradient-to-r from-slate-900 via-indigo-950 to-indigo-900 bg-clip-text text-3xl font-black tracking-tight text-transparent sm:text-4xl lg:text-[2.8rem] lg:leading-tight">
           {task.title}
@@ -96,7 +96,7 @@ export function TaskDetailClient({ task }: TaskDetailClientProps) {
             <div className="flex flex-wrap -mb-px gap-1 sm:gap-2">
               {[
                 { id: "overview", label: "Overview" },
-                { id: "solution", label: "Solution & Implementation" },
+                { id: "solution", label: "Reference Solution" },
                 { id: "review", label: "Review & Next Steps" },
               ].map((tab) => {
                 const isActive = activeTab === tab.id;
@@ -410,7 +410,7 @@ export function TaskDetailClient({ task }: TaskDetailClientProps) {
                         {nextRecommendedTask.title}
                       </h3>
                       <p className="max-w-md text-sm font-medium leading-relaxed text-slate-600">
-                        Continue with another challenge to build momentum step by step in the practice workspace.
+                        Continue with another implementation task to build momentum step by step in the practice workspace.
                       </p>
                     </div>
                     <Link
@@ -430,7 +430,7 @@ export function TaskDetailClient({ task }: TaskDetailClientProps) {
         <aside className="order-first lg:order-none lg:sticky lg:top-28 lg:self-start">
           <section className="rounded-3xl border border-slate-200/80 bg-white p-5 shadow-xs">
             <p className="text-xs font-bold uppercase tracking-[0.18em] text-slate-500">
-              Challenge Summary
+              Practice Summary
             </p>
             <div className="mt-4 space-y-4">
               <div className="space-y-1">

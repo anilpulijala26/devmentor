@@ -2,6 +2,7 @@
 import { redirect } from "next/navigation";
 import Link from "next/link";
 import { verifyJWT } from "@/lib/jwt";
+import { dbQuery } from "@/lib/db";
 import {
   LEARNING_PATHS,
   getModuleStatus,
@@ -30,6 +31,12 @@ export default async function CoursesPage() {
   const profile = parseLearningProfileCookie(cookieStore.get("learning_profile")?.value);
   const path = LEARNING_PATHS[profile.pathKey];
 
+  const completedLessonsRes = await dbQuery(
+    "SELECT COUNT(*) as count FROM user_lesson_progress WHERE user_id = $1 AND is_completed = true",
+    [decoded.userId],
+  );
+  const completedCount = parseInt(completedLessonsRes.rows[0].count, 10);
+
   return (
     <div className="min-h-screen bg-slate-50/50 pb-20">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
@@ -45,7 +52,7 @@ export default async function CoursesPage() {
 
         <div className="mt-10 grid gap-6 lg:grid-cols-2">
           {path.modules.map((module) => {
-            const status = getModuleStatus(profile, module.order, 0);
+            const status = getModuleStatus(profile, module.order, completedCount);
             const isActive = status === "Active";
             return (
               <article key={module.order} className={`rounded-[2rem] border p-6 shadow-sm ${isActive ? "border-indigo-300 bg-white" : "border-slate-200 bg-white"}`}>
@@ -92,7 +99,7 @@ export default async function CoursesPage() {
                     {status === "Locked" ? "Unlock by finishing the earlier active module" : "Ready for guided daily learning"}
                   </div>
                   <Link href="/dashboard" className="inline-flex items-center gap-2 rounded-xl bg-slate-900 px-4 py-2.5 text-sm font-semibold text-white transition hover:bg-slate-800">
-                    {isActive ? "Open Active Module" : "View Dashboard"}
+                    {isActive ? "Open Dashboard Plan" : "View Dashboard"}
                     <ArrowRight className="w-4 h-4" />
                   </Link>
                 </div>

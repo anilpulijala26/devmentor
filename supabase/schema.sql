@@ -1,3 +1,5 @@
+CREATE EXTENSION IF NOT EXISTS pgcrypto;
+
 -- 1. Create users table
 CREATE TABLE IF NOT EXISTS users (
   id UUID PRIMARY KEY,
@@ -57,6 +59,16 @@ CREATE TABLE IF NOT EXISTS user_lesson_progress (
   last_opened_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
   completed_at TIMESTAMP,
   CONSTRAINT unique_user_lesson UNIQUE (user_id, lesson_id)
+);
+
+CREATE TABLE IF NOT EXISTS user_task_progress (
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid()
+  user_id UUID REFERENCES users(id) ON DELETE CASCADE,
+  task_slug VARCHAR(255) NOT NULL,
+  is_completed BOOLEAN DEFAULT FALSE,
+  completed_at TIMESTAMP,
+  updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  CONSTRAINT unique_user_task UNIQUE (user_id, task_slug)
 );
 
 -- 7. Create daily_missions table

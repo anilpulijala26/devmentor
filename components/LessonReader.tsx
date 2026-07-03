@@ -20,6 +20,7 @@ import { LessonOutlineNav } from "./LessonOutlineNav";
 import { CodeBlock } from "./CodeBlock";
 import { LessonOutlineItem } from "@/lib/lesson-outline";
 import { CodeExampleRenderer } from "./CodeExampleRenderer";
+import { LessonNextSteps } from "./LessonNextSteps";
 
 interface LessonReaderProps {
   track: Track;
@@ -28,6 +29,14 @@ interface LessonReaderProps {
   prevLesson: Lesson | null;
   nextLesson: Lesson | null;
   outlineSections: LessonOutlineItem[];
+  nextSteps: {
+    moduleTitle: string;
+    day: number;
+    practice: { label: string; title: string; href?: string };
+    challenge: { label: string; title: string; href?: string };
+    interview: { label: string; title: string; href?: string };
+    project: { label: string; title: string; href?: string };
+  } | null;
   children: React.ReactNode;
 }
 
@@ -60,6 +69,7 @@ export function LessonReader({
   prevLesson,
   nextLesson,
   outlineSections,
+  nextSteps,
   children,
 }: LessonReaderProps) {
   const { completedLessons, toggleLessonComplete } = useProgress();
@@ -540,6 +550,17 @@ export function LessonReader({
                 </div>
               ) : null}
             </div>
+
+            {nextSteps ? (
+              <LessonNextSteps
+                moduleTitle={nextSteps.moduleTitle}
+                day={nextSteps.day}
+                practice={nextSteps.practice}
+                challenge={nextSteps.challenge}
+                interview={nextSteps.interview}
+                project={nextSteps.project}
+              />
+            ) : null}
 
             <div className="mt-12 flex flex-col gap-4 rounded-[24px] border border-slate-200 bg-slate-50 p-6 sm:flex-row sm:items-center sm:justify-between">
               <div>

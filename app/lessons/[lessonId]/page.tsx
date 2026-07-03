@@ -5,7 +5,7 @@ import { verifyJWT } from "@/lib/jwt";
 import { dbQuery } from "@/lib/db";
 import { ensureDailyMissionsAssigned, updateUserStreak } from "@/lib/streaks";
 import { LessonReaderClient } from "@/components/LessonReaderClient";
-import { getInterviewQuestionForLesson } from "@/lib/learningProfile";
+import { getDayPlanForDbLessonId, getInterviewQuestionFromDayPlanMatch } from "@/lib/learningProfile";
 
 interface Props {
   params: Promise<{ lessonId: string }>;
@@ -94,7 +94,8 @@ export default async function LessonDetailPage({ params }: Props) {
   const currentIndex = allLessons.findIndex((les) => les.id === lessonId);
   const prevLesson = currentIndex > 0 ? allLessons[currentIndex - 1] : null;
   const nextLesson = currentIndex !== -1 && currentIndex < allLessons.length - 1 ? allLessons[currentIndex + 1] : null;
-  const interview = getInterviewQuestionForLesson(lesson.title);
+  const nextSteps = getDayPlanForDbLessonId(lesson.id);
+  const interview = getInterviewQuestionFromDayPlanMatch(nextSteps);
 
   return (
     <div className="min-h-screen bg-slate-50/50 pb-20 relative overflow-hidden">
@@ -107,6 +108,7 @@ export default async function LessonDetailPage({ params }: Props) {
         prevLesson={prevLesson}
         nextLesson={nextLesson}
         interview={interview}
+        nextSteps={nextSteps}
       />
     </div>
   );

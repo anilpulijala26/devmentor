@@ -4,8 +4,8 @@ import { ArrowRight, Clock, Compass, BookOpen } from "lucide-react";
 import { StatusBadge, TagBadge } from "@/components/marketing-primitives";
 
 export const metadata = {
-  title: "Developer Roadmaps - CodeNivra",
-  description: "Accelerate your path from intern to senior software engineer with structured learning pathways."
+  title: "Career Paths - CodeNivra",
+  description: "Explore optional career path overviews after you finish your guided daily learning plan."
 };
 
 export default function RoadmapsPage() {
@@ -25,14 +25,29 @@ export default function RoadmapsPage() {
         <div className="max-w-3xl space-y-4">
           <div className="inline-flex items-center gap-2 rounded-lg border border-slate-200 bg-white px-3 py-1.5 text-sm font-medium text-slate-700">
             <span className="h-2 w-2 rounded-full bg-indigo-600" aria-hidden="true" />
-            Role-based pathways
+            Optional career exploration
           </div>
           <h1 className="text-3xl font-semibold tracking-tight text-slate-950 sm:text-4xl lg:text-[3rem] lg:leading-[1.08]">
-            Learning Roadmaps
+            Career Path Explorer
           </h1>
           <p className="max-w-[680px] text-base leading-7 text-slate-600 sm:text-lg">
-            Choose a structured path mapped to real engineering roles, then progress through lessons, tasks, and project labs in a clear sequence.
+            Browse role-based paths for motivation and direction. Your main daily guided flow still lives in Dashboard, Learn, Practice, Projects, Interview, and Progress.
           </p>
+        </div>
+
+        <div className="flex flex-wrap gap-3">
+          <Link
+            href="/courses"
+            className="inline-flex min-h-11 items-center justify-center rounded-xl bg-slate-900 px-5 text-sm font-semibold text-white transition hover:bg-slate-800"
+          >
+            Return to Guided Learn Flow
+          </Link>
+          <Link
+            href="/dashboard"
+            className="inline-flex min-h-11 items-center justify-center rounded-xl border border-slate-300 bg-white px-5 text-sm font-semibold text-slate-700 transition hover:bg-slate-50"
+          >
+            Open Dashboard
+          </Link>
         </div>
 
         <section className="space-y-6">

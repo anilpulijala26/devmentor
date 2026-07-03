@@ -13,6 +13,7 @@ import {
   RotateCcw,
 } from "lucide-react";
 import ReactMarkdown from "react-markdown";
+import { LessonNextSteps } from "./LessonNextSteps";
 
 interface Lesson {
   id: string;
@@ -42,13 +43,30 @@ interface LessonReaderClientProps {
   prevLesson: NavLesson | null;
   nextLesson: NavLesson | null;
   interview: InterviewBlock;
+  nextSteps: {
+    pathTitle: string;
+    moduleTitle: string;
+    dayPlan: {
+      day: number;
+      practiceTitle: string;
+      practiceSlug?: string;
+      practiceHref?: string;
+      challengeTitle: string;
+      challengeHref?: string;
+      interviewQuestion: string;
+      interviewHref?: string;
+      projectStepTitle: string;
+      projectSlug?: string;
+      projectHref?: string;
+    };
+  } | null;
 }
 
 type MarkdownCodeProps = React.ComponentPropsWithoutRef<"code"> & {
   inline?: boolean;
 };
 
-export function LessonReaderClient({ lesson, initialCompleted, prevLesson, nextLesson, interview }: LessonReaderClientProps) {
+export function LessonReaderClient({ lesson, initialCompleted, prevLesson, nextLesson, interview, nextSteps }: LessonReaderClientProps) {
   const [completed, setCompleted] = useState(initialCompleted);
   const [loading, setLoading] = useState(false);
   const router = useRouter();
@@ -126,6 +144,33 @@ export function LessonReaderClient({ lesson, initialCompleted, prevLesson, nextL
               <p className="mt-4 text-sm font-semibold text-slate-900">{interview.question}</p>
               <p className="mt-2 text-sm leading-6 text-slate-600">Expected answer: {interview.answer}</p>
             </div>
+
+            {nextSteps ? (
+              <LessonNextSteps
+                moduleTitle={nextSteps.moduleTitle}
+                day={nextSteps.dayPlan.day}
+                practice={{
+                  label: "Practice",
+                  title: nextSteps.dayPlan.practiceTitle,
+                  href: nextSteps.dayPlan.practiceHref,
+                }}
+                challenge={{
+                  label: "Solve",
+                  title: nextSteps.dayPlan.challengeTitle,
+                  href: nextSteps.dayPlan.challengeHref,
+                }}
+                interview={{
+                  label: "Explain",
+                  title: nextSteps.dayPlan.interviewQuestion,
+                  href: nextSteps.dayPlan.interviewHref,
+                }}
+                project={{
+                  label: "Build",
+                  title: nextSteps.dayPlan.projectStepTitle,
+                  href: nextSteps.dayPlan.projectHref,
+                }}
+              />
+            ) : null}
 
             <div className="mt-10 pt-8 border-t border-slate-100 flex flex-col sm:flex-row items-center justify-between gap-4">
               <div className="flex items-center gap-2">

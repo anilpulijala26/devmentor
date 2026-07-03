@@ -50,7 +50,7 @@ export default async function ChallengesCatalogPage() {
             <span className="text-slate-500">Practice</span>
           </div>
           <h1 className="text-3xl font-extrabold tracking-tight text-slate-900 sm:text-4xl">Daily Coding Problems</h1>
-          <p className="mt-2 text-slate-500 max-w-2xl">Solve one small JavaScript problem every day to build confidence and strengthen problem-solving habits.</p>
+          <p className="mt-2 text-slate-500 max-w-2xl">Solve one small JavaScript problem every day, then unlock the explanation after you attempt it.</p>
         </div>
 
         {todayChallenge ? (
@@ -97,7 +97,7 @@ export default async function ChallengesCatalogPage() {
                   ) : (
                     <span className="text-xs font-bold text-slate-400">Not Submitted Yet</span>
                   )}
-                  {isToday ? <Link href="/challenges/today" className="text-xs font-bold text-indigo-600 hover:text-indigo-700 flex items-center gap-1">Open Problem <ChevronRight className="w-3.5 h-3.5" /></Link> : <span className="text-xs text-slate-300 font-semibold">Unlock on cycle</span>}
+                  {isToday ? <Link href="/challenges/today" className="text-xs font-bold text-indigo-600 hover:text-indigo-700 flex items-center gap-1">Open Problem <ChevronRight className="w-3.5 h-3.5" /></Link> : <span className="text-xs text-slate-300 font-semibold">Daily rotation</span>}
                 </div>
               </div>
             );

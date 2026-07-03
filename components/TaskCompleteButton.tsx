@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React from "react";
 import { useProgress } from "@/context/ProgressContext";
 import { CheckCircle2 } from "lucide-react";
 
@@ -8,50 +8,21 @@ interface TaskCompleteButtonProps {
   taskSlug: string;
 }
 
-const TASK_DATES_STORAGE_KEY = "CodeNivra-progress-task-dates";
-
 export function TaskCompleteButton({ taskSlug }: TaskCompleteButtonProps) {
-  const { completedTasks, toggleTaskComplete } = useProgress();
+  const { completedTasks, taskCompletedDates, toggleTaskComplete } = useProgress();
   const isCompleted = completedTasks.includes(taskSlug);
-  const [completedDate, setCompletedDate] = useState<string | null>(() => {
-    if (typeof window === "undefined") {
-      return null;
-    }
+  const completedDate = taskCompletedDates[taskSlug] ?? null;
 
-    try {
-      const raw = localStorage.getItem(TASK_DATES_STORAGE_KEY);
-      if (!raw) return null;
-      const parsed = JSON.parse(raw) as Record<string, string>;
-      return parsed[taskSlug] || null;
-    } catch {
-      return null;
-    }
-  });
+  const completedDateLabel = completedDate
+    ? new Date(completedDate).toLocaleDateString(undefined, {
+        day: "numeric",
+        month: "short",
+        year: "numeric",
+      })
+    : null;
 
-  const handleToggle = () => {
-    toggleTaskComplete(taskSlug);
-
-    try {
-      const raw = localStorage.getItem(TASK_DATES_STORAGE_KEY);
-      const parsed = raw ? (JSON.parse(raw) as Record<string, string>) : {};
-
-      if (isCompleted) {
-        delete parsed[taskSlug];
-        setCompletedDate(null);
-      } else {
-        const dateLabel = new Date().toLocaleDateString(undefined, {
-          day: "numeric",
-          month: "short",
-          year: "numeric",
-        });
-        parsed[taskSlug] = dateLabel;
-        setCompletedDate(dateLabel);
-      }
-
-      localStorage.setItem(TASK_DATES_STORAGE_KEY, JSON.stringify(parsed));
-    } catch {
-      setCompletedDate(isCompleted ? null : completedDate);
-    }
+  const handleToggle = async () => {
+    await toggleTaskComplete(taskSlug);
   };
 
   return (
@@ -65,7 +36,7 @@ export function TaskCompleteButton({ taskSlug }: TaskCompleteButtonProps) {
       }`}
     >
       <CheckCircle2 className="w-4 h-4" />
-      <span>{isCompleted ? (completedDate ? `Completed on ${completedDate}` : "Completed") : "Mark as Completed"}</span>
+      <span>{isCompleted ? (completedDateLabel ? `Completed on ${completedDateLabel}` : "Completed") : "Mark as Completed"}</span>
     </button>
   );
 }

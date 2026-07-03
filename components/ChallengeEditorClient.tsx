@@ -14,6 +14,8 @@ import {
   Play,
   RotateCcw,
   Save,
+  Lock,
+  MessageSquareQuote,
 } from "lucide-react";
 
 interface ChallengeExample {
@@ -36,6 +38,10 @@ interface Challenge {
   hint: string;
   interviewQuestion: string;
   interviewAnswer: string;
+  referenceSolution?: string;
+  solutionSteps?: string[];
+  commonMistakes?: string[];
+  interviewExplanation?: string;
 }
 
 interface ChallengeEditorClientProps {
@@ -57,6 +63,7 @@ export function ChallengeEditorClient({ challenge, prevSubmission, isSolved: ini
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const [showHint, setShowHint] = useState(false);
   const [results, setResults] = useState<RunResult[]>([]);
+  const hasUnlockedSolution = success || prevSubmission !== null || results.length > 0;
 
   const sendAttempt = async (mode: "run" | "submit") => {
     setLoading(mode);
@@ -214,6 +221,67 @@ export function ChallengeEditorClient({ challenge, prevSubmission, isSolved: ini
           </div>
 
           {errorMessage ? <div className="rounded-2xl bg-red-50 border border-red-100 p-4 text-sm text-red-700">{errorMessage}</div> : null}
+
+          <div className="rounded-3xl border border-slate-200 bg-white p-5 shadow-sm">
+            <div className="flex items-center gap-2">
+              {hasUnlockedSolution ? <CheckCircle className="h-4 w-4 text-emerald-600" /> : <Lock className="h-4 w-4 text-slate-400" />}
+              <h2 className="text-base font-black text-slate-950">Solution Review</h2>
+            </div>
+
+            {hasUnlockedSolution ? (
+              <div className="mt-4 space-y-5">
+                {challenge.referenceSolution ? (
+                  <div>
+                    <p className="text-xs font-bold uppercase tracking-[0.18em] text-slate-400">Final code</p>
+                    <pre className="mt-2 overflow-x-auto rounded-2xl border border-slate-900 bg-slate-950 p-4 font-mono text-xs leading-relaxed text-slate-200">
+                      {challenge.referenceSolution}
+                    </pre>
+                  </div>
+                ) : null}
+
+                {challenge.solutionSteps?.length ? (
+                  <div>
+                    <p className="text-xs font-bold uppercase tracking-[0.18em] text-slate-400">Step-by-step explanation</p>
+                    <ol className="mt-2 space-y-2 text-sm text-slate-600">
+                      {challenge.solutionSteps.map((step, index) => (
+                        <li key={step} className="flex gap-3 rounded-2xl border border-slate-200 bg-slate-50/70 p-3">
+                          <span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-indigo-600 text-[11px] font-bold text-white">{index + 1}</span>
+                          <span>{step}</span>
+                        </li>
+                      ))}
+                    </ol>
+                  </div>
+                ) : null}
+
+                {challenge.commonMistakes?.length ? (
+                  <div>
+                    <p className="text-xs font-bold uppercase tracking-[0.18em] text-slate-400">Common mistakes</p>
+                    <div className="mt-2 space-y-2">
+                      {challenge.commonMistakes.map((mistake) => (
+                        <div key={mistake} className="rounded-2xl border border-rose-100 bg-rose-50/50 p-3 text-sm text-rose-700">
+                          {mistake}
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                ) : null}
+
+                {challenge.interviewExplanation ? (
+                  <div className="rounded-2xl border border-indigo-100 bg-indigo-50/60 p-4 text-sm">
+                    <div className="flex items-center gap-2 text-slate-900">
+                      <MessageSquareQuote className="h-4 w-4 text-indigo-600" />
+                      <p className="font-bold">Explain it in an interview</p>
+                    </div>
+                    <p className="mt-2 text-slate-600">{challenge.interviewExplanation}</p>
+                  </div>
+                ) : null}
+              </div>
+            ) : (
+              <div className="mt-4 rounded-2xl border border-slate-200 bg-slate-50/70 p-4 text-sm text-slate-600">
+                Run the tests or submit a solution first. Once you attempt the problem, the final code and explanation will unlock here.
+              </div>
+            )}
+          </div>
 
           {results.length > 0 ? (
             <div className="rounded-3xl border border-slate-200 bg-white p-5 shadow-sm">

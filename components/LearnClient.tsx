@@ -180,13 +180,13 @@ export function LearnClient({ tracks }: LearnClientProps) {
         <div className="max-w-3xl space-y-4">
           <div className="inline-flex items-center gap-2 rounded-lg border border-slate-200 bg-slate-50 px-3 py-1.5 text-sm font-medium text-slate-700">
             <span className="h-2 w-2 rounded-full bg-indigo-600" aria-hidden="true" />
-            Learning workspace
+            Optional track library
           </div>
           <h1 className="text-3xl font-semibold tracking-tight text-slate-950 sm:text-4xl lg:text-[3rem] lg:leading-[1.08]">
-            Professional Learning Hub
+            Explore Track Library
           </h1>
           <p className="max-w-[680px] text-base leading-7 text-slate-600 sm:text-lg">
-            Move through structured tracks, role-based roadmaps, practice tasks, and project labs inside one guided developer workspace.
+            Use this page to explore extra track libraries and syllabus previews. For the guided daily lesson flow, start from Dashboard or Learn.
           </p>
         </div>
 
@@ -194,8 +194,8 @@ export function LearnClient({ tracks }: LearnClientProps) {
           <div className="rounded-[24px] border border-slate-200 bg-white p-6 shadow-[0_10px_30px_rgba(15,23,42,0.05)]">
             <div className="flex flex-wrap items-center justify-between gap-3 border-b border-slate-200 pb-4">
               <div>
-                <p className="text-base font-semibold text-slate-950">Learning Command Center</p>
-                <p className="mt-1 text-sm text-slate-500">Plan your next track, open tasks, and move into project delivery.</p>
+                <p className="text-base font-semibold text-slate-950">Guided Learning Workspace</p>
+                <p className="mt-1 text-sm text-slate-500">Explore optional tracks here, then return to your daily module flow when you are ready to continue.</p>
               </div>
               <div className="rounded-full border border-emerald-200 bg-emerald-50 px-3 py-1 text-xs font-medium text-emerald-700">
                 Active workspace
@@ -205,16 +205,16 @@ export function LearnClient({ tracks }: LearnClientProps) {
             <div className="mt-5 grid gap-4 sm:grid-cols-2">
               <div className="rounded-2xl border border-slate-200 bg-slate-50/80 p-4">
                 <p className="text-xs font-medium text-slate-500">Recommended next move</p>
-                <p className="mt-2 text-lg font-semibold text-slate-950">Choose a learning track</p>
+                <p className="mt-2 text-lg font-semibold text-slate-950">Open your guided daily module</p>
               </div>
               <div className="rounded-2xl border border-slate-200 bg-slate-50/80 p-4">
                 <p className="text-xs font-medium text-slate-500">Primary workflow</p>
-                <p className="mt-2 text-lg font-semibold text-slate-950">Learn, practice, build, review</p>
+                <p className="mt-2 text-lg font-semibold text-slate-950">Learn, practice, solve, build, explain, submit</p>
               </div>
             </div>
 
             <div className="mt-5 flex flex-wrap gap-2 text-xs font-medium text-slate-700">
-              {["Roadmaps", "Tasks", "Projects", "Code Review", "Deployment"].map((item) => (
+              {["Dashboard", "Learn", "Practice", "Projects", "Interview"].map((item) => (
                 <span key={item} className="rounded-full border border-slate-200 bg-white px-3 py-1.5">
                   {item}
                 </span>
@@ -223,17 +223,17 @@ export function LearnClient({ tracks }: LearnClientProps) {
 
             <div className="mt-5 flex flex-wrap gap-3">
               <Link
-                href="/roadmaps"
+                href="/courses"
                 className="inline-flex min-h-11 items-center gap-2 rounded-xl bg-slate-900 px-5 text-sm font-semibold text-white transition hover:bg-slate-800 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-slate-900 focus-visible:ring-offset-2"
               >
-                <span>Open Roadmaps</span>
+                <span>Go to Guided Learn Flow</span>
                 <ArrowRight className="w-4 h-4" />
               </Link>
               <Link
                 href="/projects"
                 className="inline-flex min-h-11 items-center gap-2 rounded-xl border border-slate-300 bg-white px-5 text-sm font-semibold text-slate-700 transition hover:bg-slate-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 focus-visible:ring-offset-2"
               >
-                <span>Explore Labs</span>
+                <span>Open Projects</span>
                 <ArrowRight className="w-4 h-4" />
               </Link>
             </div>
@@ -246,7 +246,7 @@ export function LearnClient({ tracks }: LearnClientProps) {
       <section className="space-y-6">
         <div className="flex items-center gap-2">
           <Briefcase className="h-5 w-5 text-indigo-600" />
-          <h2 className="text-2xl font-semibold tracking-tight text-slate-950">Recommended Path by Role</h2>
+          <h2 className="text-2xl font-semibold tracking-tight text-slate-950">Career Paths (Optional)</h2>
         </div>
 
         <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-5">
@@ -269,7 +269,7 @@ export function LearnClient({ tracks }: LearnClientProps) {
                 </div>
 
                 <span className="inline-flex items-center gap-2 text-sm font-semibold text-indigo-700">
-                  Open roadmap <ArrowRight className="w-4 h-4" />
+                  View path <ArrowRight className="w-4 h-4" />
                 </span>
               </div>
             </Link>

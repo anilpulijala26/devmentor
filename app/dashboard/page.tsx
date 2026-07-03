@@ -152,6 +152,30 @@ export default async function DashboardPage() {
     const learningProfile = parseLearningProfileCookie(learningProfileCookie);
     const currentModule = getCurrentPathModule(learningProfile, completedCount);
     const currentDayPlan = getCurrentDayPlan(learningProfile, completedCount);
+
+    let projectSubmission = null;
+    if (currentDayPlan.projectSlug) {
+      try {
+        const submissionRes = await dbQuery(
+          `SELECT github_url, live_url, review_status, submitted_at
+           FROM user_project_submissions
+           WHERE user_id = $1 AND project_slug = $2`,
+          [decoded.userId, currentDayPlan.projectSlug],
+        );
+
+        if (submissionRes.rows.length > 0) {
+          projectSubmission = {
+            githubUrl: submissionRes.rows[0].github_url,
+            liveUrl: submissionRes.rows[0].live_url,
+            reviewStatus: submissionRes.rows[0].review_status,
+            submittedAt: submissionRes.rows[0].submitted_at,
+          };
+        }
+      } catch (error) {
+        console.error("Dashboard project submission lookup failed:", error);
+      }
+    }
+
     const showProfilePrompt = !learningProfileCookie;
 
     return (
@@ -167,6 +191,7 @@ export default async function DashboardPage() {
           learningProfile={learningProfile}
           currentModuleTitle={currentModule.title}
           currentDayPlan={currentDayPlan}
+          projectSubmission={projectSubmission}
           showProfilePrompt={showProfilePrompt}
         />
       </div>

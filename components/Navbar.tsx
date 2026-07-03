@@ -18,7 +18,7 @@ export function Navbar() {
   const navItems = user
     ? [
         { name: "Dashboard", href: "/dashboard", match: ["/dashboard"] },
-        { name: "Learn", href: "/courses", match: ["/courses", "/lessons", "/roadmaps", "/learn"] },
+        { name: "Learn", href: "/courses", match: ["/courses", "/lessons", "/learn"] },
         { name: "Practice", href: "/tasks", match: ["/tasks", "/challenges"] },
         { name: "Projects", href: "/projects", match: ["/projects"] },
         { name: "Interview", href: "/interview", match: ["/interview"] },

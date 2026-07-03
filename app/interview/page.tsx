@@ -9,6 +9,7 @@ import {
   parseLearningProfileCookie,
 } from "@/lib/learningProfile";
 import { ArrowRight, MessageSquareQuote } from "lucide-react";
+import { dbQuery } from "@/lib/db";
 
 export const metadata = {
   title: "Interview - CodeNivra",
@@ -30,8 +31,13 @@ export default async function InterviewPage() {
 
   const profile = parseLearningProfileCookie(cookieStore.get("learning_profile")?.value);
   const path = LEARNING_PATHS[profile.pathKey];
-  const currentModule = getCurrentPathModule(profile, 0);
-  const currentDay = getCurrentDayPlan(profile, 0);
+  const completedLessonsRes = await dbQuery(
+    "SELECT COUNT(*) as count FROM user_lesson_progress WHERE user_id = $1 AND is_completed = true",
+    [decoded.userId],
+  );
+  const completedCount = parseInt(completedLessonsRes.rows[0].count, 10);
+  const currentModule = getCurrentPathModule(profile, completedCount);
+  const currentDay = getCurrentDayPlan(profile, completedCount);
   const allQuestions = path.modules.flatMap((module) =>
     module.dayPlans.map((day) => ({
       moduleTitle: module.title,
@@ -64,6 +70,17 @@ export default async function InterviewPage() {
             <p className="mt-2 text-sm font-semibold text-slate-900">{currentDay.interviewQuestion}</p>
             <p className="mt-2 text-sm text-slate-600">{currentDay.interviewAnswer}</p>
             <p className="mt-3 text-xs text-slate-500">Current module: {currentModule.title} • Day {currentDay.day}</p>
+          </div>
+          <div className="mt-4 grid gap-3 sm:grid-cols-3">
+            <Link href={currentDay.practiceHref ?? "/tasks"} className="rounded-2xl border border-indigo-100 bg-white px-4 py-3 text-sm font-semibold text-slate-700 transition hover:bg-indigo-50/40">
+              Practice task
+            </Link>
+            <Link href={currentDay.challengeHref ?? "/challenges/today"} className="rounded-2xl border border-indigo-100 bg-white px-4 py-3 text-sm font-semibold text-slate-700 transition hover:bg-indigo-50/40">
+              Coding challenge
+            </Link>
+            <Link href={currentDay.projectHref ?? "/projects"} className="rounded-2xl border border-indigo-100 bg-white px-4 py-3 text-sm font-semibold text-slate-700 transition hover:bg-indigo-50/40">
+              Project submission
+            </Link>
           </div>
         </div>
 

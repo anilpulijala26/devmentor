@@ -2,8 +2,8 @@ import { getAllTracks } from "@/lib/content";
 import { LearnClient } from "@/components/LearnClient";
 
 export const metadata = {
-  title: "Learning Hub - CodeNivra",
-  description: "Gain hands-on developer experience. Follow guided paths, practice daily tasks, build project blueprints, and crack interviews.",
+  title: "Track Library - CodeNivra",
+  description: "Explore optional track libraries after your daily plan. Use Dashboard and Learn for the guided lesson-by-lesson flow.",
 };
 
 export default function LearnPage() {

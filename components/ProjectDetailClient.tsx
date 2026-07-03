@@ -21,12 +21,15 @@ import { ProjectChecklist } from "./mdx/ProjectChecklist";
 import { ProjectAccordion } from "./project-detail/ProjectAccordion";
 import { ProjectCTA } from "./project-detail/ProjectCTA";
 import { ProjectCodeExplorer } from "./project-detail/ProjectCodeExplorer";
+import { ProjectSubmissionPanel, type ProjectSubmission } from "./project-detail/ProjectSubmissionPanel";
 import { ProjectHero } from "./project-detail/ProjectHero";
 import { ProjectInfoCards } from "./project-detail/ProjectInfoCards";
 import type { Project } from "@/lib/projects";
 
 interface ProjectDetailClientProps {
   project: Project;
+  submission: ProjectSubmission | null;
+  isLoggedIn: boolean;
 }
 
 type ProjectTab = "overview" | "build" | "code" | "tests" | "deploy" | "interview";
@@ -93,7 +96,7 @@ function CodeBlock({
   );
 }
 
-export function ProjectDetailClient({ project }: ProjectDetailClientProps) {
+export function ProjectDetailClient({ project, submission, isLoggedIn }: ProjectDetailClientProps) {
   const [activeTab, setActiveTab] = useState<ProjectTab>("overview");
   const [copiedMap, setCopiedMap] = useState<Record<string, boolean>>({});
   const [openSections, setOpenSections] = useState<Record<string, boolean>>({
@@ -567,6 +570,13 @@ export function ProjectDetailClient({ project }: ProjectDetailClientProps) {
                 <CompactList items={project.seniorNotes} icon="dot" />
               </article>
             </div>
+
+            <ProjectCTA />
+            <ProjectSubmissionPanel
+              projectSlug={project.slug}
+              initialSubmission={submission}
+              isLoggedIn={isLoggedIn}
+            />
           </div>
         ) : null}
 

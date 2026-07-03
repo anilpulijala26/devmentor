@@ -5,6 +5,8 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useProgress } from "@/context/ProgressContext";
 import { type User } from "@/context/AuthContext";
+import { developerTasks } from "@/lib/tasks";
+import { projects } from "@/lib/projects";
 import { LearningProfilePrompt } from "@/components/LearningProfilePrompt";
 import type { DayPlan, LearningProfile } from "@/lib/learningProfile";
 import {
@@ -40,6 +42,13 @@ interface TodayChallenge {
   isSolved: boolean;
 }
 
+interface ProjectSubmissionState {
+  githubUrl: string | null;
+  liveUrl: string | null;
+  reviewStatus: string;
+  submittedAt: string | null;
+}
+
 interface DashboardClientProps {
   user: User;
   totalCount: number;
@@ -51,6 +60,7 @@ interface DashboardClientProps {
   learningProfile: LearningProfile;
   currentModuleTitle: string;
   currentDayPlan: DayPlan;
+  projectSubmission: ProjectSubmissionState | null;
   showProfilePrompt: boolean;
 }
 
@@ -65,6 +75,7 @@ export function DashboardClient({
   learningProfile,
   currentModuleTitle,
   currentDayPlan,
+  projectSubmission,
   showProfilePrompt,
 }: DashboardClientProps) {
   const { completedTasks, completedProjects } = useProgress();
@@ -76,8 +87,8 @@ export function DashboardClient({
     setMissions(dailyMissions);
   }, [dailyMissions]);
 
-  const totalTasks = 20;
-  const totalProjects = 8;
+  const totalTasks = developerTasks.length;
+  const totalProjects = projects.length;
   const lessonsPercent = totalCount > 0 ? Math.min(Math.round((completedCount / totalCount) * 100), 100) : 0;
   const tasksPercent = Math.min(Math.round((completedTasks.length / totalTasks) * 100), 100);
   const projectsPercent = Math.min(Math.round((completedProjects.length / totalProjects) * 100), 100);
@@ -91,12 +102,15 @@ export function DashboardClient({
   const practiceStatus = currentDayPlan.practiceSlug && completedTasks.includes(currentDayPlan.practiceSlug)
     ? "Completed"
     : "Not Started";
-  const explainStatus = missions.find((mission) => mission.type === "read_interview")?.isCompleted
-    ? "Completed"
-    : "Not Started";
   const challengeStatus = todayChallenge?.isSolved ? "Completed" : "Not Started";
   const projectStatus = currentDayPlan.projectSlug && completedProjects.includes(currentDayPlan.projectSlug)
     ? "Completed"
+    : "Not Started";
+  const explainStatus = missions.find((mission) => mission.type === "read_interview")?.isCompleted
+    ? "Completed"
+    : "Not Started";
+  const submitStatus = projectSubmission?.reviewStatus && projectSubmission.reviewStatus !== "not_submitted_yet"
+    ? "Submitted"
     : "Not Started";
 
   const handleToggleMission = async (progressId: string, currentCompleted: boolean) => {
@@ -137,10 +151,11 @@ export function DashboardClient({
 
   const learningPlanItems = [
     { label: "Learn", title: continueLesson?.title ?? currentDayPlan.lessonTitle, status: lessonStatus, href: continueLesson ? `/lessons/${continueLesson.id}` : "/courses" },
-    { label: "Practice", title: currentDayPlan.practiceTitle, status: practiceStatus, href: currentDayPlan.practiceSlug ? `/tasks/${currentDayPlan.practiceSlug}` : "/tasks" },
-    { label: "Solve", title: todayChallenge?.title ?? currentDayPlan.challengeTitle, status: challengeStatus, href: "/challenges/today" },
-    { label: "Explain", title: currentDayPlan.interviewQuestion, status: explainStatus, href: "/interview" },
-    { label: "Build", title: currentDayPlan.projectStepTitle, status: projectStatus, href: currentDayPlan.projectSlug ? `/projects/${currentDayPlan.projectSlug}` : "/projects" },
+    { label: "Practice", title: currentDayPlan.practiceTitle, status: practiceStatus, href: currentDayPlan.practiceHref ?? "/tasks" },
+    { label: "Solve", title: todayChallenge?.title ?? currentDayPlan.challengeTitle, status: challengeStatus, href: currentDayPlan.challengeHref ?? "/challenges/today" },
+    { label: "Build", title: currentDayPlan.projectStepTitle, status: projectStatus, href: currentDayPlan.projectHref ?? "/projects" },
+    { label: "Explain", title: currentDayPlan.interviewQuestion, status: explainStatus, href: currentDayPlan.interviewHref ?? "/interview" },
+    { label: "Submit", title: projectSubmission?.githubUrl ? "Project links saved for review" : "Submit GitHub URL and live URL", status: submitStatus, href: currentDayPlan.projectHref ?? "/projects" },
   ];
 
   return (
@@ -167,7 +182,7 @@ export function DashboardClient({
             </div>
             <div className="rounded-2xl border border-white/10 bg-white/5 px-4 py-3 text-sm text-slate-200">
               <p className="font-semibold">You have completed {completedCount} lessons so far.</p>
-              <p className="mt-1 text-slate-300">Keep today simple: finish one lesson, one task, one coding problem, and one project step.</p>
+              <p className="mt-1 text-slate-300">Keep today simple: finish one lesson, one practice task, one coding problem, one project step, and then submit your links.</p>
             </div>
           </div>
         </section>
@@ -183,7 +198,7 @@ export function DashboardClient({
                 <p className="mt-2 text-sm text-slate-500">{"Follow the flow: Learn -> Practice -> Solve -> Build -> Explain -> Submit"}</p>
               </div>
               <span className="rounded-full bg-emerald-50 px-3 py-1 text-xs font-bold text-emerald-700">
-                {completedMissionCount}/{missions.length} daily tasks done
+                {completedMissionCount}/{missions.length} checklist items done
               </span>
             </div>
 
@@ -198,7 +213,7 @@ export function DashboardClient({
                     <p className="text-xs font-bold uppercase tracking-[0.18em] text-slate-400">{index + 1}. {item.label}</p>
                     <p className="mt-1 text-sm font-semibold text-slate-900">{item.title}</p>
                   </div>
-                  <span className={`shrink-0 rounded-full px-2.5 py-1 text-[11px] font-bold ${item.status === "Completed" ? "bg-emerald-50 text-emerald-700" : item.status === "In Progress" ? "bg-amber-50 text-amber-700" : "bg-slate-100 text-slate-600"}`}>
+                  <span className={`shrink-0 rounded-full px-2.5 py-1 text-[11px] font-bold ${item.status === "Completed" ? "bg-emerald-50 text-emerald-700" : item.status === "In Progress" ? "bg-amber-50 text-amber-700" : item.status === "Submitted" ? "bg-indigo-50 text-indigo-700" : "bg-slate-100 text-slate-600"}`}>
                     {item.status}
                   </span>
                 </Link>

@@ -19,63 +19,63 @@ export function Footer() {
         {user && (
           <div className="grid gap-10 md:grid-cols-3">
             <div>
-              <h3 className="text-sm font-semibold uppercase tracking-[0.16em] text-slate-500">Start Here</h3>
+              <h3 className="text-sm font-semibold uppercase tracking-[0.16em] text-slate-500">Daily Flow</h3>
               <ul className="mt-4 space-y-3 text-sm">
                 <li>
-                  <Link href="/learn" className="text-slate-600 transition hover:text-slate-950 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 rounded px-1">
-                    Learning Hub
+                  <Link href="/dashboard" className="text-slate-600 transition hover:text-slate-950 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 rounded px-1">
+                    Dashboard
                   </Link>
                 </li>
                 <li>
-                  <Link href="/roadmaps" className="text-slate-600 transition hover:text-slate-950 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 rounded px-1">
-                    Roadmaps
+                  <Link href="/courses" className="text-slate-600 transition hover:text-slate-950 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 rounded px-1">
+                    Learn
                   </Link>
                 </li>
                 <li>
-                  <Link href="/projects" className="text-slate-600 transition hover:text-slate-950 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 rounded px-1">
-                    Project Labs
+                  <Link href="/tasks" className="text-slate-600 transition hover:text-slate-950 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 rounded px-1">
+                    Practice
                   </Link>
                 </li>
               </ul>
             </div>
 
             <div>
-              <h3 className="text-sm font-semibold uppercase tracking-[0.16em] text-slate-500">Practice</h3>
+              <h3 className="text-sm font-semibold uppercase tracking-[0.16em] text-slate-500">Build & Explain</h3>
               <ul className="mt-4 space-y-3 text-sm">
                 <li>
-                  <Link href="/tasks" className="text-slate-600 transition hover:text-slate-950 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 rounded px-1">
-                    Daily Tasks
+                  <Link href="/projects" className="text-slate-600 transition hover:text-slate-950 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 rounded px-1">
+                    Projects
+                  </Link>
+                </li>
+                <li>
+                  <Link href="/interview" className="text-slate-600 transition hover:text-slate-950 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 rounded px-1">
+                    Interview
+                  </Link>
+                </li>
+                <li>
+                  <Link href="/progress" className="text-slate-600 transition hover:text-slate-950 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 rounded px-1">
+                    Progress
+                  </Link>
+                </li>
+              </ul>
+            </div>
+
+            <div>
+              <h3 className="text-sm font-semibold uppercase tracking-[0.16em] text-slate-500">Optional Exploration</h3>
+              <ul className="mt-4 space-y-3 text-sm">
+                <li>
+                  <Link href="/learn" className="text-slate-600 transition hover:text-slate-950 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 rounded px-1">
+                    Track Library
+                  </Link>
+                </li>
+                <li>
+                  <Link href="/roadmaps" className="text-slate-600 transition hover:text-slate-950 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 rounded px-1">
+                    Career Paths
                   </Link>
                 </li>
                 <li>
                   <Link href="/code-review" className="text-slate-600 transition hover:text-slate-950 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 rounded px-1">
                     Code Review
-                  </Link>
-                </li>
-                <li>
-                  <Link href="/learn/deployment" className="text-slate-600 transition hover:text-slate-950 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 rounded px-1">
-                    Deployment
-                  </Link>
-                </li>
-              </ul>
-            </div>
-
-            <div>
-              <h3 className="text-sm font-semibold uppercase tracking-[0.16em] text-slate-500">Focus Areas</h3>
-              <ul className="mt-4 space-y-3 text-sm">
-                <li>
-                  <Link href="/learn/frontend-frameworks" className="text-slate-600 transition hover:text-slate-950 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 rounded px-1">
-                    Frontend Roadmap
-                  </Link>
-                </li>
-                <li>
-                  <Link href="/learn/backend" className="text-slate-600 transition hover:text-slate-950 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 rounded px-1">
-                    Backend Roadmap
-                  </Link>
-                </li>
-                <li>
-                  <Link href="/code-review" className="text-slate-600 transition hover:text-slate-950 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 rounded px-1">
-                    Code Review Checklist
                   </Link>
                 </li>
               </ul>

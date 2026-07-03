@@ -1,6 +1,10 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { getLessonContent, getTrackBySlug, generateStaticParamsForLesson } from "@/lib/content";
 import { extractLessonOutline, LessonOutlineItem } from "@/lib/lesson-outline";
+import { getTopicForLesson } from "@/lib/learning-map";
+import { getDeveloperTaskBySlug } from "@/lib/tasks";
+import { getProjectBySlug } from "@/lib/projects";
+import { getDayPlanForLessonRoute, getInterviewQuestionFromDayPlanMatch } from "@/lib/learningProfile";
 import { notFound } from "next/navigation";
 import { MDXContent } from "@/components/MDXContent";
 import { LessonReader } from "@/components/LessonReader";
@@ -101,6 +105,12 @@ export default async function LessonPage({ params }: Props) {
       ? allLessons[currentLessonIndex + 1]
       : null;
 
+  const mappedTopic = getTopicForLesson(lessonSlug);
+  const mappedTask = mappedTopic?.relatedTasks?.[0] ? getDeveloperTaskBySlug(mappedTopic.relatedTasks[0]) : undefined;
+  const mappedProject = mappedTopic?.relatedProjects?.[0] ? getProjectBySlug(mappedTopic.relatedProjects[0]) : undefined;
+  const dayPlanMatch = getDayPlanForLessonRoute(trackSlug, lessonSlug);
+  const interview = getInterviewQuestionFromDayPlanMatch(dayPlanMatch);
+
   const lines = (lesson.content || "").split("\n");
   const contentOutline = extractLessonOutline(lesson.content || "");
   const supplementalOutline: LessonOutlineItem[] = [];
@@ -174,6 +184,53 @@ export default async function LessonPage({ params }: Props) {
       prevLesson={prevLesson}
       nextLesson={nextLesson}
       outlineSections={outlineSections}
+      nextSteps={dayPlanMatch ? {
+        moduleTitle: dayPlanMatch.moduleTitle,
+        day: dayPlanMatch.dayPlan.day,
+        practice: {
+          label: "Practice",
+          title: dayPlanMatch.dayPlan.practiceTitle,
+          href: dayPlanMatch.dayPlan.practiceHref,
+        },
+        challenge: {
+          label: "Solve",
+          title: dayPlanMatch.dayPlan.challengeTitle,
+          href: dayPlanMatch.dayPlan.challengeHref,
+        },
+        interview: {
+          label: "Explain",
+          title: dayPlanMatch.dayPlan.interviewQuestion,
+          href: dayPlanMatch.dayPlan.interviewHref,
+        },
+        project: {
+          label: "Build",
+          title: dayPlanMatch.dayPlan.projectStepTitle,
+          href: dayPlanMatch.dayPlan.projectHref,
+        },
+      } : mappedTopic ? {
+        moduleTitle: currentModule.title,
+        day: currentLessonIndex + 1,
+        practice: {
+          label: "Practice",
+          title: mappedTask?.title ?? "Open a related practice task",
+          href: mappedTask ? `/tasks/${mappedTask.slug}` : "/tasks",
+        },
+        challenge: {
+          label: "Solve",
+          title: `Solve a coding challenge after ${lesson.frontmatter.title}`,
+          href: "/challenges/today",
+        },
+        interview: {
+          label: "Explain",
+          title: interview.question,
+          href: "/interview",
+        },
+        project: {
+          label: "Build",
+          title: mappedProject?.title ?? "Continue into a guided project step",
+          href: mappedProject ? `/projects/${mappedProject.slug}#project-submission` : "/projects",
+        },
+      } : null}
     >
       {/* Learning Objectives */}
       {objectives.length > 0 && (
