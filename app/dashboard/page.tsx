@@ -1,13 +1,18 @@
-import { cookies } from "next/headers";
+﻿import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
 import { verifyJWT } from "@/lib/jwt";
 import { dbQuery } from "@/lib/db";
 import { getOrUpdateStreakInfo, ensureDailyMissionsAssigned } from "@/lib/streaks";
 import { DashboardClient } from "@/components/DashboardClient";
+import {
+  getCurrentDayPlan,
+  getCurrentPathModule,
+  parseLearningProfileCookie,
+} from "@/lib/learningProfile";
 
 export const metadata = {
   title: "Dashboard - CodeNivra",
-  description: "Track your learning progress, current mission, and active coding streaks on CodeNivra.",
+  description: "See what to learn today, what to practice, what to build, and how your streak is growing.",
 };
 
 export default async function DashboardPage() {
@@ -24,10 +29,9 @@ export default async function DashboardPage() {
   }
 
   try {
-    // Fetch user details from PostgreSQL database
     const userResult = await dbQuery(
       "SELECT id, name, email, role, status FROM users WHERE id = $1",
-      [decoded.userId]
+      [decoded.userId],
     );
 
     if (userResult.rows.length === 0) {
@@ -35,23 +39,21 @@ export default async function DashboardPage() {
     }
 
     const user = userResult.rows[0];
-
     if (user.status !== "active") {
       redirect("/login");
     }
 
-    // --- DAILY MISSIONS ASSIGNMENT ---
     await ensureDailyMissionsAssigned(decoded.userId);
 
-    // Fetch details of today's assigned missions
     const missionsRes = await dbQuery(
       `SELECT p.id as progress_id, m.title, m.type, m.xp_reward, p.is_completed
        FROM user_daily_mission_progress p
        JOIN daily_missions m ON p.mission_id = m.id
        WHERE p.user_id = $1 AND p.assigned_date = CURRENT_DATE
        ORDER BY m.id ASC`,
-      [decoded.userId]
+      [decoded.userId],
     );
+
     const dailyMissions = missionsRes.rows.map((row) => ({
       id: row.progress_id,
       title: row.title,
@@ -60,22 +62,16 @@ export default async function DashboardPage() {
       isCompleted: row.is_completed,
     }));
 
-    // --- STREAK INFO ---
     const streakInfo = await getOrUpdateStreakInfo(decoded.userId);
-
-    // --- LESSON PROGRESS ---
-    // 1. Fetch total lessons count
     const totalLessonsRes = await dbQuery("SELECT COUNT(*) as count FROM lessons");
     const totalCount = parseInt(totalLessonsRes.rows[0].count, 10);
 
-    // 2. Fetch completed lessons count for this user
     const completedLessonsRes = await dbQuery(
       "SELECT COUNT(*) as count FROM user_lesson_progress WHERE user_id = $1 AND is_completed = true",
-      [decoded.userId]
+      [decoded.userId],
     );
     const completedCount = parseInt(completedLessonsRes.rows[0].count, 10);
 
-    // 3. Find the latest incomplete or last opened lesson for "Continue Learning"
     const lastOpenedRes = await dbQuery(
       `SELECT p.lesson_id, p.is_completed, l.title, m.course_id
        FROM user_lesson_progress p
@@ -84,7 +80,7 @@ export default async function DashboardPage() {
        WHERE p.user_id = $1
        ORDER BY p.last_opened_at DESC
        LIMIT 1`,
-      [decoded.userId]
+      [decoded.userId],
     );
 
     let continueLesson = null;
@@ -109,7 +105,7 @@ export default async function DashboardPage() {
          WHERE COALESCE(p.is_completed, FALSE) = FALSE
          ORDER BY m.order_index ASC, l.order_index ASC
          LIMIT 1`,
-        [decoded.userId]
+        [decoded.userId],
       );
 
       if (firstIncompleteRes.rows.length > 0) {
@@ -121,18 +117,17 @@ export default async function DashboardPage() {
       }
     }
 
-    // --- DAILY CODING CHALLENGE ---
     const challengesCountRes = await dbQuery("SELECT COUNT(*) as count FROM coding_challenges");
     const totalChallengesCount = parseInt(challengesCountRes.rows[0].count, 10);
-    
+
     let todayChallenge = null;
     if (totalChallengesCount > 0) {
       const todayChallengeIndexRes = await dbQuery(
         `SELECT ((CURRENT_DATE - '2026-07-01'::date) % $1) as offset_val`,
-        [totalChallengesCount]
+        [totalChallengesCount],
       );
       const todayChallengeOffset = Math.abs(parseInt(todayChallengeIndexRes.rows[0].offset_val || "0", 10));
-      
+
       const challengeRes = await dbQuery(
         `SELECT c.id, c.title, c.difficulty,
                 COALESCE(a.is_solved, FALSE) as is_solved
@@ -140,9 +135,9 @@ export default async function DashboardPage() {
          LEFT JOIN user_challenge_attempts a ON c.id = a.challenge_id AND a.user_id = $1
          ORDER BY c.order_index ASC
          LIMIT 1 OFFSET $2`,
-        [decoded.userId, todayChallengeOffset]
+        [decoded.userId, todayChallengeOffset],
       );
-      
+
       if (challengeRes.rows.length > 0) {
         todayChallenge = {
           id: challengeRes.rows[0].id,
@@ -152,6 +147,12 @@ export default async function DashboardPage() {
         };
       }
     }
+
+    const learningProfileCookie = cookieStore.get("learning_profile")?.value;
+    const learningProfile = parseLearningProfileCookie(learningProfileCookie);
+    const currentModule = getCurrentPathModule(learningProfile, completedCount);
+    const currentDayPlan = getCurrentDayPlan(learningProfile, completedCount);
+    const showProfilePrompt = !learningProfileCookie;
 
     return (
       <div className="min-h-screen bg-slate-50/50 pb-20 relative overflow-hidden">
@@ -163,6 +164,10 @@ export default async function DashboardPage() {
           dailyMissions={dailyMissions}
           streakInfo={streakInfo}
           todayChallenge={todayChallenge}
+          learningProfile={learningProfile}
+          currentModuleTitle={currentModule.title}
+          currentDayPlan={currentDayPlan}
+          showProfilePrompt={showProfilePrompt}
         />
       </div>
     );
@@ -171,3 +176,4 @@ export default async function DashboardPage() {
     redirect("/login");
   }
 }
+

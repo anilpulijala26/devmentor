@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import Link from "next/link";
 import { useMemo, useState } from "react";
@@ -144,10 +144,10 @@ export function ProjectDetailClient({ project }: ProjectDetailClientProps) {
             className="inline-flex items-center gap-2 text-sm font-semibold text-slate-600 transition hover:text-indigo-700"
           >
             <ChevronLeft className="h-4 w-4" />
-            Back to Project Labs
+            Back to Build Projects
           </Link>
           <span className="text-[10px] font-bold uppercase tracking-[0.24em] text-slate-500">
-            Lab / {project.slug.replaceAll("-", " ")}
+            Project / {project.slug.replaceAll("-", " ")}
           </span>
         </div>
       </div>
@@ -675,3 +675,5 @@ export function ProjectDetailClient({ project }: ProjectDetailClientProps) {
     </div>
   );
 }
+
+

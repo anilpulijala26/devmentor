@@ -1,11 +1,11 @@
-import { developerTasks } from "@/lib/tasks";
+﻿import { developerTasks } from "@/lib/tasks";
 import { TasksClient } from "@/components/TasksClient";
 
 export const metadata = {
-  title: "Daily Developer Tasks - CodeNivra",
-  description: "Improve your frontend and backend skills. Build reusable components, code dynamic filters, set auth guards, and handle rendering failures daily.",
+  title: "Practice Tasks - CodeNivra",
+  description: "Practice frontend and backend tasks one step at a time with fresher-friendly guidance.",
   openGraph: {
-    title: "Daily Developer Tasks - CodeNivra",
+    title: "Practice Tasks - CodeNivra",
     description: "Write code daily to master production structures and react patterns.",
     type: "website",
   }
@@ -18,3 +18,5 @@ export default function TasksPage() {
     </div>
   );
 }
+
+

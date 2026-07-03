@@ -1,14 +1,14 @@
-import { projects } from "@/lib/projects";
+﻿import { projects } from "@/lib/projects";
 import { ProjectsClient } from "@/components/ProjectsClient";
 
 export const metadata = {
-  title: "Full-Stack Projects - CodeNivra",
+  title: "Build Projects - CodeNivra",
   description:
-    "Explore full-stack projects, portfolio labs, and production-style builds with clear outcomes, tech stacks, and implementation guidance.",
+    "Explore build projects with clear stages, skills used, and implementation guidance.",
   openGraph: {
-    title: "Full-Stack Projects - CodeNivra",
+    title: "Build Projects - CodeNivra",
     description:
-      "Explore full-stack projects, portfolio labs, and production-style builds with clear outcomes and implementation guidance.",
+      "Explore build projects with clear stages and implementation guidance.",
     type: "website",
   }
 };
@@ -20,3 +20,5 @@ export default function ProjectsPage() {
     </div>
   );
 }
+
+

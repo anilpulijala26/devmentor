@@ -1,27 +1,26 @@
-"use client";
+﻿"use client";
 
 import React, { useState, useEffect } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useAuth } from "@/context/AuthContext";
-import { UserPlus, ArrowRight, CheckCircle2, AlertCircle, Eye, EyeOff } from "lucide-react";
+import { UserPlus, ArrowRight, AlertCircle, Eye, EyeOff } from "lucide-react";
+import { LEARNING_LEVEL_OPTIONS, type LearningLevelKey } from "@/lib/learningProfile";
 
 export default function RegisterPage() {
   const { register, error, clearError, user, loading: authLoading } = useAuth();
   const router = useRouter();
 
   const [name, setName] = useState("");
+  const [levelKey, setLevelKey] = useState<LearningLevelKey>("new_to_coding");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
-
   const [loading, setLoading] = useState(false);
   const [validationError, setValidationError] = useState<string | null>(null);
-
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 
-  // Redirect if already logged in
   useEffect(() => {
     if (user) {
       router.push("/dashboard");
@@ -36,7 +35,6 @@ export default function RegisterPage() {
     setValidationError(null);
     clearError();
 
-    // Client-side validations
     if (!name.trim()) {
       setValidationError("Full name is required.");
       return;
@@ -55,13 +53,12 @@ export default function RegisterPage() {
     }
 
     setLoading(true);
-    const success = await register(name, email, password, confirmPassword);
+    await register(name, email, password, confirmPassword, levelKey);
     setLoading(false);
   };
 
   return (
     <div className="min-h-[80vh] flex items-center justify-center px-4 py-12 sm:px-6 lg:px-8 bg-slate-50/50 relative overflow-hidden">
-      {/* Decorative Gradients */}
       <div className="absolute top-[-20%] left-[-10%] w-[500px] h-[500px] rounded-full bg-indigo-500/5 blur-[120px] pointer-events-none" />
       <div className="absolute bottom-[-20%] right-[-10%] w-[500px] h-[500px] rounded-full bg-violet-500/5 blur-[120px] pointer-events-none" />
 
@@ -74,12 +71,11 @@ export default function RegisterPage() {
             Create your account
           </h2>
           <p className="mt-2 text-center text-sm text-slate-500">
-            Join CodeNivra to start structured developer roadmaps
+            Join CodeNivra to start your daily JavaScript full-stack learning path
           </p>
         </div>
 
         <form className="mt-8 space-y-6" onSubmit={handleSubmit}>
-          {/* Error displays */}
           {(validationError || error) && (
             <div className="rounded-xl bg-red-50 p-4 border border-red-100 flex items-start gap-3 text-red-700 text-sm animate-fade-in">
               <AlertCircle className="w-5 h-5 shrink-0 mt-0.5" />
@@ -102,6 +98,25 @@ export default function RegisterPage() {
                 className="mt-1 block w-full rounded-xl border border-slate-200 bg-slate-50/50 px-4 py-3 text-sm text-slate-900 placeholder-slate-400 focus:border-indigo-500 focus:bg-white focus:outline-none focus:ring-1 focus:ring-indigo-500 transition-all duration-200"
                 placeholder="John Doe"
               />
+            </div>
+
+            <div>
+              <label htmlFor="level-field" className="block text-sm font-semibold text-slate-700">
+                Current Level
+              </label>
+              <select
+                id="level-field"
+                value={levelKey}
+                onChange={(e) => setLevelKey(e.target.value as LearningLevelKey)}
+                className="mt-1 block w-full rounded-xl border border-slate-200 bg-slate-50/50 px-4 py-3 text-sm text-slate-900 focus:border-indigo-500 focus:bg-white focus:outline-none focus:ring-1 focus:ring-indigo-500 transition-all duration-200"
+              >
+                {LEARNING_LEVEL_OPTIONS.map((option) => (
+                  <option key={option.key} value={option.key}>
+                    {option.label}
+                  </option>
+                ))}
+              </select>
+              <p className="mt-1 text-xs text-slate-400">We will use this to start you from the right module and day.</p>
             </div>
 
             <div>
@@ -205,3 +220,4 @@ export default function RegisterPage() {
     </div>
   );
 }
+

@@ -1,24 +1,22 @@
-"use client";
+﻿"use client";
 
-import React, { useState, useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { useAuth, User } from "@/context/AuthContext";
 import { useProgress } from "@/context/ProgressContext";
+import { type User } from "@/context/AuthContext";
+import { LearningProfilePrompt } from "@/components/LearningProfilePrompt";
+import type { DayPlan, LearningProfile } from "@/lib/learningProfile";
 import {
-  LogOut,
-  Flame,
-  Award,
-  BookOpen,
-  CheckSquare,
   ArrowRight,
-  TrendingUp,
-  Target,
-  Sparkles,
-  CheckCircle,
-  AlertCircle,
-  Trophy,
+  Award,
+  BookOpen,  CheckSquare,
   Code2,
+  Flame,
+  Sparkles,
+  Target,
+  TrendingUp,
+  Trophy,
   User as UserIcon,
 } from "lucide-react";
 
@@ -50,6 +48,10 @@ interface DashboardClientProps {
   dailyMissions: DailyMission[];
   streakInfo: StreakInfo;
   todayChallenge: TodayChallenge | null;
+  learningProfile: LearningProfile;
+  currentModuleTitle: string;
+  currentDayPlan: DayPlan;
+  showProfilePrompt: boolean;
 }
 
 export function DashboardClient({
@@ -60,11 +62,13 @@ export function DashboardClient({
   dailyMissions,
   streakInfo,
   todayChallenge,
+  learningProfile,
+  currentModuleTitle,
+  currentDayPlan,
+  showProfilePrompt,
 }: DashboardClientProps) {
-  const { logout } = useAuth();
   const { completedTasks, completedProjects } = useProgress();
   const router = useRouter();
-
   const [missions, setMissions] = useState<DailyMission[]>(dailyMissions);
   const [toggleLoading, setToggleLoading] = useState<string | null>(null);
 
@@ -74,376 +78,267 @@ export function DashboardClient({
 
   const totalTasks = 20;
   const totalProjects = 8;
+  const lessonsPercent = totalCount > 0 ? Math.min(Math.round((completedCount / totalCount) * 100), 100) : 0;
+  const tasksPercent = Math.min(Math.round((completedTasks.length / totalTasks) * 100), 100);
+  const projectsPercent = Math.min(Math.round((completedProjects.length / totalProjects) * 100), 100);
+  const completedMissionCount = missions.filter((mission) => mission.isCompleted).length;
 
-  const lessonsPercent = totalCount > 0 ? Math.min(
-    Math.round((completedCount / totalCount) * 100),
-    100
-  ) : 0;
-  const tasksPercent = Math.min(
-    Math.round((completedTasks.length / totalTasks) * 100),
-    100
-  );
-  const projectsPercent = Math.min(
-    Math.round((completedProjects.length / totalProjects) * 100),
-    100
-  );
-
-  const completedMissionsCount = missions.filter((m) => m.isCompleted).length;
-  const allMissionsCompleted = completedMissionsCount === missions.length;
+  const lessonStatus = missions.find((mission) => mission.type === "open_lesson")?.isCompleted
+    ? "Completed"
+    : continueLesson
+      ? "In Progress"
+      : "Not Started";
+  const practiceStatus = currentDayPlan.practiceSlug && completedTasks.includes(currentDayPlan.practiceSlug)
+    ? "Completed"
+    : "Not Started";
+  const explainStatus = missions.find((mission) => mission.type === "read_interview")?.isCompleted
+    ? "Completed"
+    : "Not Started";
+  const challengeStatus = todayChallenge?.isSolved ? "Completed" : "Not Started";
+  const projectStatus = currentDayPlan.projectSlug && completedProjects.includes(currentDayPlan.projectSlug)
+    ? "Completed"
+    : "Not Started";
 
   const handleToggleMission = async (progressId: string, currentCompleted: boolean) => {
     setToggleLoading(progressId);
-    // Optimistic UI update
     setMissions((prev) =>
-      prev.map((m) => (m.id === progressId ? { ...m, isCompleted: !currentCompleted } : m))
+      prev.map((mission) =>
+        mission.id === progressId ? { ...mission, isCompleted: !currentCompleted } : mission,
+      ),
     );
 
     try {
       const res = await fetch("/api/missions/toggle-task", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          progressId,
-          completed: !currentCompleted,
-        }),
+        body: JSON.stringify({ progressId, completed: !currentCompleted }),
       });
 
       if (!res.ok) {
-        // Revert on error
         setMissions((prev) =>
-          prev.map((m) => (m.id === progressId ? { ...m, isCompleted: currentCompleted } : m))
+          prev.map((mission) =>
+            mission.id === progressId ? { ...mission, isCompleted: currentCompleted } : mission,
+          ),
         );
       } else {
         router.refresh();
       }
-    } catch (err) {
-      console.error("Error toggling mission:", err);
-      // Revert on error
+    } catch (error) {
+      console.error("Error toggling mission:", error);
       setMissions((prev) =>
-        prev.map((m) => (m.id === progressId ? { ...m, isCompleted: currentCompleted } : m))
+        prev.map((mission) =>
+          mission.id === progressId ? { ...mission, isCompleted: currentCompleted } : mission,
+        ),
       );
     } finally {
       setToggleLoading(null);
     }
   };
 
+  const learningPlanItems = [
+    { label: "Learn", title: continueLesson?.title ?? currentDayPlan.lessonTitle, status: lessonStatus, href: continueLesson ? `/lessons/${continueLesson.id}` : "/courses" },
+    { label: "Practice", title: currentDayPlan.practiceTitle, status: practiceStatus, href: currentDayPlan.practiceSlug ? `/tasks/${currentDayPlan.practiceSlug}` : "/tasks" },
+    { label: "Solve", title: todayChallenge?.title ?? currentDayPlan.challengeTitle, status: challengeStatus, href: "/challenges/today" },
+    { label: "Explain", title: currentDayPlan.interviewQuestion, status: explainStatus, href: "/interview" },
+    { label: "Build", title: currentDayPlan.projectStepTitle, status: projectStatus, href: currentDayPlan.projectSlug ? `/projects/${currentDayPlan.projectSlug}` : "/projects" },
+  ];
+
   return (
-    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 relative z-10">
-      {/* Welcome Banner */}
-      <div className="bg-gradient-to-r from-slate-900 via-indigo-950 to-slate-900 rounded-3xl p-6 sm:p-8 md:p-10 shadow-[0_12px_40px_rgba(15,23,42,0.08)] mb-8 text-white relative overflow-hidden">
-        {/* Decorative elements */}
-        <div className="absolute right-0 top-0 w-80 h-80 rounded-full bg-indigo-500/10 blur-[80px] pointer-events-none" />
-        <div className="absolute left-1/3 bottom-[-50px] w-60 h-60 rounded-full bg-violet-500/10 blur-[80px] pointer-events-none" />
+    <>
+      <LearningProfilePrompt isOpen={showProfilePrompt} />
 
-        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-6 relative z-10">
-          <div className="flex items-center gap-4 sm:gap-5">
-            <div className="w-16 h-16 rounded-2xl bg-indigo-600/30 border border-indigo-500/30 flex items-center justify-center text-indigo-200">
-              <UserIcon className="w-8 h-8 text-indigo-200" />
-            </div>
-            <div>
-              <div className="flex items-center gap-2">
-                <span className="text-xs uppercase tracking-widest font-mono text-indigo-400 font-semibold bg-indigo-500/10 px-2.5 py-1 rounded-full">
-                  {user.role}
-                </span>
-                <span className="flex items-center gap-1 text-xs text-amber-400 font-semibold bg-amber-500/10 px-2.5 py-1 rounded-full">
-                  <Sparkles className="w-3.5 h-3.5" /> PRO Student
-                </span>
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 relative z-10 space-y-6">
+        <section className="rounded-[2rem] bg-gradient-to-r from-slate-900 via-indigo-950 to-slate-900 p-6 text-white shadow-[0_12px_40px_rgba(15,23,42,0.08)] sm:p-8">
+          <div className="flex flex-col gap-6 lg:flex-row lg:items-end lg:justify-between">
+            <div className="flex items-start gap-4">
+              <div className="flex h-14 w-14 shrink-0 items-center justify-center rounded-2xl bg-indigo-600/30 text-indigo-100">
+                <UserIcon className="h-7 w-7" />
               </div>
-              <h1 className="text-2xl sm:text-3xl font-extrabold tracking-tight mt-2 font-sans">
-                Welcome back, {user.name}!
-              </h1>
-              <p className="text-sm text-slate-300 mt-1.5 max-w-xl">
-                Ready to level up? You have completed {completedCount} lessons and built{" "}
-                {completedProjects.length} real-world projects so far.
-              </p>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      {/* Main Dashboard Cards Grid */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-        
-        {/* Continue Learning Card */}
-        <div className="bg-white rounded-2xl border border-slate-200/80 shadow-[0_4px_20px_rgba(15,23,42,0.01)] hover:shadow-[0_8px_30px_rgba(15,23,42,0.04)] transition-all p-6 flex flex-col justify-between">
-          <div>
-            <div className="w-10 h-10 rounded-xl bg-indigo-50 flex items-center justify-center text-indigo-600 mb-4">
-              <BookOpen className="w-5 h-5" />
-            </div>
-            <h3 className="text-lg font-bold text-slate-900">
-              {continueLesson ? "Continue Learning" : "Start Learning"}
-            </h3>
-            <p className="text-sm text-slate-500 mt-2">
-              {continueLesson
-                ? "Pick up right where you left off on your roadmap. Keep advancing through backend systems, database engineering, and cloud deployment."
-                : "Begin your learning roadmap. Walk step-by-step from building responsive interfaces to hosting live applications."}
-            </p>
-            <div className="bg-slate-50 rounded-xl p-3.5 mt-5 border border-slate-100 flex items-center justify-between">
               <div>
-                <p className="text-xs text-slate-400 font-mono">CURRENT TOPIC</p>
-                <p className="text-sm font-bold text-slate-800 mt-0.5 truncate max-w-[170px]">
-                  {continueLesson ? continueLesson.title : "Full Stack Web Development"}
-                </p>
+                <p className="text-xs font-bold uppercase tracking-[0.24em] text-indigo-300">Daily guided learning</p>
+                <h1 className="mt-2 text-2xl font-black tracking-tight sm:text-3xl">Welcome back, {user.name}</h1>
+                <div className="mt-3 grid gap-2 text-sm text-slate-200 sm:grid-cols-2 lg:grid-cols-4">
+                  <p><span className="text-slate-400">Current Path:</span> {learningProfile.pathTitle}</p>
+                  <p><span className="text-slate-400">Current Module:</span> {currentModuleTitle}</p>
+                  <p><span className="text-slate-400">Current Day:</span> Day {currentDayPlan.day}</p>
+                  <p><span className="text-slate-400">Current Level:</span> {learningProfile.currentLevel}</p>
+                </div>
               </div>
-              <span className="text-xs bg-indigo-50 text-indigo-600 font-bold px-2 py-0.5 rounded shrink-0">
-                {continueLesson ? "Active" : "Not Started"}
-              </span>
+            </div>
+            <div className="rounded-2xl border border-white/10 bg-white/5 px-4 py-3 text-sm text-slate-200">
+              <p className="font-semibold">You have completed {completedCount} lessons so far.</p>
+              <p className="mt-1 text-slate-300">Keep today simple: finish one lesson, one task, one coding problem, and one project step.</p>
             </div>
           </div>
-          <Link
-            href={continueLesson ? `/lessons/${continueLesson.id}` : `/lessons/f47ac10b-58cc-4372-a567-0e02b2c3d490`}
-            className="mt-6 inline-flex items-center justify-center gap-2 w-full rounded-xl bg-indigo-600 hover:bg-indigo-700 py-3 text-sm font-semibold text-white transition-colors"
-          >
-            {continueLesson ? "Resume Learning" : "Start Learning"} <ArrowRight className="w-4 h-4" />
-          </Link>
-        </div>
+        </section>
 
-        {/* Today's Mission Card */}
-        <div className="bg-white rounded-2xl border border-slate-200/80 shadow-[0_4px_20px_rgba(15,23,42,0.01)] hover:shadow-[0_8px_30px_rgba(15,23,42,0.04)] transition-all p-6 flex flex-col justify-between">
-          <div>
-            <div className="w-10 h-10 rounded-xl bg-emerald-50 flex items-center justify-center text-emerald-600 mb-4">
-              <Target className="w-5 h-5" />
-            </div>
-            <div className="flex items-center justify-between mb-4">
-              <h3 className="text-lg font-bold text-slate-900">Today's Mission</h3>
-              <span className="text-xs font-bold font-mono text-emerald-600 bg-emerald-50 px-2 py-0.5 rounded-full">
-                {completedMissionsCount} / {missions.length} Done
+        <div className="grid gap-6 xl:grid-cols-[1.5fr_1fr]">
+          <section className="rounded-[2rem] border border-slate-200/80 bg-white p-6 shadow-sm">
+            <div className="flex items-center justify-between gap-4">
+              <div>
+                <div className="flex items-center gap-2 text-emerald-700">
+                  <Target className="h-5 w-5" />
+                  <h2 className="text-xl font-black text-slate-950">Today&apos;s Learning Plan</h2>
+                </div>
+                <p className="mt-2 text-sm text-slate-500">{"Follow the flow: Learn -> Practice -> Solve -> Build -> Explain -> Submit"}</p>
+              </div>
+              <span className="rounded-full bg-emerald-50 px-3 py-1 text-xs font-bold text-emerald-700">
+                {completedMissionCount}/{missions.length} daily tasks done
               </span>
             </div>
 
-            {/* List of daily tasks */}
-            <div className="space-y-3.5 mt-2">
-              {missions.map((mission) => {
-                const isAutoTask = mission.type === "open_lesson" || mission.type === "complete_lesson";
-                return (
-                  <div
-                    key={mission.id}
-                    className={`flex items-start gap-3 rounded-xl p-3 border transition-colors ${
-                      mission.isCompleted
-                        ? "bg-slate-50/50 border-slate-100/80"
-                        : "bg-white border-slate-150 hover:bg-slate-50/20"
-                    }`}
-                  >
+            <div className="mt-5 space-y-3">
+              {learningPlanItems.map((item, index) => (
+                <Link
+                  key={item.label}
+                  href={item.href}
+                  className="flex items-start justify-between gap-4 rounded-2xl border border-slate-200 p-4 transition hover:border-indigo-200 hover:bg-slate-50"
+                >
+                  <div className="min-w-0">
+                    <p className="text-xs font-bold uppercase tracking-[0.18em] text-slate-400">{index + 1}. {item.label}</p>
+                    <p className="mt-1 text-sm font-semibold text-slate-900">{item.title}</p>
+                  </div>
+                  <span className={`shrink-0 rounded-full px-2.5 py-1 text-[11px] font-bold ${item.status === "Completed" ? "bg-emerald-50 text-emerald-700" : item.status === "In Progress" ? "bg-amber-50 text-amber-700" : "bg-slate-100 text-slate-600"}`}>
+                    {item.status}
+                  </span>
+                </Link>
+              ))}
+            </div>
+          </section>
+
+          <section className="rounded-[2rem] border border-slate-200/80 bg-white p-6 shadow-sm">
+            <div className="flex items-center gap-2 text-indigo-700">
+              <BookOpen className="h-5 w-5" />
+              <h2 className="text-xl font-black text-slate-950">Continue Today&apos;s Lesson</h2>
+            </div>
+            <p className="mt-3 text-sm text-slate-600">
+              {continueLesson
+                ? `You are learning ${continueLesson.title} today. Finish this lesson, complete one task, and solve one coding problem.`
+                : `Start with ${currentDayPlan.lessonTitle}. Once you finish it, move to practice and then solve today&apos;s coding problem.`}
+            </p>
+            <div className="mt-5 rounded-2xl border border-slate-200 bg-slate-50/70 p-4">
+              <p className="text-xs font-bold uppercase tracking-[0.18em] text-slate-400">Current lesson</p>
+              <p className="mt-1 text-sm font-semibold text-slate-900">{continueLesson?.title ?? currentDayPlan.lessonTitle}</p>
+              <p className="mt-2 text-xs text-slate-500">Module: {currentModuleTitle} • Day {currentDayPlan.day}</p>
+            </div>
+            <Link
+              href={continueLesson ? `/lessons/${continueLesson.id}` : "/courses"}
+              className="mt-5 inline-flex min-h-11 w-full items-center justify-center gap-2 rounded-xl bg-indigo-600 text-sm font-semibold text-white transition hover:bg-indigo-700"
+            >
+              Continue Today&apos;s Lesson <ArrowRight className="h-4 w-4" />
+            </Link>
+          </section>
+        </div>
+
+        <div className="grid gap-6 lg:grid-cols-3">
+          <section className="rounded-[2rem] border border-slate-200/80 bg-white p-6 shadow-sm">
+            <div className="flex items-center gap-2 text-indigo-700">
+              <Code2 className="h-5 w-5" />
+              <h2 className="text-lg font-black text-slate-950">Daily Coding Problem</h2>
+            </div>
+            <p className="mt-3 text-sm font-semibold text-slate-900">{todayChallenge?.title ?? currentDayPlan.challengeTitle}</p>
+            <p className="mt-2 text-sm text-slate-500">Practice one small JavaScript problem today and check your logic step by step.</p>
+            <div className="mt-4 flex items-center gap-2">
+              <span className="rounded-full bg-slate-100 px-2.5 py-1 text-[11px] font-bold text-slate-600">{todayChallenge?.difficulty ?? "Easy"}</span>
+              <span className={`rounded-full px-2.5 py-1 text-[11px] font-bold ${todayChallenge?.isSolved ? "bg-emerald-50 text-emerald-700" : "bg-amber-50 text-amber-700"}`}>
+                {todayChallenge?.isSolved ? "Completed" : "Not Submitted Yet"}
+              </span>
+            </div>
+            <Link href="/challenges/today" className="mt-5 inline-flex min-h-11 w-full items-center justify-center gap-2 rounded-xl border border-slate-200 text-sm font-semibold text-slate-700 transition hover:bg-slate-50">
+              {todayChallenge?.isSolved ? "Review Solution" : "Solve Today&apos;s Problem"}
+              <ArrowRight className="h-4 w-4" />
+            </Link>
+          </section>
+
+          <section className="rounded-[2rem] border border-slate-200/80 bg-white p-6 shadow-sm">
+            <div className="flex items-center gap-2 text-indigo-700">
+              <TrendingUp className="h-5 w-5" />
+              <h2 className="text-lg font-black text-slate-950">Your Learning Progress</h2>
+            </div>
+            <div className="mt-5 space-y-4">
+              {[
+                { label: "Lessons completed", value: `${completedCount}/${totalCount}`, width: lessonsPercent, icon: <BookOpen className="h-4 w-4 text-indigo-500" /> },
+                { label: "Practice tasks completed", value: `${completedTasks.length}/${totalTasks}`, width: tasksPercent, icon: <CheckSquare className="h-4 w-4 text-emerald-500" /> },
+                { label: "Challenges solved", value: todayChallenge?.isSolved ? "1 today" : "0 today", width: todayChallenge?.isSolved ? 100 : 20, icon: <Code2 className="h-4 w-4 text-amber-500" /> },
+                { label: "Projects completed", value: `${completedProjects.length}/${totalProjects}`, width: projectsPercent, icon: <Award className="h-4 w-4 text-purple-500" /> },
+              ].map((item) => (
+                <div key={item.label}>
+                  <div className="flex items-center justify-between text-sm text-slate-700">
+                    <span className="inline-flex items-center gap-2 font-semibold">{item.icon}{item.label}</span>
+                    <span className="font-mono text-slate-900">{item.value}</span>
+                  </div>
+                  <div className="mt-2 h-2 rounded-full bg-slate-200/80">
+                    <div className="h-full rounded-full bg-slate-900" style={{ width: `${item.width}%` }} />
+                  </div>
+                </div>
+              ))}
+            </div>
+          </section>
+
+          <section className="rounded-[2rem] border border-slate-200/80 bg-white p-6 shadow-sm">
+            <div className="flex items-center gap-2 text-amber-700">
+              <Flame className="h-5 w-5" />
+              <h2 className="text-lg font-black text-slate-950">Streak and XP</h2>
+            </div>
+            <div className="mt-5 flex items-end gap-3">
+              <span className="text-5xl font-black tracking-tight text-slate-950">{streakInfo.currentStreak}</span>
+              <span className="pb-1 text-sm font-semibold text-amber-700">day streak</span>
+            </div>
+            <p className="mt-3 inline-flex items-center gap-2 text-xs font-medium text-slate-500">
+              <Trophy className="h-4 w-4 text-amber-500" /> Longest streak: {streakInfo.longestStreak} days
+            </p>
+
+            <div className="mt-5 rounded-2xl border border-slate-200 bg-slate-50/70 p-4">
+              <div className="flex items-start gap-3">
+                <Sparkles className="mt-0.5 h-4 w-4 text-indigo-600" />
+                <p className="text-sm text-slate-600">Complete at least one guided task today to protect your streak and keep momentum strong.</p>
+              </div>
+            </div>
+          </section>
+        </div>
+
+        <section className="rounded-[2rem] border border-slate-200/80 bg-white p-6 shadow-sm">
+          <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+            <div>
+              <h2 className="text-lg font-black text-slate-950">Today&apos;s Checklist</h2>
+              <p className="mt-1 text-sm text-slate-500">Mark simple daily actions as you finish them.</p>
+            </div>
+            <Link href="/progress" className="text-sm font-semibold text-indigo-600 hover:text-indigo-500">Open full progress</Link>
+          </div>
+
+          <div className="mt-5 grid gap-3 md:grid-cols-2 xl:grid-cols-3">
+            {missions.map((mission) => {
+              const isAutoTask = mission.type === "open_lesson" || mission.type === "complete_lesson";
+              return (
+                <div key={mission.id} className={`rounded-2xl border p-4 ${mission.isCompleted ? "border-emerald-100 bg-emerald-50/40" : "border-slate-200 bg-white"}`}>
+                  <div className="flex items-start gap-3">
                     <input
                       type="checkbox"
                       checked={mission.isCompleted}
                       disabled={isAutoTask || toggleLoading === mission.id}
                       onChange={() => handleToggleMission(mission.id, mission.isCompleted)}
-                      className={`mt-1.5 h-4 w-4 rounded border-slate-350 text-indigo-600 focus:ring-indigo-500 cursor-pointer disabled:opacity-60 disabled:cursor-not-allowed`}
+                      className="mt-1 h-4 w-4 rounded border-slate-300 text-indigo-600 focus:ring-indigo-500"
                     />
                     <div className="min-w-0 flex-1">
-                      <p
-                        className={`text-sm font-medium ${
-                          mission.isCompleted ? "text-slate-400 line-through" : "text-slate-700"
-                        }`}
-                      >
-                        {mission.title}
-                      </p>
-                      <div className="flex items-center gap-1.5 mt-1">
-                        <span className="text-[10px] text-slate-400 font-mono">+{mission.xpReward} XP</span>
-                        {isAutoTask && (
-                          <span className="text-[9px] font-bold text-slate-400 font-mono tracking-wide uppercase bg-slate-100 px-1 py-0.5 rounded">
-                            Auto
-                          </span>
-                        )}
+                      <p className={`text-sm font-semibold ${mission.isCompleted ? "text-slate-500 line-through" : "text-slate-800"}`}>{mission.title}</p>
+                      <div className="mt-1 flex items-center gap-2 text-[11px] text-slate-500">
+                        <span>+{mission.xpReward} XP</span>
+                        {isAutoTask ? <span className="rounded-full bg-slate-100 px-2 py-0.5 font-bold text-slate-500">Auto</span> : null}
                       </div>
                     </div>
                   </div>
-                );
-              })}
-            </div>
-
-            {/* Success message banner */}
-            {allMissionsCompleted && (
-              <div className="rounded-xl bg-emerald-50 border border-emerald-100 p-4.5 text-center mt-5 text-emerald-800 text-xs font-semibold flex items-center justify-center gap-2 animate-fade-in shadow-sm shadow-emerald-500/5">
-                <CheckCircle className="w-4 h-4 text-emerald-600 shrink-0" />
-                <span>Great work! Today’s mission completed.</span>
-              </div>
-            )}
-          </div>
-          <Link
-            href="/courses"
-            className="mt-6 inline-flex items-center justify-center gap-1.5 w-full rounded-xl border border-slate-200 hover:bg-slate-50 py-3 text-sm font-semibold text-slate-700 transition-colors"
-          >
-            Go to Syllabus <ArrowRight className="w-4 h-4" />
-          </Link>
-        </div>
-
-        {/* Streak Card */}
-        <div className="bg-white rounded-2xl border border-slate-200/80 shadow-[0_4px_20px_rgba(15,23,42,0.01)] hover:shadow-[0_8px_30px_rgba(15,23,42,0.04)] transition-all p-6 flex flex-col justify-between">
-          <div>
-            <div className="w-10 h-10 rounded-xl bg-amber-50 flex items-center justify-center text-amber-600 mb-4">
-              <Flame className="w-5 h-5" />
-            </div>
-            <h3 className="text-lg font-bold text-slate-900">Coding Streak</h3>
-            <p className="text-sm text-slate-500 mt-2">
-              Complete at least 1 mission task today to protect and extend your streak.
-            </p>
-
-            <div className="flex items-baseline gap-2 mt-6">
-              <span className="text-5xl font-extrabold tracking-tight text-slate-950 font-mono animate-pulse">
-                {streakInfo.currentStreak}
-              </span>
-              <span className="text-sm font-semibold text-amber-600 uppercase tracking-wider">
-                Days Active 🔥
-              </span>
-            </div>
-
-            <p className="text-xs text-slate-400 mt-3 font-medium flex items-center gap-1">
-              <Trophy className="w-3.5 h-3.5 text-amber-500" /> Longest streak: {streakInfo.longestStreak} days
-            </p>
-          </div>
-          <div className="mt-6 bg-amber-50/50 rounded-xl p-3 border border-amber-100/50 flex items-center gap-3">
-            <Award className="w-5 h-5 text-amber-600 shrink-0" />
-            <span className="text-xs font-semibold text-amber-800">
-              {streakInfo.currentStreak > 0
-                ? "Active Streak Modifier: +10% Experience"
-                : "Complete today's task to activate modifier"}
-            </span>
-          </div>
-        </div>
-
-        {/* Today's Coding Challenge Card */}
-        <div className="bg-white rounded-2xl border border-slate-200/80 shadow-[0_4px_20px_rgba(15,23,42,0.01)] hover:shadow-[0_8px_30px_rgba(15,23,42,0.04)] transition-all p-6 flex flex-col justify-between">
-          <div>
-            <div className="w-10 h-10 rounded-xl bg-indigo-50 flex items-center justify-center text-indigo-600 mb-4">
-              <Code2 className="w-5 h-5" />
-            </div>
-            
-            <div className="flex items-center justify-between">
-              <h3 className="text-lg font-bold text-slate-900">Coding Challenge</h3>
-              {todayChallenge && (
-                <span className={`px-2 py-0.5 rounded text-[10px] font-bold uppercase ${
-                  todayChallenge.difficulty === "Easy" ? "bg-emerald-55/60 text-emerald-700" : "bg-amber-55/60 text-amber-700"
-                }`}>
-                  {todayChallenge.difficulty}
-                </span>
-              )}
-            </div>
-
-            {todayChallenge ? (
-              <div className="mt-3">
-                <p className="text-sm text-slate-800 font-semibold truncate max-w-[220px]">
-                  {todayChallenge.title}
-                </p>
-                <div className="mt-4 flex items-center gap-2">
-                  {todayChallenge.isSolved ? (
-                    <span className="inline-flex items-center gap-1 bg-emerald-50 text-emerald-700 border border-emerald-100 text-[10px] font-bold px-2 py-1 rounded-md">
-                      <CheckCircle className="w-3.5 h-3.5" /> Solved
-                    </span>
-                  ) : (
-                    <span className="inline-flex items-center gap-1 bg-amber-50 text-amber-700 border border-amber-100 text-[10px] font-bold px-2 py-1 rounded-md">
-                      Pending Attempt
-                    </span>
-                  )}
                 </div>
-              </div>
-            ) : (
-              <p className="text-sm text-slate-500 mt-2">
-                No active coding challenge for today. Check back tomorrow!
-              </p>
-            )}
+              );
+            })}
           </div>
-
-          <Link
-            href="/challenges/today"
-            className={`mt-6 inline-flex items-center justify-center gap-2 w-full rounded-xl py-3 text-sm font-semibold transition-all border ${
-              todayChallenge?.isSolved
-                ? "border-slate-200 hover:bg-slate-50 text-slate-700"
-                : "bg-indigo-600 hover:bg-indigo-700 text-white shadow-sm shadow-indigo-600/10"
-            }`}
-          >
-            {todayChallenge?.isSolved ? "Review Submission" : "Solve Challenge"} <ArrowRight className="w-4 h-4" />
-          </Link>
-        </div>
-
-        {/* Progress Card (spanning full width or multi column if needed) */}
-        <div className="bg-white rounded-2xl border border-slate-200/80 shadow-[0_4px_20px_rgba(15,23,42,0.01)] hover:shadow-[0_8px_30px_rgba(15,23,42,0.04)] transition-all p-6 md:col-span-2 lg:col-span-4">
-          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-6">
-            <div>
-              <div className="flex items-center gap-2">
-                <div className="w-7 h-7 rounded-lg bg-indigo-50 flex items-center justify-center text-indigo-600">
-                  <TrendingUp className="w-4 h-4" />
-                </div>
-                <h3 className="text-lg font-bold text-slate-900">Your Progress Metrics</h3>
-              </div>
-              <p className="text-sm text-slate-500 mt-1">Real-time completion summary from your learning profile</p>
-            </div>
-            <Link
-              href="/projects"
-              className="text-xs font-bold text-indigo-600 hover:text-indigo-500 flex items-center gap-1"
-            >
-              Browse Projects <ArrowRight className="w-3.5 h-3.5" />
-            </Link>
-          </div>
-
-          <div className="grid grid-cols-1 sm:grid-cols-3 gap-6">
-            {/* Lessons completed */}
-            <div className="bg-slate-50/50 rounded-xl p-5 border border-slate-100">
-              <div className="flex items-center justify-between text-sm">
-                <span className="font-semibold text-slate-600 flex items-center gap-1.5">
-                  <BookOpen className="w-4 h-4 text-indigo-500" /> Lessons
-                </span>
-                <span className="font-mono font-bold text-slate-900">
-                  {completedCount} / {totalCount}
-                </span>
-              </div>
-              <div className="mt-4 h-2 bg-slate-200/80 rounded-full overflow-hidden">
-                <div
-                  className="h-full bg-indigo-600 rounded-full transition-all duration-500"
-                  style={{ width: `${lessonsPercent}%` }}
-                />
-              </div>
-              <span className="text-[10px] text-slate-400 mt-2 block font-mono">
-                {lessonsPercent}% completed
-              </span>
-            </div>
-
-            {/* Tasks completed */}
-            <div className="bg-slate-50/50 rounded-xl p-5 border border-slate-100">
-              <div className="flex items-center justify-between text-sm">
-                <span className="font-semibold text-slate-600 flex items-center gap-1.5">
-                  <CheckSquare className="w-4 h-4 text-emerald-500" /> Tasks
-                </span>
-                <span className="font-mono font-bold text-slate-900">
-                  {completedTasks.length} / {totalTasks}
-                </span>
-              </div>
-              <div className="mt-4 h-2 bg-slate-200/80 rounded-full overflow-hidden">
-                <div
-                  className="h-full bg-emerald-500 rounded-full transition-all duration-500"
-                  style={{ width: `${tasksPercent}%` }}
-                />
-              </div>
-              <span className="text-[10px] text-slate-400 mt-2 block font-mono">
-                {tasksPercent}% completed
-              </span>
-            </div>
-
-            {/* Projects completed */}
-            <div className="bg-slate-50/50 rounded-xl p-5 border border-slate-100">
-              <div className="flex items-center justify-between text-sm">
-                <span className="font-semibold text-slate-600 flex items-center gap-1.5">
-                  <Award className="w-4 h-4 text-purple-500" /> Projects
-                </span>
-                <span className="font-mono font-bold text-slate-900">
-                  {completedProjects.length} / {totalProjects}
-                </span>
-              </div>
-              <div className="mt-4 h-2 bg-slate-200/80 rounded-full overflow-hidden">
-                <div
-                  className="h-full bg-purple-600 rounded-full transition-all duration-500"
-                  style={{ width: `${projectsPercent}%` }}
-                />
-              </div>
-              <span className="text-[10px] text-slate-400 mt-2 block font-mono">
-                {projectsPercent}% completed
-              </span>
-            </div>
-          </div>
-        </div>
-        
+        </section>
       </div>
-    </div>
+    </>
   );
 }
+
+
+
+
+
+

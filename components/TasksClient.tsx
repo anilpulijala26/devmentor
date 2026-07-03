@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import React, { useMemo, useState } from "react";
 import Link from "next/link";
@@ -74,10 +74,10 @@ export function TasksClient({ initialTasks }: TasksClientProps) {
         <div className="max-w-3xl space-y-4">
           <div className="inline-flex items-center gap-2 rounded-lg border border-slate-200 bg-slate-50 px-3 py-1.5 text-sm font-medium text-slate-700">
             <span className="h-2 w-2 rounded-full bg-indigo-600" aria-hidden="true" />
-            Daily practice workspace
+            Practice workspace
           </div>
           <h1 className="text-3xl font-semibold tracking-tight text-slate-950 sm:text-4xl lg:text-[3rem] lg:leading-[1.08]">
-            Daily Developer Tasks
+            Practice Tasks
           </h1>
           <p className="max-w-[680px] text-base leading-7 text-slate-600 sm:text-lg">
             Practice implementation details, UI patterns, API handling, and production engineering habits through focused hands-on tasks.
@@ -150,7 +150,7 @@ export function TasksClient({ initialTasks }: TasksClientProps) {
                         </span>
                       ) : (
                         <span className="text-[11px] font-medium uppercase tracking-[0.16em] text-slate-400">
-                          Daily challenge
+                          Practice task
                         </span>
                       )}
                     </div>
@@ -185,7 +185,7 @@ export function TasksClient({ initialTasks }: TasksClientProps) {
                       href={`/tasks/${task.slug}`}
                       className="inline-flex min-h-11 w-full items-center justify-center gap-2 rounded-xl bg-slate-900 text-sm font-semibold text-white transition hover:bg-slate-800 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-slate-900 focus-visible:ring-offset-2"
                     >
-                      <span>Start Task</span>
+                      <span>Open Practice Task</span>
                       <ArrowRight className="h-4 w-4 transition-transform duration-200 group-hover:translate-x-0.5" />
                     </Link>
                   </div>
@@ -210,3 +210,5 @@ export function TasksClient({ initialTasks }: TasksClientProps) {
     </div>
   );
 }
+
+

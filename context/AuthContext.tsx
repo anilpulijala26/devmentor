@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import React, { createContext, useContext, useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
@@ -16,7 +16,13 @@ interface AuthContextType {
   loading: boolean;
   error: string | null;
   login: (email: string, password: string) => Promise<boolean>;
-  register: (name: string, email: string, password: string, confirmPassword: string) => Promise<boolean>;
+  register: (
+    name: string,
+    email: string,
+    password: string,
+    confirmPassword: string,
+    levelKey?: string,
+  ) => Promise<boolean>;
   logout: () => Promise<void>;
   clearError: () => void;
 }
@@ -32,7 +38,6 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
   useEffect(() => {
     setMounted(true);
-    // Fetch profile on initial mount to check active session
     async function fetchMe() {
       try {
         const res = await fetch("/api/auth/me");
@@ -77,7 +82,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       router.push("/dashboard");
       router.refresh();
       return true;
-    } catch (err) {
+    } catch {
       setError("An unexpected network error occurred.");
       setLoading(false);
       return false;
@@ -88,7 +93,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     name: string,
     email: string,
     password: string,
-    confirmPassword: string
+    confirmPassword: string,
+    levelKey?: string,
   ): Promise<boolean> => {
     setLoading(true);
     setError(null);
@@ -96,7 +102,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       const res = await fetch("/api/auth/register", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ name, email, password, confirmPassword }),
+        body: JSON.stringify({ name, email, password, confirmPassword, levelKey }),
       });
 
       const data = await res.json();
@@ -112,7 +118,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       router.push("/dashboard");
       router.refresh();
       return true;
-    } catch (err) {
+    } catch {
       setError("An unexpected network error occurred.");
       setLoading(false);
       return false;
@@ -175,3 +181,4 @@ export function useAuth() {
   }
   return context;
 }
+

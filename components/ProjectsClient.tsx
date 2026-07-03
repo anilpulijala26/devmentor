@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import React, { useState } from "react";
 import Link from "next/link";
@@ -48,13 +48,13 @@ export function ProjectsClient({ initialProjects }: ProjectsClientProps) {
             Build workspace
           </div>
           <h1 className="text-3xl font-semibold tracking-tight text-slate-950 sm:text-4xl lg:text-[3rem] lg:leading-[1.08]">
-            Project Labs
+            Build Projects
           </h1>
           <p className="max-w-[680px] text-base leading-7 text-slate-600 sm:text-lg">
             Build production-style software with clear requirements, scoped deliverables, and implementation patterns that mirror real engineering work.
           </p>
           <p className="text-sm font-medium text-slate-500">
-            7 Labs · 4 Skill Areas · Project-Based Learning
+            7 Labs Â· 4 Skill Areas Â· Project-Based Learning
           </p>
         </div>
 
@@ -78,7 +78,7 @@ export function ProjectsClient({ initialProjects }: ProjectsClientProps) {
 
       {filtered.length === 0 ? (
         <div className="rounded-[22px] border border-slate-200 bg-white p-8 text-center shadow-[0_8px_24px_rgba(15,23,42,0.04)]">
-          <p className="text-base font-medium text-slate-600">No project labs found for this level.</p>
+          <p className="text-base font-medium text-slate-600">No build projects found for this level.</p>
         </div>
       ) : (
         <div className="grid items-stretch gap-6 md:grid-cols-2">
@@ -93,7 +93,7 @@ export function ProjectsClient({ initialProjects }: ProjectsClientProps) {
               >
                 <div className="flex flex-1 flex-col space-y-5">
                   <div className="flex items-center justify-between gap-3">
-                    <StatusBadge label="Available Now" tone="emerald" />
+                    <StatusBadge label="Ready to Build" tone="emerald" />
                     <div className="inline-flex items-center gap-1 text-xs font-medium text-slate-500">
                       <Clock className="w-3.5 h-3.5" />
                       <span>{project.duration}</span>
@@ -155,7 +155,7 @@ export function ProjectsClient({ initialProjects }: ProjectsClientProps) {
 
                 <div className="mt-6 flex gap-3 border-t border-slate-200 pt-4">
                   <ActionLink href={`/projects/${project.slug}`} className="flex-1">
-                    Start Project
+                    Start Build
                   </ActionLink>
                   <Link
                     href={`/projects/${project.slug}`}
@@ -173,3 +173,5 @@ export function ProjectsClient({ initialProjects }: ProjectsClientProps) {
     </div>
   );
 }
+
+

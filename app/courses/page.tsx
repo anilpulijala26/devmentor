@@ -1,13 +1,17 @@
-import { cookies } from "next/headers";
+﻿import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
 import Link from "next/link";
 import { verifyJWT } from "@/lib/jwt";
-import { dbQuery } from "@/lib/db";
-import { BookOpen, GraduationCap, ArrowRight, Layers, Layout, Target } from "lucide-react";
+import {
+  LEARNING_PATHS,
+  getModuleStatus,
+  parseLearningProfileCookie,
+} from "@/lib/learningProfile";
+import { ArrowRight, BookOpen, Lock, Sparkles } from "lucide-react";
 
 export const metadata = {
-  title: "Courses - CodeNivra",
-  description: "Explore our professional coding curriculum and structured learning tracks.",
+  title: "Learn - CodeNivra",
+  description: "Follow your JavaScript learning path module by module and day by day.",
 };
 
 export default async function CoursesPage() {
@@ -23,100 +27,81 @@ export default async function CoursesPage() {
     redirect("/login");
   }
 
-  // Fetch courses with their module and lesson counts from the database
-  const coursesResult = await dbQuery(`
-    SELECT c.id, c.title, c.description,
-           COALESCE(m.module_count, 0) as module_count,
-           COALESCE(l.lesson_count, 0) as lesson_count
-    FROM courses c
-    LEFT JOIN (
-      SELECT course_id, COUNT(*) as module_count FROM modules GROUP BY course_id
-    ) m ON c.id = m.course_id
-    LEFT JOIN (
-      SELECT m.course_id, COUNT(*) as lesson_count 
-      FROM lessons l
-      JOIN modules m ON l.module_id = m.id
-      GROUP BY m.course_id
-    ) l ON c.id = l.course_id
-    ORDER BY c.order_index ASC
-  `);
-
-  const courses = coursesResult.rows;
+  const profile = parseLearningProfileCookie(cookieStore.get("learning_profile")?.value);
+  const path = LEARNING_PATHS[profile.pathKey];
 
   return (
-    <div className="min-h-screen bg-slate-50/50 pb-20 relative overflow-hidden">
-      {/* Decorative Blur Spheres */}
-      <div className="absolute top-[-10%] right-[-10%] w-[600px] h-[600px] rounded-full bg-indigo-500/5 blur-[120px] pointer-events-none" />
-      <div className="absolute bottom-[-10%] left-[-10%] w-[600px] h-[600px] rounded-full bg-violet-500/5 blur-[120px] pointer-events-none" />
-
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 relative z-10">
-        <div className="text-center max-w-3xl mx-auto mb-16">
-          <div className="inline-flex items-center gap-1.5 rounded-full bg-indigo-50 px-3.5 py-1 text-xs font-semibold text-indigo-700 mb-4 border border-indigo-100">
-            <GraduationCap className="w-3.5 h-3.5" /> Structured Learning
+    <div className="min-h-screen bg-slate-50/50 pb-20">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+        <div className="max-w-3xl">
+          <div className="inline-flex items-center gap-2 rounded-full bg-indigo-50 px-3.5 py-1 text-xs font-semibold text-indigo-700 mb-4 border border-indigo-100">
+            <Sparkles className="w-3.5 h-3.5" /> Learning Path
           </div>
-          <h1 className="text-4xl sm:text-5xl font-extrabold tracking-tight text-slate-900 font-sans">
-            CodeNivra Learning Courses
-          </h1>
-          <p className="mt-4 text-base sm:text-lg text-slate-500 max-w-xl mx-auto leading-relaxed">
-            Choose a developer roadmap to go from absolute scratch to deploying real production-grade applications.
+          <h1 className="text-4xl sm:text-5xl font-extrabold tracking-tight text-slate-900">{path.title}</h1>
+          <p className="mt-4 text-base sm:text-lg text-slate-500 max-w-2xl leading-relaxed">
+            Move through one active module at a time. Each module is broken into lessons, practice tasks, coding problems, interview questions, and project steps.
           </p>
         </div>
 
-        {courses.length === 0 ? (
-          <div className="bg-white rounded-2xl border border-slate-200 p-12 text-center max-w-md mx-auto">
-            <BookOpen className="w-12 h-12 text-slate-300 mx-auto mb-4" />
-            <h3 className="text-lg font-bold text-slate-900">No courses found</h3>
-            <p className="text-sm text-slate-500 mt-2">Check back later or rerun your database seed script.</p>
-          </div>
-        ) : (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-            {courses.map((course) => (
-              <div
-                key={course.id}
-                className="bg-white rounded-2xl border border-slate-200/80 shadow-[0_4px_25px_rgba(15,23,42,0.01)] hover:shadow-[0_12px_35px_rgba(15,23,42,0.05)] hover:border-slate-300/90 transition-all duration-300 p-6 sm:p-8 flex flex-col justify-between group"
-              >
-                <div>
-                  <div className="w-12 h-12 rounded-2xl bg-indigo-50 border border-indigo-100/50 flex items-center justify-center text-indigo-600 mb-6 group-hover:scale-105 transition-transform">
-                    <Layout className="w-6 h-6" />
+        <div className="mt-10 grid gap-6 lg:grid-cols-2">
+          {path.modules.map((module) => {
+            const status = getModuleStatus(profile, module.order, 0);
+            const isActive = status === "Active";
+            return (
+              <article key={module.order} className={`rounded-[2rem] border p-6 shadow-sm ${isActive ? "border-indigo-300 bg-white" : "border-slate-200 bg-white"}`}>
+                <div className="flex items-start justify-between gap-4">
+                  <div>
+                    <p className="text-xs font-bold uppercase tracking-[0.2em] text-slate-400">Module {module.order}</p>
+                    <h2 className="mt-2 text-2xl font-black tracking-tight text-slate-950">{module.title}</h2>
+                    <p className="mt-3 text-sm leading-6 text-slate-600">{module.description}</p>
                   </div>
-                  <h3 className="text-xl font-bold text-slate-900 group-hover:text-indigo-650 transition-colors">
-                    {course.title}
-                  </h3>
-                  <p className="text-sm text-slate-500 mt-3 leading-relaxed">
-                    {course.description}
-                  </p>
+                  <span className={`shrink-0 rounded-full px-3 py-1 text-xs font-bold ${status === "Active" ? "bg-emerald-50 text-emerald-700" : status === "Completed" ? "bg-slate-100 text-slate-700" : status === "Upcoming" ? "bg-amber-50 text-amber-700" : "bg-slate-100 text-slate-500"}`}>
+                    {status}
+                  </span>
+                </div>
 
-                  <div className="grid grid-cols-2 gap-4 mt-6 border-t border-b border-slate-100 py-4.5">
-                    <div className="flex items-center gap-2">
-                      <Layers className="w-4 h-4 text-slate-400" />
-                      <div>
-                        <p className="text-xs text-slate-400 font-semibold font-mono">MODULES</p>
-                        <p className="text-sm font-bold text-slate-800">{course.module_count}</p>
-                      </div>
-                    </div>
-                    <div className="flex items-center gap-2">
-                      <BookOpen className="w-4 h-4 text-slate-400" />
-                      <div>
-                        <p className="text-xs text-slate-400 font-semibold font-mono">LESSONS</p>
-                        <p className="text-sm font-bold text-slate-800">{course.lesson_count}</p>
-                      </div>
-                    </div>
+                <div className="mt-5 grid gap-4 sm:grid-cols-2">
+                  <div className="rounded-2xl border border-slate-200 bg-slate-50/60 p-4">
+                    <p className="text-xs font-bold uppercase tracking-[0.18em] text-slate-400">Lessons</p>
+                    <ul className="mt-3 space-y-2 text-sm text-slate-700">
+                      {module.lessonTopics.slice(0, 4).map((topic) => <li key={topic}>• {topic}</li>)}
+                    </ul>
+                  </div>
+                  <div className="rounded-2xl border border-slate-200 bg-slate-50/60 p-4">
+                    <p className="text-xs font-bold uppercase tracking-[0.18em] text-slate-400">Day Flow</p>
+                    <ul className="mt-3 space-y-2 text-sm text-slate-700">
+                      <li>• Lesson</li>
+                      <li>• Practice Task</li>
+                      <li>• Coding Problem</li>
+                      <li>• Interview Question</li>
+                      <li>• Project Step</li>
+                    </ul>
                   </div>
                 </div>
 
-                <div className="mt-8">
-                  <Link
-                    href={`/courses/${course.id}`}
-                    className="inline-flex items-center justify-center gap-1.5 w-full rounded-xl bg-slate-900 hover:bg-slate-800 py-3 text-sm font-semibold text-white transition-all group-hover:bg-indigo-600"
-                  >
-                    View Syllabus <ArrowRight className="w-4 h-4 group-hover:translate-x-0.5 transition-transform" />
+                <div className="mt-5 rounded-2xl border border-slate-200 bg-white p-4">
+                  <p className="text-xs font-bold uppercase tracking-[0.18em] text-slate-400">Day 1 Preview</p>
+                  <p className="mt-2 text-sm font-semibold text-slate-900">Learn: {module.dayPlans[0]?.lessonTitle}</p>
+                  <p className="mt-1 text-sm text-slate-600">Practice: {module.dayPlans[0]?.practiceTitle}</p>
+                  <p className="mt-1 text-sm text-slate-600">Build: {module.dayPlans[0]?.projectStepTitle}</p>
+                </div>
+
+                <div className="mt-5 flex items-center justify-between gap-3">
+                  <div className="inline-flex items-center gap-2 text-sm text-slate-500">
+                    {status === "Locked" ? <Lock className="w-4 h-4" /> : <BookOpen className="w-4 h-4" />}
+                    {status === "Locked" ? "Unlock by finishing the earlier active module" : "Ready for guided daily learning"}
+                  </div>
+                  <Link href="/dashboard" className="inline-flex items-center gap-2 rounded-xl bg-slate-900 px-4 py-2.5 text-sm font-semibold text-white transition hover:bg-slate-800">
+                    {isActive ? "Open Active Module" : "View Dashboard"}
+                    <ArrowRight className="w-4 h-4" />
                   </Link>
                 </div>
-              </div>
-            ))}
-          </div>
-        )}
+              </article>
+            );
+          })}
+        </div>
       </div>
     </div>
   );
 }
+

@@ -1,9 +1,26 @@
-"use client";
+﻿"use client";
 
 import React, { useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { ChevronLeft, Code, CheckCircle, Save, Loader2, Sparkles, HelpCircle } from "lucide-react";
+import {
+  ChevronLeft,
+  Code,
+  CheckCircle,
+  ChevronDown,
+  HelpCircle,
+  Lightbulb,
+  Loader2,
+  Play,
+  RotateCcw,
+  Save,
+} from "lucide-react";
+
+interface ChallengeExample {
+  input: unknown[];
+  expected: unknown;
+  explanation?: string;
+}
 
 interface Challenge {
   id: string;
@@ -12,6 +29,13 @@ interface Challenge {
   starterCode: string;
   difficulty: string;
   orderIndex: number;
+  instruction: string;
+  inputExplanation: string;
+  outputExplanation: string;
+  examples: ChallengeExample[];
+  hint: string;
+  interviewQuestion: string;
+  interviewAnswer: string;
 }
 
 interface ChallengeEditorClientProps {
@@ -20,48 +44,31 @@ interface ChallengeEditorClientProps {
   isSolved: boolean;
 }
 
-export function ChallengeEditorClient({
-  challenge,
-  prevSubmission,
-  isSolved: initialSolved,
-}: ChallengeEditorClientProps) {
+interface RunResult {
+  passed: boolean;
+  message: string;
+}
+
+export function ChallengeEditorClient({ challenge, prevSubmission, isSolved: initialSolved }: ChallengeEditorClientProps) {
   const router = useRouter();
   const [code, setCode] = useState(prevSubmission || challenge.starterCode);
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState<"run" | "submit" | null>(null);
   const [success, setSuccess] = useState(initialSolved);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
-  const [showResetConfirm, setShowResetConfirm] = useState(false);
+  const [showHint, setShowHint] = useState(false);
+  const [results, setResults] = useState<RunResult[]>([]);
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setLoading(true);
+  const sendAttempt = async (mode: "run" | "submit") => {
+    setLoading(mode);
     setErrorMessage(null);
+    if (mode === "submit") {
+      setSuccess(false);
+    }
 
     const trimmedCode = code.trim();
     if (!trimmedCode) {
       setErrorMessage("Submitted code cannot be empty.");
-      setLoading(false);
-      return;
-    }
-    if (trimmedCode === challenge.starterCode.trim()) {
-      setErrorMessage("You must write your own solution before submitting! The code cannot match the starter template.");
-      setLoading(false);
-      return;
-    }
-
-    // Extract expected function name from starter code
-    const funcMatch = challenge.starterCode.match(/function\s+([a-zA-Z0-9_$]+)\s*\(/);
-    const expectedFuncName = funcMatch ? funcMatch[1] : null;
-
-    if (expectedFuncName && !trimmedCode.includes(expectedFuncName)) {
-      setErrorMessage(`Your solution must define the function '${expectedFuncName}'.`);
-      setLoading(false);
-      return;
-    }
-
-    if (!trimmedCode.includes("return")) {
-      setErrorMessage("Your solution must return a value (use the 'return' keyword).");
-      setLoading(false);
+      setLoading(null);
       return;
     }
 
@@ -72,116 +79,111 @@ export function ChallengeEditorClient({
         body: JSON.stringify({
           challengeId: challenge.id,
           submittedCode: code,
+          mode,
         }),
       });
 
       const data = await res.json();
+      setResults(data.results || []);
 
       if (!res.ok) {
-        throw new Error(data.error || "Failed to submit challenge.");
+        setErrorMessage(data.error || "The code did not pass yet.");
+        return;
       }
 
-      setSuccess(true);
-      router.refresh();
-    } catch (err: any) {
-      console.error("Submission error:", err);
-      setErrorMessage(err.message || "An unexpected network error occurred.");
+      if (mode === "submit") {
+        setSuccess(true);
+        router.refresh();
+      }
+    } catch (error: unknown) {
+      setErrorMessage(error instanceof Error ? error.message : "An unexpected network error occurred.");
     } finally {
-      setLoading(false);
+      setLoading(null);
     }
-  };
-
-  const handleReset = () => {
-    setShowResetConfirm(true);
   };
 
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 relative z-10">
-      
-      {/* Navigation Headers */}
       <div className="mb-6 flex items-center justify-between">
-        <Link
-          href="/challenges"
-          className="inline-flex items-center gap-1.5 text-sm font-semibold text-slate-500 hover:text-slate-800 transition-colors"
-        >
-          <ChevronLeft className="w-4 h-4" /> Back to Challenges
+        <Link href="/challenges" className="inline-flex items-center gap-1.5 text-sm font-semibold text-slate-500 hover:text-slate-800 transition-colors">
+          <ChevronLeft className="w-4 h-4" /> Back to Coding Problems
         </Link>
-        
-        {success && (
-          <span className="flex items-center gap-1.5 bg-emerald-50 text-emerald-700 border border-emerald-100 font-bold px-3.5 py-1.5 rounded-full text-xs animate-fade-in">
-            <CheckCircle className="w-3.5 h-3.5" /> Submitted for review
+
+        {success ? (
+          <span className="flex items-center gap-1.5 bg-emerald-50 text-emerald-700 border border-emerald-100 font-bold px-3.5 py-1.5 rounded-full text-xs">
+            <CheckCircle className="w-3.5 h-3.5" /> Submitted successfully
           </span>
-        )}
+        ) : null}
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
-        
-        {/* Left Side: Challenge Instructions */}
         <div className="lg:col-span-5 flex flex-col gap-6">
           <div className="bg-white rounded-3xl border border-slate-200/80 shadow-[0_4px_20px_rgba(15,23,42,0.01)] p-6 sm:p-8">
             <div className="flex items-center gap-2.5">
-              <span className="text-xs font-bold font-mono text-indigo-600 bg-indigo-50 px-2 py-0.5 rounded uppercase">
-                Challenge #{challenge.orderIndex}
-              </span>
-              <span className={`px-2 py-0.5 rounded text-xs font-bold uppercase ${
-                challenge.difficulty === "Easy" ? "bg-emerald-50 text-emerald-600" : "bg-amber-50 text-amber-600"
-              }`}>
-                {challenge.difficulty}
-              </span>
+              <span className="text-xs font-bold font-mono text-indigo-600 bg-indigo-50 px-2 py-0.5 rounded uppercase">Problem #{challenge.orderIndex}</span>
+              <span className={`px-2 py-0.5 rounded text-xs font-bold uppercase ${challenge.difficulty === "Easy" ? "bg-emerald-50 text-emerald-600" : "bg-amber-50 text-amber-600"}`}>{challenge.difficulty}</span>
             </div>
 
-            <h1 className="text-2xl font-extrabold text-slate-900 mt-4 tracking-tight">
-              {challenge.title}
-            </h1>
-            
-            <div className="mt-5 border-t border-slate-100 pt-5">
-              <h2 className="text-sm font-bold text-slate-800 uppercase tracking-wider mb-2 flex items-center gap-1.5">
-                <HelpCircle className="w-4 h-4 text-indigo-500" /> Instructions
-              </h2>
-              <p className="text-sm text-slate-600 leading-relaxed font-normal">
-                {challenge.description}
-              </p>
+            <h1 className="text-2xl font-extrabold text-slate-900 mt-4 tracking-tight">{challenge.title}</h1>
+
+            <div className="mt-5 space-y-4 border-t border-slate-100 pt-5 text-sm text-slate-600">
+              <div>
+                <h2 className="font-bold text-slate-800 flex items-center gap-1.5"><HelpCircle className="w-4 h-4 text-indigo-500" /> Clear instruction</h2>
+                <p className="mt-2 leading-relaxed">{challenge.instruction}</p>
+              </div>
+              <div>
+                <h2 className="font-bold text-slate-800">Input</h2>
+                <p className="mt-1">{challenge.inputExplanation}</p>
+              </div>
+              <div>
+                <h2 className="font-bold text-slate-800">Output</h2>
+                <p className="mt-1">{challenge.outputExplanation}</p>
+              </div>
             </div>
-            
-            <div className="mt-6 p-4 rounded-2xl bg-slate-50 border border-slate-100 text-xs text-slate-500 space-y-2">
-              <p className="font-semibold text-slate-700">Guidelines:</p>
-              <ul className="list-disc pl-4 space-y-1">
-                <li>Write or paste your JavaScript solution in the editor workspace.</li>
-                <li>Ensure all variables and return statements are syntactically sound.</li>
-                <li>Submit your solution for manual code review when complete.</li>
-              </ul>
+
+            <div className="mt-6 space-y-3">
+              <h2 className="text-sm font-bold uppercase tracking-wider text-slate-700">Example input / output</h2>
+              {challenge.examples.map((example, index) => (
+                <div key={`${challenge.id}-${index}`} className="rounded-2xl border border-slate-200 bg-slate-50/70 p-4 text-xs text-slate-700">
+                  <p className="font-bold text-slate-900">Example {index + 1}</p>
+                  <p className="mt-2"><span className="font-semibold">Input:</span> {JSON.stringify(example.input.length === 1 ? example.input[0] : example.input)}</p>
+                  <p className="mt-1"><span className="font-semibold">Output:</span> {JSON.stringify(example.expected)}</p>
+                  {example.explanation ? <p className="mt-2 text-slate-500">{example.explanation}</p> : null}
+                </div>
+              ))}
+            </div>
+
+            <div className="mt-6 rounded-2xl border border-slate-200 bg-white overflow-hidden">
+              <button type="button" onClick={() => setShowHint((prev) => !prev)} className="flex w-full items-center justify-between px-4 py-3 text-sm font-semibold text-slate-800 hover:bg-slate-50">
+                <span className="inline-flex items-center gap-2"><Lightbulb className="w-4 h-4 text-amber-500" /> Show hint</span>
+                <ChevronDown className={`w-4 h-4 transition-transform ${showHint ? "rotate-180" : ""}`} />
+              </button>
+              {showHint ? <p className="border-t border-slate-100 px-4 py-3 text-sm text-slate-600">{challenge.hint}</p> : null}
+            </div>
+
+            <div className="mt-6 rounded-2xl border border-indigo-100 bg-indigo-50/60 p-4 text-sm">
+              <p className="font-bold text-slate-900">Interview Question</p>
+              <p className="mt-2 font-semibold text-slate-900">{challenge.interviewQuestion}</p>
+              <p className="mt-2 text-slate-600">Expected answer: {challenge.interviewAnswer}</p>
             </div>
           </div>
         </div>
 
-        {/* Right Side: Code Editor Area */}
-        <div className="lg:col-span-7">
-          <form
-            onSubmit={handleSubmit}
-            className="bg-slate-900 rounded-3xl border border-slate-800 shadow-xl overflow-hidden flex flex-col h-[520px]"
-          >
-            {/* Editor Top Bar Controls */}
-            <div className="bg-slate-950/80 px-6 py-3.5 border-b border-slate-850 flex items-center justify-between">
+        <div className="lg:col-span-7 space-y-5">
+          <div className="bg-slate-900 rounded-3xl border border-slate-800 shadow-xl overflow-hidden flex flex-col min-h-[520px]">
+            <div className="bg-slate-950/80 px-6 py-3.5 border-b border-slate-800 flex items-center justify-between">
               <div className="flex items-center gap-2">
                 <Code className="w-4 h-4 text-indigo-400" />
                 <span className="text-xs font-bold text-slate-400 font-mono">solution.js</span>
               </div>
-              <button
-                type="button"
-                onClick={handleReset}
-                className="text-xs text-slate-400 hover:text-white transition-colors font-medium"
-              >
-                Reset Code
+              <button type="button" onClick={() => { setCode(challenge.starterCode); setErrorMessage(null); setSuccess(false); setResults([]); }} className="inline-flex items-center gap-2 text-xs text-slate-400 hover:text-white transition-colors font-medium">
+                <RotateCcw className="w-3.5 h-3.5" /> Reset Code
               </button>
             </div>
 
-            {/* Code Textarea Workspace */}
-            <div className="flex-1 relative flex">
-              {/* Row Numbers Simulation */}
-              <div className="bg-slate-950/40 select-none text-right px-4.5 py-5 border-r border-slate-850/60 font-mono text-xs text-slate-600 leading-6 hidden sm:block">
-                {Array.from({ length: 15 }).map((_, i) => (
-                  <div key={i}>{i + 1}</div>
-                ))}
+            <div className="flex-1 relative flex min-h-[340px]">
+              <div className="bg-slate-950/40 select-none text-right px-4.5 py-5 border-r border-slate-800/60 font-mono text-xs text-slate-600 leading-6 hidden sm:block">
+                {Array.from({ length: Math.max(12, code.split("\n").length) }).map((_, i) => <div key={i}>{i + 1}</div>)}
               </div>
 
               <textarea
@@ -192,92 +194,42 @@ export function ChallengeEditorClient({
                   setErrorMessage(null);
                 }}
                 className="flex-1 w-full bg-transparent text-slate-100 p-5 font-mono text-xs leading-6 resize-none focus:outline-none focus:ring-0 border-none placeholder-slate-700 select-text"
-                placeholder="// Write or paste your Javascript solution here..."
+                placeholder="// Write your JavaScript solution here..."
                 spellCheck="false"
               />
             </div>
 
-            {/* Submission Status Alert Section */}
-            {errorMessage && (
-              <div className="mx-6 mb-4 p-4 rounded-2xl bg-red-950/40 border border-red-900/50 text-red-200 text-xs font-mono leading-relaxed flex items-start gap-2.5 animate-fade-in shadow-inner">
-                <span className="text-red-500 font-bold shrink-0 mt-0.5">❯ Error:</span>
-                <span className="whitespace-pre-wrap">{errorMessage}</span>
+            <div className="bg-slate-950/80 px-6 py-4.5 border-t border-slate-800 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+              <span className="text-xs text-slate-500 font-mono font-medium">Line Count: {code.split("\n").length} lines</span>
+
+              <div className="flex flex-col gap-2 sm:flex-row">
+                <button type="button" onClick={() => sendAttempt("run")} disabled={loading !== null || code.trim() === ""} className="inline-flex items-center justify-center gap-2 rounded-xl border border-slate-700 px-4 py-3 text-xs font-bold text-slate-100 transition hover:bg-slate-800 disabled:opacity-50 disabled:cursor-not-allowed uppercase tracking-wider">
+                  {loading === "run" ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <Play className="w-3.5 h-3.5" />} Run Tests
+                </button>
+                <button type="button" onClick={() => sendAttempt("submit")} disabled={loading !== null || code.trim() === ""} className="inline-flex items-center justify-center gap-2 bg-indigo-600 hover:bg-indigo-700 disabled:opacity-50 transition-colors text-white font-bold text-xs px-5 py-3 rounded-xl shadow-md disabled:cursor-not-allowed uppercase tracking-wider">
+                  {loading === "submit" ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <Save className="w-3.5 h-3.5" />} Submit Solution
+                </button>
               </div>
-            )}
-
-            {success && (
-              <div className="mx-6 mb-4 p-4 rounded-xl bg-emerald-950/50 border border-emerald-900/60 text-emerald-300 text-xs font-semibold flex items-center gap-2">
-                <CheckCircle className="w-4 h-4 text-emerald-500 shrink-0" />
-                <span>Your code has been submitted! Today's mission is checked off.</span>
-              </div>
-            )}
-
-            {/* Editor Footer Panel */}
-            <div className="bg-slate-950/80 px-6 py-4.5 border-t border-slate-850 flex items-center justify-between">
-              <span className="text-xs text-slate-500 font-mono font-medium">
-                Line Count: {code.split("\n").length} lines
-              </span>
-
-              <button
-                type="submit"
-                disabled={loading || code.trim() === ""}
-                className="inline-flex items-center gap-2 bg-indigo-600 hover:bg-indigo-700 disabled:opacity-50 disabled:hover:bg-indigo-600 transition-colors text-white font-bold text-xs px-5 py-3 rounded-xl shadow-md hover:shadow-lg disabled:cursor-not-allowed uppercase tracking-wider"
-              >
-                {loading ? (
-                  <>
-                    <Loader2 className="w-3.5 h-3.5 animate-spin" /> Submitting...
-                  </>
-                ) : (
-                  <>
-                    <Save className="w-3.5 h-3.5" /> Submit Solution
-                  </>
-                )}
-              </button>
-            </div>
-          </form>
-        </div>
-
-      </div>
-
-      {/* Custom Reset Modal */}
-      {showResetConfirm && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-950/60 backdrop-blur-sm p-4 animate-fade-in">
-          <div className="bg-white rounded-3xl border border-slate-200 shadow-2xl p-6 sm:p-8 max-w-md w-full relative z-50 animate-scale-up">
-            <div className="flex items-start gap-4">
-              <div className="w-10 h-10 rounded-full bg-amber-50 flex items-center justify-center text-amber-600 shrink-0 border border-amber-100/50">
-                <HelpCircle className="w-5 h-5" />
-              </div>
-              <div>
-                <h3 className="text-lg font-bold text-slate-950">Reset Code Template?</h3>
-                <p className="mt-2 text-sm text-slate-500 leading-relaxed font-normal">
-                  Are you sure you want to discard your changes and revert the editor back to the default starter template? This action cannot be undone.
-                </p>
-              </div>
-            </div>
-            <div className="mt-6 flex items-center justify-end gap-3 border-t border-slate-100 pt-5">
-              <button
-                type="button"
-                onClick={() => setShowResetConfirm(false)}
-                className="px-4.5 py-2.5 rounded-xl border border-slate-200 text-sm font-semibold text-slate-700 hover:bg-slate-50 transition-colors cursor-pointer focus:outline-none"
-              >
-                Cancel
-              </button>
-              <button
-                type="button"
-                onClick={() => {
-                  setCode(challenge.starterCode);
-                  setSuccess(false);
-                  setErrorMessage(null);
-                  setShowResetConfirm(false);
-                }}
-                className="px-4.5 py-2.5 rounded-xl bg-amber-600 hover:bg-amber-700 text-sm font-bold text-white transition-colors cursor-pointer focus:outline-none"
-              >
-                Yes, Reset
-              </button>
             </div>
           </div>
+
+          {errorMessage ? <div className="rounded-2xl bg-red-50 border border-red-100 p-4 text-sm text-red-700">{errorMessage}</div> : null}
+
+          {results.length > 0 ? (
+            <div className="rounded-3xl border border-slate-200 bg-white p-5 shadow-sm">
+              <h2 className="text-base font-black text-slate-950">Test Results</h2>
+              <div className="mt-4 space-y-3">
+                {results.map((result, index) => (
+                  <div key={`${result.message}-${index}`} className={`rounded-2xl border p-4 text-sm ${result.passed ? "border-emerald-100 bg-emerald-50/40 text-emerald-700" : "border-amber-100 bg-amber-50/50 text-amber-800"}`}>
+                    {result.message}
+                  </div>
+                ))}
+              </div>
+            </div>
+          ) : null}
         </div>
-      )}
+      </div>
     </div>
   );
 }
+
