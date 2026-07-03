@@ -1,4 +1,4 @@
-﻿"use client";
+"use client";
 
 import { useState, useRef, useEffect } from "react";
 import Link from "next/link";
@@ -138,41 +138,93 @@ export function Navbar() {
           )}
         </div>
 
-        <button
-          onClick={() => setIsOpen(!isOpen)}
-          aria-expanded={isOpen}
-          aria-label="Toggle navigation menu"
-          className="rounded-xl p-2 text-slate-600 hover:bg-slate-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 focus-visible:ring-offset-2 cursor-pointer md:hidden"
-        >
-          {isOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
-        </button>
+        <div className="flex items-center gap-2 md:hidden">
+          {!loading && (
+            user ? (
+              <Link
+                href="/profile"
+                onClick={closeMenus}
+                aria-label="Open account details"
+                className="inline-flex items-center gap-2 rounded-xl border border-slate-200 bg-white px-3 py-2 text-sm font-semibold text-slate-700 transition hover:bg-slate-50 hover:text-slate-950 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#4F46E5] focus-visible:ring-offset-2"
+              >
+                <div className="flex h-7 w-7 items-center justify-center rounded-full bg-indigo-50 text-[#4F46E5] border border-slate-200 shrink-0">
+                  <User className="h-4 w-4" />
+                </div>
+                <div className="min-w-0 text-left leading-tight">
+                  <span className="block max-w-[84px] truncate text-slate-900">{user.name}</span>
+                  <span className="block text-[10px] font-bold uppercase tracking-[0.16em] text-slate-400">Account</span>
+                </div>
+                <ChevronDown className="h-4 w-4 shrink-0 text-slate-400" />
+              </Link>
+            ) : (
+              <Link
+                href="/login"
+                onClick={closeMenus}
+                className="inline-flex items-center justify-center rounded-xl border border-slate-200 bg-white px-3 py-2 text-sm font-semibold text-slate-700 transition hover:bg-slate-50 hover:text-slate-950 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#4F46E5] focus-visible:ring-offset-2"
+              >
+                Login
+              </Link>
+            )
+          )}
+
+          <button
+            onClick={() => setIsOpen(!isOpen)}
+            aria-expanded={isOpen}
+            aria-label="Toggle navigation menu"
+            className="rounded-xl p-2 text-slate-600 hover:bg-slate-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 focus-visible:ring-offset-2 cursor-pointer md:hidden"
+          >
+            {isOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
+          </button>
+        </div>
       </div>
 
       {isOpen ? (
         <div className="space-y-4 border-b border-slate-200 bg-white/95 px-4 pt-2 pb-6 backdrop-blur-md md:hidden">
-          {user ? (
-            <div className="space-y-1.5">
-              <p className="px-3 text-[10px] font-bold uppercase tracking-[0.18em] text-slate-400">Learning Menu</p>
-              {navItems.map((item) => {
-                const isActive = item.match.some((prefix) => pathname.startsWith(prefix));
-                return (
-                  <Link
-                    key={item.name}
-                    href={item.href}
-                    onClick={closeMenus}
-                    className={`block rounded-xl px-3 py-2.5 text-sm font-medium transition ${
-                      isActive ? "bg-slate-100 text-slate-950" : "text-slate-700 hover:bg-slate-50 hover:text-slate-950"
-                    }`}
-                  >
-                    {item.name}
-                  </Link>
-                );
-              })}
-              <Link href="/profile" onClick={closeMenus} className="block rounded-xl px-3 py-2.5 text-sm font-medium text-slate-700 hover:bg-slate-50 hover:text-slate-950 transition">
-                Profile
-              </Link>
+          {!loading && user ? (
+            <div className="rounded-2xl border border-slate-200 bg-slate-50/70 p-4">
+              <p className="text-[10px] font-bold uppercase tracking-[0.18em] text-slate-400">Signed in</p>
+              <p className="mt-1 text-sm font-bold text-slate-900 truncate">{user.name}</p>
+              {user.email ? <p className="mt-1 text-xs text-slate-500 truncate">{user.email}</p> : null}
             </div>
           ) : null}
+
+          {user ? (
+            <>
+              <div className="space-y-1.5">
+                <p className="px-3 text-[10px] font-bold uppercase tracking-[0.18em] text-slate-400">Learning Menu</p>
+                {navItems.map((item) => {
+                  const isActive = item.match.some((prefix) => pathname.startsWith(prefix));
+                  return (
+                    <Link
+                      key={item.name}
+                      href={item.href}
+                      onClick={closeMenus}
+                      className={`block rounded-xl px-3 py-2.5 text-sm font-medium transition ${
+                        isActive ? "bg-indigo-50 text-[#4F46E5]" : "text-slate-700 hover:bg-slate-50 hover:text-slate-950"
+                      }`}
+                    >
+                      {item.name}
+                    </Link>
+                  );
+                })}
+              </div>
+
+              <div className="space-y-1.5 pt-1">
+                <p className="px-3 text-[10px] font-bold uppercase tracking-[0.18em] text-slate-400">Account</p>
+                <Link href="/profile" onClick={closeMenus} className="block rounded-xl px-3 py-2.5 text-sm font-medium text-slate-700 hover:bg-slate-50 hover:text-slate-950 transition">
+                  Profile
+                </Link>
+                <Link href="/progress" onClick={closeMenus} className="block rounded-xl px-3 py-2.5 text-sm font-medium text-slate-700 hover:bg-slate-50 hover:text-slate-950 transition">
+                  View Progress
+                </Link>
+              </div>
+            </>
+          ) : (
+            <div className="rounded-2xl border border-indigo-100 bg-indigo-50/60 p-4">
+              <p className="text-sm font-bold text-slate-900">New to CodeNivra?</p>
+              <p className="mt-1 text-sm text-slate-600">Create your account to start the daily guided learning path, or sign in if you already joined.</p>
+            </div>
+          )}
 
           <div className="px-3 pt-2 border-t border-slate-100 mt-3">
             {!loading && (
@@ -189,11 +241,11 @@ export function Navbar() {
                   </button>
                 ) : (
                   <>
-                    <Link href="/login" onClick={closeMenus} className="flex w-full items-center justify-center rounded-xl border border-slate-200 bg-white py-3 text-sm font-semibold text-slate-700 transition hover:bg-slate-50">
-                      Login
-                    </Link>
                     <Link href="/register" onClick={closeMenus} className="flex w-full items-center justify-center gap-1.5 rounded-xl bg-[#4F46E5] py-3 text-sm font-semibold text-white transition hover:bg-[#4338CA]">
                       Register <ArrowRight className="w-4 h-4" />
+                    </Link>
+                    <Link href="/login" onClick={closeMenus} className="flex w-full items-center justify-center rounded-xl border border-slate-200 bg-white py-3 text-sm font-semibold text-slate-700 transition hover:bg-slate-50">
+                      Login
                     </Link>
                   </>
                 )}
@@ -205,4 +257,3 @@ export function Navbar() {
     </header>
   );
 }
-
