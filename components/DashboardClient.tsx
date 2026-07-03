@@ -19,7 +19,6 @@ import {
   Target,
   TrendingUp,
   Trophy,
-  User as UserIcon,
 } from "lucide-react";
 
 interface DailyMission {
@@ -164,25 +163,37 @@ export function DashboardClient({
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 relative z-10 space-y-6">
         <section className="rounded-[2rem] bg-gradient-to-r from-[#1E1B4B] via-[#312E81] to-[#0F172A] p-6 text-white shadow-[0_12px_40px_rgba(15,23,42,0.08)] sm:p-8">
-          <div className="flex flex-col gap-6 lg:flex-row lg:items-end lg:justify-between">
-            <div className="flex items-start gap-4">
-              <div className="flex h-14 w-14 shrink-0 items-center justify-center rounded-2xl bg-indigo-500/20 text-indigo-100">
-                <UserIcon className="h-7 w-7" />
-              </div>
-              <div>
-                <p className="text-xs font-bold uppercase tracking-[0.24em] text-indigo-200">Daily guided learning</p>
-                <h1 className="mt-2 text-2xl font-black tracking-tight sm:text-3xl">Welcome back, {user.name}</h1>
-                <div className="mt-3 grid gap-2 text-sm text-slate-200 sm:grid-cols-2 lg:grid-cols-4">
-                  <p><span className="text-slate-400">Current Path:</span> {learningProfile.pathTitle}</p>
-                  <p><span className="text-slate-400">Current Module:</span> {currentModuleTitle}</p>
-                  <p><span className="text-slate-400">Current Day:</span> Day {currentDayPlan.day}</p>
-                  <p><span className="text-slate-400">Current Level:</span> {learningProfile.currentLevel}</p>
-                </div>
+          <div className="flex flex-col gap-5 xl:flex-row xl:items-center xl:justify-between">
+            <div className="min-w-0 xl:flex-[1.1]">
+              <h1 className="text-2xl font-black tracking-tight text-white sm:text-3xl">Welcome back, {user.name}</h1>
+              <p className="mt-2 text-sm text-slate-300 sm:text-base">
+                Continue your JavaScript Full-Stack learning plan.
+              </p>
+            </div>
+
+            <div className="xl:flex-1">
+              <div className="flex flex-wrap gap-2">
+                <span className="rounded-full border border-white/10 bg-white/10 px-3 py-1.5 text-xs font-semibold text-slate-100">
+                  {learningProfile.pathTitle}
+                </span>
+                <span className="rounded-full border border-white/10 bg-white/10 px-3 py-1.5 text-xs font-semibold text-slate-100">
+                  {currentModuleTitle}
+                </span>
+                <span className="rounded-full border border-white/10 bg-white/10 px-3 py-1.5 text-xs font-semibold text-slate-100">
+                  Day {currentDayPlan.day}
+                </span>
+                <span className="rounded-full border border-white/10 bg-white/10 px-3 py-1.5 text-xs font-semibold text-slate-100">
+                  {learningProfile.currentLevel}
+                </span>
               </div>
             </div>
-            <div className="rounded-2xl border border-white/10 bg-white/10 px-4 py-3 text-sm text-slate-200">
-              <p className="font-semibold">You have completed {completedCount} lessons so far.</p>
-              <p className="mt-1 text-slate-300">Keep today simple: finish one lesson, one practice task, one coding problem, one project step, and then submit your links.</p>
+
+            <div className="w-full rounded-2xl border border-white/10 bg-white/10 px-4 py-4 xl:w-auto xl:min-w-[240px]">
+              <p className="text-xs font-bold uppercase tracking-[0.18em] text-indigo-200">Progress</p>
+              <p className="mt-2 text-lg font-bold text-white">{completedCount} / {totalCount} lessons completed</p>
+              <p className="mt-1 text-sm text-slate-300">
+                Today: lesson + practice + challenge
+              </p>
             </div>
           </div>
         </section>
