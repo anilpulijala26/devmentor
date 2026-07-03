@@ -127,15 +127,15 @@ export function ChallengeEditorClient({ challenge, prevSubmission, isSolved: ini
         <div className="lg:col-span-5 flex flex-col gap-6">
           <div className="bg-white rounded-3xl border border-slate-200/80 shadow-[0_4px_20px_rgba(15,23,42,0.01)] p-6 sm:p-8">
             <div className="flex items-center gap-2.5">
-              <span className="text-xs font-bold font-mono text-indigo-600 bg-indigo-50 px-2 py-0.5 rounded uppercase">Problem #{challenge.orderIndex}</span>
-              <span className={`px-2 py-0.5 rounded text-xs font-bold uppercase ${challenge.difficulty === "Easy" ? "bg-emerald-50 text-emerald-600" : "bg-amber-50 text-amber-600"}`}>{challenge.difficulty}</span>
+              <span className="text-xs font-bold font-mono text-[#4F46E5] bg-indigo-50 px-2 py-0.5 rounded uppercase">Problem #{challenge.orderIndex}</span>
+              <span className={`px-2 py-0.5 rounded text-xs font-bold uppercase ${challenge.difficulty === "Easy" ? "bg-slate-100 text-slate-600" : "bg-amber-50 text-amber-700"}`}>{challenge.difficulty}</span>
             </div>
 
             <h1 className="text-2xl font-extrabold text-slate-900 mt-4 tracking-tight">{challenge.title}</h1>
 
             <div className="mt-5 space-y-4 border-t border-slate-100 pt-5 text-sm text-slate-600">
               <div>
-                <h2 className="font-bold text-slate-800 flex items-center gap-1.5"><HelpCircle className="w-4 h-4 text-indigo-500" /> Clear instruction</h2>
+                <h2 className="font-bold text-slate-800 flex items-center gap-1.5"><HelpCircle className="w-4 h-4 text-[#4F46E5]" /> Clear instruction</h2>
                 <p className="mt-2 leading-relaxed">{challenge.instruction}</p>
               </div>
               <div>
@@ -168,7 +168,7 @@ export function ChallengeEditorClient({ challenge, prevSubmission, isSolved: ini
               {showHint ? <p className="border-t border-slate-100 px-4 py-3 text-sm text-slate-600">{challenge.hint}</p> : null}
             </div>
 
-            <div className="mt-6 rounded-2xl border border-indigo-100 bg-indigo-50/60 p-4 text-sm">
+            <div className="mt-6 rounded-2xl border border-indigo-100 bg-indigo-50/50 p-4 text-sm">
               <p className="font-bold text-slate-900">Interview Question</p>
               <p className="mt-2 font-semibold text-slate-900">{challenge.interviewQuestion}</p>
               <p className="mt-2 text-slate-600">Expected answer: {challenge.interviewAnswer}</p>
@@ -177,10 +177,10 @@ export function ChallengeEditorClient({ challenge, prevSubmission, isSolved: ini
         </div>
 
         <div className="lg:col-span-7 space-y-5">
-          <div className="bg-slate-900 rounded-3xl border border-slate-800 shadow-xl overflow-hidden flex flex-col min-h-[520px]">
-            <div className="bg-slate-950/80 px-6 py-3.5 border-b border-slate-800 flex items-center justify-between">
+          <div className="bg-[#111827] rounded-3xl border border-slate-700 shadow-xl overflow-hidden flex flex-col min-h-[520px]">
+            <div className="bg-[#1E1B4B]/90 px-6 py-3.5 border-b border-slate-800 flex items-center justify-between">
               <div className="flex items-center gap-2">
-                <Code className="w-4 h-4 text-indigo-400" />
+                <Code className="w-4 h-4 text-indigo-300" />
                 <span className="text-xs font-bold text-slate-400 font-mono">solution.js</span>
               </div>
               <button type="button" onClick={() => { setCode(challenge.starterCode); setErrorMessage(null); setSuccess(false); setResults([]); }} className="inline-flex items-center gap-2 text-xs text-slate-400 hover:text-white transition-colors font-medium">
@@ -206,21 +206,21 @@ export function ChallengeEditorClient({ challenge, prevSubmission, isSolved: ini
               />
             </div>
 
-            <div className="bg-slate-950/80 px-6 py-4.5 border-t border-slate-800 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+            <div className="bg-[#1E1B4B]/90 px-6 py-4.5 border-t border-slate-800 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
               <span className="text-xs text-slate-500 font-mono font-medium">Line Count: {code.split("\n").length} lines</span>
 
               <div className="flex flex-col gap-2 sm:flex-row">
                 <button type="button" onClick={() => sendAttempt("run")} disabled={loading !== null || code.trim() === ""} className="inline-flex items-center justify-center gap-2 rounded-xl border border-slate-700 px-4 py-3 text-xs font-bold text-slate-100 transition hover:bg-slate-800 disabled:opacity-50 disabled:cursor-not-allowed uppercase tracking-wider">
                   {loading === "run" ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <Play className="w-3.5 h-3.5" />} Run Tests
                 </button>
-                <button type="button" onClick={() => sendAttempt("submit")} disabled={loading !== null || code.trim() === ""} className="inline-flex items-center justify-center gap-2 bg-indigo-600 hover:bg-indigo-700 disabled:opacity-50 transition-colors text-white font-bold text-xs px-5 py-3 rounded-xl shadow-md disabled:cursor-not-allowed uppercase tracking-wider">
+                <button type="button" onClick={() => sendAttempt("submit")} disabled={loading !== null || code.trim() === ""} className="inline-flex items-center justify-center gap-2 bg-[#4F46E5] hover:bg-[#4338CA] disabled:opacity-50 transition-colors text-white font-bold text-xs px-5 py-3 rounded-xl shadow-md disabled:cursor-not-allowed uppercase tracking-wider">
                   {loading === "submit" ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <Save className="w-3.5 h-3.5" />} Submit Solution
                 </button>
               </div>
             </div>
           </div>
 
-          {errorMessage ? <div className="rounded-2xl bg-red-50 border border-red-100 p-4 text-sm text-red-700">{errorMessage}</div> : null}
+          {errorMessage ? <div className="rounded-2xl bg-red-50 border border-red-200 p-4 text-sm text-red-700">{errorMessage}</div> : null}
 
           <div className="rounded-3xl border border-slate-200 bg-white p-5 shadow-sm">
             <div className="flex items-center gap-2">
@@ -245,7 +245,7 @@ export function ChallengeEditorClient({ challenge, prevSubmission, isSolved: ini
                     <ol className="mt-2 space-y-2 text-sm text-slate-600">
                       {challenge.solutionSteps.map((step, index) => (
                         <li key={step} className="flex gap-3 rounded-2xl border border-slate-200 bg-slate-50/70 p-3">
-                          <span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-indigo-600 text-[11px] font-bold text-white">{index + 1}</span>
+                          <span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-[#4F46E5] text-[11px] font-bold text-white">{index + 1}</span>
                           <span>{step}</span>
                         </li>
                       ))}
@@ -258,7 +258,7 @@ export function ChallengeEditorClient({ challenge, prevSubmission, isSolved: ini
                     <p className="text-xs font-bold uppercase tracking-[0.18em] text-slate-400">Common mistakes</p>
                     <div className="mt-2 space-y-2">
                       {challenge.commonMistakes.map((mistake) => (
-                        <div key={mistake} className="rounded-2xl border border-rose-100 bg-rose-50/50 p-3 text-sm text-rose-700">
+                        <div key={mistake} className="rounded-2xl border border-red-200 bg-red-50 p-3 text-sm text-red-700">
                           {mistake}
                         </div>
                       ))}
@@ -267,7 +267,7 @@ export function ChallengeEditorClient({ challenge, prevSubmission, isSolved: ini
                 ) : null}
 
                 {challenge.interviewExplanation ? (
-                  <div className="rounded-2xl border border-indigo-100 bg-indigo-50/60 p-4 text-sm">
+                  <div className="rounded-2xl border border-indigo-100 bg-indigo-50/50 p-4 text-sm">
                     <div className="flex items-center gap-2 text-slate-900">
                       <MessageSquareQuote className="h-4 w-4 text-indigo-600" />
                       <p className="font-bold">Explain it in an interview</p>
@@ -288,7 +288,7 @@ export function ChallengeEditorClient({ challenge, prevSubmission, isSolved: ini
               <h2 className="text-base font-black text-slate-950">Test Results</h2>
               <div className="mt-4 space-y-3">
                 {results.map((result, index) => (
-                  <div key={`${result.message}-${index}`} className={`rounded-2xl border p-4 text-sm ${result.passed ? "border-emerald-100 bg-emerald-50/40 text-emerald-700" : "border-amber-100 bg-amber-50/50 text-amber-800"}`}>
+                  <div key={`${result.message}-${index}`} className={`rounded-2xl border p-4 text-sm ${result.passed ? "border-emerald-100 bg-emerald-50/60 text-emerald-700" : "border-red-200 bg-red-50 text-red-700"}`}>
                     {result.message}
                   </div>
                 ))}

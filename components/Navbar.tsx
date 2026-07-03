@@ -48,7 +48,7 @@ export function Navbar() {
       <div className="max-w-7xl mx-auto flex h-16 items-center justify-between px-4 sm:px-6 lg:px-8">
         <a
           href="#main-content"
-          className="sr-only focus:not-sr-only focus:absolute focus:top-4 focus:left-4 focus:z-50 focus:rounded-xl focus:bg-slate-900 focus:px-4 focus:py-2 focus:font-semibold focus:text-white focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
+          className="sr-only focus:not-sr-only focus:absolute focus:top-4 focus:left-4 focus:z-50 focus:rounded-xl focus:bg-[#1E1B4B] focus:px-4 focus:py-2 focus:font-semibold focus:text-white focus:outline-none focus:ring-2 focus:ring-[#4F46E5] focus:ring-offset-2"
         >
           Skip to content
         </a>
@@ -67,7 +67,7 @@ export function Navbar() {
                   href={item.href}
                   onClick={closeMenus}
                   className={`rounded-lg px-3 py-2 text-sm font-medium transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 focus-visible:ring-offset-2 ${
-                    isActive ? "bg-slate-100 text-slate-950" : "text-slate-600 hover:bg-slate-50 hover:text-slate-950"
+                    isActive ? "bg-indigo-50 text-[#4F46E5]" : "text-slate-600 hover:bg-slate-50 hover:text-slate-950"
                   }`}
                 >
                   {item.name}
@@ -86,8 +86,8 @@ export function Navbar() {
                     onClick={() => setIsProfileOpen(!isProfileOpen)}
                     className="inline-flex items-center gap-2 rounded-xl border border-slate-200 bg-white pl-2 pr-3 py-1.5 text-sm font-semibold text-slate-700 hover:bg-slate-50 hover:text-slate-950 transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 focus-visible:ring-offset-2 cursor-pointer"
                   >
-                    <div className="w-8 h-8 rounded-full bg-indigo-50 border border-indigo-100 text-indigo-650 flex items-center justify-center shrink-0 shadow-sm">
-                      <User className="w-4 h-4 text-indigo-600" />
+                    <div className="w-8 h-8 rounded-full bg-indigo-50 border border-slate-200 text-[#4F46E5] flex items-center justify-center shrink-0 shadow-sm">
+                      <User className="w-4 h-4 text-[#4F46E5]" />
                     </div>
                     <span className="max-w-[100px] truncate text-slate-800">{user.name}</span>
                     <ChevronDown className={`w-3.5 h-3.5 text-slate-500 transition-transform duration-200 ${isProfileOpen ? "rotate-180" : ""}`} />
@@ -116,7 +116,7 @@ export function Navbar() {
                             closeMenus();
                             logout();
                           }}
-                          className="flex w-full items-center gap-2.5 rounded-xl px-2.5 py-2 text-sm font-bold text-red-600 hover:bg-red-50 transition cursor-pointer"
+                          className="flex w-full items-center gap-2.5 rounded-xl px-2.5 py-2 text-sm font-bold text-[#DC2626] hover:bg-red-50 transition cursor-pointer"
                         >
                           Logout
                         </button>
@@ -129,7 +129,7 @@ export function Navbar() {
                   <Link href="/login" onClick={closeMenus} className="text-sm font-medium text-slate-600 hover:text-slate-950 transition">
                     Login
                   </Link>
-                  <Link href="/register" onClick={closeMenus} className="inline-flex cursor-pointer items-center gap-1.5 rounded-xl bg-slate-900 px-4 py-2 text-sm font-semibold text-white transition hover:bg-slate-800 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-slate-900 focus-visible:ring-offset-2">
+                  <Link href="/register" onClick={closeMenus} className="inline-flex cursor-pointer items-center gap-1.5 rounded-xl bg-[#4F46E5] px-4 py-2 text-sm font-semibold text-white transition hover:bg-[#4338CA] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-slate-900 focus-visible:ring-offset-2">
                     Register <ArrowRight className="w-3.5 h-3.5" />
                   </Link>
                 </>
@@ -183,7 +183,7 @@ export function Navbar() {
                       closeMenus();
                       logout();
                     }}
-                    className="flex w-full items-center justify-center rounded-xl bg-red-50 py-3 text-sm font-semibold text-red-600 transition hover:bg-red-100 cursor-pointer"
+                    className="flex w-full items-center justify-center rounded-xl bg-red-50 py-3 text-sm font-semibold text-[#DC2626] transition hover:bg-red-100 cursor-pointer"
                   >
                     Logout
                   </button>
@@ -192,7 +192,7 @@ export function Navbar() {
                     <Link href="/login" onClick={closeMenus} className="flex w-full items-center justify-center rounded-xl border border-slate-200 bg-white py-3 text-sm font-semibold text-slate-700 transition hover:bg-slate-50">
                       Login
                     </Link>
-                    <Link href="/register" onClick={closeMenus} className="flex w-full items-center justify-center gap-1.5 rounded-xl bg-slate-900 py-3 text-sm font-semibold text-white transition hover:bg-slate-800">
+                    <Link href="/register" onClick={closeMenus} className="flex w-full items-center justify-center gap-1.5 rounded-xl bg-[#4F46E5] py-3 text-sm font-semibold text-white transition hover:bg-[#4338CA]">
                       Register <ArrowRight className="w-4 h-4" />
                     </Link>
                   </>

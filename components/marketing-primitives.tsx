@@ -7,9 +7,9 @@ type Tone = "slate" | "blue" | "emerald" | "violet" | "amber" | "rose";
 
 const toneStyles: Record<Tone, string> = {
   slate: "border-slate-200 bg-slate-50 text-slate-700",
-  blue: "border-blue-200 bg-blue-50 text-blue-700",
+  blue: "border-indigo-100 bg-indigo-50 text-[#4F46E5]",
   emerald: "border-emerald-200 bg-emerald-50 text-emerald-700",
-  violet: "border-violet-200 bg-violet-50 text-violet-700",
+  violet: "border-violet-100 bg-violet-50 text-[#7C3AED]",
   amber: "border-amber-200 bg-amber-50 text-amber-700",
   rose: "border-rose-200 bg-rose-50 text-rose-700",
 };
@@ -85,11 +85,11 @@ export function ActionLink({
 }) {
   const variants = {
     primary:
-      "bg-slate-950 text-white hover:bg-slate-800 focus-visible:ring-slate-950",
+      "bg-[#4F46E5] text-white hover:bg-[#4338CA] focus-visible:ring-[#4F46E5]",
     secondary:
-      "border border-slate-300 bg-white text-slate-700 hover:bg-slate-50 focus-visible:ring-indigo-600",
+      "border border-slate-300 bg-white text-slate-700 hover:bg-slate-50 focus-visible:ring-[#4F46E5]",
     ghost:
-      "text-indigo-700 hover:text-indigo-800 focus-visible:ring-indigo-600",
+      "text-[#4F46E5] hover:text-[#4338CA] focus-visible:ring-[#4F46E5]",
   };
 
   return (

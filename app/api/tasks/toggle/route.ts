@@ -2,10 +2,18 @@ import crypto from "crypto";
 import { NextResponse } from "next/server";
 import { cookies } from "next/headers";
 import { verifyJWT } from "@/lib/jwt";
-import { dbQuery } from "@/lib/db";
+import { dbQuery, dbTableExists } from "@/lib/db";
 import { ensureDailyMissionsAssigned, updateUserStreak } from "@/lib/streaks";
 
 async function readTaskProgress(userId: string) {
+  const hasTaskProgressTable = await dbTableExists("user_task_progress");
+  if (!hasTaskProgressTable) {
+    return {
+      completedTaskSlugs: [],
+      taskCompletedDates: {},
+    };
+  }
+
   const res = await dbQuery(
     `SELECT task_slug, completed_at
      FROM user_task_progress
@@ -43,6 +51,11 @@ export async function POST(request: Request) {
 
     if (!taskSlug) {
       return NextResponse.json({ error: "Task slug is required." }, { status: 400 });
+    }
+
+    const hasTaskProgressTable = await dbTableExists("user_task_progress");
+    if (!hasTaskProgressTable) {
+      return NextResponse.json({ error: "Task progress storage is not ready yet. Apply the latest database migration first." }, { status: 503 });
     }
 
     await ensureDailyMissionsAssigned(decoded.userId);

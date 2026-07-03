@@ -72,7 +72,7 @@ export function TasksClient({ initialTasks }: TasksClientProps) {
     <div className="mx-auto max-w-7xl animate-fade-in space-y-10 px-4 py-10 sm:px-6 md:py-14 lg:px-8 lg:py-16">
       <div className="space-y-6">
         <div className="max-w-3xl space-y-4">
-          <div className="inline-flex items-center gap-2 rounded-lg border border-slate-200 bg-slate-50 px-3 py-1.5 text-sm font-medium text-slate-700">
+          <div className="inline-flex items-center gap-2 rounded-lg border border-slate-200 bg-white px-3 py-1.5 text-sm font-medium text-slate-700">
             <span className="h-2 w-2 rounded-full bg-indigo-600" aria-hidden="true" />
             Practice workspace
           </div>
@@ -96,7 +96,7 @@ export function TasksClient({ initialTasks }: TasksClientProps) {
                 aria-pressed={activeFilter === filter}
                 className={`shrink-0 whitespace-nowrap rounded-xl px-3.5 py-2 text-sm font-medium transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 focus-visible:ring-offset-2 ${
                   activeFilter === filter
-                    ? "bg-slate-900 text-white"
+                    ? "bg-[#4F46E5] text-white"
                     : "text-slate-600 hover:bg-slate-50 hover:text-slate-950"
                 }`}
               >
@@ -110,7 +110,7 @@ export function TasksClient({ initialTasks }: TasksClientProps) {
           <label htmlFor="task-search" className="sr-only">
             Search tasks
           </label>
-          <div className="flex items-center gap-3 rounded-xl border border-slate-200 bg-slate-50 px-4 py-3 transition focus-within:border-slate-300 focus-within:ring-4 focus-within:ring-slate-200/60">
+          <div className="flex items-center gap-3 rounded-xl border border-slate-200 bg-slate-50 px-4 py-3 transition focus-within:border-[#4F46E5] focus-within:ring-4 focus-within:ring-indigo-100">
             <Search className="h-4 w-4 text-slate-400" />
             <input
               id="task-search"
@@ -183,7 +183,7 @@ export function TasksClient({ initialTasks }: TasksClientProps) {
 
                     <Link
                       href={`/tasks/${task.slug}`}
-                      className="inline-flex min-h-11 w-full items-center justify-center gap-2 rounded-xl bg-slate-900 text-sm font-semibold text-white transition hover:bg-slate-800 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-slate-900 focus-visible:ring-offset-2"
+                      className="inline-flex min-h-11 w-full items-center justify-center gap-2 rounded-xl bg-[#4F46E5] text-sm font-semibold text-white transition hover:bg-[#4338CA] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-slate-900 focus-visible:ring-offset-2"
                     >
                       <span>Open Practice Task</span>
                       <ArrowRight className="h-4 w-4 transition-transform duration-200 group-hover:translate-x-0.5" />

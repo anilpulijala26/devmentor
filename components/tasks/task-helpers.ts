@@ -78,9 +78,9 @@ export function getVisibleTaskTags(slug: string) {
 
 export function getLevelTone(level: DeveloperTask["level"]) {
   return {
-    Beginner: "bg-blue-50 text-blue-700 border-blue-100",
-    Intermediate: "bg-violet-50 text-violet-700 border-violet-100",
-    Advanced: "bg-emerald-50 text-emerald-700 border-emerald-100",
+    Beginner: "bg-slate-100 text-slate-700 border-slate-200",
+    Intermediate: "bg-indigo-50 text-[#4F46E5] border-indigo-100",
+    Advanced: "bg-violet-50 text-[#7C3AED] border-violet-100",
   }[level];
 }
 

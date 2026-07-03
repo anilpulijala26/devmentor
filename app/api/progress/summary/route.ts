@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
 import { cookies } from "next/headers";
 import { verifyJWT } from "@/lib/jwt";
-import { dbQuery } from "@/lib/db";
+import { dbQuery, dbTableExists } from "@/lib/db";
 
 export async function GET() {
   try {
@@ -21,19 +21,22 @@ export async function GET() {
     let taskCompletedDates: Record<string, string> = {};
 
     try {
-      const taskRes = await dbQuery(
-        `SELECT task_slug, completed_at
-         FROM user_task_progress
-         WHERE user_id = $1 AND is_completed = TRUE`,
-        [decoded.userId],
-      );
+      const hasTaskProgressTable = await dbTableExists("user_task_progress");
+      if (hasTaskProgressTable) {
+        const taskRes = await dbQuery(
+          `SELECT task_slug, completed_at
+           FROM user_task_progress
+           WHERE user_id = $1 AND is_completed = TRUE`,
+          [decoded.userId],
+        );
 
-      completedTaskSlugs = taskRes.rows.map((row) => row.task_slug);
-      taskCompletedDates = Object.fromEntries(
-        taskRes.rows
-          .filter((row) => row.completed_at)
-          .map((row) => [row.task_slug, new Date(row.completed_at).toISOString()]),
-      );
+        completedTaskSlugs = taskRes.rows.map((row) => row.task_slug);
+        taskCompletedDates = Object.fromEntries(
+          taskRes.rows
+            .filter((row) => row.completed_at)
+            .map((row) => [row.task_slug, new Date(row.completed_at).toISOString()]),
+        );
+      }
     } catch (error) {
       console.error("Task progress summary lookup failed:", error);
     }
@@ -41,14 +44,17 @@ export async function GET() {
     let completedProjectSlugs: string[] = [];
 
     try {
-      const projectRes = await dbQuery(
-        `SELECT project_slug
-         FROM user_project_submissions
-         WHERE user_id = $1 AND review_status <> 'not_submitted_yet'`,
-        [decoded.userId],
-      );
+      const hasProjectSubmissionsTable = await dbTableExists("user_project_submissions");
+      if (hasProjectSubmissionsTable) {
+        const projectRes = await dbQuery(
+          `SELECT project_slug
+           FROM user_project_submissions
+           WHERE user_id = $1 AND review_status <> 'not_submitted_yet'`,
+          [decoded.userId],
+        );
 
-      completedProjectSlugs = projectRes.rows.map((row) => row.project_slug);
+        completedProjectSlugs = projectRes.rows.map((row) => row.project_slug);
+      }
     } catch (error) {
       console.error("Project progress summary lookup failed:", error);
     }

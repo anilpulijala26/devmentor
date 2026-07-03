@@ -50,3 +50,25 @@ export async function dbQuery<T extends QueryResultRow = any>(
 }
 
 export default pool;
+
+const tableExistsCache = new Map<string, boolean>();
+
+export async function dbTableExists(tableName: string, useCache = true) {
+  const normalizedName = tableName.includes(".") ? tableName : `public.${tableName}`;
+
+  if (useCache && tableExistsCache.has(normalizedName)) {
+    return tableExistsCache.get(normalizedName) ?? false;
+  }
+
+  const result = await pool.query<{ regclass: string | null }>(
+    "SELECT to_regclass($1) as regclass",
+    [normalizedName],
+  );
+
+  const exists = !!result.rows[0]?.regclass;
+  if (useCache) {
+    tableExistsCache.set(normalizedName, exists);
+  }
+
+  return exists;
+}

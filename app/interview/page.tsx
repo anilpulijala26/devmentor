@@ -49,15 +49,15 @@ export default async function InterviewPage() {
   );
 
   return (
-    <div className="min-h-screen bg-slate-50/50 pb-20">
+    <div className="min-h-screen bg-slate-50 pb-20">
       <div className="max-w-6xl mx-auto px-4 py-10 sm:px-6 lg:px-8">
         <div className="rounded-[2rem] border border-slate-200 bg-white p-6 shadow-sm sm:p-8">
           <div className="flex items-start gap-4">
-            <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-indigo-50 text-indigo-600">
+            <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-indigo-50 text-[#4F46E5]">
               <MessageSquareQuote className="h-6 w-6" />
             </div>
             <div>
-              <p className="text-xs font-bold uppercase tracking-[0.24em] text-indigo-600">Interview readiness</p>
+              <p className="text-xs font-bold uppercase tracking-[0.24em] text-[#4F46E5]">Interview readiness</p>
               <h1 className="mt-2 text-3xl font-black tracking-tight text-slate-950">Practice explaining what you learn</h1>
               <p className="mt-3 max-w-2xl text-sm leading-6 text-slate-600">
                 After each lesson or coding problem, read one short interview question and one expected answer. Keep it simple and say it in your own words.
@@ -65,20 +65,20 @@ export default async function InterviewPage() {
             </div>
           </div>
 
-          <div className="mt-6 rounded-2xl border border-indigo-100 bg-indigo-50/60 p-5">
-            <p className="text-xs font-bold uppercase tracking-[0.18em] text-indigo-600">Today&apos;s question</p>
+          <div className="mt-6 rounded-2xl border border-indigo-100 bg-indigo-50/50 p-5">
+            <p className="text-xs font-bold uppercase tracking-[0.18em] text-[#4F46E5]">Today&apos;s question</p>
             <p className="mt-2 text-sm font-semibold text-slate-900">{currentDay.interviewQuestion}</p>
             <p className="mt-2 text-sm text-slate-600">{currentDay.interviewAnswer}</p>
             <p className="mt-3 text-xs text-slate-500">Current module: {currentModule.title} • Day {currentDay.day}</p>
           </div>
           <div className="mt-4 grid gap-3 sm:grid-cols-3">
-            <Link href={currentDay.practiceHref ?? "/tasks"} className="rounded-2xl border border-indigo-100 bg-white px-4 py-3 text-sm font-semibold text-slate-700 transition hover:bg-indigo-50/40">
+            <Link href={currentDay.practiceHref ?? "/tasks"} className="rounded-2xl border border-indigo-100 bg-white px-4 py-3 text-sm font-semibold text-slate-700 transition hover:border-indigo-200 hover:bg-indigo-50/30">
               Practice task
             </Link>
-            <Link href={currentDay.challengeHref ?? "/challenges/today"} className="rounded-2xl border border-indigo-100 bg-white px-4 py-3 text-sm font-semibold text-slate-700 transition hover:bg-indigo-50/40">
+            <Link href={currentDay.challengeHref ?? "/challenges/today"} className="rounded-2xl border border-indigo-100 bg-white px-4 py-3 text-sm font-semibold text-slate-700 transition hover:border-indigo-200 hover:bg-indigo-50/30">
               Coding challenge
             </Link>
-            <Link href={currentDay.projectHref ?? "/projects"} className="rounded-2xl border border-indigo-100 bg-white px-4 py-3 text-sm font-semibold text-slate-700 transition hover:bg-indigo-50/40">
+            <Link href={currentDay.projectHref ?? "/projects"} className="rounded-2xl border border-indigo-100 bg-white px-4 py-3 text-sm font-semibold text-slate-700 transition hover:border-indigo-200 hover:bg-indigo-50/30">
               Project submission
             </Link>
           </div>
@@ -96,7 +96,7 @@ export default async function InterviewPage() {
         </div>
 
         <div className="mt-6 flex justify-end">
-          <Link href="/dashboard" className="inline-flex items-center gap-2 rounded-xl bg-slate-950 px-5 py-3 text-sm font-semibold text-white transition hover:bg-slate-800">
+          <Link href="/dashboard" className="inline-flex items-center gap-2 rounded-xl bg-[#4F46E5] px-5 py-3 text-sm font-semibold text-white transition hover:bg-[#4338CA]">
             Back to Dashboard <ArrowRight className="h-4 w-4" />
           </Link>
         </div>

@@ -38,9 +38,9 @@ export function DashboardHighlights() {
   }, []);
 
   return (
-    <div className="rounded-2xl border border-indigo-100 bg-white p-6 shadow-sm">
+    <div className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
       <div className="flex items-center justify-between gap-4">
-        <div className="flex items-center gap-2 text-indigo-700">
+        <div className="flex items-center gap-2 text-[#4F46E5]">
           <span className="inline-flex h-9 w-9 items-center justify-center rounded-full bg-indigo-50">
             <Sparkles className="h-4 w-4" />
           </span>
@@ -61,7 +61,7 @@ export function DashboardHighlights() {
               aria-label={`Show highlight ${idx + 1}`}
               onClick={() => setActiveIndex(idx)}
               className={`h-2.5 w-2.5 rounded-full transition ${
-                idx === activeIndex ? "bg-indigo-600" : "bg-slate-200"
+                idx === activeIndex ? "bg-[#4F46E5]" : "bg-slate-200"
               }`}
             />
           ))}

@@ -3,8 +3,8 @@ import { ArrowRight } from "lucide-react";
 
 export function ProjectCTA() {
   return (
-    <section className="rounded-[2rem] bg-slate-950 p-6 text-white shadow-xs">
-      <p className="text-xs font-bold uppercase tracking-[0.24em] text-slate-400">
+    <section className="rounded-[2rem] bg-[#1E1B4B] p-6 text-white shadow-xs">
+      <p className="text-xs font-bold uppercase tracking-[0.24em] text-indigo-200">
         Final Step
       </p>
       <div className="mt-3 flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
@@ -16,7 +16,7 @@ export function ProjectCTA() {
         </div>
         <Link
           href="#project-submission"
-          className="inline-flex items-center gap-2 rounded-full bg-white px-5 py-3 text-sm font-bold text-slate-950 transition hover:bg-slate-100"
+          className="inline-flex items-center gap-2 rounded-full bg-[#4F46E5] px-5 py-3 text-sm font-bold text-white transition hover:bg-[#4338CA]"
         >
           Open Submission
           <ArrowRight className="h-4 w-4" />

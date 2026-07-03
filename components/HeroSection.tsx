@@ -3,11 +3,11 @@ import { Sparkles, ArrowRight, CheckCircle2 } from "lucide-react";
 
 export function HeroSection() {
   return (
-    <section className="relative w-full bg-white pt-12 pb-16 md:pt-20 md:pb-24 overflow-hidden border-b border-slate-100/80">
+    <section className="relative w-full bg-white pt-12 pb-16 md:pt-20 md:pb-24 overflow-hidden border-b border-slate-200/80">
       {/* Soft background glow meshes */}
       <div className="absolute inset-0 pointer-events-none overflow-hidden">
-        <div className="absolute top-[-10%] left-[-5%] w-[700px] h-[700px] bg-gradient-to-tr from-indigo-100/30 to-purple-100/20 rounded-full blur-[140px] opacity-80" />
-        <div className="absolute bottom-[-15%] right-[-5%] w-[800px] h-[800px] bg-gradient-to-br from-violet-100/30 to-pink-100/20 rounded-full blur-[150px] opacity-70" />
+        <div className="absolute top-[-10%] left-[-5%] w-[700px] h-[700px] bg-gradient-to-tr from-indigo-100/30 to-violet-100/20 rounded-full blur-[140px] opacity-80" />
+        <div className="absolute bottom-[-15%] right-[-5%] w-[800px] h-[800px] bg-gradient-to-br from-violet-100/20 to-indigo-100/10 rounded-full blur-[150px] opacity-70" />
       </div>
 
       {/* Decorative Grid Pattern */}
@@ -17,26 +17,26 @@ export function HeroSection() {
         <div className="grid lg:grid-cols-12 gap-12 lg:gap-16 items-center">
           {/* Left Details Column */}
           <div className="lg:col-span-7 space-y-7 text-left animate-fade-in">
-            <div className="inline-flex items-center gap-2 bg-indigo-50 border border-indigo-100 px-3.5 py-1.5 rounded-full text-indigo-700 shadow-sm">
+            <div className="inline-flex items-center gap-2 bg-indigo-50 border border-slate-200 px-3.5 py-1.5 rounded-full text-[#4F46E5] shadow-sm">
               <Sparkles className="w-3.5 h-3.5 text-indigo-600 animate-pulse" />
               <span className="text-[10px] font-extrabold uppercase tracking-widest">
                 Production-ready developer learning platform
               </span>
             </div>
 
-            <h1 className="text-4xl sm:text-5xl lg:text-[56px] font-black text-slate-900 tracking-tight leading-[1.1]">
-              Master <span className="text-transparent bg-clip-text bg-gradient-to-r from-indigo-600 via-indigo-700 to-purple-600">Full-Stack Development</span> <br />
+            <h1 className="text-4xl sm:text-5xl lg:text-[50px] font-black text-slate-900 tracking-tight leading-[1.1]">
+              Master <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#4F46E5] via-[#4338CA] to-[#7C3AED]">Full-Stack Development</span> <br />
               Through Real-World Practice
             </h1>
 
-            <p className="text-sm sm:text-base lg:text-lg text-slate-500 leading-relaxed max-w-2xl font-semibold">
+            <p className="text-sm sm:text-base lg:text-lg text-slate-600 leading-relaxed max-w-2xl font-semibold">
               Learn frontend, backend, projects, code review, deployment, and interview explanation through one guided platform.
             </p>
 
             <div className="flex flex-wrap items-center gap-4 pt-2">
               <Link
                 href="/learn"
-                className="group inline-flex items-center justify-center gap-2 bg-indigo-650 hover:bg-indigo-700 text-white px-7 h-12 rounded-xl font-bold text-sm transition-all duration-300 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 focus-visible:ring-offset-2 min-h-[44px] cursor-pointer shadow-md hover:shadow-indigo-100 transform active:scale-98 hover:-translate-y-0.5"
+                className="group inline-flex items-center justify-center gap-2 bg-[#4F46E5] hover:bg-[#4338CA] text-white px-7 h-12 rounded-xl font-bold text-sm transition-all duration-300 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 focus-visible:ring-offset-2 min-h-[44px] cursor-pointer shadow-md hover:shadow-indigo-100 transform active:scale-98 hover:-translate-y-0.5"
               >
                 <span>Start Learning</span>
                 <ArrowRight className="w-4 h-4 transition-transform duration-200 group-hover:translate-x-1" />

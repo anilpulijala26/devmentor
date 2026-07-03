@@ -38,10 +38,10 @@ export default async function CoursesPage() {
   const completedCount = parseInt(completedLessonsRes.rows[0].count, 10);
 
   return (
-    <div className="min-h-screen bg-slate-50/50 pb-20">
+    <div className="min-h-screen bg-slate-50 pb-20">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
         <div className="max-w-3xl">
-          <div className="inline-flex items-center gap-2 rounded-full bg-indigo-50 px-3.5 py-1 text-xs font-semibold text-indigo-700 mb-4 border border-indigo-100">
+          <div className="inline-flex items-center gap-2 rounded-full bg-indigo-50 px-3.5 py-1 text-xs font-semibold text-[#4F46E5] mb-4 border border-slate-200">
             <Sparkles className="w-3.5 h-3.5" /> Learning Path
           </div>
           <h1 className="text-4xl sm:text-5xl font-extrabold tracking-tight text-slate-900">{path.title}</h1>
@@ -55,14 +55,14 @@ export default async function CoursesPage() {
             const status = getModuleStatus(profile, module.order, completedCount);
             const isActive = status === "Active";
             return (
-              <article key={module.order} className={`rounded-[2rem] border p-6 shadow-sm ${isActive ? "border-indigo-300 bg-white" : "border-slate-200 bg-white"}`}>
+              <article key={module.order} className={`rounded-[2rem] border p-6 shadow-sm ${isActive ? "border-[#4F46E5] bg-white" : "border-slate-200 bg-white"}`}>
                 <div className="flex items-start justify-between gap-4">
                   <div>
                     <p className="text-xs font-bold uppercase tracking-[0.2em] text-slate-400">Module {module.order}</p>
                     <h2 className="mt-2 text-2xl font-black tracking-tight text-slate-950">{module.title}</h2>
                     <p className="mt-3 text-sm leading-6 text-slate-600">{module.description}</p>
                   </div>
-                  <span className={`shrink-0 rounded-full px-3 py-1 text-xs font-bold ${status === "Active" ? "bg-emerald-50 text-emerald-700" : status === "Completed" ? "bg-slate-100 text-slate-700" : status === "Upcoming" ? "bg-amber-50 text-amber-700" : "bg-slate-100 text-slate-500"}`}>
+                  <span className={`shrink-0 rounded-full px-3 py-1 text-xs font-bold ${status === "Active" ? "bg-indigo-50 text-[#4F46E5]" : status === "Completed" ? "bg-emerald-50 text-emerald-700" : status === "Upcoming" ? "bg-amber-50 text-amber-700" : "bg-slate-100 text-slate-500"}`}>
                     {status}
                   </span>
                 </div>
@@ -98,7 +98,7 @@ export default async function CoursesPage() {
                     {status === "Locked" ? <Lock className="w-4 h-4" /> : <BookOpen className="w-4 h-4" />}
                     {status === "Locked" ? "Unlock by finishing the earlier active module" : "Ready for guided daily learning"}
                   </div>
-                  <Link href="/dashboard" className="inline-flex items-center gap-2 rounded-xl bg-slate-900 px-4 py-2.5 text-sm font-semibold text-white transition hover:bg-slate-800">
+                  <Link href="/dashboard" className="inline-flex items-center gap-2 rounded-xl bg-[#4F46E5] px-4 py-2.5 text-sm font-semibold text-white transition hover:bg-[#4338CA]">
                     {isActive ? "Open Dashboard Plan" : "View Dashboard"}
                     <ArrowRight className="w-4 h-4" />
                   </Link>

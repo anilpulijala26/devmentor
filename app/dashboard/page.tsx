@@ -1,7 +1,7 @@
 ﻿import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
 import { verifyJWT } from "@/lib/jwt";
-import { dbQuery } from "@/lib/db";
+import { dbQuery, dbTableExists } from "@/lib/db";
 import { getOrUpdateStreakInfo, ensureDailyMissionsAssigned } from "@/lib/streaks";
 import { DashboardClient } from "@/components/DashboardClient";
 import {
@@ -156,20 +156,23 @@ export default async function DashboardPage() {
     let projectSubmission = null;
     if (currentDayPlan.projectSlug) {
       try {
-        const submissionRes = await dbQuery(
-          `SELECT github_url, live_url, review_status, submitted_at
-           FROM user_project_submissions
-           WHERE user_id = $1 AND project_slug = $2`,
-          [decoded.userId, currentDayPlan.projectSlug],
-        );
+        const hasProjectSubmissionsTable = await dbTableExists("user_project_submissions");
+        if (hasProjectSubmissionsTable) {
+          const submissionRes = await dbQuery(
+            `SELECT github_url, live_url, review_status, submitted_at
+             FROM user_project_submissions
+             WHERE user_id = $1 AND project_slug = $2`,
+            [decoded.userId, currentDayPlan.projectSlug],
+          );
 
-        if (submissionRes.rows.length > 0) {
-          projectSubmission = {
-            githubUrl: submissionRes.rows[0].github_url,
-            liveUrl: submissionRes.rows[0].live_url,
-            reviewStatus: submissionRes.rows[0].review_status,
-            submittedAt: submissionRes.rows[0].submitted_at,
-          };
+          if (submissionRes.rows.length > 0) {
+            projectSubmission = {
+              githubUrl: submissionRes.rows[0].github_url,
+              liveUrl: submissionRes.rows[0].live_url,
+              reviewStatus: submissionRes.rows[0].review_status,
+              submittedAt: submissionRes.rows[0].submitted_at,
+            };
+          }
         }
       } catch (error) {
         console.error("Dashboard project submission lookup failed:", error);

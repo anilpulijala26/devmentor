@@ -2,7 +2,7 @@ import { NextResponse } from "next/server";
 import { cookies } from "next/headers";
 import crypto from "crypto";
 import { verifyJWT } from "@/lib/jwt";
-import { dbQuery } from "@/lib/db";
+import { dbQuery, dbTableExists } from "@/lib/db";
 
 function isValidUrl(value: string) {
   try {
@@ -38,6 +38,14 @@ export async function POST(request: Request) {
 
     if (!isValidUrl(githubUrl) || !isValidUrl(liveUrl)) {
       return NextResponse.json({ error: "Please enter valid URLs for both GitHub and live project links." }, { status: 400 });
+    }
+
+    const hasProjectSubmissionsTable = await dbTableExists("user_project_submissions");
+    if (!hasProjectSubmissionsTable) {
+      return NextResponse.json(
+        { error: "Project submissions storage is not ready yet. Apply the latest database migration first." },
+        { status: 503 },
+      );
     }
 
     const submissionId = crypto.randomUUID();

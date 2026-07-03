@@ -73,7 +73,7 @@ export function ProjectSubmissionPanel({
     <section id="project-submission" className="rounded-[2rem] border border-slate-200/80 bg-white p-6 shadow-xs">
       <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
         <div>
-          <p className="text-xs font-bold uppercase tracking-[0.24em] text-indigo-600">Submit</p>
+          <p className="text-xs font-bold uppercase tracking-[0.24em] text-[#4F46E5]">Submit</p>
           <h3 className="mt-2 text-2xl font-black tracking-tight text-slate-950">Share your build links</h3>
           <p className="mt-2 max-w-2xl text-sm leading-6 text-slate-600">
             Submit your GitHub repository and live URL after you finish the current project stage. Then practice how you will explain the build in the interview tab.
@@ -98,7 +98,7 @@ export function ProjectSubmissionPanel({
                 value={githubUrl}
                 onChange={(event) => setGithubUrl(event.target.value)}
                 placeholder="https://github.com/yourname/project"
-                className="min-h-11 w-full rounded-xl border border-slate-200 bg-white px-4 text-sm font-normal text-slate-700 outline-none transition focus:border-indigo-400 focus:ring-4 focus:ring-indigo-100"
+                className="min-h-11 w-full rounded-xl border border-slate-200 bg-white px-4 text-sm font-normal text-slate-700 outline-none transition focus:border-[#4F46E5] focus:ring-4 focus:ring-indigo-100"
                 required
               />
             </label>
@@ -110,7 +110,7 @@ export function ProjectSubmissionPanel({
                 value={liveUrl}
                 onChange={(event) => setLiveUrl(event.target.value)}
                 placeholder="https://your-project.vercel.app"
-                className="min-h-11 w-full rounded-xl border border-slate-200 bg-white px-4 text-sm font-normal text-slate-700 outline-none transition focus:border-indigo-400 focus:ring-4 focus:ring-indigo-100"
+                className="min-h-11 w-full rounded-xl border border-slate-200 bg-white px-4 text-sm font-normal text-slate-700 outline-none transition focus:border-[#4F46E5] focus:ring-4 focus:ring-indigo-100"
                 required
               />
             </label>
@@ -123,12 +123,12 @@ export function ProjectSubmissionPanel({
           </div>
 
           {message ? <div className="rounded-2xl border border-emerald-100 bg-emerald-50 px-4 py-3 text-sm text-emerald-700">{message}</div> : null}
-          {error ? <div className="rounded-2xl border border-rose-100 bg-rose-50 px-4 py-3 text-sm text-rose-700">{error}</div> : null}
+          {error ? <div className="rounded-2xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">{error}</div> : null}
 
           <button
             type="submit"
             disabled={loading}
-            className="inline-flex min-h-11 items-center justify-center gap-2 rounded-xl bg-slate-950 px-5 text-sm font-semibold text-white transition hover:bg-slate-800 disabled:cursor-not-allowed disabled:opacity-60"
+            className="inline-flex min-h-11 items-center justify-center gap-2 rounded-xl bg-[#4F46E5] px-5 text-sm font-semibold text-white transition hover:bg-[#4338CA] disabled:cursor-not-allowed disabled:opacity-60"
           >
             {loading ? <Loader2 className="h-4 w-4 animate-spin" /> : <UploadCloud className="h-4 w-4" />}
             Submit Project Links

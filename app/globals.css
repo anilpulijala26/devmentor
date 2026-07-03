@@ -2,8 +2,24 @@
 @import "prismjs/themes/prism-tomorrow.css";
 
 :root {
-  --background: #ffffff;
-  --foreground: #0f172a;
+  --color-primary: #4F46E5;
+  --color-primary-hover: #4338CA;
+  --color-accent: #7C3AED;
+  --color-text: #0F172A;
+  --color-text-secondary: #64748B;
+  --color-text-muted: #94A3B8;
+  --color-bg: #F8FAFC;
+  --color-card: #FFFFFF;
+  --color-border: #E2E8F0;
+  --color-success-bg: #ECFDF5;
+  --color-success-text: #059669;
+  --color-warning-bg: #FFFBEB;
+  --color-warning-text: #D97706;
+  --color-error-bg: #FEF2F2;
+  --color-error-text: #DC2626;
+  --color-dark-card: #1E1B4B;
+  --background: var(--color-bg);
+  --foreground: var(--color-text);
 }
 
 html {
@@ -30,7 +46,7 @@ button {
 }
 
 :focus-visible {
-  outline: 2px solid #2563eb;
+  outline: 2px solid var(--color-primary);
   outline-offset: 2px;
 }
 
@@ -137,4 +153,9 @@ button {
 .no-scrollbar {
   -ms-overflow-style: none;  /* IE and Edge */
   scrollbar-width: none;  /* Firefox */
+}
+
+::selection {
+  background: rgba(79, 70, 229, 0.16);
+  color: var(--color-text);
 }

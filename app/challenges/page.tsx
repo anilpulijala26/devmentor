@@ -38,7 +38,7 @@ export default async function ChallengesCatalogPage() {
   const todayChallenge = challenges[todayOffset] || challenges[0];
 
   return (
-    <div className="min-h-screen bg-slate-50/50 pb-20 relative overflow-hidden">
+    <div className="min-h-screen bg-slate-50 pb-20 relative overflow-hidden">
       <div className="absolute top-0 right-1/4 w-96 h-96 bg-indigo-200/20 rounded-full blur-3xl pointer-events-none" />
       <div className="absolute bottom-1/4 left-1/4 w-96 h-96 bg-emerald-200/10 rounded-full blur-3xl pointer-events-none" />
 
@@ -54,38 +54,38 @@ export default async function ChallengesCatalogPage() {
         </div>
 
         {todayChallenge ? (
-          <div className="mb-12 bg-gradient-to-r from-slate-900 via-slate-800 to-indigo-950 rounded-3xl p-6 sm:p-8 text-white shadow-xl shadow-indigo-950/10 border border-slate-700/50 relative overflow-hidden">
+          <div className="mb-12 bg-gradient-to-r from-[#1E1B4B] via-[#312E81] to-[#0F172A] rounded-3xl p-6 sm:p-8 text-white shadow-xl shadow-indigo-950/10 border border-slate-700/50 relative overflow-hidden">
             <div className="absolute top-0 right-0 w-80 h-80 bg-indigo-500/10 rounded-full blur-3xl pointer-events-none" />
             <div className="relative z-10 flex flex-col md:flex-row md:items-center md:justify-between gap-6">
               <div className="max-w-3xl">
                 <div className="flex items-center gap-3">
-                  <span className="bg-indigo-500/20 text-indigo-300 border border-indigo-500/30 px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider">Today&apos;s Problem</span>
-                  <span className={`px-2.5 py-0.5 rounded-full text-xs font-bold ${todayChallenge.difficulty === "Easy" ? "bg-emerald-500/20 text-emerald-300" : "bg-amber-500/20 text-amber-300"}`}>{todayChallenge.difficulty}</span>
+                  <span className="bg-indigo-500/20 text-indigo-100 border border-indigo-400/30 px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider">Today&apos;s Problem</span>
+                  <span className={`px-2.5 py-0.5 rounded-full text-xs font-bold ${todayChallenge.difficulty === "Easy" ? "bg-slate-700/60 text-slate-100" : "bg-amber-500/20 text-amber-200"}`}>{todayChallenge.difficulty}</span>
                   {todayChallenge.is_solved ? <span className="flex items-center gap-1 bg-emerald-500 text-white px-2.5 py-0.5 rounded-full text-xs font-semibold"><CheckCircle2 className="w-3.5 h-3.5" /> Completed</span> : null}
                 </div>
                 <h2 className="text-2xl font-bold mt-4 tracking-tight">{todayChallenge.title}</h2>
                 <p className="text-slate-300 text-sm mt-2 leading-relaxed">{todayChallenge.description}</p>
               </div>
-              <Link href="/challenges/today" className="inline-flex items-center gap-2 bg-white text-slate-900 hover:bg-slate-50 transition-colors font-bold px-6 py-3.5 rounded-2xl shadow-lg text-sm">
+              <Link href="/challenges/today" className="inline-flex items-center gap-2 bg-[#4F46E5] text-white hover:bg-[#4338CA] transition-colors font-bold px-6 py-3.5 rounded-2xl shadow-lg text-sm">
                 {todayChallenge.is_solved ? "Review Solution" : "Solve Today&apos;s Problem"} <ArrowRight className="w-4 h-4" />
               </Link>
             </div>
           </div>
         ) : null}
 
-        <h2 className="text-lg font-bold text-slate-800 mb-5 flex items-center gap-2"><Code2 className="w-5 h-5 text-indigo-500" /> Problem Archive</h2>
+        <h2 className="text-lg font-bold text-slate-800 mb-5 flex items-center gap-2"><Code2 className="w-5 h-5 text-[#4F46E5]" /> Problem Archive</h2>
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {challenges.map((challenge) => {
             const isToday = challenge.id === todayChallenge?.id;
             return (
-              <div key={challenge.id} className={`bg-white rounded-2xl border p-5 transition-all flex flex-col justify-between ${isToday ? "border-indigo-500 shadow-md ring-1 ring-indigo-500/10" : "border-slate-200/80 hover:shadow-[0_8px_30px_rgba(15,23,42,0.04)] hover:border-slate-300"}`}>
+              <div key={challenge.id} className={`bg-white rounded-2xl border p-5 transition-all flex flex-col justify-between ${isToday ? "border-[#4F46E5] shadow-md ring-1 ring-indigo-200" : "border-slate-200/80 hover:shadow-[0_8px_30px_rgba(15,23,42,0.04)] hover:border-slate-300"}`}>
                 <div>
                   <div className="flex items-center justify-between">
                     <span className="text-xs text-slate-400 font-bold font-mono">PROBLEM #{challenge.order_index}</span>
                     <div className="flex items-center gap-1.5">
-                      <span className={`px-2 py-0.5 rounded-md text-[10px] font-bold ${challenge.difficulty === "Easy" ? "bg-emerald-50 text-emerald-600" : "bg-amber-50 text-amber-600"}`}>{challenge.difficulty}</span>
-                      {isToday ? <span className="bg-indigo-50 text-indigo-600 border border-indigo-100 px-1.5 py-0.5 rounded text-[9px] font-bold uppercase tracking-wider">Active</span> : null}
+                      <span className={`px-2 py-0.5 rounded-md text-[10px] font-bold ${challenge.difficulty === "Easy" ? "bg-slate-100 text-slate-600" : "bg-amber-50 text-amber-700"}`}>{challenge.difficulty}</span>
+                      {isToday ? <span className="bg-indigo-50 text-[#4F46E5] border border-indigo-100 px-1.5 py-0.5 rounded text-[9px] font-bold uppercase tracking-wider">Active</span> : null}
                     </div>
                   </div>
                   <h3 className="text-base font-bold text-slate-900 mt-3.5 tracking-tight">{challenge.title}</h3>
@@ -97,7 +97,7 @@ export default async function ChallengesCatalogPage() {
                   ) : (
                     <span className="text-xs font-bold text-slate-400">Not Submitted Yet</span>
                   )}
-                  {isToday ? <Link href="/challenges/today" className="text-xs font-bold text-indigo-600 hover:text-indigo-700 flex items-center gap-1">Open Problem <ChevronRight className="w-3.5 h-3.5" /></Link> : <span className="text-xs text-slate-300 font-semibold">Daily rotation</span>}
+                  {isToday ? <Link href="/challenges/today" className="text-xs font-bold text-[#4F46E5] hover:text-[#4338CA] flex items-center gap-1">Open Problem <ChevronRight className="w-3.5 h-3.5" /></Link> : <span className="text-xs text-slate-300 font-semibold">Daily rotation</span>}
                 </div>
               </div>
             );

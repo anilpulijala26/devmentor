@@ -54,7 +54,7 @@ export function ProjectsClient({ initialProjects }: ProjectsClientProps) {
             Build production-style software with clear requirements, scoped deliverables, and implementation patterns that mirror real engineering work.
           </p>
           <p className="text-sm font-medium text-slate-500">
-            7 Labs Â· 4 Skill Areas Â· Project-Based Learning
+            7 Labs / 4 Skill Areas / Project-Based Learning
           </p>
         </div>
 
@@ -64,9 +64,9 @@ export function ProjectsClient({ initialProjects }: ProjectsClientProps) {
               key={filter}
               onClick={() => setActiveFilter(filter)}
               aria-pressed={activeFilter === filter}
-              className={`rounded-xl px-4 py-2 text-sm font-medium transition cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 focus-visible:ring-offset-2 ${
+              className={`rounded-xl px-4 py-2 text-sm font-medium transition cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#4F46E5] focus-visible:ring-offset-2 ${
                 activeFilter === filter
-                  ? "bg-slate-900 text-white"
+                  ? "bg-[#4F46E5] text-white shadow-sm"
                   : "text-slate-600 hover:bg-slate-50 hover:text-slate-950"
               }`}
             >
@@ -110,20 +110,12 @@ export function ProjectsClient({ initialProjects }: ProjectsClientProps) {
                       <TagBadge
                         key={badge}
                         label={badge}
-                        tone={
-                          badge === "Beginner"
-                            ? "blue"
-                            : badge === "Intermediate"
-                              ? "violet"
-                              : badge === "Advanced"
-                                ? "emerald"
-                                : "slate"
-                        }
+                        tone="slate"
                       />
                     ))}
                   </div>
 
-                  <div className="grid gap-4 rounded-2xl border border-slate-200 bg-slate-50/70 p-4">
+                  <div className="grid gap-4 rounded-2xl border border-slate-200 bg-slate-50 p-4">
                     <div>
                       <p className="text-[11px] font-medium uppercase tracking-[0.16em] text-slate-500">What you will build</p>
                       <p className="mt-2 text-sm leading-6 text-slate-600">{project.features[0]}</p>
@@ -148,7 +140,7 @@ export function ProjectsClient({ initialProjects }: ProjectsClientProps) {
                       {visibleTech.map((tech) => (
                         <TagBadge key={tech} label={tech} />
                       ))}
-                      {extraTechCount > 0 && <TagBadge label={`+${extraTechCount} more`} tone="blue" />}
+                      {extraTechCount > 0 && <TagBadge label={`+${extraTechCount} more`} tone="slate" />}
                     </div>
                   </div>
                 </div>
@@ -159,7 +151,7 @@ export function ProjectsClient({ initialProjects }: ProjectsClientProps) {
                   </ActionLink>
                   <Link
                     href={`/projects/${project.slug}`}
-                    className="inline-flex min-h-11 flex-1 items-center justify-center gap-2 rounded-xl border border-slate-300 bg-white px-5 text-sm font-semibold text-slate-700 transition hover:bg-slate-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-600 focus-visible:ring-offset-2"
+                    className="inline-flex min-h-11 flex-1 items-center justify-center gap-2 rounded-xl border border-slate-300 bg-white px-5 text-sm font-semibold text-slate-700 transition hover:bg-slate-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#4F46E5] focus-visible:ring-offset-2"
                   >
                     View Details
                     <ArrowRight className="w-4 h-4 transition-transform duration-200 group-hover:translate-x-0.5" />

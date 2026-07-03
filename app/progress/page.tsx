@@ -2,7 +2,7 @@ import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
 import Link from "next/link";
 import { verifyJWT } from "@/lib/jwt";
-import { dbQuery } from "@/lib/db";
+import { dbQuery, dbTableExists } from "@/lib/db";
 import { getOrUpdateStreakInfo } from "@/lib/streaks";
 import { projects } from "@/lib/projects";
 import { developerTasks } from "@/lib/tasks";
@@ -46,11 +46,14 @@ export default async function ProgressPage() {
     const totalTasks = developerTasks.length;
 
     try {
-      const completedTasksRes = await dbQuery(
-        `SELECT COUNT(*) as count FROM user_task_progress WHERE user_id = $1 AND is_completed = TRUE`,
-        [decoded.userId],
-      );
-      completedTasksCount = parseInt(completedTasksRes.rows[0].count, 10);
+      const hasTaskProgressTable = await dbTableExists("user_task_progress");
+      if (hasTaskProgressTable) {
+        const completedTasksRes = await dbQuery(
+          `SELECT COUNT(*) as count FROM user_task_progress WHERE user_id = $1 AND is_completed = TRUE`,
+          [decoded.userId],
+        );
+        completedTasksCount = parseInt(completedTasksRes.rows[0].count, 10);
+      }
     } catch (error) {
       console.error("Progress task completion lookup failed:", error);
     }
@@ -60,11 +63,14 @@ export default async function ProgressPage() {
     const totalProjects = projects.length;
 
     try {
-      const completedProjectsRes = await dbQuery(
-        `SELECT COUNT(*) as count FROM user_project_submissions WHERE user_id = $1 AND review_status <> 'not_submitted_yet'`,
-        [decoded.userId],
-      );
-      completedProjectsCount = parseInt(completedProjectsRes.rows[0].count, 10);
+      const hasProjectSubmissionsTable = await dbTableExists("user_project_submissions");
+      if (hasProjectSubmissionsTable) {
+        const completedProjectsRes = await dbQuery(
+          `SELECT COUNT(*) as count FROM user_project_submissions WHERE user_id = $1 AND review_status <> 'not_submitted_yet'`,
+          [decoded.userId],
+        );
+        completedProjectsCount = parseInt(completedProjectsRes.rows[0].count, 10);
+      }
     } catch (error) {
       console.error("Progress project submissions lookup failed:", error);
     }
@@ -137,7 +143,7 @@ export default async function ProgressPage() {
     const projectsPercent = totalProjects > 0 ? Math.min(Math.round((completedProjectsCount / totalProjects) * 100), 100) : 0;
 
     return (
-      <div className="min-h-screen bg-[radial-gradient(circle_at_top,rgba(191,219,254,0.1),transparent_35%),linear-gradient(180deg,#f8fafc_0%,#ffffff_20%,#f8fafc_100%)] pb-20 relative overflow-hidden">
+      <div className="min-h-screen bg-[radial-gradient(circle_at_top,rgba(79,70,229,0.08),transparent_35%),linear-gradient(180deg,#f8fafc_0%,#ffffff_20%,#f8fafc_100%)] pb-20 relative overflow-hidden">
         {/* Background grids */}
         <div className="absolute inset-0 bg-[linear-gradient(to_right,rgba(148,163,184,0.03)_1px,transparent_1px),linear-gradient(to_bottom,rgba(148,163,184,0.03)_1px,transparent_1px)] bg-[size:50px_50px] pointer-events-none" />
 
@@ -156,7 +162,7 @@ export default async function ProgressPage() {
             
             {/* Header section */}
             <div>
-              <span className="text-xs uppercase tracking-widest font-mono text-indigo-650 font-bold bg-indigo-50 px-3 py-1.5 rounded-full">
+              <span className="text-xs uppercase tracking-widest font-mono text-[#4F46E5] font-bold bg-indigo-50 px-3 py-1.5 rounded-full">
                 Learning Performance
               </span>
               <h1 className="text-3xl sm:text-4xl font-black text-slate-950 tracking-tight mt-4">
@@ -174,14 +180,14 @@ export default async function ProgressPage() {
               <div className="bg-white rounded-2xl border border-slate-200/80 p-6 shadow-sm">
                 <div className="flex items-center justify-between">
                   <span className="text-xs font-bold text-slate-400 uppercase tracking-widest font-mono">Lessons Completion</span>
-                  <BookOpen className="w-5 h-5 text-indigo-500" />
+                  <BookOpen className="w-5 h-5 text-[#4F46E5]" />
                 </div>
                 <div className="mt-4 flex items-baseline gap-2">
                   <span className="text-4xl font-extrabold text-slate-900 font-mono">{completedCount}</span>
                   <span className="text-sm font-semibold text-slate-400">/ {totalCount}</span>
                 </div>
                 <div className="mt-4 h-2 bg-slate-100 rounded-full overflow-hidden">
-                  <div className="h-full bg-indigo-600 rounded-full transition-all" style={{ width: `${lessonsPercent}%` }} />
+                  <div className="h-full bg-[#4F46E5] rounded-full transition-all" style={{ width: `${lessonsPercent}%` }} />
                 </div>
                 <span className="text-[10px] text-slate-400 mt-2 block font-mono font-medium">
                   {lessonsPercent}% syllabus completed
@@ -226,14 +232,14 @@ export default async function ProgressPage() {
               <div className="bg-white rounded-2xl border border-slate-200/80 p-6 shadow-sm">
                 <div className="flex items-center justify-between">
                   <span className="text-xs font-bold text-slate-400 uppercase tracking-widest font-mono">Projects Completed</span>
-                  <Award className="w-5 h-5 text-purple-500" />
+                  <Award className="w-5 h-5 text-emerald-600" />
                 </div>
                 <div className="mt-4 flex items-baseline gap-2">
                   <span className="text-4xl font-extrabold text-slate-900 font-mono">{completedProjectsCount}</span>
                   <span className="text-sm font-semibold text-slate-400">/ {totalProjects}</span>
                 </div>
                 <div className="mt-4 h-2 bg-slate-100 rounded-full overflow-hidden">
-                  <div className="h-full bg-purple-600 rounded-full transition-all" style={{ width: `${projectsPercent}%` }} />
+                  <div className="h-full bg-emerald-600 rounded-full transition-all" style={{ width: `${projectsPercent}%` }} />
                 </div>
                 <span className="text-[10px] text-slate-400 mt-2 block font-mono font-medium">
                   {projectsPercent}% projects finished
@@ -249,7 +255,7 @@ export default async function ProgressPage() {
               <div className="lg:col-span-2 space-y-6">
                 <div className="bg-white rounded-3xl border border-slate-200/80 p-6 sm:p-8 shadow-sm">
                   <div className="flex items-center gap-3">
-                    <div className="w-10 h-10 rounded-xl bg-indigo-50 flex items-center justify-center text-indigo-650 shrink-0">
+                    <div className="w-10 h-10 rounded-xl bg-indigo-50 flex items-center justify-center text-[#4F46E5] shrink-0">
                       <BookOpen className="w-5 h-5" />
                     </div>
                     <div>
@@ -273,7 +279,7 @@ export default async function ProgressPage() {
                   <div className="mt-8 flex items-center">
                     <Link
                       href={continueLesson ? `/lessons/${continueLesson.id}` : `/courses`}
-                      className="inline-flex items-center justify-center gap-2 bg-indigo-600 hover:bg-indigo-700 text-white font-bold px-6 py-3.5 rounded-xl shadow-md transition-all text-sm w-full sm:w-auto"
+                      className="inline-flex items-center justify-center gap-2 bg-[#4F46E5] hover:bg-[#4338CA] text-white font-bold px-6 py-3.5 rounded-xl shadow-md transition-all text-sm w-full sm:w-auto"
                     >
                       {continueLesson ? "Continue Learning" : "Start Today's Lesson"} <ArrowRight className="w-4 h-4" />
                     </Link>
