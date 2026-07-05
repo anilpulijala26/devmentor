@@ -40,7 +40,7 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: "Please enter valid URLs for both GitHub and live project links." }, { status: 400 });
     }
 
-    const hasProjectSubmissionsTable = await dbTableExists("user_project_submissions");
+    const hasProjectSubmissionsTable = await dbTableExists("user_project_submissions", false);
     if (!hasProjectSubmissionsTable) {
       return NextResponse.json(
         { error: "Project submissions storage is not ready yet. Apply the latest database migration first." },
@@ -77,3 +77,4 @@ export async function POST(request: Request) {
     return NextResponse.json({ error: "Could not save your project submission." }, { status: 500 });
   }
 }
+

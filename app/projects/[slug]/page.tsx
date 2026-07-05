@@ -50,7 +50,7 @@ export default async function ProjectDetailPage({ params }: Props) {
     if (decoded) {
       isLoggedIn = true;
       try {
-        const hasProjectSubmissionsTable = await dbTableExists("user_project_submissions");
+        const hasProjectSubmissionsTable = await dbTableExists("user_project_submissions", false);
         if (hasProjectSubmissionsTable) {
           const submissionRes = await dbQuery(
             `SELECT github_url, live_url, review_status, submitted_at
@@ -82,3 +82,4 @@ export default async function ProjectDetailPage({ params }: Props) {
     </div>
   );
 }
+

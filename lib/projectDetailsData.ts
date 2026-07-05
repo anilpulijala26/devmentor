@@ -1,6 +1,9 @@
+import { getCuratedBuildSteps, getCuratedCodeFiles } from "./projectCurations";
+
 export interface CodeFile {
   name: string;
   path: string;
+  label?: string;
   code: string;
   language: string;
 }
@@ -23,6 +26,10 @@ export interface BuildStepSection {
 }
 
 export interface ProjectDetails {
+  coreFocus?: string[];
+  apiNote?: string;
+  deliverables?: string[];
+  submissionGuidance?: string[];
   requirements: Requirements;
   buildSteps: BuildStepSection[];
   codeFiles: CodeFile[];
@@ -337,6 +344,16 @@ export interface ProjectBase {
   folderStructure: string;
   databaseSchema?: string;
   businessRequirement: string;
+  whoShouldBuild?: string;
+  skillsCovered?: string[];
+  apiContract?: string;
+  implementationPhases?: { phase: string; desc: string }[];
+  interviewExplanation?: {
+    buildDesc: string;
+    approachDesc: string;
+    challengesDesc: string;
+    productionImprovements: string[];
+  };
 }
 
 export function getDetailsForProject(slug: string, base: ProjectBase): ProjectDetails {
@@ -374,146 +391,46 @@ export function getDetailsForProject(slug: string, base: ProjectBase): ProjectDe
     "Rapid submission spam checks block parallel api request executions."
   ];
 
-  // 10 Build steps customization
-  const buildSteps: BuildStepSection[] = [
-    { step: 1, title: "Project Setup", description: `Initialize workspace environments and project dependencies using standard configuration packages for ${base.title}.`, code: "npm init -y\nnpm install -D typescript @types/node", codeLanguage: "bash" },
-    { step: 2, title: "Folder Structure configuration", description: `Establish modular file trees representing code structures according to production layout guidelines.`, code: base.folderStructure || "src/\n├── components/\n└── index.ts", codeLanguage: "text" },
-    { step: 3, title: "UI Layout creation", description: "Design semantic page elements mapping dashboard widgets or container elements cleanly.", code: "<!-- Semantic layout landmarks -->\n<div class=\"layout-container\">\n  <main id=\"main-content\"></main>\n</div>", codeLanguage: "html" },
-    { step: 4, title: "State Management setup", description: "Configure state contexts or reactive hooks to process user interaction values.", code: "const [state, setState] = useState(initialState);", codeLanguage: "javascript" },
-    { step: 5, title: "API Integration points", description: "Establish service layer methods utilizing Fetch API requests targeting database or backend API endpoints.", code: "const res = await fetch('/api/resource');\nconst data = await res.json();", codeLanguage: "javascript" },
-    { step: 6, title: "Backend Setup", description: hasBackend || hasNext ? "Set up request-response routing paths and mount core security middleware parameters." : "This layout relies on static files or serverless api hooks to bypass active process servers.", code: "import express from 'express';\nconst app = express();", codeLanguage: "typescript" },
-    { step: 7, title: "Database Schema creation", description: hasDatabase ? "Establish relational database models or queries mapping variables onto schema tables." : "Session data is cached locally inside the browser using memory scopes or local storage keys.", code: base.databaseSchema || "CREATE TABLE records (\n  id SERIAL PRIMARY KEY,\n  value VARCHAR(255)\n);", codeLanguage: "sql" },
-    { step: 8, title: "Validation and Error Handling", description: "Verify type schemas using declarative validator parameters, preventing malformed payload transits.", code: "if (!payload.isValid) {\n  throw new Error('Malformed schema payload');\n}", codeLanguage: "javascript" },
-    { step: 9, title: "Testing Integration", description: "Configure Jest or mock frameworks to run test specs, asserting payload schemas on responses.", code: "describe('API Contract Suite', () => {\n  it('returns valid structures', () => {\n    expect(data.id).toBeDefined();\n  });\n});", codeLanguage: "javascript" },
-    { step: 10, title: "Deployment Pipeline", description: "Package application binaries or static grids and deploy to target staging environments.", code: "npm run build && vercel --prod", codeLanguage: "bash" }
-  ];
+  const curatedStages = getCuratedBuildSteps(base.slug);
+  const buildSteps: BuildStepSection[] = (curatedStages && curatedStages.length > 0
+    ? curatedStages.map((stage, index) => ({
+        step: index + 1,
+        title: stage.title,
+        description: stage.description,
+      }))
+    : (base.implementationPhases && base.implementationPhases.length > 0
+        ? base.implementationPhases.map((phase, index) => ({
+            step: index + 1,
+            title: phase.phase.replace(/^Phase\s+\d+:\s*/, ""),
+            description: phase.desc,
+          }))
+        : [
+            { step: 1, title: "Set up the project", description: `Create the starter structure for ${base.title}.` },
+            { step: 2, title: "Build the core feature", description: "Implement the main workflow users will interact with." },
+            { step: 3, title: "Validate and polish", description: "Add error handling, empty states, and responsive behavior." },
+            { step: 4, title: "Deploy and submit", description: "Ship the build and share the repo plus live URL." },
+          ]));
 
-  // Dynamic code files generation
-  const codeFiles: CodeFile[] = [];
-
-  if (hasDocker) {
-    codeFiles.push(
-      {
-        name: "package.json",
-        path: "package.json",
-        code: `{\n  "name": "${base.slug}",\n  "version": "1.0.0",\n  "scripts": {\n    "start": "node server.js"\n  },\n  "dependencies": {\n    "express": "^4.18.2"\n  }\n}`,
-        language: "json"
-      },
-      {
-        name: "Dockerfile",
-        path: "client/Dockerfile",
-        code: `FROM node:18-alpine AS builder\nWORKDIR /app\nCOPY package*.json ./\nRUN npm ci\nCOPY . .\nRUN npm run build\n\nFROM nginx:alpine\nCOPY --from=builder /app/dist /usr/share/nginx/html\nEXPOSE 80\nCMD ["nginx", "-g", "daemon off;"]`,
-        language: "dockerfile"
-      },
-      {
-        name: "Dockerfile",
-        path: "server/Dockerfile",
-        code: `FROM node:18-alpine\nWORKDIR /app\nCOPY package*.json ./\nRUN npm ci --only=production\nCOPY . .\nEXPOSE 3000\nCMD ["node", "server.js"]`,
-        language: "dockerfile"
-      },
-      {
-        name: "docker-compose.yml",
-        path: "docker-compose.yml",
-        code: `version: '3.8'\n\nservices:\n  client:\n    build:\n      context: ./client\n    ports:\n      - "80:80"\n    depends_on:\n      - server\n\n  server:\n    build:\n      context: ./server\n    ports:\n      - "3000:3000"\n    environment:\n      - DATABASE_URL=postgres://db:5432/main\n    depends_on:\n      - db\n\n  db:\n    image: postgres:15-alpine\n    volumes:\n      - pgdata:/var/lib/postgresql/data\n    environment:\n      - POSTGRES_DB=main\n      - POSTGRES_PASSWORD=secret\n\nvolumes:\n  pgdata:`,
-        language: "yaml"
-      }
-    );
-  } else if (hasNext) {
-    codeFiles.push(
-      {
-        name: "package.json",
-        path: "package.json",
-        code: `{\n  "name": "${base.slug}",\n  "dependencies": {\n    "next": "^14.1.0",\n    "react": "^18.2.0",\n    "react-dom": "^18.2.0",\n    "zod": "^3.22.4"\n  }\n}`,
-        language: "json"
-      },
-      {
-        name: "layout.tsx",
-        path: "app/layout.tsx",
-        code: `import type { Metadata } from 'next';\n\nexport const metadata: Metadata = {\n  title: '${base.title}',\n  description: '${base.description}',\n};\n\nexport default function Layout({ children }: { children: React.ReactNode }) {\n  return (\n    <html lang="en">\n      <body className="antialiased bg-slate-50 text-slate-900">\n        <header className="p-4 border-b bg-white font-bold">${base.title}</header>\n        <main className="p-6 max-w-4xl mx-auto">{children}</main>\n      </body>\n    </html>\n  );\n}`,
-        language: "tsx"
-      },
-      {
-        name: "page.tsx",
-        path: "app/page.tsx",
-        code: `import React from 'react';\n\nexport default async function Page() {\n  return (\n    <div className="space-y-4">\n      <h1 className="text-3xl font-black">${base.title} Workspace</h1>\n      <p className="text-slate-600">${base.description}</p>\n      <div className="p-6 bg-white border rounded-2xl shadow-xs">\n        <h2 className="font-bold text-slate-800 mb-2">Core Dashboard Workspace</h2>\n        <p className="text-sm text-slate-500">Run setup and install scripts to initiate production modules.</p>\n      </div>\n    </div>\n  );\n}`,
-        language: "tsx"
-      },
-      {
-        name: "route.ts",
-        path: "app/api/resource/route.ts",
-        code: `import { NextResponse } from 'next/server';\n\nexport async function GET() {\n  return NextResponse.json({ success: true, timestamp: new Date().toISOString() });\n}`,
-        language: "typescript"
-      }
-    );
-  } else if (hasReact) {
-    codeFiles.push(
-      {
-        name: "package.json",
-        path: "package.json",
-        code: `{\n  "name": "${base.slug}",\n  "scripts": {\n    "dev": "vite",\n    "build": "tsc && vite build"\n  },\n  "dependencies": {\n    "react": "^18.2.0",\n    "react-dom": "^18.2.0"\n  },\n  "devDependencies": {\n    "vite": "^5.0.0",\n    "typescript": "^5.0.0"\n  }\n}`,
-        language: "json"
-      },
-      {
-        name: "vite.config.ts",
-        path: "vite.config.ts",
-        code: `import { defineConfig } from 'vite';\nimport react from '@vitejs/plugin-react';\n\nexport default defineConfig({\n  plugins: [react()],\n});`,
-        language: "typescript"
-      },
-      {
-        name: "App.tsx",
-        path: "src/App.tsx",
-        code: `import React, { useState } from 'react';\n\nexport default function App() {\n  const [count, setCount] = useState(0);\n  return (\n    <div className="min-h-screen bg-slate-50 p-8 flex flex-col items-center justify-center">\n      <h1 className="text-4xl font-extrabold text-slate-900 mb-4">${base.title}</h1>\n      <button \n        onClick={() => setCount(c => c + 1)} \n        className="bg-indigo-600 text-white px-6 py-3 rounded-2xl font-bold shadow-sm"\n      >\n        Count Active: {count}\n      </button>\n    </div>\n  );\n}`,
-        language: "tsx"
-      }
-    );
-  } else if (hasBackend) {
-    codeFiles.push(
-      {
-        name: "package.json",
-        path: "package.json",
-        code: `{\n  "name": "${base.slug}",\n  "version": "1.0.0",\n  "scripts": {\n    "start": "node dist/app.js",\n    "build": "tsc"\n  },\n  "dependencies": {\n    "express": "^4.18.2",\n    "zod": "^3.22.4",\n    "dotenv": "^16.4.0"\n  },\n  "devDependencies": {\n    "typescript": "^5.0.0",\n    "@types/express": "^4.17.21"\n  }\n}`,
-        language: "json"
-      },
-      {
-        name: "app.ts",
-        path: "src/app.ts",
-        code: `import express from 'express';\nimport dotenv from 'dotenv';\n\ndotenv.config();\nconst app = express();\napp.use(express.json());\n\napp.get('/api/health', (req, res) => {\n  res.json({ status: 'healthy', project: '${base.title}' });\n});\n\nconst PORT = process.env.PORT || 3000;\napp.listen(PORT, () => console.log('Service running on port ' + PORT));\n\nexport default app;`,
-        language: "typescript"
-      },
-      {
-        name: ".env.example",
-        path: ".env.example",
-        code: `PORT=3000\nDATABASE_URL=postgres://user:pass@host:5432/dbname\nJWT_SECRET=replace_with_secure_signing_hash`,
-        language: "text"
-      }
-    );
-  } else {
-    // Static HTML/CSS project or general devops
-    codeFiles.push(
-      {
-        name: "package.json",
-        path: "package.json",
-        code: `{\n  "name": "${base.slug}",\n  "version": "1.0.0",\n  "scripts": {\n    "start": "echo 'Static hosting setup completed'"\n  }\n}`,
-        language: "json"
-      },
-      {
-        name: "index.html",
-        path: "index.html",
-        code: `<!DOCTYPE html>\n<html lang="en">\n<head>\n  <meta charset="UTF-8">\n  <title>${base.title}</title>\n  <style>\n    body { font-family: sans-serif; padding: 2rem; background: #fafafa; }\n  </style>\n</head>\n<body>\n  <h1>${base.title}</h1>\n  <p>${base.description}</p>\n</body>\n</html>`,
-        language: "html"
-      }
-    );
-  }
-
-  // If DB/Prisma is required
-  if (hasDatabase && !hasDocker) {
-    codeFiles.push({
-      name: "schema.prisma",
-      path: "prisma/schema.prisma",
-      code: base.databaseSchema || `datasource db {\n  provider = "postgresql"\n  url      = env("DATABASE_URL")\n}\n\ngenerator client {\n  provider = "prisma-client-js"\n}\n\nmodel Record {\n  id        String   @id @default(uuid())\n  createdAt DateTime @default(now())\n  updatedAt DateTime @updatedAt\n}`,
-      language: "prisma"
-    });
-  }
+  const curatedCodeFiles = getCuratedCodeFiles(base.slug);
+  const codeFiles: CodeFile[] = curatedCodeFiles
+    ? curatedCodeFiles.map((file) => ({ ...file }))
+    : hasDatabase && !hasDocker
+      ? [
+          {
+            name: "schema.prisma",
+            path: "prisma/schema.prisma",
+            code: base.databaseSchema || `datasource db {\n  provider = "postgresql"\n  url      = env("DATABASE_URL")\n}` ,
+            language: "prisma",
+          },
+        ]
+      : [
+          {
+            name: "README.md",
+            path: "README.md",
+            code: `# ${base.title}\n\nAdd project-specific files and starter code here.`,
+            language: "md",
+          },
+        ];
 
   const unitTestCode = `import request from 'supertest';\nimport app from '../src/app';\n\ndescribe('${base.title} Test Suite', () => {\n  it('checks standard system diagnostic paths', async () => {\n    // Dynamic validation\n    expect(true).toBe(true);\n  });\n});`;
 
@@ -524,6 +441,14 @@ export function getDetailsForProject(slug: string, base: ProjectBase): ProjectDe
   ];
 
   return {
+    coreFocus: base.skillsCovered?.slice(0, 4),
+    apiNote: hasBackend || hasDatabase ? "Backend or data storage is part of this project. Review the API contract and database notes below." : "No backend required for this project.",
+    deliverables: base.features?.slice(0, 4),
+    submissionGuidance: [
+      "Submit your GitHub repository URL.",
+      hasBackend || hasDatabase ? "Submit a live URL or clear API review instructions for the reviewer." : "Submit the live deployed URL for review.",
+      "Add notes for the reviewer about mocked data, demo credentials, or unfinished work.",
+    ],
     requirements: {
       businessObjective: base.businessRequirement || `Provide secure, highly performant containerized or routed mechanisms hosting the core structures of ${base.title}.`,
       functional: functionalReqs,
@@ -571,11 +496,11 @@ export function getDetailsForProject(slug: string, base: ProjectBase): ProjectDe
       ]
     },
     interview: {
-      howToExplain: `I designed and compiled ${base.title} utilizing ${base.techStack?.join(", ") || "modular JavaScript"}. I structured the application layout around isolated scopes to decouple database mutations from client rendering routines.`,
+      howToExplain: base.interviewExplanation?.buildDesc || `I built ${base.title} to practice the main concepts in ${base.techStack?.join(", ") || "the selected stack"} and turn them into a project I can explain clearly.`,
       architecture: hasBackend
         ? "Clients interact with Express API routes using JSON payloads. Middlewares validate tokens and formats before calling Prisma schemas."
         : "Dynamic pages use modular component hooks with LocalStorage state persistence caching user preferences.",
-      challenges: `Managing configuration parameters and ensuring network failures don't lead to stale UI panels. I resolved this by applying try-catch error boundaries wrapping api calls.`,
+      challenges: base.interviewExplanation?.challengesDesc || `A key challenge was keeping the project focused while still handling validation, edge cases, and user feedback cleanly.`,
       improvements: [
         "Integrate automated container orchestration rules.",
         "Add push notification bindings using Redis queues."
@@ -591,3 +516,10 @@ export function getDetailsForProject(slug: string, base: ProjectBase): ProjectDe
     }
   };
 }
+
+
+
+
+
+
+

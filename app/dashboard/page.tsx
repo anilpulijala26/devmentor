@@ -1,4 +1,4 @@
-﻿import { cookies } from "next/headers";
+import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
 import { verifyJWT } from "@/lib/jwt";
 import { dbQuery, dbTableExists } from "@/lib/db";
@@ -156,7 +156,7 @@ export default async function DashboardPage() {
     let projectSubmission = null;
     if (currentDayPlan.projectSlug) {
       try {
-        const hasProjectSubmissionsTable = await dbTableExists("user_project_submissions");
+        const hasProjectSubmissionsTable = await dbTableExists("user_project_submissions", false);
         if (hasProjectSubmissionsTable) {
           const submissionRes = await dbQuery(
             `SELECT github_url, live_url, review_status, submitted_at
@@ -204,4 +204,5 @@ export default async function DashboardPage() {
     redirect("/login");
   }
 }
+
 

@@ -44,7 +44,7 @@ export async function GET() {
     let completedProjectSlugs: string[] = [];
 
     try {
-      const hasProjectSubmissionsTable = await dbTableExists("user_project_submissions");
+      const hasProjectSubmissionsTable = await dbTableExists("user_project_submissions", false);
       if (hasProjectSubmissionsTable) {
         const projectRes = await dbQuery(
           `SELECT project_slug
@@ -69,3 +69,4 @@ export async function GET() {
     return NextResponse.json({ error: "Could not load progress summary." }, { status: 500 });
   }
 }
+

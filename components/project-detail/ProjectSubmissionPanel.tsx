@@ -1,7 +1,5 @@
-"use client";
-
 import type { FormEvent } from "react";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Loader2, UploadCloud } from "lucide-react";
 
 export interface ProjectSubmission {
@@ -17,12 +15,28 @@ interface ProjectSubmissionPanelProps {
   isLoggedIn: boolean;
 }
 
+interface LocalSubmissionState {
+  githubUrl: string;
+  liveUrl: string;
+  reviewStatus: string;
+  submittedAt: string | null;
+  reviewNotes: string;
+}
+
 function formatReviewStatus(value: string) {
   return value
     .replaceAll("_", " ")
     .split(" ")
     .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
     .join(" ");
+}
+
+function getLocalSubmissionKey(projectSlug: string) {
+  return `project-local-submission-${projectSlug}`;
+}
+
+function getLocalNotesKey(projectSlug: string) {
+  return `project-review-notes-${projectSlug}`;
 }
 
 export function ProjectSubmissionPanel({
@@ -34,9 +48,55 @@ export function ProjectSubmissionPanel({
   const [liveUrl, setLiveUrl] = useState(initialSubmission?.liveUrl ?? "");
   const [reviewStatus, setReviewStatus] = useState(initialSubmission?.reviewStatus ?? "not_submitted_yet");
   const [submittedAt, setSubmittedAt] = useState(initialSubmission?.submittedAt ?? null);
+  const [reviewNotes, setReviewNotes] = useState("");
   const [message, setMessage] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
+
+  useEffect(() => {
+    const savedNotes = window.localStorage.getItem(getLocalNotesKey(projectSlug));
+    if (savedNotes) {
+      setReviewNotes(savedNotes);
+    }
+
+    if (initialSubmission) {
+      return;
+    }
+
+    const savedSubmission = window.localStorage.getItem(getLocalSubmissionKey(projectSlug));
+    if (!savedSubmission) {
+      return;
+    }
+
+    try {
+      const parsed = JSON.parse(savedSubmission) as LocalSubmissionState;
+      setGithubUrl(parsed.githubUrl || "");
+      setLiveUrl(parsed.liveUrl || "");
+      setReviewStatus(parsed.reviewStatus || "submitted_for_review");
+      setSubmittedAt(parsed.submittedAt || null);
+      setReviewNotes(parsed.reviewNotes || savedNotes || "");
+    } catch {
+      window.localStorage.removeItem(getLocalSubmissionKey(projectSlug));
+    }
+  }, [initialSubmission, projectSlug]);
+
+  useEffect(() => {
+    window.localStorage.setItem(getLocalNotesKey(projectSlug), reviewNotes);
+  }, [projectSlug, reviewNotes]);
+
+  const saveLocalSubmission = (nextSubmittedAt: string) => {
+    const payload: LocalSubmissionState = {
+      githubUrl,
+      liveUrl,
+      reviewStatus: "submitted_for_review",
+      submittedAt: nextSubmittedAt,
+      reviewNotes,
+    };
+
+    window.localStorage.setItem(getLocalSubmissionKey(projectSlug), JSON.stringify(payload));
+    setReviewStatus(payload.reviewStatus);
+    setSubmittedAt(payload.submittedAt);
+  };
 
   const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
@@ -53,6 +113,18 @@ export function ProjectSubmissionPanel({
 
       const data = await res.json();
       if (!res.ok) {
+        const storageNotReady =
+          res.status === 503 &&
+          typeof data.error === "string" &&
+          data.error.toLowerCase().includes("storage is not ready");
+
+        if (storageNotReady) {
+          const now = new Date().toISOString();
+          saveLocalSubmission(now);
+          setMessage("Project links saved on this device. Database storage is not ready yet, but your submission details will stay available locally in this browser.");
+          return;
+        }
+
         setError(data.error || "Could not save your project submission.");
         return;
       }
@@ -61,6 +133,7 @@ export function ProjectSubmissionPanel({
       setSubmittedAt(data.submission.submittedAt);
       setGithubUrl(data.submission.githubUrl || "");
       setLiveUrl(data.submission.liveUrl || "");
+      saveLocalSubmission(data.submission.submittedAt || new Date().toISOString());
       setMessage("Project links saved. Your submission is now ready for review.");
     } catch (submissionError) {
       setError(submissionError instanceof Error ? submissionError.message : "Could not save your project submission.");
@@ -76,7 +149,7 @@ export function ProjectSubmissionPanel({
           <p className="text-xs font-bold uppercase tracking-[0.24em] text-[#4F46E5]">Submit</p>
           <h3 className="mt-2 text-2xl font-black tracking-tight text-slate-950">Share your build links</h3>
           <p className="mt-2 max-w-2xl text-sm leading-6 text-slate-600">
-            Submit your GitHub repository and live URL after you finish the current project stage. Then practice how you will explain the build in the interview tab.
+            Submit your GitHub repository and live URL after you finish the current project stage. Add reviewer notes below so a mentor knows what to test, what is still mocked, or where you want feedback.
           </p>
         </div>
         <span className={`inline-flex rounded-full px-3 py-1 text-xs font-bold ${reviewStatus === "submitted_for_review" ? "bg-amber-50 text-amber-700" : reviewStatus === "reviewed" ? "bg-emerald-50 text-emerald-700" : "bg-slate-100 text-slate-600"}`}>
@@ -115,6 +188,17 @@ export function ProjectSubmissionPanel({
               />
             </label>
           </div>
+
+          <label className="block space-y-2 text-sm font-semibold text-slate-800">
+            <span>Notes for mentor or reviewer</span>
+            <textarea
+              value={reviewNotes}
+              onChange={(event) => setReviewNotes(event.target.value)}
+              placeholder="Mention demo credentials, mocked APIs, unfinished features, or the area where you want review feedback."
+              className="min-h-28 w-full rounded-2xl border border-slate-200 bg-white px-4 py-3 text-sm font-normal text-slate-700 outline-none transition focus:border-[#4F46E5] focus:ring-4 focus:ring-indigo-100"
+            />
+            <p className="text-xs font-normal text-slate-500">These notes stay on this device for your own review workflow.</p>
+          </label>
 
           <div className="rounded-2xl border border-slate-200 bg-slate-50/80 p-4 text-sm text-slate-600">
             <p className="font-semibold text-slate-900">Review status</p>

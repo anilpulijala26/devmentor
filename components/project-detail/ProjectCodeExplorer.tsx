@@ -73,6 +73,7 @@ export function ProjectCodeExplorer({ files }: { files: CodeFile[] }) {
   }, [fileTree]);
 
   const currentSelectedFile = selectedFile || firstFile;
+  const currentFileMeta = files.find((file) => file.path === currentSelectedFile?.path);
 
   const handleCopy = async () => {
     if (!currentSelectedFile) return;
@@ -154,9 +155,14 @@ export function ProjectCodeExplorer({ files }: { files: CodeFile[] }) {
           {currentSelectedFile ? (
             <div className="flex h-full min-w-0 flex-col">
               <div className="flex flex-wrap items-center justify-between gap-3 border-b border-slate-900 bg-slate-900/70 px-4 py-3">
-                <span className="truncate font-mono text-xs text-slate-400">
-                  {currentSelectedFile.path}
-                </span>
+                <div className="min-w-0">
+                  <span className="block truncate font-mono text-xs text-slate-400">
+                    {currentSelectedFile.path}
+                  </span>
+                  <span className="mt-1 block text-[11px] font-bold uppercase tracking-[0.2em] text-indigo-300">
+                    {currentFileMeta?.label || "Starter Code"}
+                  </span>
+                </div>
                 <button
                   type="button"
                   onClick={handleCopy}

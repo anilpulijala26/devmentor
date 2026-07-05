@@ -63,7 +63,7 @@ export default async function ProgressPage() {
     const totalProjects = projects.length;
 
     try {
-      const hasProjectSubmissionsTable = await dbTableExists("user_project_submissions");
+      const hasProjectSubmissionsTable = await dbTableExists("user_project_submissions", false);
       if (hasProjectSubmissionsTable) {
         const completedProjectsRes = await dbQuery(
           `SELECT COUNT(*) as count FROM user_project_submissions WHERE user_id = $1 AND review_status <> 'not_submitted_yet'`,
@@ -343,3 +343,4 @@ export default async function ProgressPage() {
     redirect("/login");
   }
 }
+

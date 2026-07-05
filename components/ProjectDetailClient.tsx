@@ -1,4 +1,4 @@
-﻿"use client";
+"use client";
 
 import Link from "next/link";
 import { useMemo, useState } from "react";
@@ -326,8 +326,8 @@ export function ProjectDetailClient({ project, submission, isLoggedIn }: Project
             </ProjectAccordion>
 
             <ProjectAccordion
-              title="Implementation Path"
-              subtitle="A cleaner step-by-step plan instead of one long build section."
+              title="Project Stages"
+              subtitle="Follow these stages before you move into deployment and submission."
               isOpen={openSections.buildSteps}
               onToggle={() => toggleSection("buildSteps")}
             >
@@ -361,14 +361,25 @@ export function ProjectDetailClient({ project, submission, isLoggedIn }: Project
               </div>
             </ProjectAccordion>
 
+            {details.deliverables?.length ? (
+              <ProjectAccordion
+                title="Deliverables"
+                subtitle="The main outcomes a learner should finish before submission."
+                isOpen={openSections.deliverables ?? true}
+                onToggle={() => toggleSection("deliverables")}
+              >
+                <CompactList items={details.deliverables} />
+              </ProjectAccordion>
+            ) : null}
+
             <ProjectAccordion
-              title="Folder Structure"
-              subtitle="Reference blueprint for the lab workspace."
+              title="Project Files"
+              subtitle="Reference blueprint for the files you should create."
               isOpen={openSections.folder}
               onToggle={() => toggleSection("folder")}
             >
               <CodeBlock
-                title="Project Folder Blueprint"
+                title="Project File Tree"
                 code={project.folderStructure}
                 copyId="folder-structure"
                 onCopy={copyText}
@@ -380,22 +391,35 @@ export function ProjectDetailClient({ project, submission, isLoggedIn }: Project
 
         {activeTab === "code" && details ? (
           <div className="space-y-5">
-            <ProjectCodeExplorer files={details.codeFiles} />
+            <div className="space-y-3">
+              <div className="rounded-3xl border border-slate-200/80 bg-white p-5 shadow-xs">
+                <p className="text-xs font-bold uppercase tracking-[0.24em] text-slate-500">Starter Code</p>
+                <p className="mt-2 text-sm leading-relaxed text-slate-600">These snippets are starter-level examples for this specific project, not generic placeholders.</p>
+              </div>
+              <ProjectCodeExplorer files={details.codeFiles} />
+            </div>
 
             <ProjectAccordion
               title="API and Database Reference"
-              subtitle="Keep the full technical reference available without making the page feel heavy."
+              subtitle="Only show backend details when this project actually needs them."
               isOpen={openSections.codeArchitecture}
               onToggle={() => toggleSection("codeArchitecture")}
             >
               <div className="grid gap-6">
-                <CodeBlock
-                  title="API Contract"
-                  code={project.apiContract}
-                  copyId="api-contract"
-                  onCopy={copyText}
-                  copied={!!copiedMap["api-contract"]}
-                />
+                {details.apiNote ? (
+                  <div className="rounded-2xl border border-slate-200 bg-slate-50/80 p-4 text-sm text-slate-600">
+                    {details.apiNote}
+                  </div>
+                ) : null}
+                {project.apiContract && !project.apiContract.startsWith("N/A") ? (
+                  <CodeBlock
+                    title="API Contract"
+                    code={project.apiContract}
+                    copyId="api-contract"
+                    onCopy={copyText}
+                    copied={!!copiedMap["api-contract"]}
+                  />
+                ) : null}
                 {project.databaseSchema ? (
                   <CodeBlock
                     title="Database Schema"
@@ -514,6 +538,17 @@ export function ProjectDetailClient({ project, submission, isLoggedIn }: Project
               </div>
             </ProjectAccordion>
 
+            {details.submissionGuidance?.length ? (
+              <ProjectAccordion
+                title="Submission Guidance"
+                subtitle="What to submit for GitHub, live review, and reviewer handoff."
+                isOpen={openSections.submission ?? true}
+                onToggle={() => toggleSection("submission")}
+              >
+                <CompactList items={details.submissionGuidance} />
+              </ProjectAccordion>
+            ) : null}
+
             {(details.deploy.dockerfile || details.deploy.dockerCompose || details.deploy.githubActions) ? (
               <ProjectAccordion
                 title="Deployment Config Files"
@@ -583,8 +618,8 @@ export function ProjectDetailClient({ project, submission, isLoggedIn }: Project
         {activeTab === "interview" && details ? (
           <div className="space-y-5">
             <ProjectAccordion
-              title="Project Pitch and Architecture"
-              subtitle="How to explain the lab clearly in interviews."
+              title="How to Explain This Project in Interview"
+              subtitle="Use these points to explain the project clearly, simply, and confidently."
               isOpen={openSections.interviewPrep}
               onToggle={() => toggleSection("interviewPrep")}
             >
@@ -685,5 +720,13 @@ export function ProjectDetailClient({ project, submission, isLoggedIn }: Project
     </div>
   );
 }
+
+
+
+
+
+
+
+
 
 
